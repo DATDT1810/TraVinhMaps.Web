@@ -1,7 +1,14 @@
+using TraVinhMaps.Web.Admin.Services.Users;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Register IUserService
+builder.Services.AddScoped<IUserService, UserService>();
+
+
 
 var app = builder.Build();
 
