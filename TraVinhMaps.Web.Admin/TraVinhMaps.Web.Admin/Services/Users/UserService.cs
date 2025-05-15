@@ -88,6 +88,28 @@ namespace TraVinhMaps.Web.Admin.Services.Users
             throw new HttpRequestException("Unable to fetch users for counting.");
         }
 
+        public async Task<long> CountAllUsersAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync(userApi + "count", cancellationToken);
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                return long.Parse(content);
+            }
+            throw new HttpRequestException("Unable to fetch user count.");
+        }
+
+        public async Task<long> CountActiveUsersAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync(userApi + "count-active", cancellationToken);
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                return long.Parse(content);
+            }
+            throw new HttpRequestException("Unable to fetch user count.");
+        }
+
         public async Task DeleteAsync(UserResponse entity, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient.DeleteAsync(userApi, cancellationToken);
@@ -131,6 +153,19 @@ namespace TraVinhMaps.Web.Admin.Services.Users
             string data = JsonSerializer.Serialize(entity);
             var content = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
             HttpResponseMessage response = await _httpClient.PutAsync(userApi, content, cancellationToken);
+        }
+
+        public async Task<List<UserResponse>> GetRecentUsersAsync(int count, CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync(userApi + "all", cancellationToken);
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var users = JsonSerializer.Deserialize<IEnumerable<UserResponse>>(content, options) ?? new List<UserResponse>();
+                return users.OrderByDescending(u => u.CreatedAt).Take(count).ToList();
+            }
+            throw new HttpRequestException("Unable to fetch recent users.");
         }
     }
 }

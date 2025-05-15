@@ -23,7 +23,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             ViewData["Title"] = "Account Management";
-            ViewData["Breadcrumb"] = new List<string> { "Account List" };
+            ViewData["Breadcrumb"] = new List<string> { "Account Management","Account List" };
             var users = await _userService.ListAllAsync();
             return View(users);
         }
@@ -93,11 +93,25 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [HttpGet("CountUser")]
         public async Task<IActionResult> CountUser(CancellationToken cancellationToken = default)
         {
-            var count = await _userService.CountAsync(cancellationToken: cancellationToken);
-            ViewBag.TotolUsers = count;
+            var countUser = await _userService.CountAsync(cancellationToken: cancellationToken);
+            ViewBag.TotolUsers = countUser;
             return View();
         }
 
-    }
+        [HttpGet("CountAllUsers")]
+        public async Task<IActionResult> CountAllUsers(CancellationToken cancellationToken = default)
+        {
+            var countAllUsers = await _userService.CountAllUsersAsync(cancellationToken: cancellationToken);
+            ViewBag.TotolAllUsers = countAllUsers;
+            return View();
+        }
 
+        [HttpGet("CountActiveUser")]
+        public async Task<IActionResult> CountActiveUser(CancellationToken cancellationToken = default)
+        {
+            var countAllActiveUser = await _userService.CountActiveUsersAsync(cancellationToken: cancellationToken);
+            ViewBag.TotolActiveUsers = countAllActiveUser;
+            return View();
+        }
+    }
 }

@@ -11,14 +11,20 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
-                    <h4>Account list</h4>
+                    <h4>@ViewData["Title"]</h4>
                 </div>
                 <div class="col-6">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a asp-controller="" asp-action=""><i class="fa fa-home"
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
                                     style="font-size: 20px;"></i></a></li>
-                        <li class="breadcrumb-item">Account Management</li>
-                        <li class="breadcrumb-item active">Account list</li>
+                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
+                        {
+                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
+                            {
+                                <li class="breadcrumb-item">@item</li>
+                            }
+                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
+                        }
                     </ol>
                 </div>
             </div>

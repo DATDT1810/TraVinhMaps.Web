@@ -6916,7 +6916,8 @@ button.button-primary:hover {
 .card .card-footer {
   background-color: #fff;
   border-top: 1px solid #ecf3fa;
-  padding: 20px;
+  padding: 10px;
+  margin-bottom: 10px;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
 }
@@ -40997,10 +40998,6 @@ body.dark-sidebar .page-wrapper.compact-sidebar .page-body-wrapper div.sidebar-w
 body.dark-sidebar .page-wrapper.compact-sidebar .page-body-wrapper div.sidebar-wrapper .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content > li .sidebar-link.active span {
   color: var(--theme-deafult);
 }
-body.dark-sidebar .page-wrapper.compact-sidebar .page-body-wrapper div.sidebar-wrapper .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content > li .sidebar-link.active svg {
-  color: var(--theme-deafult);
-  stroke: var(--theme-deafult);
-}
 body.dark-sidebar .page-wrapper.compact-sidebar .page-body-wrapper div.sidebar-wrapper .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content > li .mega-menu-container .mega-box .link-section .submenu-title h5 {
   color: rgba(255, 255, 255, 0.6);
 }
@@ -44210,6 +44207,7 @@ table.table-bordered thead tr th p {
   width: auto;
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
+  width: 90px;
 }
 .page-wrapper.compact-wrapper .page-body-wrapper div.sidebar-wrapper.close_icon .badge {
   opacity: 0;
@@ -44243,6 +44241,8 @@ table.table-bordered thead tr th p {
 .page-wrapper.compact-wrapper .page-body-wrapper div.sidebar-wrapper.close_icon .logo-icon-wrapper {
   text-align: right;
   display: block;
+  margin-left: -10px;
+  width: 110px;
 }
 .page-wrapper.compact-wrapper .page-body-wrapper div.sidebar-wrapper.close_icon:hover {
   width: 265px;
