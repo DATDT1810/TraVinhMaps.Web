@@ -10,40 +10,45 @@
     <meta name="keywords"
         content="admin template, Riho admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="pixelstrap">
-    <link rel="icon" href="../assets/images/favicon.png" type="image/x-icon">
-    <link rel="shortcut icon" href="../assets/images/favicon.png" type="image/x-icon">
+    <link rel="icon" href="~/assets/images/favicon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="~/assets/images/favicon.png" type="image/x-icon">
     <title>TraVinhMaps</title>
     <!-- Google font-->
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&amp;display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="../assets/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/font-awesome.min.css">
     <!-- ico-font-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/icofont.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/icofont.css">
     <!-- Themify icon-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/themify.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/themify.css">
     <!-- Flag icon-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/flag-icon.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/flag-icon.css">
     <!-- Feather icon-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/feather-icon.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/feather-icon.css">
     <!-- Plugins css start-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/slick.css">
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/slick-theme.css">
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/scrollbar.css">
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/animate.css">
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/echart.css">
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/date-picker.css">
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/chartist.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/slick.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/slick-theme.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/scrollbar.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/animate.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/echart.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/date-picker.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/chartist.css">
     <!-- Plugins css Ends-->
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/datatables.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/datatable-extension.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- Bootstrap css-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/bootstrap.css">
 
     <!-- App css-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
-    <link id="color" rel="stylesheet" href="../assets/css/color-1.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link id="color" rel="stylesheet" href="~/assets/css/color-1.css" media="screen">
     <!-- Responsive css-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/responsive.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/responsive.css">
 </head>
 
 <body>
@@ -459,7 +464,7 @@
             <div class="ProfileCard-realName">{{name}}</div>
             </div> 
             </div>
-          </script>
+            </script>
                 <script class="empty-template"
                     type="text/x-handlebars-template"><div class="EmptyMessage">Your search turned up 0 results. This most likely means the backend is down, yikes!</div></script>
             </div>
@@ -507,7 +512,8 @@
                             </li>
                             <!-- > Account Management -->
                             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
-                                    class="sidebar-link sidebar-title link-nav" href="accounts-list.html">
+                                    class="sidebar-link sidebar-title link-nav" asp-controller="UserManagement"
+                                    asp-action="Index">
                                     <i class="fa fa-user"
                                         style="color: white; font-size: 20px; padding-right: 10px;"></i>
                                     <span>Account Management</span></a></li>
@@ -592,15 +598,15 @@
                 </nav>
             </div>
             <!-- Page Sidebar Ends-->
-             <main role="main" class="pb-3"></main>
+            <main role="main" class="pb-3"></main>
             @RenderBody()
-        </main>
+            </main>
             <!-- footer start-->
             <footer class="footer">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Copyright 2025 © Khanh's Team theme by pixelstrap </p>
+                            <p class="mb-0">Copyright 2025 © Khanh's Team </p>
                         </div>
                     </div>
                 </div>
@@ -609,50 +615,52 @@
     </div>
 
     <!-- latest jquery-->
-    <script src="../assets/js/jquery.min.js"></script>
+    <script src="~/assets/js/jquery.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="~/assets/js/datatable/datatables/jquery.dataTables.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <!-- Bootstrap js-->
-    <script src="../assets/js/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/js/bootstrap/bootstrap.bundle.min.js"></script>
     <!-- feather icon js-->
-    <script src="../assets/js/icons/feather-icon/feather.min.js"></script>
-    <script src="../assets/js/icons/feather-icon/feather-icon.js"></script>
+    <script src="~/assets/js/icons/feather-icon/feather.min.js"></script>
+    <script src="~/assets/js/icons/feather-icon/feather-icon.js"></script>
     <!-- scrollbar js-->
-    <script src="../assets/js/scrollbar/simplebar.js"></script>
-    <script src="../assets/js/scrollbar/custom.js"></script>
+    <script src="~/assets/js/scrollbar/simplebar.js"></script>
+    <script src="~/assets/js/scrollbar/custom.js"></script>
     <!-- Sidebar jquery-->
-    <script src="../assets/js/config.js"></script>
+    <script src="~/assets/js/config.js"></script>
     <!-- Plugins JS start-->
-    <script src="../assets/js/sidebar-menu.js"></script>
-    <script src="../assets/js/sidebar-pin.js"></script>
-    <script src="../assets/js/slick/slick.min.js"></script>
-    <script src="../assets/js/slick/slick.js"></script>
-    <script src="../assets/js/header-slick.js"></script>
-    <script src="../assets/js/chart/apex-chart/apex-chart.js"></script>
-    <script src="../assets/js/chart/apex-chart/stock-prices.js"></script>
-    <script src="../assets/js/chart/apex-chart/moment.min.js"></script>
-    <script src="../assets/js/chart/chartist/chartist.js"></script>
-    <script src="../assets/js/chart/chartist/chartist-plugin-tooltip.js"></script>
-    <script src="../assets/js/chart/chartist/chartist-custom.js"></script>
-    <script src="../assets/js/chart/apex-chart/chart-custom.js"></script>
-
+      <script src="~/assets/js/sidebar-menu.js"></script>
+      <script src="~/assets/js/sidebar-pin.js"></script>
+      <script src="~/assets/js/slick/slick.min.js"></script>
+      <script src="~/assets/js/slick/slick.js"></script>
+      <script src="~/assets/js/header-slick.js"></script>
+@*        <script src="~/assets/js/chart/apex-chart/apex-chart.js"></script>
+       <script src="~/assets/js/chart/apex-chart/stock-prices.js"></script>
+       <script src="~/assets/js/chart/apex-chart/moment.min.js"></script> *@
+@*        <script src="~/assets/js/chart/chartist/chartist.js"></script>
+       <script src="~/assets/js/chart/chartist/chartist-plugin-tooltip.js"></script>
+       <script src="~/assets/js/chart/chartist/chartist-custom.js"></script>
+       <script src="~/assets/js/chart/apex-chart/chart-custom.js"></script> *@
+ 
     <!-- calendar js-->
-    <script src="../assets/js/datepicker/date-picker/datepicker.js"></script>
-    <script src="../assets/js/datepicker/date-picker/datepicker.en.js"></script>
-    <script src="../assets/js/datepicker/date-picker/datepicker.custom.js"></script>
-    <script src="../assets/js/dashboard/default.js"></script>
-    <script src="../assets/js/notify/index.js"></script>
-    <script src="../assets/js/typeahead/handlebars.js"></script>
-    <script src="../assets/js/typeahead/typeahead.bundle.js"></script>
-    <script src="../assets/js/typeahead/typeahead.custom.js"></script>
-    <script src="../assets/js/typeahead-search/handlebars.js"></script>
-    <script src="../assets/js/typeahead-search/typeahead-custom.js"></script>
-    <script src="../assets/js/height-equal.js"></script>
-    <script src="../assets/js/animation/wow/wow.min.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.en.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.custom.js"></script>
+    @* <script src="~/assets/js/dashboard/default.js"></script> *@
+    @* <script src="~/assets/js/notify/index.js"></script> *@
+    <script src="~/assets/js/typeahead/handlebars.js"></script>
+    <script src="~/assets/js/typeahead/typeahead.bundle.js"></script>
+    <script src="~/assets/js/typeahead/typeahead.custom.js"></script>
+    <script src="~/assets/js/typeahead-search/handlebars.js"></script>
+    <script src="~/assets/js/typeahead-search/typeahead-custom.js"></script>
+    <script src="~/assets/js/height-equal.js"></script>
+    <script src="~/assets/js/animation/wow/wow.min.js"></script>
     <!-- Plugins JS Ends-->
     <!-- Theme js-->
-    <script src="../assets/js/script.js"></script>
-    <script src="../assets/js/theme-customizer/customizer.js"></script>
+    <script src="~/assets/js/script.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
-
 </body>
 
 </html>
