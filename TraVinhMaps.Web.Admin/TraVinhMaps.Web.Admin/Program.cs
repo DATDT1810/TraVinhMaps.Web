@@ -10,6 +10,13 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 
 
+builder.Services.AddHttpClient("ApiClient", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7162/");
+    client.Timeout = TimeSpan.FromMinutes(2); // optional
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

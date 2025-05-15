@@ -1,0 +1,90 @@
+@model List<TraVinhMaps.Web.Admin.Models.Users.UserResponse>
+
+<div class="notification-box">
+    <i class="fa fa-bell-o" style="font-size: 24px;"></i>
+    <span class="badge rounded-pill badge-secondary">@Model.Count()</span>
+</div>
+<div class="onhover-show-div notification-dropdown">
+    <div class="card mb-0">
+        <div class="card-header">
+            <div class="common-space">
+                <h4 class="text-start f-w-600">Notifications</h4>
+                <div><span>@Model.Count() New</span></div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="notitications-bar">
+                <ul class="nav nav-pills nav-primary p-0" id="pills-tab" role="tablist">
+                    <li class="nav-item p-0"> <a class="nav-link active" id="pills-aboutus-tab" data-bs-toggle="pill"
+                            href="#pills-aboutus" role="tab" aria-controls="pills-aboutus"
+                            aria-selected="true">All(@Model.Count())</a></li>
+                    <li class="nav-item p-0"> <a class="nav-link" id="pills-blog-tab" data-bs-toggle="pill"
+                            href="#pills-blog" role="tab" aria-controls="pills-blog" aria-selected="false">Messages</a>
+                    </li>
+                    <li class="nav-item p-0"> <a class="nav-link" id="pills-contactus-tab" data-bs-toggle="pill"
+                            href="#pills-contactus" role="tab" aria-controls="pills-contactus"
+                            aria-selected="false">Cart</a></li>
+                </ul>
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-aboutus" role="tabpanel"
+                        aria-labelledby="pills-aboutus-tab">
+                        <div class="user-message">
+                            <ul>
+                                @foreach (var user in Model)
+                                {
+                                    var timeSpan = DateTime.Now - user.CreatedAt;
+                                    var timeAgo = timeSpan.TotalMinutes < 60
+                                    ? $"{timeSpan.TotalMinutes:F0} min"
+                                    : $"{timeSpan.TotalHours:F0} hr";
+                                    <li class="notification d-flex w-100 justify-content-between align-items-center">
+                                        <div
+                                            class="d-flex w-100 notification-data justify-content-center align-items-center gap-2">
+                                            <div class="user-alerts flex-shrink-0">
+                                                <img class="rounded-circle img-fluid img-40"
+                                                    src="@(user.UserProfile?.Avatar ?? "~/assets/images/dashboard/user/default.jpg")"
+                                                    alt="user" />
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="common-space user-id w-100">
+                                                    <div class="common-space w-100">
+                                                        <a class="f-w-500 f-12"
+                                                            href="@Url.Action("Details", "UserManagement", new { id = user.Id })">@(user.UserProfile?.FullName
+                                                                                                                    ?? user.Username)</a>
+                                                </div>
+                                            </div>
+                                            <div><span class="f-w-500 f-light f-12">Registered</span></div>
+                                        </div>
+                                        <span class="f-light f-w-500 f-12">@timeAgo</span>
+                                    </div>
+                                </li>
+                                                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="pills-blog" role="tabpanel" aria-labelledby="pills-blog-tab">
+                        <div class="notification-card">
+                            <ul>
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="pills-contactus" role="tabpanel"
+                        aria-labelledby="pills-contactus-tab">
+                        <div class="cart-dropdown">
+                            @* <ul>
+                                <!-- Cart content remains unchanged -->
+                            </ul> *@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer pb-0 pr-0 pl-0">
+            <div class="text-center">
+                <a class="f-w-700" href="@Url.Action("Index", "UserManagement")">
+                    <button class="btn btn-primary" type="button" title="btn btn-primary">Check all</button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,6 @@
-﻿@{
+﻿@using TraVinhMaps.Web.Admin.Models.Dashboard
+@model DashboardVM
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -8,14 +10,20 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
-                    <h4>Dashboard</h4>
+                    <h4>@ViewData["Title"]</h4>
                 </div>
                 <div class="col-6">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">
                                 <i class="fa fa-home" style="font-size: 20px;"></i> </a></li>
-                        <li class="breadcrumb-item">Dashboard</li>
-                        <li class="breadcrumb-item active">Default</li>
+                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
+                        {
+                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
+                            {
+                                <li class="breadcrumb-item">@item</li>
+                            }
+                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
+                        }
                     </ol>
                 </div>
             </div>
@@ -32,11 +40,10 @@
                                     class="f-light f-w-500 f-14">Total Users</span>
                                 <div class="project-details">
                                     <div class="project-counter">
-                                        <h2 class="f-w-600">1,523</h2><span class="f-12 f-w-400">(This
-                                            month)</span>
+                                        <h2 class="f-w-600">@Model.TotalUsers</h2>
                                     </div>
                                     <div class="product-sub bg-primary-light">
-                                        <img src="../assets/images/dashboard_icon/People.png" alt=""
+                                        <img src="~/assets/images/dashboard_icon/People.png" alt=""
                                             style="width: 25px;">
                                     </div>
                                 </div>
@@ -60,8 +67,7 @@
                                     class="f-light f-w-500 f-14">Active Users</span>
                                 <div class="project-details">
                                     <div class="project-counter">
-                                        <h2 class="f-w-600">836</h2><span class="f-12 f-w-400">(This month)
-                                        </span>
+                                        <h2 class="f-w-600">@Model.TotalUserActive</h2>
                                     </div>
                                     <div class="product-sub bg-warning-light">
                                         <img src="../assets/images/dashboard_icon/verified-user.png" alt=""

@@ -6916,7 +6916,8 @@ button.button-primary:hover {
 .card .card-footer {
   background-color: #fff;
   border-top: 1px solid #ecf3fa;
-  padding: 20px;
+  padding: 10px;
+  margin-bottom: 10px;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
 }
@@ -15470,6 +15471,19 @@ input[type=number] {
   margin-right: auto;
   margin-left: 4.6666666667px;
 }
+.export-header > div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: end;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
 
 .list-product-header > div {
   display: -webkit-box;
@@ -15758,7 +15772,7 @@ input[type=number] {
           align-items: center;
 }
 .product-names .light-product-box img {
-  height: 26px;
+  height: 36px;
 }
 
 /* .product-action {
@@ -40984,10 +40998,6 @@ body.dark-sidebar .page-wrapper.compact-sidebar .page-body-wrapper div.sidebar-w
 body.dark-sidebar .page-wrapper.compact-sidebar .page-body-wrapper div.sidebar-wrapper .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content > li .sidebar-link.active span {
   color: var(--theme-deafult);
 }
-body.dark-sidebar .page-wrapper.compact-sidebar .page-body-wrapper div.sidebar-wrapper .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content > li .sidebar-link.active svg {
-  color: var(--theme-deafult);
-  stroke: var(--theme-deafult);
-}
 body.dark-sidebar .page-wrapper.compact-sidebar .page-body-wrapper div.sidebar-wrapper .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content > li .mega-menu-container .mega-box .link-section .submenu-title h5 {
   color: rgba(255, 255, 255, 0.6);
 }
@@ -44197,6 +44207,7 @@ table.table-bordered thead tr th p {
   width: auto;
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
+  width: 90px;
 }
 .page-wrapper.compact-wrapper .page-body-wrapper div.sidebar-wrapper.close_icon .badge {
   opacity: 0;
@@ -44230,6 +44241,8 @@ table.table-bordered thead tr th p {
 .page-wrapper.compact-wrapper .page-body-wrapper div.sidebar-wrapper.close_icon .logo-icon-wrapper {
   text-align: right;
   display: block;
+  margin-left: -10px;
+  width: 110px;
 }
 .page-wrapper.compact-wrapper .page-body-wrapper div.sidebar-wrapper.close_icon:hover {
   width: 265px;
