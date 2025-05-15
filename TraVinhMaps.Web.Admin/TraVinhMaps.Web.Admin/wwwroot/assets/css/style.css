@@ -15470,6 +15470,19 @@ input[type=number] {
   margin-right: auto;
   margin-left: 4.6666666667px;
 }
+.export-header > div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: end;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
 
 .list-product-header > div {
   display: -webkit-box;
@@ -15758,7 +15771,7 @@ input[type=number] {
           align-items: center;
 }
 .product-names .light-product-box img {
-  height: 26px;
+  height: 36px;
 }
 
 /* .product-action {

@@ -1,0 +1,129 @@
+﻿@using TraVinhMaps.Web.Admin.Models.Users;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<UserResponse>;
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>Account list</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a asp-controller="" asp-action=""><i class="fa fa-home"
+                                    style="font-size: 20px;"></i></a></li>
+                        <li class="breadcrumb-item">Account Management</li>
+                        <li class="breadcrumb-item active">Account list</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="export-header d-flex justify-content-between align-items-center">
+                            <div>
+                                <button class="btn btn-primary">Export <i class="fa fa-file-excel-o"></i></button>
+                            </div>
+                            <div class="status-filter">
+                                <select id="statusFilter" class="form-select">
+                                    <option value="all">All</option>
+                                    <option value="inactive">Ban (Inactive)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="list-users">
+                            <table class="table" id="project-status">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th><span class="f-light f-w-600">Full Name</span></th>
+                                        <th><span class="f-light f-w-600">Email</span></th>
+                                        <th><span class="f-light f-w-600">Phone</span></th>
+                                        <th><span class="f-light f-w-600">Status</span></th>
+                                        <th><span class="f-light f-w-600">Created At</span></th>
+                                        <th><span class="f-light f-w-600">Action</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int count = 1;
+                                    }
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr class="user-removes">
+                                            <td>@count</td>
+                                            <td>
+                                                <div class="product-names">
+                                                    <div class="light-product-box"><img class="img-fluid"
+                                                            src="@item.UserProfile.Avatar" alt="avatar"></div>
+                                                    <p>@item.UserProfile.FullName</p>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <p class="f-light">@item.Email</p>
+                                            </td>
+                                            <td>
+                                                <p class="f-light">@item.PhoneNumber</p>
+                                            </td>
+                                            <td><span
+                                                    class="badge @(item.Status ? "badge-light-primary" : "badge-light-danger")">@(item.Status
+                                                                                                    ? "Active" : "Inactive")</span></td>
+                                        <td>
+                                            @item.CreatedAt.ToString("MMM dd yyyy, hh:mm tt",
+                                                                                        System.Globalization.CultureInfo.InvariantCulture)
+                                        </td>
+                                        <td>
+                                            <div class="options-action dropdown">
+                                                <button class="btn btn-primary dropdown-toggle btn-md pe-5 text-start"
+                                                    type="button" id="sortingField" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                    Options
+                                                </button>
+                                                <ul class="dropdown-menu bg-light">
+                                                    <li><a class="dropdown-item" asp-controller="UserManagement"
+                                                            asp-action="Details" asp-route-id="@item.Id"><i
+                                                                class="fa fa-eye"></i> Detail</a></li>
+                                                    <li>
+                                                        @if (@item.IsForbidden == false)
+                                                            {
+                                                                <a class="dropdown-item ban-user" href="javascript:void(0)"
+                                                                    data-id="@item.Id"><i class="fa fa-ban"></i> Ban</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a class="dropdown-item unban-user" href="javascript:void(0)"
+                                                                    data-id="@item.Id"><i class="fa fa-unlock"></i> Unban</a>
+                                                            }
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        count++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+</div>
+
+@section Scripts {
+    @Html.AntiForgeryToken()
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script src="~/assets/js/usermanagement/index.js"></script>
+}
