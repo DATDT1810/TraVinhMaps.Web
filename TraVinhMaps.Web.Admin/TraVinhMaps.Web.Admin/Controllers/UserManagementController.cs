@@ -23,7 +23,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             ViewData["Title"] = "Account Management";
-            ViewData["Breadcrumb"] = new List<string> { "Account Managementx","Account List" };
+            ViewData["Breadcrumb"] = new List<string> { "Account Management","Account List" };
             var users = await _userService.ListAllAsync();
             return View(users);
         }
@@ -97,6 +97,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             ViewBag.TotolUsers = countUser;
             return View();
         }
+
         [HttpGet("CountAllUsers")]
         public async Task<IActionResult> CountAllUsers(CancellationToken cancellationToken = default)
         {
@@ -112,7 +113,5 @@ namespace TraVinhMaps.Web.Admin.Controllers
             ViewBag.TotolActiveUsers = countAllActiveUser;
             return View();
         }
-
     }
-
 }
