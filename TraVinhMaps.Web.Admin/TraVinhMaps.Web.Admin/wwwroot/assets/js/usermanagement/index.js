@@ -20,12 +20,24 @@ $(document).ready(function () {
   // Custom filter for status
   $("#statusFilter").on("change", function () {
     var status = $(this).val();
-    if (status === "all") {
-      table.column(4).search("").draw();
-    } else if (status === "inactive") {
-      table.column(4).search("Inactive").draw();
-    }
+    table.draw();
   });
+
+  // Custom DataTable search function for status filtering
+  $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+    var status = $("#statusFilter").val();
+    var statusText = data[4]; // Status column (Active/Inactive)
+
+    if (status === "all") {
+      return statusText === "Active"; // Show only active users in "All"
+    } else if (status === "inactive") {
+      return statusText === "Inactive"; // Show only inactive users in "Ban (Inactive)"
+    }
+    return true;
+  });
+
+  // Set default filter to "all" and draw table
+  $("#statusFilter").val("all").trigger("change");
 
   // AJAX Ban user with SweetAlert2
   $(document).on("click", ".ban-user", function (e) {
@@ -60,9 +72,9 @@ $(document).ready(function () {
               actionCell.find(".ban-user").replaceWith(
                 `<a class="dropdown-item unban-user" href="javascript:void(0)" data-id="${userId}">
                     <i class="fa fa-unlock"></i> Unban
-                 </a>`
+                </a>`
               );
-              table.row(row).invalidate().draw(false);
+              table.row(row).invalidate().draw(); // Redraw table to apply filter
               showSuccessAlert("Success", response.message);
             } else {
               showErrorAlert("Failed", response.message);
@@ -108,7 +120,6 @@ $(document).ready(function () {
                 .text("Active")
                 .removeClass("badge-light-danger")
                 .addClass("badge-light-primary");
-
               // Update action dropdown from Unban -> Ban
               const actionCell = row.find("td:last-child ul.dropdown-menu");
               actionCell.find(".unban-user").replaceWith(
@@ -116,8 +127,7 @@ $(document).ready(function () {
                     <i class="fa fa-ban"></i> Ban
                  </a>`
               );
-
-              table.row(row).invalidate().draw(false);
+              table.row(row).invalidate().draw(); // Redraw table to apply filter
               showSuccessAlert("Success", response.message);
             } else {
               showErrorAlert("Failed", response.message);
