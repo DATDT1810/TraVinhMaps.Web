@@ -36,6 +36,9 @@ $(document).ready(function () {
     return true;
   });
 
+  // Set default filter to "all" and draw table
+  $("#statusFilter").val("all").trigger("change");
+
   // AJAX Ban user with SweetAlert2
   $(document).on("click", ".ban-user", function (e) {
     e.preventDefault();
