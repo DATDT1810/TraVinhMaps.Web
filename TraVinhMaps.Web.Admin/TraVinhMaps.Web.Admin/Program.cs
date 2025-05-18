@@ -1,3 +1,4 @@
+using TraVinhMaps.Web.Admin.Services.Notifications;
 using TraVinhMaps.Web.Admin.Services.Users;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +8,7 @@ builder.Services.AddControllersWithViews();
 
 // Register IUserService
 builder.Services.AddScoped<IUserService, UserService>();
-
+builder.Services.AddScoped<INotificationsService, NotificationsService>();
 
 
 builder.Services.AddHttpClient("ApiClient", client =>
