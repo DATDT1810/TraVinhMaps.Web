@@ -1716,15 +1716,15 @@ svg.f-light {
 }
 
 .btn-success {
-  background-color: #00AC46 !important;
-  border-color: #00AC46 !important;
+  background-color: #158247 !important;
+  border-color: #158247 !important;
   -webkit-tap-highlight-color: transparent;
   -webkit-transform: translateZ(0);
           transform: translateZ(0);
 }
 .btn-success.disabled, .btn-success:disabled {
-  background-color: #00AC46 !important;
-  border-color: #00AC46 !important;
+  background-color: #158247 !important;
+  border-color: #158247 !important;
 }
 .btn-success:focus {
   -webkit-box-shadow: unset !important;
@@ -15470,19 +15470,6 @@ input[type=number] {
 [dir=rtl] .tagify__tag__removeBtn {
   margin-right: auto;
   margin-left: 4.6666666667px;
-}
-.export-header > div {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: end;
-      -ms-flex-pack: end;
-          justify-content: end;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
 }
 
 .list-product-header > div {

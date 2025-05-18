@@ -107,7 +107,8 @@
                             <div class="form search-form mb-0">
                                 <div class="input-group">
                                     <span class="input-icon">
-                                        <i class="fa fa-search" style="position: absolute; margin-left: 18px; margin-top: 15px;"></i>
+                                        <i class="fa fa-search"
+                                            style="position: absolute; margin-left: 18px; margin-top: 15px;"></i>
                                         <input class="w-100" type="search" placeholder="Search">
                                     </span>
                                 </div>
@@ -126,7 +127,7 @@
                             <div class="mode"><i class="moon" data-feather="moon"> </i></div>
                         </li>
                         <li class="onhover-dropdown notification-down">
-                            
+
                             @await Component.InvokeAsync("Notification")
                         </li>
                         <li class="profile-nav onhover-dropdown">
@@ -167,7 +168,8 @@
             <!-- Page Sidebar Start-->
             <div class="sidebar-wrapper" data-layout="stroke-svg">
                 <div class="logo-wrapper"><a asp-controller="Home" asp-action="Index"><img class="img-fluid"
-                            src="~/assets/images/logo/logo.png" alt="Logo" style="width: 100px; margin-left: 50px; margin-top: -20px;"></a>
+                            src="~/assets/images/logo/logo.png" alt="Logo"
+                            style="width: 100px; margin-left: 50px; margin-top: -20px;"></a>
                     <div class="back-btn"><i class="fa fa-angle-left"> </i></div>
                     <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="grid"> </i>
                     </div>
@@ -208,13 +210,14 @@
                                     <span>Account Management</span></a></li>
                             <!-- > Tips Managment -->
                             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
-                                    class="sidebar-link sidebar-title link-nav" >
+                                    class="sidebar-link sidebar-title link-nav">
                                     <i class="fa fa-lightbulb-o"
                                         style="color: white; font-size: 20px; padding-right: 13px;"></i>
                                     <span>Tips Managment</span></a></li>
                             <!-- > Send Notifications -->
                             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
-                                    class="sidebar-link sidebar-title link-nav" href="">
+                                    class="sidebar-link sidebar-title link-nav" asp-controller="Notifications"
+                                    asp-action="Index">
                                     <i class="fa fa-bell"
                                         style="color: white; font-size: 16px; padding-right: 8px;"></i>
                                     <span>Send Notifications</span></a></li>
@@ -249,7 +252,6 @@
                                     <li> <a href="">Ocop</a></li>
                                     <li><a href="">Destination</a></li>
                                     <li><a href="">Local specialty</a></li>
-                                    <li><a href="">Stay</a></li>
                                     <li><a href="">Utilities</a></li>
                                 </ul>
                             </li>
@@ -307,6 +309,7 @@
     <script src="~/assets/js/jquery.min.js"></script>
     <!-- DataTables JS -->
     <script src="~/assets/js/datatable/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/assets/js/datatable/datatables/datatable.custom.js"></script>
     <!-- SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <!-- Bootstrap js-->
@@ -320,25 +323,16 @@
     <!-- Sidebar jquery-->
     <script src="~/assets/js/config.js"></script>
     <!-- Plugins JS start-->
-      <script src="~/assets/js/sidebar-menu.js"></script>
-      <script src="~/assets/js/sidebar-pin.js"></script>
-      <script src="~/assets/js/slick/slick.min.js"></script>
-      <script src="~/assets/js/slick/slick.js"></script>
-      <script src="~/assets/js/header-slick.js"></script>
-@*        <script src="~/assets/js/chart/apex-chart/apex-chart.js"></script>
-       <script src="~/assets/js/chart/apex-chart/stock-prices.js"></script>
-       <script src="~/assets/js/chart/apex-chart/moment.min.js"></script> *@
-@*        <script src="~/assets/js/chart/chartist/chartist.js"></script>
-       <script src="~/assets/js/chart/chartist/chartist-plugin-tooltip.js"></script>
-       <script src="~/assets/js/chart/chartist/chartist-custom.js"></script>
-       <script src="~/assets/js/chart/apex-chart/chart-custom.js"></script> *@
- 
+    <script src="~/assets/js/sidebar-menu.js"></script>
+    <script src="~/assets/js/sidebar-pin.js"></script>
+    <script src="~/assets/js/slick/slick.min.js"></script>
+    <script src="~/assets/js/slick/slick.js"></script>
+    <script src="~/assets/js/header-slick.js"></script>
+
     <!-- calendar js-->
     <script src="~/assets/js/datepicker/date-picker/datepicker.js"></script>
     <script src="~/assets/js/datepicker/date-picker/datepicker.en.js"></script>
     <script src="~/assets/js/datepicker/date-picker/datepicker.custom.js"></script>
-    @* <script src="~/assets/js/dashboard/default.js"></script> *@
-    @* <script src="~/assets/js/notify/index.js"></script> *@
     <script src="~/assets/js/typeahead/handlebars.js"></script>
     <script src="~/assets/js/typeahead/typeahead.bundle.js"></script>
     <script src="~/assets/js/typeahead/typeahead.custom.js"></script>
@@ -347,6 +341,7 @@
     <script src="~/assets/js/height-equal.js"></script>
     <script src="~/assets/js/animation/wow/wow.min.js"></script>
     <!-- Plugins JS Ends-->
+
     <!-- Theme js-->
     <script src="~/assets/js/script.js"></script>
     @await RenderSectionAsync("Scripts", required: false)

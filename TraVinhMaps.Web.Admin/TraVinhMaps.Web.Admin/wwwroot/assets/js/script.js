@@ -368,7 +368,7 @@
     $(".flip-card-inner").addClass("flipped");
   });
 
-  $("#flip-back").click(function () {
+  /*$("#flip-back").click(function () {
     $(".flip-card-inner").removeClass("flipped");
   });
   // ================== show and hide input start
@@ -381,7 +381,7 @@
     }else{
       document.getElementById("searchInput").classList.remove("show")
     }
-  })
+  })*/
   // ================ show and hide input css end 
 
 })(jQuery);
