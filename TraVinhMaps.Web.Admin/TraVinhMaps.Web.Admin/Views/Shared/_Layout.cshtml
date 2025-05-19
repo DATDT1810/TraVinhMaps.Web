@@ -32,9 +32,11 @@
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/slick-theme.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/scrollbar.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/animate.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/owlcarousel.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/echart.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/date-picker.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/chartist.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/owlcarousel.css">
     <!-- Plugins css Ends-->
     <!-- DataTables CSS -->
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/datatables.css">
@@ -208,6 +210,12 @@
                                     <i class="fa fa-user"
                                         style="color: white; font-size: 20px; padding-right: 10px;"></i>
                                     <span>Account Management</span></a></li>
+                            <!-- > Account Management -->
+                            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
+                                    class="sidebar-link sidebar-title link-nav" asp-controller="" asp-action="">
+                                    <i class="fa fa-user"
+                                        style="color: white; font-size: 20px; padding-right: 10px;"></i>
+                                    <span>Admin Management</span></a></li>
                             <!-- > Tips Managment -->
                             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
                                     class="sidebar-link sidebar-title link-nav">
@@ -307,6 +315,8 @@
 
     <!-- latest jquery-->
     <script src="~/assets/js/jquery.min.js"></script>
+    <!-- Owl carousel -->
+    <script src="~/assets/js/owlcarousel/owl.carousel.min.js"></script>
     <!-- DataTables JS -->
     <script src="~/assets/js/datatable/datatables/jquery.dataTables.min.js"></script>
     <script src="~/assets/js/datatable/datatables/datatable.custom.js"></script>
@@ -340,10 +350,14 @@
     <script src="~/assets/js/typeahead-search/typeahead-custom.js"></script>
     <script src="~/assets/js/height-equal.js"></script>
     <script src="~/assets/js/animation/wow/wow.min.js"></script>
+    <script src="~/assets/js/owlcarousel/owl.carousel.js"></script>
+    <script src="~/assets/js/ecommerce.js"></script>
     <!-- Plugins JS Ends-->
 
     <!-- Theme js-->
     <script src="~/assets/js/script.js"></script>
+    <script src="~/assets/js/theme-customizer/customizer.js"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 
