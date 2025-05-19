@@ -1,0 +1,99 @@
+@model TraVinhMaps.Web.Admin.Models.Users.UserRequest
+
+@{
+    ViewData["Title"] = "Create Admin";
+}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>@ViewData["Title"]</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home" style="font-size: 20px;"></i>
+                            </a>
+                        </li>
+                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
+                        {
+                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
+                            {
+                                <li class="breadcrumb-item">@item</li>
+                            }
+                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
+                        }
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form theme-form">
+                            <form id="createAdminForm" asp-controller="UserManagement" asp-action="Create"
+                                method="post">
+                                @Html.AntiForgeryToken()
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label asp-for="Email" class="form-label">Email</label>
+                                            <input asp-for="Email" class="form-control" type="text"
+                                                placeholder="Enter username *">
+                                            <span asp-validation-for="Email" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label asp-for="Password" class="form-label">Password</label>
+                                            <input asp-for="Password" class="form-control" type="text"
+                                                placeholder="Enter your password *">
+                                            <span asp-validation-for="Password" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label asp-for="RoleId" class="form-label">Role</label>
+                                            <select asp-for="RoleId" class="form-select">
+                                                <option value="">Select a role</option>
+                                                <option value="64f1a2b3c4d5e6f7890abcde">Admin</option>
+                                            </select>
+                                            <span asp-validation-for="RoleId" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="text-end">
+                                            <button type="submit" class="btn btn-success me-3">Add</button>
+                                            <a asp-controller="UserManagement" asp-action="Index"
+                                                class="btn btn-danger">Cancel</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script src="~/assets/js/create.js"></script>
+}

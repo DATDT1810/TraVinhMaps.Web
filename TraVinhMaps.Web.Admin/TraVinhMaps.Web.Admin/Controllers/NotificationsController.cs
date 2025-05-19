@@ -52,7 +52,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View();
         }
 
-        // POST: Admin/Users/Create
+        // POST: Admin/Notification/Send Notification
         [HttpPost("SendNotification")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendNotification(NotificationRequest request, CancellationToken cancellationToken = default)
