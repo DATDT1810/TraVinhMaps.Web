@@ -15,7 +15,8 @@
                 </div>
                 <div class="col-6">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home" style="font-size: 20px;"></i></a></li>
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
+                                    style="font-size: 20px;"></i></a></li>
                         @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
                         {
                             foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
@@ -36,6 +37,7 @@
                 <div class="card">
                     <div class="card-body">
                         <form asp-controller="Notifications" asp-action="SendNotification" method="post">
+                            @Html.AntiForgeryToken()
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                             <div class="form theme-form">
                                 <div class="row">
@@ -66,7 +68,8 @@
                                     <div class="col">
                                         <div class="mb-3">
                                             <label asp-for="Content" class="control-label">Enter Content</label>
-                                            <textarea asp-for="Content" class="form-control" rows="3" required></textarea>
+                                            <textarea asp-for="Content" class="form-control" rows="3"
+                                                required></textarea>
                                             <span asp-validation-for="Content" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -75,7 +78,8 @@
                                     <div class="col">
                                         <div class="text-end">
                                             <button type="submit" class="btn btn-success me-3">Add</button>
-                                            <a asp-controller="Notifications" asp-action="Index" class="btn btn-danger">Cancel</a>
+                                            <a asp-controller="Notifications" asp-action="Index"
+                                                class="btn btn-danger">Cancel</a>
                                         </div>
                                     </div>
                                 </div>
@@ -90,7 +94,7 @@
 </div>
 
 @section Scripts {
-    @Html.AntiForgeryToken()
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-}   
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script src="~/assets/js/notifications/sendnotification.js"></script>
+}
