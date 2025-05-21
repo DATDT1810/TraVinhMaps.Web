@@ -99,8 +99,8 @@ namespace TraVinhMaps.Web.Admin.Services.Notifications
 
             var result = await response.Content.ReadAsStringAsync(cancellation);
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            return JsonSerializer.Deserialize<bool>(result, options);
-            
+            var apiResponse = JsonSerializer.Deserialize<ApiResponse>(result, options);
+            return apiResponse?.Success ?? false;
         }
 
         public async Task<IEnumerable<NotificationResponse>> GetUniqueNotificationsAsync(CancellationToken cancellationToken = default)

@@ -1,9 +1,7 @@
-@using TraVinhMaps.Web.Admin.Models.Notifications
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@model NotificationRequest
+@model TraVinhMaps.Web.Admin.Models.Users.UserRequest
 
 @{
-    ViewData["Title"] = "Send Notification";
+    ViewData["Title"] = "Create Admin";
 }
 
 <div class="page-body">
@@ -15,8 +13,11 @@
                 </div>
                 <div class="col-6">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
-                                    style="font-size: 20px;"></i></a></li>
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home" style="font-size: 20px;"></i>
+                            </a>
+                        </li>
                         @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
                         {
                             foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
@@ -36,41 +37,39 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-body">
-                        <form asp-controller="Notifications" asp-action="SendNotification" method="post">
-                            @Html.AntiForgeryToken()
-                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                            <div class="form theme-form">
+                        <div class="form theme-form">
+                            <form id="createAdminForm" asp-controller="UserManagement" asp-action="Create"
+                                method="post">
+                                @Html.AntiForgeryToken()
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label asp-for="Title" class="control-label">Title</label>
-                                            <input asp-for="Title" class="form-control" placeholder="Title *" />
-                                            <span asp-validation-for="Title" class="text-danger"></span>
+                                            <label asp-for="Email" class="form-label">Email</label>
+                                            <input asp-for="Email" class="form-control" type="text"
+                                                placeholder="Enter username *">
+                                            <span asp-validation-for="Email" class="text-danger"></span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label asp-for="IconCode" class="control-label">Select Icon</label>
-                                            <select asp-for="IconCode" class="form-control" required>
-                                                <option value="">-- Select an icon --</option>
-                                                <option value="bun">🍜 (Bún)</option>
-                                                <option value="moon">🌝 (Moon)</option>
-                                                <option value="heart">❤️ (Heart)</option>
-                                                <option value="sparkles">✨ (Sparkles)</option>
+                                            <label asp-for="Password" class="form-label">Password</label>
+                                            <input asp-for="Password" class="form-control" type="text"
+                                                placeholder="Enter your password *">
+                                            <span asp-validation-for="Password" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label asp-for="RoleId" class="form-label">Role</label>
+                                            <select asp-for="RoleId" class="form-select">
+                                                <option value="">Select a role</option>
+                                                <option value="64f1a2b3c4d5e6f7890abcde">Admin</option>
                                             </select>
-                                            <span asp-validation-for="IconCode" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="mb-3">
-                                            <label asp-for="Content" class="control-label">Enter Content</label>
-                                            <textarea asp-for="Content" class="form-control" rows="3"
-                                                required></textarea>
-                                            <span asp-validation-for="Content" class="text-danger"></span>
+                                            <span asp-validation-for="RoleId" class="text-danger"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -78,13 +77,13 @@
                                     <div class="col">
                                         <div class="text-end">
                                             <button type="submit" class="btn btn-success me-3">Add</button>
-                                            <a asp-controller="Notifications" asp-action="Index"
+                                            <a asp-controller="UserManagement" asp-action="Index"
                                                 class="btn btn-danger">Cancel</a>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -96,5 +95,5 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/assets/js/sweetalert-custom.js"></script>
-    <script src="~/assets/js/notifications/sendnotification.js"></script>
+    <script src="~/assets/js/usermanagement/create.js"></script>
 }

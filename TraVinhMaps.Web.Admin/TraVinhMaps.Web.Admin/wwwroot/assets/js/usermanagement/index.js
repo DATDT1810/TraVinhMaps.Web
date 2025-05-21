@@ -1,45 +1,56 @@
 $(document).ready(function () {
-  var table = $("#project-status").DataTable({
+  /* ========== 1. KHỞI TẠO DATATABLES ========== */
+  const table = $("#project-status").DataTable({
     paging: true,
     ordering: true,
     info: true,
     searching: true,
     columnDefs: [
       {
+        // Cột Status
         targets: 4,
-        render: function (data, type, row) {
+        render: (data, type) => {
           if (type === "filter" || type === "sort") {
-            return $(data).text();
+            return $("<div>").html(data).text().trim(); // Bóc text từ HTML
           }
-          return data;
+          return data; // Giữ nguyên badge khi hiển thị
         },
       },
     ],
   });
 
-  // Custom filter for status
-  $("#statusFilter").on("change", function () {
-    var status = $(this).val();
-    table.draw();
+  /* ========== 2. BỘ LỌC THEO COMBOBOX ========== */
+  $("#statusFilter").on("change", () => table.draw());
+
+  // Hàm filter
+  $.fn.dataTable.ext.search.push((settings, data) => {
+    const filter = $("#statusFilter").val(); // all | inactive
+    const status = data[4]; // Text thuần nhờ render
+
+    if (filter === "inactive") return status === "Inactive";
+    return status === "Active"; // "all" chỉ hiển thị Active
   });
 
-  // Custom DataTable search function for status filtering
-  $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-    var status = $("#statusFilter").val();
-    var statusText = data[4]; // Status column (Active/Inactive)
+  $("#statusFilter").val("all").trigger("change"); // Mặc định
 
-    if (status === "all") {
-      return statusText === "Active"; // Show only active users in "All"
-    } else if (status === "inactive") {
-      return statusText === "Inactive"; // Show only inactive users in "Ban (Inactive)"
+  /* ========== 3. HÀM CẬP NHẬT 1 HÀNG ========== */
+  function updateRow(row, isActive) {
+    const statusSpan = row.find("td:eq(4) span");
+    if (isActive) {
+      statusSpan
+        .text("Active")
+        .removeClass("badge-light-danger")
+        .addClass("badge-light-primary");
+    } else {
+      statusSpan
+        .text("Inactive")
+        .removeClass("badge-light-primary")
+        .addClass("badge-light-danger");
     }
-    return true;
-  });
+    table.row(row).invalidate().draw(false); // Giữ nguyên trang
+  }
 
-  // Set default filter to "all" and draw table
-  $("#statusFilter").val("all").trigger("change");
-
-  // AJAX Ban user with SweetAlert2
+  /* ========== 4. AJAX BAN ========== */
   $(document).on("click", ".ban-user", function (e) {
     e.preventDefault();
     const userId = $(this).data("id");
@@ -50,49 +61,42 @@ $(document).ready(function () {
       "Are you sure you want to ban this user?",
       "Ban",
       "Cancel"
-    ).then((confirmed) => {
-      if (confirmed) {
-        $.ajax({
-          url: "/Admin/UserManagement/Delete",
-          method: "POST",
-          data: { id: userId },
-          headers: {
-            RequestVerificationToken: token,
-          },
-          success: function (response) {
-            if (response.success) {
-              const row = $(`a[data-id="${userId}"]`).closest("tr");
-              row
-                .find("td:eq(4) span")
-                .text("Inactive")
-                .removeClass("badge-light-primary")
-                .addClass("badge-light-danger");
-              // Update action dropdown from Ban -> Unban
-              const actionCell = row.find("td:last-child ul.dropdown-menu");
-              actionCell.find(".ban-user").replaceWith(
-                `<a class="dropdown-item unban-user" href="javascript:void(0)" data-id="${userId}">
-                    <i class="fa fa-unlock"></i> Unban
-                </a>`
-              );
-              table.row(row).invalidate().draw(); // Redraw table to apply filter
-              showSuccessAlert("Success", response.message);
-            } else {
-              showErrorAlert("Failed", response.message);
-            }
-          },
-          error: function (xhr) {
-            showErrorAlert(
-              "Error",
-              "An error occurred while banning the user: " +
-                (xhr.responseJSON?.message || "Unknown error")
-            );
-          },
-        });
-      }
+    ).then((ok) => {
+      if (!ok) return;
+      $.ajax({
+        url: "/Admin/UserManagement/Delete",
+        method: "POST",
+        data: { id: userId },
+        headers: { RequestVerificationToken: token },
+        success: ({ success, message }) => {
+          if (success) {
+            const row = $(this).closest("tr"); // Lấy hàng chứa nút ban
+            // Cập nhật nút Ban -> Unban
+            row
+              .find(".ban-user")
+              .removeClass("ban-user")
+              .addClass("unban-user")
+              .attr("title", "Unban")
+              .html('<i class="fa fa-unlock"></i>');
+            // Cập nhật trạng thái sang Inactive
+            updateRow(row, false);
+            showSuccessAlert("Success", message);
+          } else {
+            showErrorAlert("Failed", message);
+          }
+        },
+        error: (xhr) => {
+          showErrorAlert(
+            "Error",
+            "An error occurred while banning the user: " +
+              (xhr.responseJSON?.message || "Unknown error")
+          );
+        },
+      });
     });
   });
 
-  // AJAX Unban user with SweetAlert2
+  /* ========== 5. AJAX UNBAN ========== */
   $(document).on("click", ".unban-user", function (e) {
     e.preventDefault();
     const userId = $(this).data("id");
@@ -103,45 +107,38 @@ $(document).ready(function () {
       "Are you sure you want to unban this user?",
       "Unban",
       "Cancel"
-    ).then((confirmed) => {
-      if (confirmed) {
-        $.ajax({
-          url: "/Admin/UserManagement/Restore",
-          method: "POST",
-          data: { id: userId },
-          headers: {
-            RequestVerificationToken: token,
-          },
-          success: function (response) {
-            if (response.success) {
-              const row = $(`a[data-id="${userId}"]`).closest("tr");
-              row
-                .find("td:eq(4) span")
-                .text("Active")
-                .removeClass("badge-light-danger")
-                .addClass("badge-light-primary");
-              // Update action dropdown from Unban -> Ban
-              const actionCell = row.find("td:last-child ul.dropdown-menu");
-              actionCell.find(".unban-user").replaceWith(
-                `<a class="dropdown-item ban-user" href="javascript:void(0)" data-id="${userId}">
-                    <i class="fa fa-ban"></i> Ban
-                 </a>`
-              );
-              table.row(row).invalidate().draw(); // Redraw table to apply filter
-              showSuccessAlert("Success", response.message);
-            } else {
-              showErrorAlert("Failed", response.message);
-            }
-          },
-          error: function (xhr) {
-            showErrorAlert(
-              "Error",
-              "An error occurred while unbanning the user: " +
-                (xhr.responseJSON?.message || "Unknown error")
-            );
-          },
-        });
-      }
+    ).then((ok) => {
+      if (!ok) return;
+      $.ajax({
+        url: "/Admin/UserManagement/Restore",
+        method: "POST",
+        data: { id: userId },
+        headers: { RequestVerificationToken: token },
+        success: ({ success, message }) => {
+          if (success) {
+            const row = $(this).closest("tr"); // Lấy hàng chứa nút unban
+            // Cập nhật nút Unban -> Ban
+            row
+              .find(".unban-user")
+              .removeClass("unban-user")
+              .addClass("ban-user")
+              .attr("title", "Ban")
+              .html('<i class="fa fa-ban"></i>');
+            // Cập nhật trạng thái sang Active
+            updateRow(row, true);
+            showSuccessAlert("Success", message);
+          } else {
+            showErrorAlert("Failed", message);
+          }
+        },
+        error: (xhr) => {
+          showErrorAlert(
+            "Error",
+            "An error occurred while unbanning the user: " +
+              (xhr.responseJSON?.message || "Unknown error")
+          );
+        },
+      });
     });
   });
 });

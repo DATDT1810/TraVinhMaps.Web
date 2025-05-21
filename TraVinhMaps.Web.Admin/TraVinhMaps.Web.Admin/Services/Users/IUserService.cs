@@ -24,5 +24,6 @@ namespace TraVinhMaps.Web.Admin.Services.Users
                 Task<bool> RestoreUser(string id, CancellationToken cancellationToken = default);
                 Task<Pagination<UserResponse>> GetUsersAsync(UserSpecParams userSpecParams, CancellationToken cancellationToken = default);
                 Task<List<UserResponse>> GetRecentUsersAsync(int count, CancellationToken cancellationToken = default);
+                Task<UserResponse> AddAdminAsync(UserRequest request, CancellationToken cancellationToken = default);
         }
 }

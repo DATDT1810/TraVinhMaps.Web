@@ -21,7 +21,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             _notificationService = notificationService;
         }
 
-        [HttpGet]
+        [HttpGet("Index")]
         public async Task<IActionResult> Index()
         {
             ViewData["Title"] = "Send Notification";
@@ -52,7 +52,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View();
         }
 
-        // POST: Admin/Users/Create
+        // POST: Admin/Notification/Send Notification
         [HttpPost("SendNotification")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendNotification(NotificationRequest request, CancellationToken cancellationToken = default)
@@ -64,13 +64,14 @@ namespace TraVinhMaps.Web.Admin.Controllers
             try
             {
                 var notification = await _notificationService.SendNotificationAsync(request, cancellationToken);
+                TempData["NotificationSuccess"] = "The notification was sent successfully!";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception)
             {
+                TempData["NotificationError"] = "The notification failed to send!";
                 return View(request);
             }
         }
-
     }
 }
