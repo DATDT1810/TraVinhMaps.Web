@@ -153,7 +153,7 @@ namespace TraVinhMaps.Web.Admin.Services.Auth
             }
         }
 
-        public async Task<Data> VerifyOtp(string token, string otpCode)
+        public async Task<AuthenData> VerifyOtp(string token, string otpCode)
         {
             try
             {
@@ -184,7 +184,7 @@ namespace TraVinhMaps.Web.Admin.Services.Auth
                             return null;
                         }
 
-                        var result = JsonConvert.DeserializeObject<Data>(authResponse.Data);
+                        var result = JsonConvert.DeserializeObject<AuthenData>(authResponse.Data);
                         if (string.IsNullOrEmpty(result?.SessionId) || string.IsNullOrEmpty(result?.RefreshToken))
                         {
                             _logger.LogError("Missing required token data in response");
@@ -216,6 +216,42 @@ namespace TraVinhMaps.Web.Admin.Services.Auth
         public Task<bool> Logout()
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<bool> Logout(string sessionId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(sessionId))
+                {
+                    _logger.LogWarning("Attempted logout with null sessionId");
+                    return false;
+                }
+
+                var client = _httpClientFactory.CreateClient("ApiClient");
+                client.DefaultRequestHeaders.Add("sessionId", sessionId);
+
+                _logger.LogInformation("Sending logout request to API");
+                var response = await client.GetAsync($"{_apiUrl}/logout");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation("Logout successful");
+                    return true;
+                }
+                else
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogWarning("Logout failed with status code: {StatusCode}, Response: {Response}",
+                        response.StatusCode, responseContent);
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception in Logout");
+                return false;
+            }
         }
 
         public async Task<bool> ResetPassword(string identifier, string newPassword)
@@ -293,6 +329,48 @@ namespace TraVinhMaps.Web.Admin.Services.Auth
             {
                 _logger.LogError(ex, "Exception in VerifyOtpForgotPassword");
                 return false;
+            }
+        }
+
+        public async Task<string> RequestEmailAuthentication(string email)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(email))
+                {
+                    _logger.LogWarning("Attempted email authentication with empty email");
+                    return null;
+                }
+
+                var client = _httpClientFactory.CreateClient("ApiClient");
+                var requestContent = new StringContent("", Encoding.UTF8, "application/json");
+
+                _logger.LogInformation("Requesting email authentication for: {Email}", email);
+                var response = await client.PostAsync($"{_apiUrl}/login-email-authen-admin?email={email}", requestContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation("Email authentication request successful for: {Email}", email);
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<TokenResponse>(responseContent);
+                    if (result == null)
+                    {
+                        _logger.LogError("Failed to deserialize email authentication response");
+                        return null;
+                    }
+                    var token = JsonConvert.DeserializeObject<ContextData>(result.Data);
+                    return token.Token;
+                }
+                else
+                {
+                    _logger.LogWarning("Email authentication request failed");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Exception in RequestEmailAuthentication");
+                return null;
             }
         }
     }
