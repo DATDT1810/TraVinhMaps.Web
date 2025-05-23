@@ -1,3 +1,4 @@
+using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using TraVinhMaps.Web.Admin.Services.Auth;
 using TraVinhMaps.Web.Admin.Services.Notifications;
@@ -8,7 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// loadEnvironment
+// Load environment variables from .env file
+Env.Load();
+// Add environment variables to configuration
+builder.Configuration.AddEnvironmentVariables();
 
 // Register session services
 builder.Services.AddDistributedMemoryCache();
@@ -46,8 +50,9 @@ builder.Services.AddAuthentication(options =>
     })
     .AddGoogle(googleOptions =>
     {
-        googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-        googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        // Try to get from environment variables first, then fall back to configuration
+        googleOptions.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID"); ;
+        googleOptions.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
         // googleOptions.CallbackPath = "/Authen/signin-google"; // Use a simpler path that matches Google's expectations
     });
 
