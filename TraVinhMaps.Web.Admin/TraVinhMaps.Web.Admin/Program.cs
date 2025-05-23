@@ -1,4 +1,6 @@
+using TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature;
 using TraVinhMaps.Web.Admin.Services.Notifications;
+using TraVinhMaps.Web.Admin.Services.TouristDestination;
 using TraVinhMaps.Web.Admin.Services.Users;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +11,10 @@ builder.Services.AddControllersWithViews();
 // Register IUserService
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<INotificationsService, NotificationsService>();
+// Register TouristDestination
+builder.Services.AddScoped<IDestinationService, DestinationService>();
+//Register Event And Festival
+builder.Services.AddScoped<IEventAndFestivalService, EventAndFestivalService>();
 
 
 builder.Services.AddHttpClient("ApiClient", client =>

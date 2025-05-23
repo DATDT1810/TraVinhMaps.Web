@@ -1,10 +1,11 @@
-﻿@using TraVinhMaps.Web.Admin.Models.Users;
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@model IEnumerable<UserResponse>;
+@using TraVinhMaps.Web.Admin.Models.TouristDestination;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
+@model IEnumerable<TouristDestinationResponse>
 @{
-    ViewData["Title"] = "Account List";
+    ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <div class="page-body">
     <div class="container-fluid">
         <div class="page-title">
@@ -14,11 +15,8 @@
                 </div>
                 <div class="col-6">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a asp-controller="Home" asp-action="Index">
-                                <i class="fa fa-home" style="font-size: 20px;"></i>
-                            </a>
-                        </li>
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
+                                    style="font-size: 20px;"></i></a></li>
                         @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
                         {
                             foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
@@ -32,38 +30,39 @@
             </div>
         </div>
     </div>
+    <!-- Container-fluid starts-->
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
-                            <div class="d-flex gap-2 mb-3">
-                                <a asp-controller="UserManagement" asp-action="Create" class="btn btn-success">
-                                    <i class="fa fa-plus me-1"></i>Add Admin
+                            <div>
+                                <a asp-controller="TouristDestinationManagement" asp-action="CreateDestination" class="btn btn-success">
+                                    <i class="fa fa-plus me-1"></i>Create Destination
                                 </a>
-
                                 <button class="btn btn-primary" id="exportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
+                                @if(ViewBag.error != null) {
+                                    <span class="text-danger">@ViewBag.error</span>
+                                }
                             </div>
                             <div class="status-filter">
                                 <select id="statusFilter" class="form-select">
-                                    <option value="all">All</option>
-                                    <option value="inactive">Ban (Inactive)</option>
-                                    <option value="admin">Admin</option>
+                                    <option value="active">All</option>
+                                    <option value="inactive">Inactive</option>
                                 </select>
                             </div>
-
                         </div>
                         <div class="list-users">
                             <table class="table" id="project-status">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
-                                        <th>Full Name</th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
+                                        <th>No.</th>
+                                        <th>Name Of Destination</th>
+                                        <th style="width: 150px;">AvarageRating</th>
+                                        <th style="width: 100px;">Favorite</th>
                                         <th>Status</th>
                                         <th>Created At</th>
                                         <th>Action</th>
@@ -75,52 +74,43 @@
                                     }
                                     @foreach (var item in Model)
                                     {
-                                        <tr>
+                                        <tr class="user-removes">
                                             <td>@count</td>
                                             <td>
                                                 <div class="product-names">
-                                                    <div class="light-product-box">
-                                                        <img class="img-fluid"
-                                                            src="@(item.UserProfile?.Avatar ?? "/assets/img/default-avatar.png")"
-                                                            alt="avatar">
+                                                    <div class="light-product-box"><img class="img-fluid"
+                                                            src="@item.Images.First()" alt="avatar">
                                                     </div>
-                                                    <p>@(item.UserProfile?.FullName ?? "—")</p>
+                                                    <p>@item.Name</p>
                                                 </div>
                                             </td>
-                                            <td>@item.Email</td>
-                                            <td>@item.PhoneNumber</td>
-                                            <td>
-                                                <span
-                                                    class="badge @(item.Status ? "badge-light-primary" : "badge-light-danger")">
-                                                    @(item.Status ? "Active" : "Inactive")
-                                                </span>
-                                            </td>
-                                            <td>
-                                                @item.CreatedAt.ToString("MMM dd yyyy, hh:mm tt",
-                                                System.Globalization.CultureInfo.InvariantCulture)
+                                            <td>@item.AvarageRating</td>
+                                            <td>@item.FavoriteCount</td>
+                                            <td><span
+                                                    class="badge @(item.status ? "badge-light-primary" : "badge-light-danger")">@(item.status
+                                                                                                    ? "Active" : "Inactive")</span></td>
+                                        <td>
+                                            @item.CreatedAt.ToString("MMM dd yyyy, hh:mm tt",
+                                                                                        System.Globalization.CultureInfo.InvariantCulture)
                                         </td>
                                         <td>
                                             <ul class="action">
                                                 <li>
-                                                    <a class="edit" asp-controller="UserManagement" asp-action="Details"
+                                                    <a class="edit" asp-controller="TouristDestinationManagement" asp-action="DetailDestination"
                                                         asp-route-id="@item.Id" title="Details">
                                                         <i class="fa fa-eye"></i>
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    @if (!item.IsForbidden)
+                                                    @if (@item.status == false)
                                                         {
-                                                            <a class="dropdown-item ban-user" href="javascript:void(0)"
-                                                                data-id="@item.Id" title="Ban">
-                                                                <i class="fa fa-ban"></i>
-                                                            </a>
+                                                            <a class="undelete-destination" href="javascript:void(0)"
+                                                                    data-id="@item.Id"><i class="fa fa-unlock"></i> Restore</a>
                                                         }
                                                         else
                                                         {
-                                                            <a class="dropdown-item unban-user" href="javascript:void(0)"
-                                                                data-id="@item.Id" title="Unban">
-                                                                <i class="fa fa-unlock"></i>
-                                                            </a>
+                                                            <a class="delete-destination" href="javascript:void(0)"
+                                                                    data-id="@item.Id"><i class="fa fa-ban"></i> Delete</a>
                                                         }
                                                     </li>
                                                 </ul>
@@ -136,11 +126,13 @@
             </div>
         </div>
     </div>
+    <!-- Container-fluid Ends-->
 </div>
+
 @section Scripts {
     @Html.AntiForgeryToken()
     <script src="~/assets/js/sweetalert-custom.js"></script>
-    <script src="~/assets/js/usermanagement/index.js"></script>
+    <script src="~/assets/js/touristdestinationmanagement/index.js"></script>
     <script>
         (function () {
             const success = @Html.Raw(Json.Serialize(TempData["Success"]));
