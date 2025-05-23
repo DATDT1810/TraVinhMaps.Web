@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TraVinhMaps.Web.Admin.Models.Auth;
 using TraVinhMaps.Web.Admin.Services.Auth;
+
 
 namespace TraVinhMaps.Web.Admin.Controllers
 {
@@ -44,15 +46,21 @@ namespace TraVinhMaps.Web.Admin.Controllers
         private readonly IDataProtector _dataProtector;
         private const string SessionId = "SessionId";
         private const string RefreshTokenKey = "RefreshToken";
+        private readonly IConfiguration _configuration;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         public AuthenController(
             ILogger<AuthenController> logger,
             IAuthService authService,
-            IDataProtectionProvider dataProtectionProvider)
+            IDataProtectionProvider dataProtectionProvider,
+            IConfiguration configuration,
+            IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
             _authService = authService;
             _dataProtector = dataProtectionProvider.CreateProtector("Auth.TokenProtection");
+            _configuration = configuration;
+            _httpClientFactory = httpClientFactory;
         }
 
         [HttpGet]
@@ -80,7 +88,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 if (result != null && !string.IsNullOrEmpty(result.Data))
                 {
                     // Encrypt the token before storing
-                    // var encryptedToken = _dataProtector.Protect(result.Data);
+                    // var encryptedToken = _dataProtector.Protect(result.AuthenData);
 
                     // Store using TempData with encrypted values
                     TempData["Token"] = result.Data;
@@ -227,14 +235,26 @@ namespace TraVinhMaps.Web.Admin.Controllers
         {
             try
             {
-                // Clear session data
-                HttpContext.Session.Remove(SessionId);
-                HttpContext.Session.Remove(RefreshTokenKey);
+                // Get the encrypted sessionId from HttpContext.Session
+                string encryptedSessionId = HttpContext.Session.GetString(SessionId);
+                if (!string.IsNullOrEmpty(encryptedSessionId))
+                {
+                    // Decrypt the sessionId
+                    string sessionId = _dataProtector.Unprotect(encryptedSessionId);
 
-                // Sign out of auth cookie
-                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                    // Call the auth service to logout
+                    await _authService.Logout(sessionId);
 
+                    HttpContext.Session.Remove(SessionId);
+                    HttpContext.Session.Remove(RefreshTokenKey);
+
+                    // Sign out of auth cookie
+                    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+                    //return RedirectToAction("Index");
+                }
                 return RedirectToAction("Index");
+                // Clear session data
             }
             catch (Exception ex)
             {
@@ -375,6 +395,80 @@ namespace TraVinhMaps.Web.Admin.Controllers
             };
 
             return View(model);
+        }
+
+        /// <summary>
+        /// Initiates the Google OAuth2 authentication process
+        /// </summary>
+        [HttpGet]
+        [Route("LoginWithGoogle")]
+        public IActionResult LoginWithGoogle()
+        {
+            var properties = new AuthenticationProperties
+            {
+                RedirectUri = "/Authen/GoogleCallback",
+            };
+
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
+
+        /// <summary>
+        /// Handles the callback from Google OAuth2 authentication
+        /// - Extracts the authenticated email
+        /// - Calls API to initiate email authentication
+        /// - Redirects to OTP verification
+        /// </summary>
+        [HttpGet]
+        [Route("GoogleCallback")]
+        public async Task<IActionResult> GoogleCallback()
+        {
+            try
+            {
+                // Get the authenticated user information
+                var authenticateResult = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+
+                if (!authenticateResult.Succeeded)
+                {
+                    return RedirectToAction("Index");
+                }
+
+                // Extract email from the claims
+                var emailClaim = authenticateResult.Principal.FindFirst(ClaimTypes.Email);
+                if (emailClaim == null)
+                {
+                    TempData["ErrorMessage"] = "Could not retrieve email from Google account.";
+                    return RedirectToAction("Index");
+                }
+
+                var email = emailClaim.Value;
+
+                // Call the API to initiate email authentication
+                var result = await _authService.RequestEmailAuthentication(email);
+
+                if (result != null)
+                {
+                    // Store the token and email for OTP verification
+                    TempData["Token"] = result;
+                    TempData["Username"] = email;
+
+                    // Sign out of the cookie authentication scheme to prevent automatic cookie creation
+                    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                    return RedirectToAction("OtpVerification");
+                }
+                else
+                {
+                    // Sign out of the cookie authentication scheme to prevent automatic cookie creation
+                    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                    TempData["ErrorMessage"] = "Failed to authenticate with Google. Please try again.";
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during Google authentication callback");
+                TempData["ErrorMessage"] = "An unexpected error occurred during Google authentication.";
+                return RedirectToAction("Index");
+            }
         }
     }
 }

@@ -63,13 +63,6 @@
                             <h4>Sign in to account</h4>
                             <p>Enter your email & password to login</p>
                             
-                            @if (TempData["SuccessMessage"] != null)
-                            {
-                                <div class="alert alert-success" role="alert">
-                                    @TempData["SuccessMessage"]
-                                </div>
-                            }
-                          
                             <div class="form-group">
                                 <label asp-for="Identifier" class="col-form-label">Email Or Phone Number</label>
                                 <input asp-for="Identifier" class="form-control"  placeholder="Please fill here">
@@ -100,7 +93,7 @@
                             
                             <div class="social mt-4">
                                 <div class="btn-showcase">
-                                    <a class="btn btn-light google-btn" asp-action="LoginWithGoogle" target="_blank">
+                                    <a class="btn btn-light google-btn" asp-action="LoginWithGoogle">
                                         <i class="fa fa-google me-2"></i>Google
                                     </a>
                                 </div>
@@ -147,6 +140,9 @@
     <!-- Plugins JS Ends-->
     <!-- Theme js-->
     <script src="../assets/js/script.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../assets/js/sweetalert-custom.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -164,6 +160,27 @@
                     showHideBtn.querySelector('span').classList.add('show');
                 }
             });
+            
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <text>
+                showErrorAlert("Login Failed", "@TempData["ErrorMessage"]");
+                </text>
+            }
+            
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <text>
+                showSuccessAlert("Success", "@TempData["SuccessMessage"]");
+                </text>
+            }
+            
+            @if (ViewData.ModelState[""] != null && ViewData.ModelState[""].Errors.Count > 0)
+            {
+                <text>
+                showErrorAlert("Login Failed", "@Html.Raw(ViewData.ModelState[""].Errors[0].ErrorMessage)");
+                </text>
+            }
         });
     </script>
     

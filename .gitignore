@@ -42,3 +42,7 @@ bld/
 msbuild.log
 msbuild.err
 msbuild.wrn
+
+# Environment files
+.env
+.env.*
