@@ -1,7 +1,10 @@
+
+using TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using TraVinhMaps.Web.Admin.Services.Auth;
 using TraVinhMaps.Web.Admin.Services.Notifications;
+using TraVinhMaps.Web.Admin.Services.TouristDestination;
 using TraVinhMaps.Web.Admin.Services.Users;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +31,11 @@ builder.Services.AddSession(options =>
 // Register IUserService
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<INotificationsService, NotificationsService>();
+// Register TouristDestination
+builder.Services.AddScoped<IDestinationService, DestinationService>();
+//Register Event And Festival
+builder.Services.AddScoped<IEventAndFestivalService, EventAndFestivalService>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Configure cookie authentication
