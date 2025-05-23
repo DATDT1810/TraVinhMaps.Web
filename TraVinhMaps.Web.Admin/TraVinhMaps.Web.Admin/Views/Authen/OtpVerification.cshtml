@@ -159,12 +159,8 @@
                   
                   <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
                   
-                  @if (TempData["ErrorMessage"] != null)
-                  {
-                    <div class="alert alert-danger" role="alert">
-                      @TempData["ErrorMessage"]
-                    </div>
-                  }
+                  @* Removed standard bootstrap alerts *@
+                  
                   <div class="form-group">
                     <label asp-for="OtpCode" class="col-form-label"></label>
                     
@@ -224,9 +220,27 @@
       <script src="../assets/js/script.js"></script>
       <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
       <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+      <!-- SweetAlert2 -->
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <script src="../assets/js/sweetalert-custom.js"></script>
       
       <script>
         $(document).ready(function() {
+          // Display errors with SweetAlert if present
+          @if (TempData["ErrorMessage"] != null)
+          {
+            <text>
+            showErrorAlert("Verification Failed", "@TempData["ErrorMessage"]");
+            </text>
+          }
+          
+          @if (ViewData.ModelState[""] != null && ViewData.ModelState[""].Errors.Count > 0)
+          {
+            <text>
+            showErrorAlert("Verification Failed", "@Html.Raw(ViewData.ModelState[""].Errors[0].ErrorMessage)");
+            </text>
+          }
+        
           // Store the remaining time in localStorage to persist across page loads
           let timerKey = 'otpCountdownEndTime';
           

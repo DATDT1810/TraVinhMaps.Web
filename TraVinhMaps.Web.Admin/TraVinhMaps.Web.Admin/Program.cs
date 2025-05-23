@@ -1,6 +1,7 @@
+
 using TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature;
+using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
 using TraVinhMaps.Web.Admin.Services.Auth;
 using TraVinhMaps.Web.Admin.Services.Notifications;
 using TraVinhMaps.Web.Admin.Services.TouristDestination;
@@ -11,15 +12,20 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Load environment variables from .env file
+Env.Load();
+// Add environment variables to configuration
+builder.Configuration.AddEnvironmentVariables();
+
 // Register session services
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.IdleTimeout = TimeSpan.FromMinutes(60);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure cookies are only sent over HTTPS
-    options.Cookie.SameSite = SameSiteMode.Strict; // Protect against CSRF attacks
+    options.Cookie.SameSite = SameSiteMode.Lax; // Changed from Strict to Lax to allow cross-site redirects for OAuth
 });
 
 // Register IUserService
@@ -33,7 +39,11 @@ builder.Services.AddScoped<IEventAndFestivalService, EventAndFestivalService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Configure cookie authentication
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+})
     .AddCookie(options =>
     {
         options.LoginPath = "/Authen";
@@ -41,18 +51,25 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/Authen/AccessDenied"; // Add path for access denied
         options.Cookie.HttpOnly = true;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure cookies are only sent over HTTPS
-        options.Cookie.SameSite = SameSiteMode.Strict; // Protect against CSRF attacks
+        options.Cookie.SameSite = SameSiteMode.Lax; // Changed from Strict to Lax to allow cross-site redirects for OAuth
         options.ExpireTimeSpan = TimeSpan.FromHours(24);
         options.SlidingExpiration = true;
         options.Cookie.Name = "TVMaps.Auth"; // Custom name for the cookie
+    })
+    .AddGoogle(googleOptions =>
+    {
+        // Try to get from environment variables first, then fall back to configuration
+        googleOptions.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID"); ;
+        googleOptions.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
+        // googleOptions.CallbackPath = "/Authen/signin-google"; // Use a simpler path that matches Google's expectations
     });
 
 // Add Antiforgery services for CSRF protection
-builder.Services.AddAntiforgery(options => 
+builder.Services.AddAntiforgery(options =>
 {
-   // options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    // options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.HttpOnly = true;
-    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SameSite = SameSiteMode.Lax; // Changed from Strict to Lax
 });
 
 builder.Services.AddHttpClient("ApiClient", client =>
