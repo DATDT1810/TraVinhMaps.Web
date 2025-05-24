@@ -1,0 +1,113 @@
+@using TraVinhMaps.Web.Admin.Models.CommunityTips
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model CommunityTipsRequest
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div>
+    <div class="page-body">
+        <div class="container-fluid">
+            <div class="page-title">
+                <div class="row">
+                    <div class="col-6">
+                        <h4>@ViewData["Title"]</h4>
+                    </div>
+                    <div class="col-6">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i
+                                        class="fa fa-home" style="font-size: 20px;"></i></a></li>
+                            @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
+                            {
+                                foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
+                                {
+                                    <li class="breadcrumb-item">@item</li>
+                                }
+                                <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
+                            }
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form asp-controller="CommunityTips" asp-action="Create" method="post">
+                                @Html.AntiForgeryToken()
+                                <div class="form theme-form">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label asp-for="Title" class="control-label">Title</label>
+                                                <input asp-for="Title" class="form-control" placeholder="Title *"
+                                                    required />
+                                                <span asp-validation-for="Title" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label asp-for="Content" class="control-label">Enter Content</label>
+                                                <textarea asp-for="Content" class="form-control" rows="3"
+                                                    required></textarea>
+                                                <span asp-validation-for="Content" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label asp-for="TagId" class="control-label">Tag</label>
+                                                <select asp-for="TagId" class="form-control" asp-items="ViewBag.Tags"
+                                                    required>
+                                                    <option value="">-- Select a tag --</option>
+                                                </select>
+                                                <span asp-validation-for="TagId" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <input asp-for="Status" type="hidden" value="true" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="text-end">
+                                                <button type="submit" class="btn btn-success me-3">Add</button>
+                                                <a asp-controller="CommunityTips" asp-action="Index"
+                                                    class="btn btn-danger">Cancel</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script>
+        $(document).ready(function () {
+            @if (TempData["CreateTipsError"] != null)
+                {
+                    <text>
+                        showErrorAlert("Error!", "@TempData["CreateTipsError"]");
+                    </text>
+            }
+            });
+    </script>
+}

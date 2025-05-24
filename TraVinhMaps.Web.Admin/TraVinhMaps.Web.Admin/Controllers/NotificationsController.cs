@@ -38,7 +38,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             var notification = await _notificationService.GetByIdAsync(id, cancellationToken);
             if (notification == null)
             {
-                return RedirectToAction("GetUniqueNotifications");
+                return RedirectToAction("Index");
             }
             return View(notification);
         }

@@ -1,4 +1,6 @@
+using TraVinhMaps.Web.Admin.Services.CommunityTips;
 using TraVinhMaps.Web.Admin.Services.Notifications;
+using TraVinhMaps.Web.Admin.Services.Tags;
 using TraVinhMaps.Web.Admin.Services.Users;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,9 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Register IUserService
+// Register IUserServiceComunityTips
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<INotificationsService, NotificationsService>();
+builder.Services.AddScoped<ICommunityTipsService, CommunityTipsService>();
+builder.Services.AddScoped<ITagService, TagService>();
 
 
 builder.Services.AddHttpClient("ApiClient", client =>

@@ -1,0 +1,73 @@
+@using TraVinhMaps.Web.Admin.Models.CommunityTips
+@model CommunityTipsResponse
+@{
+    ViewData["Title"] = "CommunityTipsDetails";
+}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>@ViewData["Title"]</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
+                                    style="font-size: 20px;"></i></a></li>
+                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
+                        {
+                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
+                            {
+                                <li class="breadcrumb-item">@item</li>
+                            }
+                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
+                        }
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="col-sm-12">
+                            <div class="card-header">
+                                <h4>@Model.Title</h4>
+                            </div>
+                            <div class="card-body">
+                                <span>@Model.Content</span>
+
+                                <div class="row">
+                                    <div class="col-md-3 mt-3 mb-3">
+                                        <label class="form-label">Status</label>
+                                        <input class="form-control" value="@Model.Status " readonly>
+                                    </div>
+                                    <div class="col-md-3 mt-3 mb-3">
+                                        <label class="form-label">Tag</label>
+                                        <input class="form-control" value="@ViewBag.TagName " readonly>
+                                    </div>
+                                    <div class="col-md-3 mt-3 mb-3">
+                                        <label class="form-label">Creat At</label>
+                                        <input class="form-control" value="@Model.CreatedAt " readonly>
+                                    </div>
+                                    <div class="col-md-3 mt-3 mb-3">
+                                        <label class="form-label">Update At</label>
+                                        <input class="form-control" value="@Model.UpdateAt " readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-success float-end" asp-controller="CommunityTips" asp-action="Index">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

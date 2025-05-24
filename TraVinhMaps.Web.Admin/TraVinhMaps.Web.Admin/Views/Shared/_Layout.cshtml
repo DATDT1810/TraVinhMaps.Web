@@ -37,6 +37,8 @@
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/date-picker.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/chartist.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/owlcarousel.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/dropzone.css">
+
     <!-- Plugins css Ends-->
     <!-- DataTables CSS -->
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/datatables.css">
@@ -218,7 +220,8 @@
                                     <span>Admin Management</span></a></li>
                             <!-- > Tips Managment -->
                             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
-                                    class="sidebar-link sidebar-title link-nav">
+                                    class="sidebar-link sidebar-title link-nav" asp-controller="CommunityTips"
+                                    asp-action="Index">
                                     <i class="fa fa-lightbulb-o"
                                         style="color: white; font-size: 20px; padding-right: 13px;"></i>
                                     <span>Tips Managment</span></a></li>
@@ -344,6 +347,8 @@
     <script src="~/assets/js/datepicker/date-picker/datepicker.en.js"></script>
     <script src="~/assets/js/datepicker/date-picker/datepicker.custom.js"></script>
     <script src="~/assets/js/typeahead/handlebars.js"></script>
+    <script src="~/assets/js/dropzone/dropzone.js"></script>
+    <script src="~/assets/js/dropzone/dropzone-script.js"></script>
     <script src="~/assets/js/typeahead/typeahead.bundle.js"></script>
     <script src="~/assets/js/typeahead/typeahead.custom.js"></script>
     <script src="~/assets/js/typeahead-search/handlebars.js"></script>
