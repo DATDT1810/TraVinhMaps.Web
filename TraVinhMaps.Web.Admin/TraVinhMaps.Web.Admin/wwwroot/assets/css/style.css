@@ -7130,6 +7130,25 @@ div .action .delete i {
   color: #FE6A49;
 }
 
+div .action .details {
+  margin-right: 5px;
+}
+div .action .details i {
+  color: #0077B5
+}
+[dir=rtl] div .action .details {
+  margin-left: 5px;
+}
+div .action .restore {
+  margin-right: 5px;
+}
+div .action .restore i {
+  color: #FFAE1A
+}
+[dir=rtl] div .action .restore {
+  margin-left: 5px;
+}
+
 #auto-generate-content_wrapper.dataTables_wrapper button {
   background-color: var(--white);
   border: 1px solid var(--theme-deafult);
