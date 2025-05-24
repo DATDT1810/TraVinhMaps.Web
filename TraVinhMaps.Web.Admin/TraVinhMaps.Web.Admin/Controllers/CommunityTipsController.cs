@@ -12,25 +12,31 @@ using TraVinhMaps.Web.Admin.Services.Tags;
 
 namespace TraVinhMaps.Web.Admin.Controllers
 {
+    // Controller responsible for handling Community Tips-related actions
     [Route("[controller]")]
     public class CommunityTipsController : Controller
     {
         private readonly ICommunityTipsService _communityTipsService;
         private readonly ITagService _tagService;
 
+        // Constructor injection for community tips and tag services
         public CommunityTipsController(ICommunityTipsService communityTipsService, ITagService tagService = null)
         {
             _communityTipsService = communityTipsService;
             _tagService = tagService;
         }
 
+        // GET: /CommunityTips/Index
+        // Displays the list of community tips
         [HttpGet("Index")]
         public async Task<IActionResult> Index()
         {
             ViewData["Title"] = "Tips List";
             ViewData["Breadcrumb"] = new List<string> { "Tips Management", "Tips List" };
+
             var tips = await _communityTipsService.ListAllAsync();
 
+            // Load tags for each tip and assign the tag name
             var tipsWithTags = new List<CommunityTipsResponse>();
             foreach (var tip in tips)
             {
@@ -39,27 +45,35 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 tipsWithTags.Add(tip);
             }
 
+            // Send all available tags to the view
             var tags = await _tagService.ListAllAsync();
             ViewBag.Tags = tags.Select(t => new { Id = t.Id, Name = t.Name }).ToList();
+
             return View(tipsWithTags);
         }
 
-        // GET: CommunityTips/ComunityTipsDetails/{id}
+        // GET: /CommunityTips/{id}
+        // Displays the detail view of a specific tip
         [HttpGet("{id}")]
         public async Task<IActionResult> CommunityTipsDetails(string id, CancellationToken cancellationToken = default)
         {
             ViewData["Title"] = "Tips List";
             ViewData["Breadcrumb"] = new List<string> { "Tips List", "Details" };
+
             var tips = await _communityTipsService.GetByIdAsync(id, cancellationToken);
             if (tips == null)
             {
                 return RedirectToAction("Index");
             }
+
             var tag = await _tagService.GetByIdAsync(tips.TagId);
             ViewBag.TagName = tag?.Name ?? "";
+
             return View(tips);
         }
 
+        // GET: /CommunityTips/Create
+        // Displays the form to create a new tip
         [HttpGet("Create")]
         public async Task<IActionResult> Create(CancellationToken cancellationToken)
         {
@@ -72,7 +86,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View();
         }
 
-        // POST: Admin/Tips/Add
+        // POST: /CommunityTips/Create
+        // Handles form submission for creating a new tip
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CommunityTipsRequest request, CancellationToken cancellationToken = default)
@@ -87,7 +102,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             try
             {
                 var notification = await _communityTipsService.AddAsync(request, cancellationToken);
-                TempData["CreateTipsSuccess"] = "The tips create successfully!";
+                TempData["CreateTipsSuccess"] = "The tip was created successfully!";
                 return RedirectToAction(nameof(Index));
             }
             catch (InvalidOperationException)
@@ -101,11 +116,13 @@ namespace TraVinhMaps.Web.Admin.Controllers
             {
                 var tags = await _tagService.ListAllAsync();
                 ViewBag.Tags = new SelectList(tags, "Id", "Name");
-                TempData["CreateTipsError"] = "The tips failed to add!";
+                TempData["CreateTipsError"] = "Failed to add the tip!";
                 return View(request);
             }
         }
 
+        // GET: /CommunityTips/Edit?id={id}
+        // Displays the form to edit an existing tip
         [HttpGet("Edit")]
         public async Task<IActionResult> Edit(string id)
         {
@@ -116,6 +133,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 {
                     return RedirectToAction("Index");
                 }
+
                 var tags = await _tagService.ListAllAsync();
                 ViewBag.Tags = new SelectList(tags, "Id", "Name", tips.TagId);
                 return View(tips);
@@ -126,6 +144,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // POST: /CommunityTips/Edit
+        // Handles form submission to update an existing tip
         [HttpPost("Edit")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CommunityTipsResponse request, CancellationToken cancellationToken)
@@ -138,12 +158,13 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
             catch (Exception)
             {
-                TempData["EditTipsError"] = "The tips failed to edit!";
+                TempData["EditTipsError"] = "Failed to update the tip!";
                 return View(request);
             }
         }
 
-
+        // GET: /CommunityTips/Restore/{id}
+        // Displays confirmation view for restoring a deleted tip
         [HttpGet("Restore/{id}")]
         public async Task<IActionResult> Restore(string id)
         {
@@ -151,6 +172,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(tips);
         }
 
+        // POST: /CommunityTips/Restore
+        // Handles the actual restoration of a deleted tip
         [HttpPost("Restore")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreConfirm(string id, CancellationToken cancellationToken = default)
@@ -160,17 +183,18 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 var success = await _communityTipsService.RestoreTipAsync(id, cancellationToken);
                 if (success)
                 {
-                    return Json(new { success = true, message = "Tips restored successfully" });
+                    return Json(new { success = true, message = "Tip restored successfully" });
                 }
-                return Json(new { success = false, message = "Failed to restore tips" });
+                return Json(new { success = false, message = "Failed to restore tip" });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = $"Error restoring tips: {ex.Message}" });
+                return Json(new { success = false, message = $"Error restoring tip: {ex.Message}" });
             }
         }
 
-
+        // GET: /CommunityTips/Delete/{id}
+        // Displays confirmation view for deleting a tip
         [HttpGet("Delete/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string id)
@@ -179,6 +203,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(tips);
         }
 
+        // POST: /CommunityTips/Delete
+        // Handles deletion of a tip
         [HttpPost("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirm(string id, CancellationToken cancellationToken)
@@ -186,11 +212,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
             try
             {
                 await _communityTipsService.DeleteTipAsync(id, cancellationToken);
-                return Json(new { success = true, message = "Tips delete successfully" });
+                return Json(new { success = true, message = "Tip deleted successfully" });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = $"Error delete user: {ex.Message}" });
+                return Json(new { success = false, message = $"Error deleting tip: {ex.Message}" });
             }
         }
     }
