@@ -30792,16 +30792,30 @@ footer .license-list h6 {
 }
 .login-card .login-main .theme-form .or {
   position: relative;
+  display: inline-block;
+  z-index: 1;
+  padding: 0 20px;
+  text-align: center;
 }
 .login-card .login-main .theme-form .or:before {
   content: "";
   position: absolute;
-  width: 65%;
-  height: 2px;
+  width: 45%;
+  height: 1px;
   background-color: #f3f3ff;
-  top: 9px;
+  top: 50%;
   z-index: 0;
-  right: 0;
+  right: 100%;
+}
+.login-card .login-main .theme-form .or:after {
+  content: "";
+  position: absolute;
+  width: 45%;
+  height: 1px;
+  background-color: #f3f3ff;
+  top: 50%;
+  z-index: 0;
+  left: 100%;
 }
 .login-card .login-main .theme-form input {
   background-color: rgba(0, 102, 102, 0.1);
@@ -34880,6 +34894,9 @@ body.dark-only .login-card .login-main .theme-form input {
   background-color: #22242B !important;
 }
 body.dark-only .login-card .login-main .theme-form .or:before {
+  background-color: #22242B;
+}
+body.dark-only .login-card .login-main .theme-form .or:after {
   background-color: #22242B;
 }
 body.dark-only .login-card .login-main .theme-form .checkbox label::before {

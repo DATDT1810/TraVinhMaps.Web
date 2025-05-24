@@ -1,6 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -38,7 +39,6 @@
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/chartist.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/owlcarousel.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/dropzone.css">
-
     <!-- Plugins css Ends-->
     <!-- DataTables CSS -->
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/datatables.css">
@@ -48,12 +48,14 @@
     <!-- Bootstrap css-->
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/bootstrap.css">
 
+
     <!-- App css-->
     <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
     <link id="color" rel="stylesheet" href="~/assets/css/color-1.css" media="screen">
     <!-- Responsive css-->
     <link rel="stylesheet" type="text/css" href="~/assets/css/responsive.css">
 </head>
+
 
 <body>
     <!-- loader starts-->
@@ -101,8 +103,7 @@
                                 alt="hand-gif">
                         </div>
                     </div>
-                    <div class="welcome-content d-xl-block d-none"><span class="text-truncate col-12">Here’s what’s
-                            happening with
+                    <div class="welcome-content d-xl-block d-none"><span class="text-truncate col-12">Here's what's happening with
                             your store today. </span></div>
                 </div>
                 <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
@@ -132,6 +133,7 @@
                         </li>
                         <li class="onhover-dropdown notification-down">
 
+
                             @await Component.InvokeAsync("Notification")
                         </li>
                         <li class="profile-nav onhover-dropdown">
@@ -144,11 +146,18 @@
                                 </div>
                             </div>
                             <ul class="profile-dropdown onhover-show-div">
-                                <li><a href="user-profile.html"><i data-feather="user"></i><span>My Profile</span></a>
+                                <li>
+                                    <a href="~/Account/ViewProfile">
+                                    <i data-feather="user"></i><span>My Profile</span>
+                                    </a>
                                 </li>
                                 <li> <a href="edit-profile.html"> <i
                                             data-feather="settings"></i><span>Settings</span></a></li>
-                                <li><a class="btn btn-pill btn-outline-primary btn-sm" href="login.html">Log Out</a>
+                                <li>
+                                    <form asp-controller="Authen" asp-action="Logout" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-pill btn-outline-primary btn-sm">Log Out</button>
+                                    </form>
                                 </li>
                             </ul>
                         </li>
@@ -157,9 +166,9 @@
                 <script class="result-template" type="text/x-handlebars-template">
             <div class="ProfileCard u-cf">                        
             <div class="ProfileCard-avatar"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-airplay m-0"><path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"></path><polygon points="12 15 17 21 7 21 12 15"></polygon></svg></div>
-            <div class="ProfileCard-details"> 
+            <div class="ProfileCard-details">
             <div class="ProfileCard-realName">{{name}}</div>
-            </div> 
+            </div>
             </div>
             </script>
                 <script class="empty-template"
@@ -214,10 +223,16 @@
                                     <span>Account Management</span></a></li>
                             <!-- > Account Management -->
                             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
-                                    class="sidebar-link sidebar-title link-nav" asp-controller="" asp-action="">
+                                    class="sidebar-link sidebar-title link-nav" asp-controller="" asp-action="Index">
                                     <i class="fa fa-user"
                                         style="color: white; font-size: 20px; padding-right: 10px;"></i>
                                     <span>Admin Management</span></a></li>
+                            <!-- > Account Management -->
+                            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
+                                    class="sidebar-link sidebar-title link-nav" asp-controller="TouristDestinationManagement" asp-action="Index">
+                                    <i class="fa fa-globe"
+                                        style="color: white; font-size: 20px; padding-right: 10px;"></i>
+                                    <span>Destination Management</span></a></li>
                             <!-- > Tips Managment -->
                             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
                                     class="sidebar-link sidebar-title link-nav" asp-controller="CommunityTips"
@@ -267,6 +282,7 @@
                                 </ul>
                             </li>
 
+
                             <!-- > Analytics -->
                             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
                                     class="sidebar-link sidebar-title" href="#">
@@ -286,13 +302,6 @@
                                     class="sidebar-link sidebar-title link-nav" href="">
                                     <i class="fa fa-cog" style="color: white; font-size: 20px; padding-right: 8px;"></i>
                                     <span>Setting</span></a>
-                            </li>
-                            <!-- > Logout -->
-                            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
-                                    class="sidebar-link sidebar-title link-nav" href="">
-                                    <i class="fa fa-sign-out"
-                                        style="color: white; font-size: 20px; padding-right: 8px;"></i>
-                                    <span>Logout</span></a>
                             </li>
                         </ul>
                         <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
@@ -315,6 +324,7 @@
             </footer>
         </div>
     </div>
+
 
     <!-- latest jquery-->
     <script src="~/assets/js/jquery.min.js"></script>
@@ -342,6 +352,7 @@
     <script src="~/assets/js/slick/slick.js"></script>
     <script src="~/assets/js/header-slick.js"></script>
 
+
     <!-- calendar js-->
     <script src="~/assets/js/datepicker/date-picker/datepicker.js"></script>
     <script src="~/assets/js/datepicker/date-picker/datepicker.en.js"></script>
@@ -359,11 +370,14 @@
     <script src="~/assets/js/ecommerce.js"></script>
     <!-- Plugins JS Ends-->
 
+
     <!-- Theme js-->
     <script src="~/assets/js/script.js"></script>
     <script src="~/assets/js/theme-customizer/customizer.js"></script>
 
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 
 </html>
