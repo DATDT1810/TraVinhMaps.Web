@@ -1,0 +1,250 @@
+@model TraVinhMaps.Web.Admin.Models.Users.UserProfileModel
+@{
+    ViewData["Title"] = "User Profile";
+}
+
+<div class="container-fluid">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-12 col-sm-6">
+                <h3>User Profile</h3>
+            </div>
+            <div class="col-12 col-sm-6">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Home"> <i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Users</li>
+                    <li class="breadcrumb-item active">Profile</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- User Profile Left Section -->
+        <div class="col-xl-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h5 class="card-title mb-0">Profile</h5>
+                </div>
+                <div class="card-body">
+                    <div class="profile-title text-center">
+                        <div class="d-flex justify-content-center">
+                            <div class="profile-img">
+                                @if (String.IsNullOrEmpty(Model.Avatar))
+                                {
+                                    <img class="img-fluid" src="~/assets/images/user/default-avatar.png" alt="User Avatar">
+                                }
+                                else
+                                {
+                                    <img class="img-fluid" src="@Model.Avatar" alt="User Avatar">
+                                }
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <h5 class="mb-1">@Model.DisplayName</h5>
+                            <p class="badge @(Model.RoleName == "admin" ? "badge-primary" : "badge-secondary")">@Model.RoleName</p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Account Status</span>
+                                <span class="badge @(Model.IsActive ? "badge-success" : "badge-danger")">
+                                    @(Model.IsActive ? "Active" : "Forbidden")
+                                </span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Email Verified</span>
+                                <span class="badge @(Model.IsEmailVerified ? "badge-success" : "badge-warning")">
+                                    @(Model.IsEmailVerified ? "Verified" : "Pending")
+                                </span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Member Since</span>
+                                <span>@Model.FormattedCreatedDate</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Profile Right Section -->
+        <div class="col-xl-8">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h5 class="card-title mb-0">Account Details</h5>
+                </div>
+                <div class="card-body">
+                    <form id="profileForm">
+                        <div class="mb-3">
+                            <label class="form-label">User ID</label>
+                            <input type="text" class="form-control" value="@Model.Id" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" value="@Model.Email" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" value="@(Model.PhoneNumber ?? "Not provided")" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Role</label>
+                            <input type="text" class="form-control" value="@Model.RoleName" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Created Date</label>
+                            <input type="text" class="form-control" value="@Model.FormattedCreatedDateTime" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Last Updated</label>
+                            <input type="text" class="form-control" value="@Model.FormattedUpdatedDateTime" readonly>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header pb-0 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Security Settings</h5>
+                    <button class="btn btn-primary" id="changePasswordBtn" type="button">Change Password</button>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Two-Factor Authentication</span>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="twoFactorAuth">
+                            </div>
+                        </div>
+                        <p class="text-muted mb-0">Add an extra layer of security to your account</p>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Account Activity Notifications</span>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="activityNotifications" checked>
+                            </div>
+                        </div>
+                        <p class="text-muted mb-0">Receive notifications about login attempts and security events</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="changePasswordForm">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label">Current Password</label>
+                        <input type="password" class="form-control" id="currentPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="newPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="savePasswordBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize change password modal
+            $('#changePasswordBtn').on('click', function() {
+                $('#changePasswordModal').modal('show');
+            });
+            
+            // Handle password change
+            $('#savePasswordBtn').on('click', function() {
+                const currentPassword = $('#currentPassword').val();
+                const newPassword = $('#newPassword').val();
+                const confirmPassword = $('#confirmPassword').val();
+                
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'All fields are required',
+                        icon: 'error'
+                    });
+                    return;
+                }
+                
+                if (newPassword !== confirmPassword) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'New passwords do not match',
+                        icon: 'error'
+                    });
+                    return;
+                }
+                
+                // Submit via AJAX
+                $.ajax({
+                    url: '/Admin/UserManagement/ChangePassword',
+                    type: 'POST',
+                    data: {
+                        currentPassword: currentPassword,
+                        newPassword: newPassword,
+                        confirmPassword: confirmPassword
+                    },
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                title: 'Success',
+                                text: response.message || 'Password has been changed successfully',
+                                icon: 'success'
+                            });
+                            
+                            $('#changePasswordModal').modal('hide');
+                            $('#changePasswordForm')[0].reset();
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                text: response.message || 'Failed to change password',
+                                icon: 'error'
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'An error occurred while changing password',
+                            icon: 'error'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}
