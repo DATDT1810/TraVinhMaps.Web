@@ -1,3 +1,5 @@
+using TraVinhMaps.Web.Admin.Services.CommunityTips;
+using TraVinhMaps.Web.Admin.Services.Tags;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -12,6 +14,22 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Register IUserService
+builder.Services.AddScoped<IUserService, UserService>();
+// Register INotificationsService
+builder.Services.AddScoped<INotificationsService, NotificationsService>();
+// Register ICommunityTipsService
+builder.Services.AddScoped<ICommunityTipsService, CommunityTipsService>();
+// Register ITagService
+builder.Services.AddScoped<ITagService, TagService>();
+
+// Register TouristDestination
+builder.Services.AddScoped<IDestinationService, DestinationService>();
+// Register Event And Festival
+builder.Services.AddScoped<IEventAndFestivalService, EventAndFestivalService>();
+//  Register AuthService
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Load environment variables from .env file
 Env.Load();
@@ -28,16 +46,6 @@ builder.Services.AddSession(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure cookies are only sent over HTTPS
     options.Cookie.SameSite = SameSiteMode.Lax; // Changed from Strict to Lax to allow cross-site redirects for OAuth
 });
-
-// Register IUserService
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<INotificationsService, NotificationsService>();
-// Register TouristDestination
-builder.Services.AddScoped<IDestinationService, DestinationService>();
-//Register Event And Festival
-builder.Services.AddScoped<IEventAndFestivalService, EventAndFestivalService>();
-
-builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Configure cookie authentication
 builder.Services.AddAuthentication(options =>
