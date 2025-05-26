@@ -1,11 +1,14 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using TraVinhMaps.Web.Admin.Models.EventAndFestivalFeature;
+using TraVinhMaps.Web.Admin.Models.TouristDestination;
 using TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature;
 
 namespace TraVinhMaps.Web.Admin.Controllers
@@ -47,12 +50,311 @@ namespace TraVinhMaps.Web.Admin.Controllers
             // await _eventAndFestivalService.CreateEventAndFestival(createEventAndFestivalRequest);
             return RedirectToAction("Index");
         }
-        
+
+        [HttpGet("CreateEventFestival")]
+        public IActionResult CreateEventFestival()
+        {
+            return View();
+        }
+
+        [HttpPost("CreateEventFestival")]
+        public async Task<IActionResult> CreateEventFestival(CreateEventAndFestivalRequestViewModel createEventAndFestivalRequestViewModel)
+        {
+            if (createEventAndFestivalRequestViewModel.ImagesFile == null ||
+    !createEventAndFestivalRequestViewModel.ImagesFile.Any(f => f != null && f.Length > 0))
+            {
+                TempData["errorMessage"] = "Add at least 1 valid picture for event and festival, please try again";
+                return View(createEventAndFestivalRequestViewModel);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                TempData["errorMessage"] = "Add event/festival failure, please try again";
+                return View(createEventAndFestivalRequestViewModel);
+            }
+            string format = "MM/dd/yyyy";
+            CultureInfo provider = CultureInfo.InvariantCulture;
+            CreateEventAndFestivalRequest createEventAndFestivalRequest = new CreateEventAndFestivalRequest()
+            {
+                NameEvent = createEventAndFestivalRequestViewModel.NameEvent,
+                Description = createEventAndFestivalRequestViewModel.Description,
+                StartDate = DateTime.ParseExact(createEventAndFestivalRequestViewModel.StartDate, format, provider),
+                EndDate = DateTime.ParseExact(createEventAndFestivalRequestViewModel.EndDate, format, provider),
+                Category = createEventAndFestivalRequestViewModel.Category,
+                ImagesFile = createEventAndFestivalRequestViewModel.ImagesFile,
+                Location = new EventLocation
+                {
+                    Name = createEventAndFestivalRequestViewModel.Name,
+                    Address = createEventAndFestivalRequestViewModel.Address,
+                    MarkerId = createEventAndFestivalRequestViewModel.MarkerId,
+                    location = new Location
+                    {
+                        Type = createEventAndFestivalRequestViewModel.Type,
+                        Coordinates = new List<double> { createEventAndFestivalRequestViewModel.longitude, createEventAndFestivalRequestViewModel.latitude }
+                    }
+                },
+                TagId = createEventAndFestivalRequestViewModel.TagId
+            };
+            await _eventAndFestivalService.CreateEventAndFestival(createEventAndFestivalRequest);
+            TempData["successMessage"] = "Add event/festival successfull";
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet("DetailEventFestival")]
+        public async Task<IActionResult> DetailEventFestival(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var eventAndFestivalDetail = await _eventAndFestivalService.GetEventAndFestivalById(id);
+            return View(eventAndFestivalDetail);
+        }
+
+        [HttpGet("EditEventAndFestival")]
+        public async Task<IActionResult> EditEventAndFestival(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var eventAndFestivalDetail = await _eventAndFestivalService.GetEventAndFestivalById(id);
+            if (eventAndFestivalDetail == null)
+            {
+                return NotFound();
+            }
+            UpdateEventAndFestivalRequestViewModel updateEventAndFestivalRequestViewModel = new UpdateEventAndFestivalRequestViewModel()
+            {
+                Id = eventAndFestivalDetail.Id,
+                NameEvent = eventAndFestivalDetail.NameEvent,
+                Description = eventAndFestivalDetail.Description,
+                StartDate = eventAndFestivalDetail.StartDate.ToLocalTime().ToString("MM/dd/yyyy"),
+                EndDate = eventAndFestivalDetail.EndDate.ToLocalTime().ToString("MM/dd/yyyy"),
+                Category = eventAndFestivalDetail.Category,
+                Name = eventAndFestivalDetail.Location.Name,
+                Address = eventAndFestivalDetail.Location.Address,
+                MarkerId = eventAndFestivalDetail.Location.MarkerId,
+                Type = eventAndFestivalDetail.Location.location.Type,
+                longitude = eventAndFestivalDetail.Location.location.Coordinates[0],
+                latitude = eventAndFestivalDetail.Location.location.Coordinates[1],
+                TagId = eventAndFestivalDetail.TagId
+            };
+
+            ViewBag.Category = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "Event", Text = "Event" },
+                new SelectListItem { Value = "Festival", Text = "Festival" }
+            };
+            ViewBag.TypeLocation = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "Point", Text = "Point" },
+                new SelectListItem { Value = "Unknow", Text = "Unknow" }
+            };
+            return View(updateEventAndFestivalRequestViewModel);
+        }
+
+        [HttpPost("EditEventAndFestival")]
+        public async Task<IActionResult> EditEventAndFestival(UpdateEventAndFestivalRequestViewModel updateEventAndFestivalRequestViewModel)
+        {
+            string format = "MM/dd/yyyy";
+            CultureInfo provider = CultureInfo.InvariantCulture;
+            UpdateEventAndFestivalRequest updateEventAndFestivalRequest = new UpdateEventAndFestivalRequest()
+            {
+                Id = updateEventAndFestivalRequestViewModel.Id,
+                NameEvent = updateEventAndFestivalRequestViewModel.NameEvent,
+                Description = updateEventAndFestivalRequestViewModel.Description,
+                StartDate = DateTime.ParseExact(updateEventAndFestivalRequestViewModel.StartDate, format, provider),
+                EndDate = DateTime.ParseExact(updateEventAndFestivalRequestViewModel.EndDate, format, provider),
+                Category = updateEventAndFestivalRequestViewModel.Category,
+                Location = new EventLocation
+                {
+                    Name = updateEventAndFestivalRequestViewModel.Name,
+                    Address = updateEventAndFestivalRequestViewModel.Address,
+                    MarkerId = updateEventAndFestivalRequestViewModel.MarkerId,
+                    location = new Location
+                    {
+                        Type = updateEventAndFestivalRequestViewModel.Type,
+                        Coordinates = new List<double> { updateEventAndFestivalRequestViewModel.longitude, updateEventAndFestivalRequestViewModel.latitude }
+                    }
+                },
+                TagId = updateEventAndFestivalRequestViewModel.TagId
+            };
+            var eventAndFestivalUpdate = await _eventAndFestivalService.UpdateEventAndFestival(updateEventAndFestivalRequest);
+            if (eventAndFestivalUpdate == null)
+            {
+                return View(updateEventAndFestivalRequestViewModel);
+            }
+            TempData["EditEventAndFestivalSuccess"] = "Edit event and festival successfull";
+            return RedirectToAction("DetailEventFestival", new { id = updateEventAndFestivalRequestViewModel.Id });
+        }
+
+        [HttpPost("DeleteEventAndFestival")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteEventAndFestival(string id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _eventAndFestivalService.DeleteEventAndFestival(id);
+                return Json(new { success = true, message = "Delete event and festival successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error delete event and festival: {ex.Message}" });
+            }
+        }
+
+        [HttpPost("DeleteEventAndFestivalByForm")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteEventAndFestivalByForm(string id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _eventAndFestivalService.DeleteEventAndFestival(id);
+                TempData["successMessage"] = "Delete event and festival successfully";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = $"Error Delete event and festival: {ex.Message}";
+                return RedirectToAction("DetailEventFestival", new { id = id });
+            }
+        }
+        [HttpPost("RestoreEventAndFestival")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestoreEventAndFestival(string id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _eventAndFestivalService.RestoreEventAndFestival(id);
+                return Json(new { success = true, message = "Delete destination successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error delete destination: {ex.Message}" });
+            }
+        }
+
+        [HttpPost("RestoreEventAndFestivalByForm")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestoreEventAndFestivalByForm(string id, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _eventAndFestivalService.RestoreEventAndFestival(id);
+                TempData["successMessage"] = "Restore event and festival successfully";
+                return RedirectToAction("DetailEventFestival", new { id = id });
+            }
+            catch (Exception ex)
+            {
+                TempData["errorMessage"] = $"Error restore event and festival: {ex.Message}";
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost("AddEventAndFestivalImage")]
+        public async Task<IActionResult> AddEventAndFestivalImage(string id, List<IFormFile> imageDestinationFileList)
+        {
+            try
+            {
+                if (!IsImageListFile(imageDestinationFileList))
+                {
+                    TempData["error"] = "Invalid file type. Please upload a valid image file.";
+                    return RedirectToAction("DetailDestination", new { id = id });
+                }
+                AddImageEventAndFestivalRequest addImageEventAndFestivalRequest = new AddImageEventAndFestivalRequest()
+                {
+                    id = id,
+                    imageFile = imageDestinationFileList
+                };
+                var result = await _eventAndFestivalService.AddEventAndFestivalImage(addImageEventAndFestivalRequest);
+                if (result == null)
+                {
+                    TempData["errorHistory"] = "adding history photos to this tourist attraction failed, please try again later";
+                    return RedirectToAction("DetailEventFestival", new { id = id });
+                }
+                return RedirectToAction("DetailEventFestival", new { id = id });
+            }
+            catch (System.Exception ex)
+            {
+                return Json(new { success = false, message = $"Error deleting image: {ex.Message}" });
+            }
+        }
+
+        [HttpPost("DeleteEventAndFestivalImage")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteEventAndFestivalImage(string id, string urlImage)
+        {
+            try
+            {
+                if (id == null)
+                {
+                    return NotFound();
+                }
+                var eventAndFestivalDetail = await _eventAndFestivalService.GetEventAndFestivalById(id);
+                if (eventAndFestivalDetail == null)
+                {
+                    return NotFound();
+                }
+
+                // Kiểm tra số lượng ảnh hiện tại
+                var currentImages = eventAndFestivalDetail.Images;
+                if (currentImages == null || currentImages.Count <= 1)
+                {
+                    TempData["errorMessage"] = "You cannot delete the last remaining image.";
+                    return RedirectToAction("DetailEventFestival", new { id = id });
+                }
+
+                DeleteEventAndFestivalImage deleteEventAndFestivalImage = new DeleteEventAndFestivalImage()
+                {
+                    id = id,
+                    imageUrl = urlImage
+                };
+                var result = await _eventAndFestivalService.DeleteEventAndFestivalImage(deleteEventAndFestivalImage);
+                if (result)
+                {
+                    TempData["successMessage"] = "Add event/festival image successfull";
+                    return RedirectToAction("DetailEventFestival", new { id = id });
+                }
+                TempData["errorMessage"] = "Add event/festival image failure, please try again";
+                return RedirectToAction("DetailEventFestival", new { id = id });
+            }
+            catch (System.Exception ex)
+            {
+                return Json(new { success = false, message = $"Error deleting image: {ex.Message}" });
+            }
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View("Error!");
+        }
+
+        private bool IsImageFile(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return false;
+            var allowedContentTypes = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
+            if (!allowedContentTypes.Contains(file.ContentType.ToLower()))
+                return false;
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+            var fileExtension = Path.GetExtension(file.FileName).ToLower();
+            if (!allowedExtensions.Contains(fileExtension))
+                return false;
+            return true;
+        }
+
+        private bool IsImageListFile(List<IFormFile> formFiles)
+        {
+            foreach (var item in formFiles)
+            {
+                if (!IsImageFile(item))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

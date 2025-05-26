@@ -253,9 +253,8 @@
                                         <div class="item add-image-box" id="addImageBox">
                                             <div>
                                                 <div class="upload-placeholder">+</div>
-                                                <input asp-for="ImagesFile" hidden type="file" accept="image/*"
-                                                     multiple id="uploadImageInput"
-                                                    onchange="" />
+                                                <input asp-for="ImagesFile" hidden type="file" accept="image/*" multiple
+                                                    id="uploadImageInput" onchange="" />
                                             </div>
                                         </div>
                                     </div>
@@ -267,8 +266,8 @@
                                             <div>
                                                 <div class="upload-placeholder">+</div>
                                                 <input asp-for="HistoryStory.ImagesFile" hidden type="file"
-                                                    accept="image/*" multiple
-                                                    id="uploadImageHistoryInput" onchange="" />
+                                                    accept="image/*" multiple id="uploadImageHistoryInput"
+                                                    onchange="" />
                                             </div>
                                         </div>
                                     </div>
@@ -385,7 +384,7 @@
         addImageBox.parentElement.appendChild(previewContainer);
 
         uploadInput.addEventListener("change", function () {
-            previewContainer.innerHTML = ""; 
+            previewContainer.innerHTML = "";
 
             const files = uploadInput.files;
             if (!files || files.length === 0) return;
