@@ -11,47 +11,7 @@
         switch (status) {
             case 401:
                 // Session expired, handled by session-handler.js
-                return;
-            case 403:
-                // Forbidden - Access denied
-                Swal.fire({
-                    title: 'Access Denied',
-                    text: message || 'You do not have permission to access this resource.',
-                    icon: 'error',
-                    confirmButtonColor: '#dc3545'
-                });
-                break;
-            case 404:
-                // Not found
-                Swal.fire({
-                    title: 'Not Found',
-                    text: message || 'The requested resource could not be found.',
-                    icon: 'warning',
-                    confirmButtonColor: '#ffc107'
-                });
-                break;
-            case 500:
-            case 502:
-            case 503:
-            case 504:
-                // Server errors
-                Swal.fire({
-                    title: 'Server Error',
-                    text: message || 'An error occurred while processing your request. Please try again later.',
-                    icon: 'error',
-                    confirmButtonColor: '#dc3545'
-                });
-                break;
-            default:
-                // Other errors
-                if (status >= 400) {
-                    Swal.fire({
-                        title: 'Error',
-                        text: message || 'An error occurred while processing your request.',
-                        icon: 'error',
-                        confirmButtonColor: '#dc3545'
-                    });
-                }
+                return;       
         }
     }
 

@@ -1,12 +1,13 @@
-using TraVinhMaps.Web.Admin.Services.CommunityTips;
-using TraVinhMaps.Web.Admin.Services.Tags;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using TraVinhMaps.Web.Admin.Extensions;
+using TraVinhMaps.Web.Admin.Services.Admin;
 using TraVinhMaps.Web.Admin.Services.Auth;
+using TraVinhMaps.Web.Admin.Services.CommunityTips;
 using TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature;
 using TraVinhMaps.Web.Admin.Services.Notifications;
+using TraVinhMaps.Web.Admin.Services.Tags;
 using TraVinhMaps.Web.Admin.Services.TouristDestination;
 using TraVinhMaps.Web.Admin.Services.Users;
 
@@ -23,14 +24,17 @@ builder.Services.AddScoped<INotificationsService, NotificationsService>();
 builder.Services.AddScoped<ICommunityTipsService, CommunityTipsService>();
 // Register ITagService
 builder.Services.AddScoped<ITagService, TagService>();
-
 // Register TouristDestination
 builder.Services.AddScoped<IDestinationService, DestinationService>();
 // Register Event And Festival
 builder.Services.AddScoped<IEventAndFestivalService, EventAndFestivalService>();
 //  Register AuthService
 builder.Services.AddScoped<IAuthService, AuthService>();
-
+// Register ITokenService
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ITokenService, TokenService>();
+// Admin services
+builder.Services.AddScoped<IAdminService, AdminService>();
 // Load environment variables from .env file
 Env.Load();
 // Add environment variables to configuration 
@@ -64,7 +68,7 @@ builder.Services.AddAuthentication(options =>
         options.ExpireTimeSpan = TimeSpan.FromHours(24);
         options.SlidingExpiration = true;
         options.Cookie.Name = "TVMaps.Auth"; // Custom name for the cookie
-        
+
         // Check cookie expiration on every request
         options.Events = new CookieAuthenticationEvents
         {
@@ -72,7 +76,7 @@ builder.Services.AddAuthentication(options =>
             {
                 var tokenService = context.HttpContext.RequestServices.GetRequiredService<ITokenService>();
                 var sessionId = tokenService.GetSessionId();
-                
+
                 if (string.IsNullOrEmpty(sessionId))
                 {
                     context.RejectPrincipal();
@@ -104,17 +108,6 @@ builder.Services.AddHttpClient("ApiClient", client =>
     client.BaseAddress = new Uri("https://localhost:7162/");
     client.Timeout = TimeSpan.FromMinutes(5); // config wait time out with 5 minutes
 }).AddHttpMessageHandler<AuthHttpMessageHandler>();
-
-// Register for the Request without the sessionId in the Header
-builder.Services.AddHttpClient("ApiPublic",client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7162/");
-    client.Timeout = TimeSpan.FromMinutes(5); // config wait time out with 5 minutes
-});
-
-// Register ITokenService
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<ITokenService, TokenService>();
 
 // Add data protection services for more secure token storage
 builder.Services.AddDataProtection();

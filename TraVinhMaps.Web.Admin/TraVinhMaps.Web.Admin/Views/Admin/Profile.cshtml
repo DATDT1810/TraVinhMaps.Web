@@ -1,0 +1,193 @@
+﻿@model TraVinhMaps.Web.Admin.Models.Users.AdminProfileResponse
+@using TraVinhMaps.Web.Admin.Models.Users
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Profile";
+}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>Edit Profile</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="#">
+                                <svg class="stroke-icon">
+                                    <use href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#stroke-home"></use>
+                                </svg>
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">Admin</li>
+                        <li class="breadcrumb-item active"> Edit Profile</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="edit-profile">
+            <form asp-action="UpdateProfile" asp-controller="Admin" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="row">
+                    <!-- Left side -->
+                    <div class="col-xl-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title mb-0">My Profile</h4>
+                                <div class="card-options">
+                                    <a class="card-options-collapse" href="#" data-bs-toggle="card-collapse">
+                                        <i class="fe fe-chevron-up"></i>
+                                    </a>
+                                    <a class="card-options-remove" href="#" data-bs-toggle="card-remove">
+                                        <i class="fe fe-x"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-4">
+                                    <div class="profile-title text-center">
+                                        <div class="d-flex justify-content-center">
+                                            <div class="text-center">
+                                                <img class="rounded-circle profile-avatar mb-4" alt="Profile Image"
+                                                     src="@(string.IsNullOrEmpty(Model.Avatar) ? Url.Content("~/assets/images/user/user.png") : Model.Avatar)"
+                                                     style="width: 150px; height: 150px; object-fit: cover;">
+                                                <div class="mb-3">
+                                                    <label for="Avatar" class="btn btn-outline-primary">Change Avatar</label>
+                                                    <input id="Avatar" name="Avatar" type="file" accept="image/*" class="d-none">
+                                                </div>
+                                                <div id="image-error" class="text-danger" style="display: none;">
+                                                    Please select a valid image file (JPEG, PNG, GIF, etc.)
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Hidden ID for POST -->
+                                <input type="hidden" name="Id" value="@Model.Id" />
+
+                                <div class="mb-3">
+                                    <label class="form-label">User ID</label>
+                                    <input class="form-control" value="@Model.Id" readonly />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input class="form-control" name="Email" value="@Model.Email" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Phone Number</label>
+                                    <input class="form-control" name="PhoneNumber" value="@Model.PhoneNumber" />
+                                </div>
+                                <div class="mb-3" hidden>
+                                    <label class="form-label">Password</label>
+                                    <input class="form-control" type="password" name="Password" value="@Model.Password" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right side -->
+                    <div class="col-xl-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title mb-0">Account Details</h4>
+                                <div class="card-options">
+                                    <a class="card-options-collapse" href="#" data-bs-toggle="card-collapse">
+                                        <i class="fe fe-chevron-up"></i>
+                                    </a>
+                                    <a class="card-options-remove" href="#" data-bs-toggle="card-remove">
+                                        <i class="fe fe-x"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Username</label>
+                                            <input class="form-control" type="text" name="UserName" value="@Model.UserName" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Role</label>
+                                            <input class="form-control" type="text" value="@Model.RoleName" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Created At</label>
+                                            <input class="form-control" type="text" value="@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Last Updated</label>
+                                            <input class="form-control" type="text" value="@(Model.UpdatedAt.HasValue? Model.UpdatedAt.Value.ToString("yyyy-MM-dd HH:mm") : "Not updated yet")" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Status</label>
+                                            <input class="form-control" type="text" value="@(Model.Status ? "Active" : "Inactive")" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Forbidden Status</label>
+                                            <input class="form-control" type="text" value="@(Model.IsForbidden ? "Forbidden" : "Not Forbidden")" readonly />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-end">
+                                <button class="btn btn-primary" type="submit">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const success = @Html.Raw(Json.Serialize(TempData["Success"]));
+            const error   = @Html.Raw(Json.Serialize(TempData["Error"]));
+            if (success) showSuccessAlert("Success!", success);
+            if (error)   showErrorAlert("Error!",   error);
+        })();
+        // Preview image before upload
+        document.getElementById('Avatar').addEventListener('change', function (e) {
+            if (e.target.files && e.target.files[0]) {
+                var reader = new FileReader();
+
+                // Check file type
+                const file = e.target.files[0];
+                const imageError = document.getElementById('image-error');
+                const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp', 'image/webp', 'image/svg+xml'];
+
+                if (!validImageTypes.includes(file.type)) {
+                    imageError.style.display = 'block';
+                    return;
+                } else {
+                    imageError.style.display = 'none';
+                }
+
+                reader.onload = function (e) {
+                    document.querySelector('.profile-avatar').setAttribute('src', e.target.result);
+                }
+
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}

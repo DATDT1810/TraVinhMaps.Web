@@ -182,20 +182,5 @@ namespace TraVinhMaps.Web.Admin.Services.Users
                 throw new HttpRequestException($"Unable to create admin. Status: {response.StatusCode}, Error: {errorContent}");
             }
         }
-
-        public async Task<UserResponse> GetAdminProfileAsync(string sessionId, CancellationToken cancellationToken = default)
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, userApi + "admin/profile");
-            request.Headers.Add("sessionId ", sessionId);
-
-            var response = await _httpClient.SendAsync(request, cancellationToken);
-            if (response.IsSuccessStatusCode)
-            {
-                var content = await response.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return JsonSerializer.Deserialize<UserResponse>(content, options) ?? throw new HttpRequestException("Admin profile not found.");
-            }
-            throw new NotImplementedException();
-        }
     }
 }

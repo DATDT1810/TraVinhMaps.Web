@@ -8,14 +8,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description"
-      content="TraVinhGo.The Most App For Your Trip">
 <meta name="keywords"
-      content="admin template, Riho admin template, dashboard template, flat admin template, responsive admin template, web app">
+      content="TraVinhGo.The Most App For Your Trip">
 <meta name="author" content="pixelstrap">
 <link rel="icon" href="../assets/images/favicon.png" type="image/x-icon">
 <link rel="shortcut icon" href="../assets/images/favicon.png" type="image/x-icon">
-<title>Riho - Premium Admin Template</title>
+<title>TraVinhGo - Best cross-platform software</title>
 <!-- Google font-->
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
@@ -45,33 +43,34 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-xl-5">
-            <img class="bg-img-cover bg-center" src="../assets/images/login/3.jpg" alt="looginpage">
+            <div class="login-left-img">
+                <img class="bg-img-cover bg-center" src="@(Url.Content("~/assets/images/login/login.png"))" alt="loginpage">
+            </div>
         </div>
         <div class="col-xl-7 p-0">
             <div class="login-card login-dark">
                 <div>
                     <div>
-                        <a class="logo text-start" href="index-2.html">
-                            <img class="img-fluid for-dark"
-                                 src="../assets/images/logo/logo.png" alt="looginpage"><img class="img-fluid for-light"
-                                                                                            src="../assets/images/logo/logo_dark.png" alt="looginpage">
-                        </a>
+                        <img class="img-fluid for-dark"
+                             src="~/assets/images/logo/logo.png" alt="looginpage">
+                        <img class="img-fluid for-light" 
+                             src="~/assets/images/logo/logo.png" alt="looginpage">
                     </div>
                     <div class="login-main">
                         <form asp-action="login" asp-controller="Authen" class="theme-form">
                             @Html.AntiForgeryToken()
                             <h4>Sign in to account</h4>
                             <p>Enter your email & password to login</p>
-                            
+
                             <div class="form-group">
                                 <label asp-for="Identifier" class="col-form-label">Email Or Phone Number</label>
-                                <input asp-for="Identifier" class="form-control"  placeholder="Please fill here">
+                                <input asp-for="Identifier" class="form-control" placeholder="Please fill here">
                                 <span asp-validation-for="Identifier" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label asp-for="Password" class="col-form-label">Password</label>
                                 <div class="form-input position-relative">
-                                    <input asp-for="Password" class="form-control"  placeholder="*********" type="password">
+                                    <input asp-for="Password" class="form-control" placeholder="*********" type="password">
                                     <div class="show-hide"><span class="show"></span></div>
                                     <span asp-validation-for="Password" class="text-danger"></span>
                                 </div>
@@ -86,11 +85,11 @@
                                     <button class="btn btn-primary btn-block w-100" type="submit">Sign in</button>
                                 </div>
                             </div>
-                            
+
                             <div class="separator">
                                 <span>Or Sign in with</span>
                             </div>
-                            
+
                             <div class="social mt-4">
                                 <div class="btn-showcase">
                                     <a class="btn btn-light google-btn" asp-action="LoginWithGoogle">
@@ -98,7 +97,7 @@
                                     </a>
                                 </div>
                             </div>
-                        
+
                             <script>
                                 (function () {
                                   'use strict';
@@ -139,16 +138,16 @@
     <!-- calendar js-->
     <!-- Plugins JS Ends-->
     <!-- Theme js-->
-    <script src="../assets/js/script.js"></script>
+ 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../assets/js/sweetalert-custom.js"></script>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const showHideBtn = document.querySelector('.show-hide');
             const passwordField = document.querySelector('input[type="password"]');
-            
+
             showHideBtn.addEventListener('click', function() {
                 if (passwordField.type === 'password') {
                     passwordField.type = 'text';
@@ -160,31 +159,46 @@
                     showHideBtn.querySelector('span').classList.add('show');
                 }
             });
-            
+
             @if (TempData["ErrorMessage"] != null)
             {
-                <text>
-                showErrorAlert("Login Failed", "@TempData["ErrorMessage"]");
-                </text>
+                    <text>
+                    showErrorAlert("Login Failed", "@TempData["ErrorMessage"]");
+                    </text>
             }
-            
+
             @if (TempData["SuccessMessage"] != null)
             {
-                <text>
-                showSuccessAlert("Success", "@TempData["SuccessMessage"]");
-                </text>
+                    <text>
+                    showSuccessAlert("Success", "@TempData["SuccessMessage"]");
+                    </text>
             }
-            
+
             @if (ViewData.ModelState[""] != null && ViewData.ModelState[""].Errors.Count > 0)
             {
-                <text>
-                showErrorAlert("Login Failed", "@Html.Raw(ViewData.ModelState[""].Errors[0].ErrorMessage)");
-                </text>
+                    <text>
+                    showErrorAlert("Login Failed", "@Html.Raw(ViewData.ModelState[""].Errors[0].ErrorMessage)");
+                    </text>
             }
         });
     </script>
-    
+
     <style>
+        .login-card img.for-dark,
+        .login-card img.for-light {
+            max-width: 150px;
+            height: auto;
+            margin-left: 130px;
+        }
+
+        .login-left-img {
+            padding-top: 40px;
+        }
+
+        .login-left-img img {
+                width: 100%;
+                height: auto;
+         }
         .google-btn {
             background-color: #fff;
             color: #757575;
@@ -201,36 +215,36 @@
             justify-content: center;
             padding: 10px 24px;
         }
-        
-        .google-btn:hover {
-            background-color: #f8f8f8;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
-        
-        .google-btn i {
-            color: red;
-            font-size: 18px;
-        }
-        
+
+            .google-btn:hover {
+                background-color: #f8f8f8;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            }
+
+            .google-btn i {
+                color: red;
+                font-size: 18px;
+            }
+
         .separator {
             display: flex;
             align-items: center;
             text-align: center;
             margin: 20px 0;
         }
-        
-        .separator::before,
-        .separator::after {
-            content: '';
-            flex: 1;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        .separator span {
-            padding: 0 10px;
-            color: #999;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
+
+            .separator::before,
+            .separator::after {
+                content: '';
+                flex: 1;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .separator span {
+                padding: 0 10px;
+                color: #999;
+                font-size: 0.875rem;
+                font-weight: 500;
+            }
     </style>
 </div>

@@ -21,6 +21,5 @@ namespace TraVinhMaps.Web.Admin.Services.Users
         Task<Pagination<UserResponse>> GetUsersAsync(UserSpecParams userSpecParams, CancellationToken cancellationToken = default);
         Task<List<UserResponse>> GetRecentUsersAsync(int count, CancellationToken cancellationToken = default);
         Task<UserResponse> AddAdminAsync(UserRequest request, CancellationToken cancellationToken = default);
-        Task<UserResponse> GetAdminProfileAsync(string sessionId, CancellationToken cancellationToken = default);
     }
 }

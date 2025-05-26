@@ -1,11 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using TraVinhMaps.Web.Admin.Models.Users;
 using TraVinhMaps.Web.Admin.Services.Auth;
 using TraVinhMaps.Web.Admin.Services.Users;
@@ -16,10 +9,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
     public class UserManagementController : Controller
     {
         private readonly IUserService _userService;
-
-        public UserManagementController(IUserService userService)
+        private readonly ITokenService _tokenService;
+        public UserManagementController(IUserService userService, ITokenService tokenService)
         {
             _userService = userService;
+            _tokenService = tokenService;
         }
 
         [HttpGet]
@@ -146,79 +140,5 @@ namespace TraVinhMaps.Web.Admin.Controllers
             ViewBag.TotolActiveUsers = countAllActiveUser;
             return View();
         }
-
-        // GET: Admin Profile
-        [HttpGet("Profile")]
-        public async Task<IActionResult> Profile()
-        {
-            try
-            {
-                ViewData["Title"] = "User Profile";
-                ViewData["Breadcrumb"] = new List<string> { "User Management", "Profile" };
-                
-                // Get session ID from token service or auth context
-                var sessionId = HttpContext.Session.GetString("SessionId");
-                if (string.IsNullOrEmpty(sessionId))
-                {
-                    return RedirectToAction("Index", "Authen");
-                }
-                
-                // Get admin profile data
-                var apiResponse = await _userService.GetAdminProfileAsync(sessionId);
-                if (apiResponse == null)
-                {
-                    TempData["Error"] = "Unable to retrieve profile data.";
-                    return RedirectToAction("Index", "Home");
-                }
-                
-                // Map API response to our model
-                var profileModel = new UserProfileModel
-                {
-                    Id = apiResponse.Id,
-                    UserName = apiResponse.Username,
-                    Email = apiResponse.Email,
-                    PhoneNumber = apiResponse.PhoneNumber,
-                    Password = "********", // Don't expose actual password
-                    Avatar = apiResponse.UserProfile?.Avatar,
-                    CreatedAt = apiResponse.CreatedAt,
-                    UpdatedAt = apiResponse.UpdatedAt,
-                    RoleName = "admin", // Assuming this is an admin profile
-                    IsForbidden = apiResponse.IsForbidden,
-                    Status = apiResponse.Status
-                };
-                
-                return View(profileModel);
-            }
-            catch (Exception ex)
-            {
-                TempData["Error"] = "An error occurred while loading profile data.";
-                return RedirectToAction("Index", "Home");
-            }
-        }
-
-        // POST: Change Password
-        [HttpPost("ChangePassword")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(ChangePasswordRequest model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return Json(new { success = false, message = "Invalid data provided", errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage) });
-            }
-
-            try
-            {
-                // Call API to change password - implement this method in UserService
-                // var result = await _userService.ChangePasswordAsync(model);
-                
-                // For demonstration purposes, we'll just return success
-                return Json(new { success = true, message = "Password changed successfully" });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = $"Error changing password: {ex.Message}" });
-            }
-        }
-
     }
 }

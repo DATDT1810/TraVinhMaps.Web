@@ -9,7 +9,7 @@ namespace TraVinhMaps.Web.Admin.Services.Auth
         Task<bool> ResendOtp(string token);
         Task<bool> Logout(string sessionId);
         Task<TokenResponse> ForgotPassword(string email);
-        Task<bool> ResetPassword(string token, string newPassword)
+        Task<bool> ResetPassword(string token, string newPassword);
         Task<bool> VerifyOtpForgotPassword(string token, string otpCode);
         Task<string> RequestEmailAuthentication(string email);
     }
