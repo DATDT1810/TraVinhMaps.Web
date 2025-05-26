@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using TraVinhMaps.Web.Admin.Models.Users;
+using TraVinhMaps.Web.Admin.Services.Auth;
 using TraVinhMaps.Web.Admin.Services.Users;
 
 namespace TraVinhMaps.Web.Admin.Controllers
@@ -14,10 +9,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
     public class UserManagementController : Controller
     {
         private readonly IUserService _userService;
-
-        public UserManagementController(IUserService userService)
+        private readonly ITokenService _tokenService;
+        public UserManagementController(IUserService userService, ITokenService tokenService)
         {
             _userService = userService;
+            _tokenService = tokenService;
         }
 
         [HttpGet]

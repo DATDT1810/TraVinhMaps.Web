@@ -21,11 +21,6 @@ namespace TraVinhMaps.Web.Admin.Services.Auth
             _logger = logger;
         }
 
-        public Task<bool> ChangePassword(string oldPassword, string newPassword)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<TokenResponse> ForgotPassword(string email)
         {
             try
@@ -211,11 +206,6 @@ namespace TraVinhMaps.Web.Admin.Services.Auth
                 _logger.LogError(ex, "Exception in VerifyOtp");
                 return null;
             }
-        }
-
-        public Task<bool> Logout()
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<bool> Logout(string sessionId)

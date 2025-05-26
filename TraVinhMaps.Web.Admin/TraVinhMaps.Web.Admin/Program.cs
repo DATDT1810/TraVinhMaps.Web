@@ -1,14 +1,15 @@
-using TraVinhMaps.Web.Admin.Services.CommunityTips;
-using TraVinhMaps.Web.Admin.Services.Tags;
-using TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using TraVinhMaps.Web.Admin.Extensions;
+using TraVinhMaps.Web.Admin.Services.Admin;
 using TraVinhMaps.Web.Admin.Services.Auth;
+using TraVinhMaps.Web.Admin.Services.CommunityTips;
+using TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature;
 using TraVinhMaps.Web.Admin.Services.Notifications;
+using TraVinhMaps.Web.Admin.Services.Tags;
 using TraVinhMaps.Web.Admin.Services.TouristDestination;
 using TraVinhMaps.Web.Admin.Services.Users;
-using TraVinhMaps.Web.Admin.Services.Admins;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -24,24 +25,27 @@ builder.Services.AddScoped<INotificationsService, NotificationsService>();
 builder.Services.AddScoped<ICommunityTipsService, CommunityTipsService>();
 // Register ITagService
 builder.Services.AddScoped<ITagService, TagService>();
-
 // Register TouristDestination
 builder.Services.AddScoped<IDestinationService, DestinationService>();
 // Register Event And Festival
 builder.Services.AddScoped<IEventAndFestivalService, EventAndFestivalService>();
 //  Register AuthService
 builder.Services.AddScoped<IAuthService, AuthService>();
-
+// Register ITokenService
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ITokenService, TokenService>();
+// Admin services
+builder.Services.AddScoped<IAdminService, AdminService>();
 // Load environment variables from .env file
 Env.Load();
-// Add environment variables to configuration
+// Add environment variables to configuration 
 builder.Configuration.AddEnvironmentVariables();
 
 // Register session services
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(60);
+    options.IdleTimeout = TimeSpan.FromDays(1);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure cookies are only sent over HTTPS
@@ -76,6 +80,22 @@ builder.Services.AddAuthentication(options =>
         options.ExpireTimeSpan = TimeSpan.FromHours(24);
         options.SlidingExpiration = true;
         options.Cookie.Name = "TVMaps.Auth"; // Custom name for the cookie
+
+        // Check cookie expiration on every request
+        options.Events = new CookieAuthenticationEvents
+        {
+            OnValidatePrincipal = async context =>
+            {
+                var tokenService = context.HttpContext.RequestServices.GetRequiredService<ITokenService>();
+                var sessionId = tokenService.GetSessionId();
+
+                if (string.IsNullOrEmpty(sessionId))
+                {
+                    context.RejectPrincipal();
+                    await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                }
+            }
+        };
     })
     .AddGoogle(googleOptions =>
     {
@@ -93,11 +113,13 @@ builder.Services.AddAntiforgery(options =>
     options.Cookie.SameSite = SameSiteMode.Lax; // Changed from Strict to Lax
 });
 
+builder.Services.AddTransient<AuthHttpMessageHandler>();
+// Register for The request must have the sessionId in the Header
 builder.Services.AddHttpClient("ApiClient", client =>
 {
     client.BaseAddress = new Uri("https://localhost:7162/");
     client.Timeout = TimeSpan.FromMinutes(5); // config wait time out with 5 minutes
-});
+}).AddHttpMessageHandler<AuthHttpMessageHandler>();
 
 // Add data protection services for more secure token storage
 builder.Services.AddDataProtection();
@@ -126,6 +148,9 @@ app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Add session expiration middleware after authentication but before controllers
+app.UseSessionExpiration();
 
 app.MapControllerRoute(
     name: "default",

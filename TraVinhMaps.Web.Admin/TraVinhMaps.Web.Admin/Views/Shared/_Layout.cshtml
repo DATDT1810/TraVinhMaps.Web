@@ -99,13 +99,12 @@
                 <div class="left-header col-xxl-5 col-xl-6 col-lg-5 col-md-4 col-sm-3 p-0">
                     <div> <a class="toggle-sidebar" href="#"> <i class="iconly-Category icli"> </i></a>
                         <div class="d-flex align-items-center gap-2 ">
-                            <h4 class="f-w-600">Welcome Alex</h4><img class="mt-0" src="../assets/images/hand.gif"
+                            <h4 class="f-w-600">Welcome Admin</h4><img class="mt-0" src="../assets/images/hand.gif"
                                 alt="hand-gif">
                         </div>
                     </div>
-                    <div class="welcome-content d-xl-block d-none"><span class="text-truncate col-12">Here's what's
-                            happening with
-                            your store today. </span></div>
+                    <div class="welcome-content d-xl-block d-none"><span class="text-truncate col-12">Here's what's happening with
+                            your App today. </span></div>
                 </div>
                 <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
                     <ul class="nav-menus">
@@ -148,8 +147,8 @@
                             </div>
                             <ul class="profile-dropdown onhover-show-div">
                                 <li>
-                                    <a href="~/Account/ViewProfile">
-                                        <i data-feather="user"></i><span>My Profile</span>
+                                    <a href="~/Admin/Profile">
+                                    <i data-feather="user"></i><span>My Profile</span>
                                     </a>
                                 </li>
                                 <li> <a href="edit-profile.html"> <i
@@ -301,11 +300,11 @@
                                         style="color: white; font-size: 14px; padding-right: 8px;"></i>
                                     <span>Analytics</span></a>
                                 <ul class="sidebar-submenu">
-                                    <li> <a href="">Ocop</a></li>
+                                    <li><a href="">Ocop</a></li>
                                     <li><a href="">Destination</a></li>
                                     <li><a href="">Local specialty</a></li>
                                     <li><a href="">Stay</a></li>
-                                    <li><a href="list-products.html">Utilities</a></li>
+                                    <li><a href="">Utilities</a></li>
                                 </ul>
                             </li>
                             <!-- > Setting -->
@@ -322,13 +321,13 @@
             <!-- Page Sidebar Ends-->
             <main role="main" class="pb-3"></main>
             @RenderBody()
-            </main>
+        
             <!-- footer start-->
             <footer class="footer">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Copyright 2025 © Khanh's Team </p>
+                            <p class="mb-0">Copyright 2025 © Khanh's Team From FPTU</p>
                         </div>
                     </div>
                 </div>
@@ -385,6 +384,8 @@
     <!-- Theme js-->
     <script src="~/assets/js/script.js"></script>
     <script src="~/assets/js/theme-customizer/customizer.js"></script>
+    <script src="~/assets/js/error-handler.js"></script>
+    <script src="~/assets/js/session-handler.js"></script>
 
 
     @await RenderSectionAsync("Scripts", required: false)

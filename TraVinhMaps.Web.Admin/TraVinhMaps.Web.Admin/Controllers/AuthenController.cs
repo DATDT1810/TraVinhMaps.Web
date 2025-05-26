@@ -44,20 +44,21 @@ namespace TraVinhMaps.Web.Admin.Controllers
         private readonly ILogger<AuthenController> _logger;
         private readonly IAuthService _authService;
         private readonly IDataProtector _dataProtector;
-        private const string SessionId = "SessionId";
-        private const string RefreshTokenKey = "RefreshToken";
+        private readonly ITokenService _tokenService;
         private readonly IConfiguration _configuration;
         private readonly IHttpClientFactory _httpClientFactory;
 
         public AuthenController(
             ILogger<AuthenController> logger,
             IAuthService authService,
+            ITokenService tokenService,
             IDataProtectionProvider dataProtectionProvider,
             IConfiguration configuration,
             IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
             _authService = authService;
+            _tokenService = tokenService;
             _dataProtector = dataProtectionProvider.CreateProtector("Auth.TokenProtection");
             _configuration = configuration;
             _httpClientFactory = httpClientFactory;
@@ -93,6 +94,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     // Store using TempData with encrypted values
                     TempData["Token"] = result.Data;
                     TempData["Username"] = model.Identifier;
+                    TempData["IsRememberMe"] = model.RememberMe;
 
                     // Redirect to OTP verification page
                     return RedirectToAction("OtpVerification");
@@ -131,6 +133,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             TempData.Keep("Token");
             TempData.Keep("Username");
             TempData.Keep("IsPasswordReset");
+            TempData.Keep("IsRememberMe");
 
             return View(new OtpVerificationViewModel
             {
@@ -184,13 +187,9 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     if (result != null)
                     {
                         // Encrypt session tokens before storing
-                        string encryptedSessionId = _dataProtector.Protect(result.SessionId);
-                        string encryptedRefreshToken = _dataProtector.Protect(result.RefreshToken);
+                        bool isRemember = TempData["IsRememberMe"] as bool? ?? false;
 
-                        // Store encrypted tokens in session
-                        HttpContext.Session.SetString(SessionId, encryptedSessionId);
-                        HttpContext.Session.SetString(RefreshTokenKey, encryptedRefreshToken);
-
+                        await _tokenService.StoreTokensAsync(result.SessionId, result.RefreshToken, isRemember);
                         // Create claims and login
                         var claims = new List<Claim>
                         {
@@ -236,23 +235,24 @@ namespace TraVinhMaps.Web.Admin.Controllers
             try
             {
                 // Get the encrypted sessionId from HttpContext.Session
-                string encryptedSessionId = HttpContext.Session.GetString(SessionId);
-                if (!string.IsNullOrEmpty(encryptedSessionId))
+
+                string sessionId = _tokenService.GetSessionId();
+
+                // Call the auth service to logout
+                var result = await _authService.Logout(sessionId);
+
+                if (!result)
                 {
-                    // Decrypt the sessionId
-                    string sessionId = _dataProtector.Unprotect(encryptedSessionId);
-
-                    // Call the auth service to logout
-                    await _authService.Logout(sessionId);
-
-                    HttpContext.Session.Remove(SessionId);
-                    HttpContext.Session.Remove(RefreshTokenKey);
-
-                    // Sign out of auth cookie
-                    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-                    //return RedirectToAction("Index");
+                    ViewData["ErrorMessage"] = "Failed to logout. Please try again.";
+                    return RedirectToAction("Index");
                 }
+
+                await _tokenService.ClearTokensAsync();
+
+                // Sign out of auth cookie
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                TempData.Clear();
+
                 return RedirectToAction("Index");
                 // Clear session data
             }
@@ -407,6 +407,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
             var properties = new AuthenticationProperties
             {
                 RedirectUri = "/Authen/GoogleCallback",
+                // this is for google to show the login page with the email already selected
+                Items =
+                {
+                    { "prompt", "select_account" }
+                }
             };
 
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
