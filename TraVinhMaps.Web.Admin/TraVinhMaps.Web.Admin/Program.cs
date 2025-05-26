@@ -52,6 +52,17 @@ builder.Services.AddSession(options =>
     options.Cookie.SameSite = SameSiteMode.Lax; // Changed from Strict to Lax to allow cross-site redirects for OAuth
 });
 
+// Register IUserService
+builder.Services.AddScoped<IUserService, UserService>();
+// Register INotificationsService
+builder.Services.AddScoped<INotificationsService, NotificationsService>();
+// Register TouristDestination
+builder.Services.AddScoped<IDestinationService, DestinationService>();
+//Register Event And Festival
+builder.Services.AddScoped<IEventAndFestivalService, EventAndFestivalService>();
+// Register IAuthService
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 // Configure cookie authentication
 builder.Services.AddAuthentication(options =>
 {

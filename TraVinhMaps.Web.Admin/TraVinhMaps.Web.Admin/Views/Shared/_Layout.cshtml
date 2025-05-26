@@ -156,7 +156,8 @@
                                 <li>
                                     <form asp-controller="Authen" asp-action="Logout" method="post">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-pill btn-outline-primary btn-sm">Log Out</button>
+                                        <button type="submit" class="btn btn-pill btn-outline-primary btn-sm">Log
+                                            Out</button>
                                     </form>
                                 </li>
                             </ul>
@@ -221,18 +222,27 @@
                                     <i class="fa fa-user"
                                         style="color: white; font-size: 20px; padding-right: 10px;"></i>
                                     <span>Account Management</span></a></li>
-                            <!-- > Account Management -->
+                            <!-- > Admin Management -->
                             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
-                                    class="sidebar-link sidebar-title link-nav" asp-controller="Admin" asp-action="Index">
+                                    class="sidebar-link sidebar-title link-nav" asp-controller="Admin"
+                                    asp-action="Index">
                                     <i class="fa fa-user-secret"
                                         style="color: white; font-size: 20px; padding-right: 10px;"></i>
                                     <span>Admin Management</span></a></li>
-                            <!-- > Account Management -->
+                            <!-- > Destination Management -->
                             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
-                                    class="sidebar-link sidebar-title link-nav" asp-controller="TouristDestinationManagement" asp-action="Index">
+                                    class="sidebar-link sidebar-title link-nav"
+                                    asp-controller="TouristDestinationManagement" asp-action="Index">
                                     <i class="fa fa-globe"
-                                        style="color: white; font-size: 20px; padding-right: 10px;"></i>
+                                        style="color: white; font-size: 18px; padding-right: 8px;"></i>
                                     <span>Destination Management</span></a></li>
+                            <!-- > Event and festival Management -->
+                            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
+                                    class="sidebar-link sidebar-title link-nav"
+                                    asp-controller="EventAndFestivalManagement" asp-action="Index">
+                                    <i class="fa fa-calendar"
+                                        style="color: white; font-size: 16px; padding-right: 8px;"></i>
+                                    <span>Event And Festival</span></a></li>
                             <!-- > Tips Managment -->
                             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
                                     class="sidebar-link sidebar-title link-nav" asp-controller="CommunityTips"
