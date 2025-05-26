@@ -20,7 +20,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
         private readonly ITagService _tagService;
 
         // Constructor injection for community tips and tag services
-        public CommunityTipsController(ICommunityTipsService communityTipsService, ITagService tagService = null)
+        public CommunityTipsController(ICommunityTipsService communityTipsService, ITagService tagService)
         {
             _communityTipsService = communityTipsService;
             _tagService = tagService;

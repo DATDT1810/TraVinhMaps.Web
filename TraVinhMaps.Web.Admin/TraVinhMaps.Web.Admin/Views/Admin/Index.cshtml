@@ -1,10 +1,9 @@
-﻿@using TraVinhMaps.Web.Admin.Models.Users;
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@model IEnumerable<UserResponse>;
+@using TraVinhMaps.Web.Admin.Models.Admins
+@model IEnumerable<AdminResponse>
 @{
-    ViewData["Title"] = "Account List";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Admin List";
 }
+
 <div class="page-body">
     <div class="container-fluid">
         <div class="page-title">
@@ -39,28 +38,31 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
                             <div class="d-flex gap-2 mb-3">
+                                <a asp-controller="Admin" asp-action="Create" class="btn btn-success">
+                                    <i class="fa fa-plus me-1"></i>Add Admin
+                                </a>
+
                                 <button class="btn btn-primary" id="exportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
                             </div>
                             <div class="status-filter">
                                 <select id="statusFilter" class="form-select">
-                                    <option value="all">All</option>
-                                    <option value="inactive">Ban (Inactive)</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Delete (Inactive)</option>
                                 </select>
                             </div>
-
                         </div>
-                        <div class="list-users">
-                            <table class="display" id="project-status">
+                        <div class="table-responsive custom-scrollbar">
+                            <table class="display" id="basic-9">
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Full Name</th>
+                                        <th>Username</th>
                                         <th>Email</th>
                                         <th>Phone</th>
                                         <th>Status</th>
-                                        <th>Created At</th>
+                                        <th>Create At</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -70,16 +72,11 @@
                                     }
                                     @foreach (var item in Model)
                                     {
-                                        <tr>
+                                        <tr data-admin-id="@item.Id">
                                             <td>@count</td>
                                             <td>
-                                                <div class="product-names">
-                                                    <div class="light-product-box">
-                                                        <img class="img-fluid"
-                                                            src="@(item.UserProfile?.Avatar ?? "/assets/img/default-avatar.png")"
-                                                            alt="avatar">
-                                                    </div>
-                                                    <p>@(item.UserProfile?.FullName ?? "—")</p>
+                                                <div class="user-names">
+                                                    <p>@item.Username</p>
                                                 </div>
                                             </td>
                                             <td>@item.Email</td>
@@ -93,35 +90,38 @@
                                             <td>
                                                 @item.CreatedAt.ToLocalTime().ToString("MMM dd yyyy, hh:mm tt",
                                                 System.Globalization.CultureInfo.InvariantCulture)
-                                            </td>
-                                            <td>
+                                        </td>
+                                        <td>
                                             <ul class="action">
                                                 <li>
-                                                    <a class="edit" asp-controller="UserManagement" asp-action="Details"
+                                                    <a class="details" asp-controller="Admin" asp-action="Details"
                                                         asp-route-id="@item.Id" title="Details">
                                                         <i class="fa fa-eye"></i>
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    @if (!item.IsForbidden)
-                                                        {
-                                                            <a class="delete ban-user" href="javascript:void(0)"
-                                                                data-id="@item.Id" title="Ban">
-                                                                <i class="fa fa-ban"></i>
+                                                    <a class="edit" asp-controller="Admin" asp-action="Update"
+                                                        asp-route-id="@item.Id" title="Edit">
+                                                        <i class="fa fa-pencil"></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <ul class="action">
+                                                        <li>
+                                                            <a class="delete" href="javascript:void(0)"
+                                                                data-id="@item.Id" title="Delete">
+                                                                <i class="fa fa-trash"></i>
                                                             </a>
-                                                        }
-                                                        else
-                                                        {
-                                                            <a class="unban-user" href="javascript:void(0)"
-                                                                data-id="@item.Id" title="Unban">
-                                                                <i class="fa fa-unlock"></i>
+                                                            <a class="restore" href="javascript:void(0)"
+                                                                data-id="@item.Id" title="Restore">
+                                                                <i class="fa fa-undo"></i>
                                                             </a>
-                                                        }
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-                                        count++;
+                                                        </li>
+                                                    </ul>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                                                        count++;
                                     }
                                 </tbody>
                             </table>
@@ -132,16 +132,32 @@
         </div>
     </div>
 </div>
+@if (TempData["Success"] != null)
+{
+    <input type="hidden" id="update-success-message" value="@TempData["Success"]" />
+}
+@if (TempData["Error"] != null)
+{
+    <input type="hidden" id="update-error-message" value="@TempData["Error"]" />
+}
 @section Scripts {
     @Html.AntiForgeryToken()
     <script src="~/assets/js/sweetalert-custom.js"></script>
-    <script src="~/assets/js/usermanagement/index.js"></script>
+    <script src="~/assets/js/admins/update.js"></script>
     <script>
-        (function () {
-            const success = @Html.Raw(Json.Serialize(TempData["Success"]));
-            const error   = @Html.Raw(Json.Serialize(TempData["Error"]));
-            if (success) showSuccessAlert("Success!", success);
-            if (error)   showErrorAlert("Error!",   error);
-        })();
+        $(document).ready(function () {
+            @if (TempData["CreateAdminSuccess"] != null)
+                {
+                    <text>
+                        showSuccessAlert("Success!", "@TempData["CreateAdminSuccess"]");
+                    </text>
+            }
+                @if (TempData["CreateAdminError"] != null)
+                {
+                    <text>
+                        showErrorAlert("Error!", "@TempData["CreateAdminError"]");
+                    </text>
+            }
+                                    });
     </script>
 }
