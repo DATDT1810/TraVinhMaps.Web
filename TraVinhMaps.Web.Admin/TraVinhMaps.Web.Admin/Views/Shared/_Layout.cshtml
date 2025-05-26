@@ -103,7 +103,8 @@
                                 alt="hand-gif">
                         </div>
                     </div>
-                    <div class="welcome-content d-xl-block d-none"><span class="text-truncate col-12">Here's what's happening with
+                    <div class="welcome-content d-xl-block d-none"><span class="text-truncate col-12">Here's what's
+                            happening with
                             your store today. </span></div>
                 </div>
                 <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
@@ -148,7 +149,7 @@
                             <ul class="profile-dropdown onhover-show-div">
                                 <li>
                                     <a href="~/Account/ViewProfile">
-                                    <i data-feather="user"></i><span>My Profile</span>
+                                        <i data-feather="user"></i><span>My Profile</span>
                                     </a>
                                 </li>
                                 <li> <a href="edit-profile.html"> <i
@@ -156,7 +157,8 @@
                                 <li>
                                     <form asp-controller="Authen" asp-action="Logout" method="post">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-pill btn-outline-primary btn-sm">Log Out</button>
+                                        <button type="submit" class="btn btn-pill btn-outline-primary btn-sm">Log
+                                            Out</button>
                                     </form>
                                 </li>
                             </ul>
@@ -221,18 +223,27 @@
                                     <i class="fa fa-user"
                                         style="color: white; font-size: 20px; padding-right: 10px;"></i>
                                     <span>Account Management</span></a></li>
-                            <!-- > Account Management -->
+                            <!-- > Admin Management -->
                             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
-                                    class="sidebar-link sidebar-title link-nav" asp-controller="Admin" asp-action="Index">
+                                    class="sidebar-link sidebar-title link-nav" asp-controller="Admin"
+                                    asp-action="Index">
                                     <i class="fa fa-user-secret"
                                         style="color: white; font-size: 20px; padding-right: 10px;"></i>
                                     <span>Admin Management</span></a></li>
-                            <!-- > Account Management -->
+                            <!-- > Destination Management -->
                             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
-                                    class="sidebar-link sidebar-title link-nav" asp-controller="TouristDestinationManagement" asp-action="Index">
+                                    class="sidebar-link sidebar-title link-nav"
+                                    asp-controller="TouristDestinationManagement" asp-action="Index">
                                     <i class="fa fa-globe"
-                                        style="color: white; font-size: 20px; padding-right: 10px;"></i>
+                                        style="color: white; font-size: 18px; padding-right: 8px;"></i>
                                     <span>Destination Management</span></a></li>
+                            <!-- > Event and festival Management -->
+                            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
+                                    class="sidebar-link sidebar-title link-nav"
+                                    asp-controller="EventAndFestivalManagement" asp-action="Index">
+                                    <i class="fa fa-calendar"
+                                        style="color: white; font-size: 16px; padding-right: 8px;"></i>
+                                    <span>Event And Festival</span></a></li>
                             <!-- > Tips Managment -->
                             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
                                     class="sidebar-link sidebar-title link-nav" asp-controller="CommunityTips"

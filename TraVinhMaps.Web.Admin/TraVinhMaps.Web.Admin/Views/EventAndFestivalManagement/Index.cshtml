@@ -105,13 +105,13 @@
                                                 <li>
                                                     @if (@item.Status == false)
                                                         {
-                                                                    <a class="undelete-eventandfestival" href="javascript:void(0)"
-                                                                    data-id="@item.Id"><i class="fa fa-unlock"></i> Restore</a>
+                                                                    <a title="Restore" class="undelete-eventandfestival" href="javascript:void(0)"
+                                                                    data-id="@item.Id"><i class="fa fa-undo"></i></a>
                                                         }
                                                         else
                                                         {
-                                                            <a class="delete-eventandfestival" href="javascript:void(0)"
-                                                                    data-id="@item.Id"><i class="fa fa-ban"></i> Delete</a>
+                                                            <a title="Delete" class="delete-eventandfestival" href="javascript:void(0)"
+                                                                    data-id="@item.Id"><i class="fa fa-trash"></i></a>
                                                         }
                                                     </li>
                                                 </ul>

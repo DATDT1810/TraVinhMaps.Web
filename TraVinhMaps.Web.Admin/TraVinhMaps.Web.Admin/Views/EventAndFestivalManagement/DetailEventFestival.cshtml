@@ -24,7 +24,6 @@
         z-index: 10;
         padding: 0;
     }
-
     .Delete-button-history-image {
         position: absolute;
         top: 4px;
@@ -83,10 +82,6 @@
         cursor: pointer;
     }
 
-    @* .upload-placeholder:hover {
-        background-color: #e0e0e0;
-    } *@
-
     div.gallery {
         margin: 5px;
         @* border: 1px solid #ccc; *@
@@ -128,12 +123,8 @@
                 </div>
                 <div class="col-6">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index-2.html">
-                                <svg class="stroke-icon">
-                                    <use
-                                        href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#stroke-home">
-                                    </use>
-                                </svg></a></li>
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
+                                    style="font-size: 20px;"></i></a></li>
                         <li class="breadcrumb-item"><a asp-action="Index">Event And Festival management</a></li>
                         <li class="breadcrumb-item active">Event And Festival Detail</li>
                     </ol>

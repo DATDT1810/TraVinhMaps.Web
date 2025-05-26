@@ -70,7 +70,7 @@
 
         showConfirmAlert(
             "Confirmation",
-            "Are you sure you want to delete this eventandfestival?",
+            "Are you sure you want to delete this event and festival?",
             "Delete",
             "Cancel"
         ).then((confirmed) => {
@@ -94,9 +94,8 @@
                             // Update action dropdown from Ban -> Unban
                             const actionCell = row.find("td:last-child ul.action");
                             actionCell.find(".delete-eventandfestival").replaceWith(
-                                `<a class="undelete-eventandfestival" href="javascript:void(0)" data-id="${eventAndFestivalId}">
-                      <i class="fa fa-unlock"></i> Restore
-                  </a>`
+                                `<a title="Restore" class="undelete-eventandfestival" href="javascript:void(0)"
+                                                                    data-id="@item.Id"><i class="fa fa-undo"></i></a>`
                             );
                             table.row(row).invalidate().draw(false);
                             showSuccessAlert("Success", response.message);
@@ -124,7 +123,7 @@
 
         showConfirmAlert(
             "Confirmation",
-            "Are you sure you want to restore this destination?",
+            "Are you sure you want to restore this event and festival?",
             "restore",
             "Cancel"
         ).then((confirmed) => {
@@ -150,9 +149,8 @@
                             // Update action dropdown from Unban -> Ban
                             const actionCell = row.find("td:last-child ul.action");
                             actionCell.find(".undelete-eventandfestival").replaceWith(
-                                `<a class="delete-eventandfestival" href="javascript:void(0)" data-id="${eventAndFestivalId}">
-                      <i class="fa fa-ban"></i> Delete
-                  </a>`
+                                `<a title="Delete" class="delete-eventandfestival" href="javascript:void(0)"
+                                                                    data-id="@item.Id"><i class="fa fa-trash"></i></a>`
                             );
 
                             table.row(row).invalidate().draw(false);
