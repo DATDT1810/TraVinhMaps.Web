@@ -1,0 +1,93 @@
+@using TraVinhMaps.Web.Admin.Models.Admins
+@model UpdateAdminRequest
+
+@{
+    ViewData["Title"] = "Update";
+}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>@ViewData["Title"]</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home" style="font-size: 20px;"></i>
+                            </a>
+                        </li>
+                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
+                        {
+                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
+                            {
+                                <li class="breadcrumb-item">@item</li>
+                            }
+                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
+                        }
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form theme-form">
+                            <form id="updateAdminForm" action="/Admin/Update" method="post">
+                                @Html.AntiForgeryToken()
+                                <div class="row">
+                                    <input asp-for="Id" type="text" hidden>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label asp-for="Password" class="form-label">Password</label>
+                                                <input asp-for="Password" class="form-control" type="text">
+                                                <span asp-validation-for="Password" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label asp-for="PhoneNumber" class="form-label">PhoneNumber</label>
+                                            <input asp-for="PhoneNumber" class="form-control" type="text">
+                                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label asp-for="Username" class="form-label">Username</label>
+                                            <input asp-for="Username" class="form-control" type="text">
+                                            <span asp-validation-for="Username" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="text-end">
+                                            <button type="submit" class="btn btn-success me-3">Update</button>
+                                            <a asp-controller="Admin" asp-action="Index"
+                                                class="btn btn-danger">Cancel</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+}
