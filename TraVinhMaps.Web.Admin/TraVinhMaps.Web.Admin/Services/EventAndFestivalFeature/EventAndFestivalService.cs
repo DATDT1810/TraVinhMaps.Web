@@ -89,6 +89,8 @@ namespace TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature
 
             var response = await _httpClient.PostAsync(eventAndFestivalApi + "CreateEventAndFestival", formData);
             var content = await response.Content.ReadAsStringAsync();
+            System.Console.WriteLine("_______________________________________________________");
+            System.Console.WriteLine(content);
             if (response.StatusCode == System.Net.HttpStatusCode.Created)
             {
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -112,7 +114,7 @@ namespace TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature
         {
             string data = JsonSerializer.Serialize(deleteEventAndFestivalImage);
             var content = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
-            var response = await this._httpClient.PostAsync(eventAndFestivalApi + "DeleteDestinationImage", content);
+            var response = await this._httpClient.PostAsync(eventAndFestivalApi + "DeleteEventAndFestivalImage", content);
             var contentResponse = await response.Content.ReadAsStringAsync();
             if (response.IsSuccessStatusCode)
             {
@@ -169,6 +171,8 @@ namespace TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature
             var content = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
             HttpResponseMessage response = await _httpClient.PutAsync(eventAndFestivalApi + "UpdateEventAndFestival", content);
             var contentResponse = await response.Content.ReadAsStringAsync();
+            System.Console.WriteLine("__________________________");
+            System.Console.WriteLine(contentResponse);
             if (response.StatusCode == System.Net.HttpStatusCode.Created)
             {
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };

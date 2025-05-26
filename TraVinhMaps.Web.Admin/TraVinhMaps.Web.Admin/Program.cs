@@ -38,7 +38,7 @@ builder.Services.AddScoped<IEventAndFestivalService, EventAndFestivalService>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-// Configure cookie authentication
+Configure cookie authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;

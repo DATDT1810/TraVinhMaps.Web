@@ -37,7 +37,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
                             <div>
-                                <a asp-controller="EventAndFestivalManagement" asp-action="CreateEventAndFestival" class="btn btn-success">
+                                <a asp-controller="EventAndFestivalManagement" asp-action="CreateEventFestival" class="btn btn-success">
                                     <i class="fa fa-plus me-1"></i>Create Event And Festival
                                 </a>
                                 <button class="btn btn-primary" id="exportBtn">
@@ -97,7 +97,7 @@
                                         <td>
                                             <ul class="action">
                                                 <li>
-                                                    <a class="edit" asp-controller="TouristDestinationManagement" asp-action="DetailDestination"
+                                                    <a class="edit" asp-controller="EventAndFestivalManagement" asp-action="DetailEventFestival"
                                                         asp-route-id="@item.Id" title="Details">
                                                         <i class="fa fa-eye"></i>
                                                     </a>
@@ -105,12 +105,12 @@
                                                 <li>
                                                     @if (@item.Status == false)
                                                         {
-                                                            <a class="undelete-destination" href="javascript:void(0)"
+                                                                    <a class="undelete-eventandfestival" href="javascript:void(0)"
                                                                     data-id="@item.Id"><i class="fa fa-unlock"></i> Restore</a>
                                                         }
                                                         else
                                                         {
-                                                            <a class="delete-destination" href="javascript:void(0)"
+                                                            <a class="delete-eventandfestival" href="javascript:void(0)"
                                                                     data-id="@item.Id"><i class="fa fa-ban"></i> Delete</a>
                                                         }
                                                     </li>
@@ -133,7 +133,7 @@
 @section Scripts {
     @Html.AntiForgeryToken()
     <script src="~/assets/js/sweetalert-custom.js"></script>
-    <script src="~/assets/js/touristdestinationmanagement/index.js"></script>
+    <script src="~/assets/js/EventAndFestival/index.js"></script>
     <script>
         (function () {
             const success = @Html.Raw(Json.Serialize(TempData["Success"]));
@@ -141,5 +141,23 @@
             if (success) showSuccessAlert("Success!", success);
             if (error)   showErrorAlert("Error!",   error);
         })();
+          @if (TempData["EditEventAndFestivalSuccess"] != null)
+            {
+                <text>
+                    showSuccessAlert("Success!", "@TempData["EditEventAndFestivalSuccess"]");
+                </text>
+            }
+            @if (TempData["successMessage"] != null)
+            {
+                <text>
+                    showSuccessAlert("Success!", "@TempData["successMessage"]");
+                </text>
+            }
+            @if (TempData["errorMessage"] != null)
+            {
+                <text>
+                    showErrorAlert("Success!", "@TempData["errorMessage"]");
+                </text>
+            }
     </script>
 }
