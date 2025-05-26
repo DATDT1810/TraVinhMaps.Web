@@ -1,4 +1,5 @@
-
+using TraVinhMaps.Web.Admin.Services.CommunityTips;
+using TraVinhMaps.Web.Admin.Services.Tags;
 using TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -6,11 +7,30 @@ using TraVinhMaps.Web.Admin.Services.Auth;
 using TraVinhMaps.Web.Admin.Services.Notifications;
 using TraVinhMaps.Web.Admin.Services.TouristDestination;
 using TraVinhMaps.Web.Admin.Services.Users;
+using TraVinhMaps.Web.Admin.Services.Admins;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Register IUserService
+builder.Services.AddScoped<IUserService, UserService>();
+// Register IAdminService
+builder.Services.AddScoped<IAdminService, AdminService>();
+// Register INotificationsService
+builder.Services.AddScoped<INotificationsService, NotificationsService>();
+// Register ICommunityTipsService
+builder.Services.AddScoped<ICommunityTipsService, CommunityTipsService>();
+// Register ITagService
+builder.Services.AddScoped<ITagService, TagService>();
+
+// Register TouristDestination
+builder.Services.AddScoped<IDestinationService, DestinationService>();
+// Register Event And Festival
+builder.Services.AddScoped<IEventAndFestivalService, EventAndFestivalService>();
+//  Register AuthService
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Load environment variables from .env file
 Env.Load();
@@ -30,15 +50,16 @@ builder.Services.AddSession(options =>
 
 // Register IUserService
 builder.Services.AddScoped<IUserService, UserService>();
+// Register INotificationsService
 builder.Services.AddScoped<INotificationsService, NotificationsService>();
 // Register TouristDestination
 builder.Services.AddScoped<IDestinationService, DestinationService>();
 //Register Event And Festival
 builder.Services.AddScoped<IEventAndFestivalService, EventAndFestivalService>();
-
+// Register IAuthService
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-Configure cookie authentication
+// Configure cookie authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
