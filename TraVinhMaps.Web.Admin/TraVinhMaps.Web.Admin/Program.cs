@@ -10,8 +10,6 @@ using TraVinhMaps.Web.Admin.Services.Notifications;
 using TraVinhMaps.Web.Admin.Services.Tags;
 using TraVinhMaps.Web.Admin.Services.TouristDestination;
 using TraVinhMaps.Web.Admin.Services.Users;
-using TraVinhMaps.Web.Admin.Services.Admins;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
