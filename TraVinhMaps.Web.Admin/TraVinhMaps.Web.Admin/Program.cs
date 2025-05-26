@@ -7,6 +7,7 @@ using TraVinhMaps.Web.Admin.Services.Auth;
 using TraVinhMaps.Web.Admin.Services.Notifications;
 using TraVinhMaps.Web.Admin.Services.TouristDestination;
 using TraVinhMaps.Web.Admin.Services.Users;
+using TraVinhMaps.Web.Admin.Services.Admins;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ builder.Services.AddControllersWithViews();
 
 // Register IUserService
 builder.Services.AddScoped<IUserService, UserService>();
+// Register IAdminService
+builder.Services.AddScoped<IAdminService, AdminService>();
 // Register INotificationsService
 builder.Services.AddScoped<INotificationsService, NotificationsService>();
 // Register ICommunityTipsService
