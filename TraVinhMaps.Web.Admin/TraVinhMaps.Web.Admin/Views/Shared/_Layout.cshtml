@@ -103,7 +103,8 @@
                                 alt="hand-gif">
                         </div>
                     </div>
-                    <div class="welcome-content d-xl-block d-none"><span class="text-truncate col-12">Here's what's happening with
+                    <div class="welcome-content d-xl-block d-none"><span class="text-truncate col-12">Here's what's
+                            happening with
                             your App today. </span></div>
                 </div>
                 <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
@@ -148,7 +149,7 @@
                             <ul class="profile-dropdown onhover-show-div">
                                 <li>
                                     <a href="~/Admin/Profile">
-                                    <i data-feather="user"></i><span>My Profile</span>
+                                        <i data-feather="user"></i><span>My Profile</span>
                                     </a>
                                 </li>
                                 <li> <a href="edit-profile.html"> <i
@@ -222,13 +223,13 @@
                                     <i class="fa fa-user"
                                         style="color: white; font-size: 20px; padding-right: 10px;"></i>
                                     <span>Account Management</span></a></li>
-                            <!-- > Admin Management -->
-                            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
-                                    class="sidebar-link sidebar-title link-nav" asp-controller="Admin"
-                                    asp-action="Index">
-                                    <i class="fa fa-user-secret"
-                                        style="color: white; font-size: 20px; padding-right: 10px;"></i>
-                                    <span>Admin Management</span></a></li>
+                                <!-- > Admin Management -->
+                                <li class="sidebar-list" id="adminManagementMenu"><i class="fa fa-thumb-tack"></i><a
+                                        class="sidebar-link sidebar-title link-nav" asp-controller="Admin"
+                                        asp-action="Index">
+                                        <i class="fa fa-user-secret"
+                                            style="color: white; font-size: 20px; padding-right: 7px;"></i>
+                                        <span>Admin Management</span></a></li>
                             <!-- > Destination Management -->
                             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
                                     class="sidebar-link sidebar-title link-nav"
@@ -257,13 +258,6 @@
                                     <i class="fa fa-bell"
                                         style="color: white; font-size: 16px; padding-right: 8px;"></i>
                                     <span>Send Notifications</span></a></li>
-                            <!-- > Activitis Managment -->
-                            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
-                                    class="sidebar-link sidebar-title link-nav" href="">
-                                    <i class="fa fa-calendar"
-                                        style="color: white; font-size: 16px; padding-right: 10px;"></i>
-                                    <span>Activities Managment</span></a>
-                            </li>
                             <!-- > Maker Managment -->
                             <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
                                     class="sidebar-link sidebar-title link-nav" href="">
@@ -321,7 +315,7 @@
             <!-- Page Sidebar Ends-->
             <main role="main" class="pb-3"></main>
             @RenderBody()
-        
+
             <!-- footer start-->
             <footer class="footer">
                 <div class="container-fluid">

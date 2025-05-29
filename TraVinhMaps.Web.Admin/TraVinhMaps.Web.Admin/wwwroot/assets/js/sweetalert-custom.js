@@ -4,12 +4,12 @@
 
 // Success alert
 function showSuccessAlert(title = "Success!", text = "The action has been successfully completed.", confirmButtonText = "OK") {
-    Swal.fire({
+    return Swal.fire({
         title: title,
         text: text,
         icon: "success",
         confirmButtonText: confirmButtonText,
-        confirmButtonColor: "#28a745" // Green colors
+        confirmButtonColor: "#28a745"
     });
 }
 
@@ -64,13 +64,14 @@ function showInfoAlert(title = "Information", text = "This is an informational m
     });
 }
 
-// Timed alert (auto-closes)
-function showTimedAlert(title = "Notification", text = "This notification will auto-close after 2 seconds.", icon = "info", timer = 2000) {
+// Timed alert (auto-closes after 3 seconds, no buttons)
+function showTimedAlert(title = "Notification", text = "This notification will auto-close after 3 seconds.", icon = "info", timer = 3000) {
     Swal.fire({
         title: title,
         text: text,
         icon: icon,
         timer: timer,
-        showConfirmButton: false
+        showConfirmButton: false,
+        timerProgressBar: true // Optional: shows progress bar
     });
 }

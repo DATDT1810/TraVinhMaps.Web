@@ -55,8 +55,8 @@
                             </div>
                         </div>
                         <div class="list-users">
-                            <table class="table" id="project-status">
-                                <thead>
+                            <table class="display" id="project-status">
+                                <thead class="bg-primary">
                                     <tr>
                                         <th>No. &nbsp</th>
                                         <th>Name Of Event And Festival</th>
@@ -97,7 +97,7 @@
                                         <td>
                                             <ul class="action">
                                                 <li>
-                                                    <a class="edit" asp-controller="EventAndFestivalManagement" asp-action="DetailEventFestival"
+                                                    <a class="details" asp-controller="EventAndFestivalManagement" asp-action="DetailEventFestival"
                                                         asp-route-id="@item.Id" title="Details">
                                                         <i class="fa fa-eye"></i>
                                                     </a>
