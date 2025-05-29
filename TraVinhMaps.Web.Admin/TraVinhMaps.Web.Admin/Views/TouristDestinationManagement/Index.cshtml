@@ -56,8 +56,8 @@
                             </div>
                         </div>
                         <div class="list-users">
-                            <table class="table" id="project-status">
-                                <thead>
+                            <table class="display" id="project-status">
+                                <thead class="bg-primary">
                                     <tr>
                                         <th>No.</th>
                                         <th>Name Of Destination</th>
@@ -90,13 +90,12 @@
                                                     class="badge @(item.status ? "badge-light-primary" : "badge-light-danger")">@(item.status
                                                                                                     ? "Active" : "Inactive")</span></td>
                                         <td>
-                                            @item.CreatedAt.ToString("MMM dd yyyy, hh:mm tt",
-                                                                                        System.Globalization.CultureInfo.InvariantCulture)
+                                            @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                         </td>
                                         <td>
                                             <ul class="action">
                                                 <li>
-                                                    <a class="edit" asp-controller="TouristDestinationManagement" asp-action="DetailDestination"
+                                                    <a class="details" asp-controller="TouristDestinationManagement" asp-action="DetailDestination"
                                                         asp-route-id="@item.Id" title="Details">
                                                         <i class="fa fa-eye"></i>
                                                     </a>
@@ -104,13 +103,13 @@
                                                 <li>
                                                     @if (@item.status == false)
                                                         {
-                                                            <a class="undelete-destination" href="javascript:void(0)"
-                                                                    data-id="@item.Id"><i class="fa fa-unlock"></i> Restore</a>
+                                                            <a class="restore undelete-destination" href="javascript:void(0)"
+                                                                    data-id="@item.Id" title="Restore"><i class="fa fa-undo"></i></a>
                                                         }
                                                         else
                                                         {
-                                                            <a class="delete-destination" href="javascript:void(0)"
-                                                                    data-id="@item.Id"><i class="fa fa-ban"></i> Delete</a>
+                                                            <a class="delete-destination delete" href="javascript:void(0)"
+                                                                    data-id="@item.Id" title="Delete"><i class="fa fa-trash"></i></a>
                                                         }
                                                     </li>
                                                 </ul>

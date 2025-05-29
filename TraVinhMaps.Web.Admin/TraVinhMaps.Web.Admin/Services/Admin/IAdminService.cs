@@ -14,7 +14,7 @@ namespace TraVinhMaps.Web.Admin.Services.Admin
         Task<IEnumerable<AdminResponse>> ListAllAsync(CancellationToken cancellationToken = default);
         Task<IEnumerable<AdminResponse>> ListAsync(Expression<Func<AdminResponse, bool>> predicate, CancellationToken cancellationToken = default);
         Task<AdminRequest> AddAsync(AdminRequest entity, CancellationToken cancellationToken = default);
-        Task<UpdateAdminRequest> UpdateAsync(UpdateAdminRequest entity, CancellationToken cancellationToken = default);
+        // Task<UpdateAdminRequest> UpdateAsync(UpdateAdminRequest entity, CancellationToken cancellationToken = default);
         Task<bool> DeleteAdmin(string id, CancellationToken cancellationToken = default);
         Task<bool> RestoreAdmin(string id, CancellationToken cancellationToken = default);
     }

@@ -126,6 +126,9 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [HttpGet("Edit")]
         public async Task<IActionResult> Edit(string id)
         {
+            ViewData["Title"] = "Edit Tips";
+            ViewData["Breadcrumb"] = new List<string> { "Tips Management", "Edit" };
+
             try
             {
                 var tips = await _communityTipsService.GetByIdAsync(id);

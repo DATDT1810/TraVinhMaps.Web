@@ -53,7 +53,7 @@
                         </div>
                         <div class="list-users">
                             <table class="display" id="project-status">
-                                <thead>
+                                <thead class="bg-primary">
                                     <tr>
                                         <th>#</th>
                                         <th>Full Name</th>
@@ -91,13 +91,12 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                @item.CreatedAt.ToLocalTime().ToString("MMM dd yyyy, hh:mm tt",
-                                                System.Globalization.CultureInfo.InvariantCulture)
+                                                @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                             </td>
                                             <td>
                                             <ul class="action">
                                                 <li>
-                                                    <a class="edit" asp-controller="UserManagement" asp-action="Details"
+                                                    <a class="details" asp-controller="UserManagement" asp-action="Details"
                                                         asp-route-id="@item.Id" title="Details">
                                                         <i class="fa fa-eye"></i>
                                                     </a>
@@ -112,7 +111,7 @@
                                                         }
                                                         else
                                                         {
-                                                            <a class="unban-user" href="javascript:void(0)"
+                                                            <a class="restore unban-user" href="javascript:void(0)"
                                                                 data-id="@item.Id" title="Unban">
                                                                 <i class="fa fa-unlock"></i>
                                                             </a>

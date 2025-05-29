@@ -1,46 +1,45 @@
 $(document).ready(function () {
+    // Bộ lọc trạng thái
     $("#statusFilter").on("change", function () {
-        const filter = $(this).val();
-        let hasVisibleRows = false; // Theo dõi có hàng hiển thị hay không
+    const filter = $(this).val();
+    let hasVisibleRows = false;
+    $("table tbody tr:not(#no-items-row)").each(function () {
+        const row = $(this);
+        const tagId = String(row.data("tag-id") || "");
+        const isActive = row.find('[id="delete-tips"]').length > 0;
 
-        $("table tbody tr:not(#no-items-row)").each(function () {
-            const row = $(this);
-            const tagId = row.data("tag-id") || "";
-            const isActive = row.find('[id="delete-tips"]').length > 0;
-
-            if (filter === "all") {
-                if (isActive) {
-                    row.show();
-                    hasVisibleRows = true;
-                } else {
-                    row.hide();
-                }
-            } else if (filter === "inactive") {
-                if (!isActive) {
-                    row.show();
-                    hasVisibleRows = true;
-                } else {
-                    row.hide();
-                }
+        if (filter === "all") {
+            if (isActive) {
+                row.show();
+                hasVisibleRows = true;
             } else {
-                if (tagId && tagId === filter && isActive) {
-                    row.show();
-                    hasVisibleRows = true;
-                } else {
-                    row.hide();
-                }
+                row.hide();
             }
-        });
-
-        // Hiển thị/ẩn thông báo "No items found"
-        if (hasVisibleRows) {
-            $("#no-items-row").hide();
+        } else if (filter === "inactive") {
+            if (!isActive) {
+                row.show();
+                hasVisibleRows = true;
+            } else {
+                row.hide();
+            }
         } else {
-            $("#no-items-row").show();
+            const tagIds = tagId.split(",");
+            if (tagIds.includes(filter) && isActive) {
+                row.show();
+                hasVisibleRows = true;
+            } else {
+                row.hide();
+            }
         }
     });
+    if (hasVisibleRows) {
+        $("#no-items-row").hide();
+    } else {
+        $("#no-items-row").show();
+    }
+});
 
-    // DELETE
+    // Xóa tips
     $(document).on("click", "#delete-tips", function (e) {
         e.preventDefault();
         var id = $(this).data("id");
@@ -63,31 +62,33 @@ $(document).ready(function () {
                     },
                     success: function (response) {
                         if (response.success) {
-                            showSuccessAlert("Success!", response.message);
-                            $row.fadeOut(400, function () {
-                                $(this).remove();
-                                // Kích hoạt lại bộ lọc sau khi xóa
-                                $("#statusFilter").trigger("change");
-                            });
+                            showTimedAlert("Success!", response.message, "success", 3000);
+                            // Đổi nút delete sang restore
+                            var $actionCell = $row.find('td:last');
+                            $actionCell.find('.delete').parent().html(`
+                                <a id="restore-tips" class="restore" href="javascript:void(0)"
+                                    data-id="`+id+`" title="Restore">
+                                    <i class="fa fa-undo"></i>
+                                </a>
+                            `);
+                            $("#statusFilter").trigger("change");
                         } else {
-                            showErrorAlert("Error", response.message);
+                            showTimedAlert("Error!", response.message, "error", 3000);
                         }
                     },
                     error: function () {
-                        showErrorAlert(
-                            "Error",
-                            "An error occurred while deleting the tip."
-                        );
+                        showTimedAlert("Error!", "An error occurred while deleting the tip.", "error", 3000);
                     },
                 });
             }
         });
     });
 
-    // RESTORE
+    // Khôi phục tips
     $(document).on("click", "#restore-tips", function (e) {
         e.preventDefault();
         var id = $(this).data("id");
+        var $row = $(this).closest("tr");
         var token = $('input[name="__RequestVerificationToken"]').val();
 
         showConfirmAlert(
@@ -106,22 +107,28 @@ $(document).ready(function () {
                     },
                     success: function (response) {
                         if (response.success) {
-                            showSuccessAlert("Success!", response.message);
-                            location.reload(); // Tải lại trang để cập nhật trạng thái
+                            showTimedAlert("Success!", response.message, "success", 3000);
+                            // Đổi nút restore sang delete
+                            var $actionCell = $row.find('td:last');
+                            $actionCell.find('.restore').parent().html(`
+                                <a id="delete-tips" class="delete" href="javascript:void(0)"
+                                    data-id="`+id+`" title="Delete">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </a>
+                            `);
+                            $("#statusFilter").trigger("change");
                         } else {
-                            showErrorAlert("Error", response.message);
+                            showTimedAlert("Error!", response.message, "error", 3000);
                         }
                     },
                     error: function () {
-                        showErrorAlert(
-                            "Error",
-                            "An error occurred while restoring the tip."
-                        );
+                        showTimedAlert("Error!", "An error occurred while restoring the tip.", "error", 3000);
                     },
                 });
             }
         });
     });
 
+    // Gọi filter khi load trang
     $("#statusFilter").trigger("change");
 });

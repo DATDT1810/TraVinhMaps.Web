@@ -94,8 +94,8 @@ $(document).ready(function () {
                 // Update action dropdown from Ban -> Unban
                 const actionCell = row.find("td:last-child ul.action");
                 actionCell.find(".delete-destination").replaceWith(
-                  `<a class="undelete-destination" href="javascript:void(0)" data-id="${destinationId}">
-                      <i class="fa fa-unlock"></i> Restore
+                  `<a class="restore undelete-destination" href="javascript:void(0)" data-id="${destinationId}" title="Restore">
+                      <i class="fa fa-undo"></i>
                   </a>`
                 );
                 table.row(row).invalidate().draw(false);
@@ -150,8 +150,8 @@ $(document).ready(function () {
                 // Update action dropdown from Unban -> Ban
                 const actionCell = row.find("td:last-child ul.action");
                 actionCell.find(".undelete-destination").replaceWith(
-                  `<a class="delete-destination" href="javascript:void(0)" data-id="${destinationId}">
-                      <i class="fa fa-ban"></i> Delete
+                  `<a class="delete delete-destination" href="javascript:void(0)" data-id="${destinationId}" title="Delete">
+                      <i class="fa fa-trash"></i>
                   </a>`
                 );
 

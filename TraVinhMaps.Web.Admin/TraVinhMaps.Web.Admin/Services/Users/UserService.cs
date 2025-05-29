@@ -1,6 +1,5 @@
 using System.Text.Json;
 using TraVinhMaps.Web.Admin.Models.Users;
-using TraVinhMaps.Web.Admin.Models.Users.Specs;
 
 namespace TraVinhMaps.Web.Admin.Services.Users
 {
@@ -129,10 +128,6 @@ namespace TraVinhMaps.Web.Admin.Services.Users
             throw new HttpRequestException("Unable to fetch user.");
         }
 
-        public Task<PaginationUserResponse.Pagination<UserResponse>> GetUsersAsync(UserSpecParams userSpecParams, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
         public async Task<bool> RestoreUser(string id, CancellationToken cancellationToken = default)
         {
             var contents = new StringContent("");
