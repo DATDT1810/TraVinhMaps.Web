@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Text.Json.Serialization;
 namespace TraVinhMaps.Web.Admin.Models.Users
 {
@@ -11,7 +7,7 @@ namespace TraVinhMaps.Web.Admin.Models.Users
         public string? Username { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
-        [JsonPropertyName("profile")] 
+        [JsonPropertyName("profile")]
         public Profile? UserProfile { get; set; }
         public List<Favorite>? Favorites { get; set; }
         public bool IsForbidden { get; set; }

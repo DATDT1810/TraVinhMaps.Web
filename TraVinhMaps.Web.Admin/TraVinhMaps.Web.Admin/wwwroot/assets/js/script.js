@@ -1,10 +1,5 @@
 /*! -----------------------------------------------------------------------------------
 
-    Template Name: Riho Admin
-    Template URI: https://admin.pixelstrap.net/riho/template/
-    Description: This is Admin theme
-    Author: Pixelstrap
-    Author URI: https://themeforest.net/user/pixelstrap
 
 -----------------------------------------------------------------------------------
 
@@ -73,23 +68,8 @@
       .attr("type", "password");
   });
 
-  /*=====================
-      02. Background Image js
-      ==========================*/
-  $(".bg-center").parent().addClass("b-center");
-  $(".bg-img-cover").parent().addClass("bg-size");
-  $(".bg-img-cover").each(function () {
-    var el = $(this),
-      src = el.attr("src"),
-      parent = el.parent();
-    parent.css({
-      "background-image": "url(" + src + ")",
-      "background-size": "cover",
-      "background-position": "center",
-      display: "block",
-    });
-    el.hide();
-  });
+
+  
 
   $(".mega-menu-container").css("display", "none");
   $(".header-search").click(function () {
@@ -368,7 +348,7 @@
     $(".flip-card-inner").addClass("flipped");
   });
 
-  $("#flip-back").click(function () {
+  /*$("#flip-back").click(function () {
     $(".flip-card-inner").removeClass("flipped");
   });
   // ================== show and hide input start
@@ -381,7 +361,7 @@
     }else{
       document.getElementById("searchInput").classList.remove("show")
     }
-  })
+  })*/
   // ================ show and hide input css end 
 
 })(jQuery);

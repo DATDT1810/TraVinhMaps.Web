@@ -1,0 +1,109 @@
+@using TraVinhMaps.Web.Admin.Helper
+@using TraVinhMaps.Web.Admin.Models.Notifications;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<NotificationResponse>;
+@{
+    ViewData["Title"] = "Notification List";
+}
+
+
+<div>
+    <div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>@ViewData["Title"]</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
+                                    style="font-size: 20px;"></i></a></li>
+                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
+                        {
+                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
+                            {
+                                <li class="breadcrumb-item">@item</li>
+                            }
+                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
+                        }
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3">
+                            <button class="btn btn-primary">
+                                <i class="fa fa-file-excel-o me-1"></i>Export
+                            </button>
+                            <a asp-controller="Notifications" asp-action="SendNotification" class="btn btn-success">
+                                <i class="fa fa-plus me-1"></i>Send Notification
+                            </a>
+                        </div>
+                    <div class="table-responsive custom-scrollbar">
+                        <table class="display" id="basic-9">
+                            <thead class="bg-primary">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Title</th>
+                                    <th>Content</th>
+                                    <th>Create At</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int count = 1;
+                                }
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@count</td>
+                                        <td>@Html.Raw(item.Title)</td>
+                                        <td>@Html.TruncateWords(item.Content, 16)</td>
+                                        <td>@item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</td>
+                                    <td>
+                                        <ul class="action">
+                                            <li class="edit"> <a asp-controller="Notifications" asp-action="Details"
+                                                    asp-route-id="@item.Id" title="Details"><i class="fa fa-eye"
+                                                        aria-hidden="true"></i></a></li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                                                count++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- Container-fluid Ends-->
+
+@section Scripts {
+    @Html.AntiForgeryToken()
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const successMessage = @Html.Raw(Json.Serialize(TempData["NotificationSuccess"]));
+            const errorMessage = @Html.Raw(Json.Serialize(TempData["NotificationError"]));
+
+            if (successMessage) {
+               showTimedAlert("Success!", successMessage, "success", 3000);
+
+            } else if (errorMessage) {
+               showTimedAlert("Error!", successMessage, "error", 3000);
+
+            }
+        });
+    </script>
+}

@@ -1,0 +1,56 @@
+@using TraVinhMaps.Web.Admin.Models.Admins
+@model AdminRequest
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="page-body">
+    <!-- Previous HTML remains the same -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form theme-form">
+                            <form id="createAdminForm" asp-controller="Admin" asp-action="Create" method="post">
+                                @Html.AntiForgeryToken()
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label asp-for="Email" class="form-label">Email</label>
+                                            <input asp-for="Email" class="form-control" type="email"
+                                                placeholder="Enter email *">
+                                            <span asp-validation-for="Email" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <input asp-for="RoleId" type="hidden" value="dummy" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="text-end">
+                                            <button type="submit" class="btn btn-success me-3">Add</button>
+                                            <a asp-controller="Admin" asp-action="Index"
+                                                class="btn btn-danger">Cancel</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script src="~/assets/js/admins/create.js"></script>
+}

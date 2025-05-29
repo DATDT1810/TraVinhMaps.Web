@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -38,6 +39,7 @@
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/date-picker.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/chartist.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/owlcarousel.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/dropzone.css">
     <!-- Plugins css Ends-->
     <!-- DataTables CSS -->
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/datatables.css">
@@ -47,12 +49,14 @@
     <!-- Bootstrap css-->
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/bootstrap.css">
 
+
     <!-- App css-->
     <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
     <link id="color" rel="stylesheet" href="~/assets/css/color-1.css" media="screen">
     <!-- Responsive css-->
     <link rel="stylesheet" type="text/css" href="~/assets/css/responsive.css">
 </head>
+
 
 <body>
     <!-- loader starts-->
@@ -100,17 +104,13 @@
                     <div>
                         <a class="toggle-sidebar" href="#"> <i class="iconly-Category icli"> </i></a>
                         <div class="d-flex align-items-center gap-2 ">
-                            <h4 class="f-w-600">Welcome Alex</h4><img class="mt-0" src="../assets/images/hand.gif"
-                                                                      alt="hand-gif">
+                            <h4 class="f-w-600">Welcome Admin</h4><img class="mt-0" src="../assets/images/hand.gif"
+                                alt="hand-gif">
                         </div>
                     </div>
-                    <div class="welcome-content d-xl-block d-none">
-                        <span class="text-truncate col-12">
-                            Here’s what’s
+                    <div class="welcome-content d-xl-block d-none"><span class="text-truncate col-12">Here's what's
                             happening with
-                            your store today.
-                        </span>
-                    </div>
+                            your App today. </span></div>
                 </div>
                 <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
                     <ul class="nav-menus">
@@ -119,7 +119,7 @@
                                 <div class="input-group">
                                     <span class="input-icon">
                                         <i class="fa fa-search"
-                                           style="position: absolute; margin-left: 18px; margin-top: 15px;"></i>
+                                            style="position: absolute; margin-left: 18px; margin-top: 15px;"></i>
                                         <input class="w-100" type="search" placeholder="Search">
                                     </span>
                                 </div>
@@ -140,7 +140,6 @@
                             <div class="mode"><i class="moon" data-feather="moon"> </i></div>
                         </li>
                         <li class="onhover-dropdown notification-down">
-
                             @await Component.InvokeAsync("Notification")
                         </li>
                         <li class="profile-nav onhover-dropdown">
@@ -156,28 +155,31 @@
                             </div>
                             <ul class="profile-dropdown onhover-show-div">
                                 <li>
-                                    <a href="user-profile.html"><i data-feather="user"></i><span>My Profile</span></a>
-                                </li>
-                                <li>
-                                    <a href="edit-profile.html">
-                                        <i data-feather="settings"></i><span>Settings</span>
+                                    <a href="~/Admin/Profile">
+                                        <i data-feather="user"></i><span>My Profile</span>
                                     </a>
                                 </li>
+                                <li> <a href="edit-profile.html"> <i
+                                            data-feather="settings"></i><span>Settings</span></a></li>
                                 <li>
-                                    <a class="btn btn-pill btn-outline-primary btn-sm" href="login.html">Log Out</a>
+                                    <form asp-controller="Authen" asp-action="Logout" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-pill btn-outline-primary btn-sm">Log
+                                            Out</button>
+                                    </form>
                                 </li>
                             </ul>
                         </li>
                     </ul>
                 </div>
                 <script class="result-template" type="text/x-handlebars-template">
-                    <div class="ProfileCard u-cf">
-                    <div class="ProfileCard-avatar"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-airplay m-0"><path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"></path><polygon points="12 15 17 21 7 21 12 15"></polygon></svg></div>
-                    <div class="ProfileCard-details">
-                    <div class="ProfileCard-realName">{{name}}</div>
-                    </div>
-                    </div>
-                </script>
+            <div class="ProfileCard u-cf">                        
+            <div class="ProfileCard-avatar"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-airplay m-0"><path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"></path><polygon points="12 15 17 21 7 21 12 15"></polygon></svg></div>
+            <div class="ProfileCard-details">
+            <div class="ProfileCard-realName">{{name}}</div>
+            </div>
+            </div>
+            </script>
                 <script class="empty-template"
                         type="text/x-handlebars-template"><div class="EmptyMessage">Your search turned up 0 results. This most likely means the backend is down, yikes!</div></script>
             </div>
@@ -187,12 +189,9 @@
         <div class="page-body-wrapper">
             <!-- Page Sidebar Start-->
             <div class="sidebar-wrapper" data-layout="stroke-svg">
-                <div class="logo-wrapper">
-                    <a asp-controller="Home" asp-action="Index">
-                        <img class="img-fluid"
-                             src="~/assets/images/logo/logo.png" alt="Logo"
-                             style="width: 100px; margin-left: 50px; margin-top: -20px;">
-                    </a>
+                <div class="logo-wrapper"><a asp-controller="Home" asp-action="Index"><img class="img-fluid"
+                            src="~/assets/images/logo/logo.png" alt="Logo"
+                            style="width: 100px; margin-left: 50px; margin-top: -20px;"></a>
                     <div class="back-btn"><i class="fa fa-angle-left"> </i></div>
                     <div class="toggle-sidebar">
                         <i class="status_toggle middle sidebar-toggle" data-feather="grid"> </i>
@@ -238,12 +237,23 @@
                             <li class="sidebar-list">
                                 <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" asp-controller="UserManagement"
                                                                    asp-action="Index">
-                                    <i class="fa fa-user"
-                                       style="color: white; font-size: 20px; padding-right: 10px;"></i>
-                                    <span>Account Management</span>
-                                </a>
-                            </li>
-                            <!-- > Ocop Product -->
+                                    <i class="fa fa-user" style="color: white; font-size: 20px; padding-right: 10px;"></i>
+                                    <span>Account Management</span></a></li>
+                                <!-- > Admin Management -->
+                                <li class="sidebar-list" id="adminManagementMenu"><i class="fa fa-thumb-tack"></i><a
+                                        class="sidebar-link sidebar-title link-nav" asp-controller="Admin"
+                                        asp-action="Index">
+                                        <i class="fa fa-user-secret"
+                                            style="color: white; font-size: 20px; padding-right: 7px;"></i>
+                                        <span>Admin Management</span></a></li>
+                            <!-- > Destination Management -->
+                            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
+                                    class="sidebar-link sidebar-title link-nav"
+                                    asp-controller="TouristDestinationManagement" asp-action="Index">
+                                    <i class="fa fa-globe"
+                                        style="color: white; font-size: 18px; padding-right: 8px;"></i>
+                                    <span>Destination Management</span></a></li>
+                          <!-- > Ocop Product -->
                             <li class="sidebar-list">
                                 <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" asp-controller="OcopProduct" asp-action="Index">
                                     <i class="fa fa-shopping-bag"
@@ -251,31 +261,29 @@
                                     <span>Ocop Product</span>
                                 </a>
                             </li>
+                            <!-- > Event and festival Management -->
+                            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
+                                    class="sidebar-link sidebar-title link-nav"
+                                    asp-controller="EventAndFestivalManagement" asp-action="Index">
+                                    <i class="fa fa-calendar"
+                                        style="color: white; font-size: 16px; padding-right: 8px;"></i>
+                                    <span>Event And Festival</span></a></li>
                             <!-- > Tips Managment -->
-                            <li class="sidebar-list">
-                                <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav">
+                            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
+                                    class="sidebar-link sidebar-title link-nav" asp-controller="CommunityTips"
+                                    asp-action="Index">
                                     <i class="fa fa-lightbulb-o"
                                        style="color: white; font-size: 20px; padding-right: 13px;"></i>
                                     <span>Tips Managment</span>
                                 </a>
                             </li>
                             <!-- > Send Notifications -->
-                            <li class="sidebar-list">
-                                <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" asp-controller="Notifications"
-                                                                   asp-action="Index">
+                           <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
+                                    class="sidebar-link sidebar-title link-nav" asp-controller="Notifications"
+                                    asp-action="Index">
                                     <i class="fa fa-bell"
-                                       style="color: white; font-size: 16px; padding-right: 8px;"></i>
-                                    <span>Send Notifications</span>
-                                </a>
-                            </li>
-                            <!-- > Activitis Managment -->
-                            <li class="sidebar-list">
-                                <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="">
-                                    <i class="fa fa-calendar"
-                                       style="color: white; font-size: 16px; padding-right: 10px;"></i>
-                                    <span>Activities Managment</span>
-                                </a>
-                            </li>
+                                        style="color: white; font-size: 16px; padding-right: 8px;"></i>
+                                    <span>Send Notifications</span></a></li>
                             <!-- > Maker Managment -->
                             <li class="sidebar-list">
                                 <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="">
@@ -307,6 +315,7 @@
                                 </ul>
                             </li>
 
+
                             <!-- > Analytics -->
                             <li class="sidebar-list">
                                 <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
@@ -315,11 +324,11 @@
                                     <span>Analytics</span>
                                 </a>
                                 <ul class="sidebar-submenu">
-                                    <li> <a href="">Ocop</a></li>
+                                    <li><a href="">Ocop</a></li>
                                     <li><a href="">Destination</a></li>
                                     <li><a href="">Local specialty</a></li>
                                     <li><a href="">Stay</a></li>
-                                    <li><a href="list-products.html">Utilities</a></li>
+                                    <li><a href="">Utilities</a></li>
                                 </ul>
                             </li>
                             <!-- > Setting -->
@@ -327,14 +336,6 @@
                                 <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="">
                                     <i class="fa fa-cog" style="color: white; font-size: 20px; padding-right: 8px;"></i>
                                     <span>Setting</span>
-                                </a>
-                            </li>
-                            <!-- > Logout -->
-                            <li class="sidebar-list">
-                                <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="">
-                                    <i class="fa fa-sign-out"
-                                       style="color: white; font-size: 20px; padding-right: 8px;"></i>
-                                    <span>Logout</span>
                                 </a>
                             </li>
                         </ul>
@@ -345,19 +346,20 @@
             <!-- Page Sidebar Ends-->
             <main role="main" class="pb-3"></main>
             @RenderBody()
-            </main>
+
             <!-- footer start-->
             <footer class="footer">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Copyright 2025 © Khanh's Team </p>
+                            <p class="mb-0">Copyright 2025 © Khanh's Team From FPTU</p>
                         </div>
                     </div>
                 </div>
             </footer>
         </div>
     </div>
+
 
     <!-- latest jquery-->
     <script src="~/assets/js/jquery.min.js"></script>
@@ -384,12 +386,14 @@
     <script src="~/assets/js/slick/slick.min.js"></script>
     <script src="~/assets/js/slick/slick.js"></script>
     <script src="~/assets/js/header-slick.js"></script>
-
+  
     <!-- calendar js-->
     <script src="~/assets/js/datepicker/date-picker/datepicker.js"></script>
     <script src="~/assets/js/datepicker/date-picker/datepicker.en.js"></script>
     <script src="~/assets/js/datepicker/date-picker/datepicker.custom.js"></script>
     <script src="~/assets/js/typeahead/handlebars.js"></script>
+    <script src="~/assets/js/dropzone/dropzone.js"></script>
+    <script src="~/assets/js/dropzone/dropzone-script.js"></script>
     <script src="~/assets/js/typeahead/typeahead.bundle.js"></script>
     <script src="~/assets/js/typeahead/typeahead.custom.js"></script>
     <script src="~/assets/js/typeahead-search/handlebars.js"></script>
@@ -399,11 +403,14 @@
     <script src="~/assets/js/owlcarousel/owl.carousel.js"></script>
     <script src="~/assets/js/ecommerce.js"></script>
     <!-- Plugins JS Ends-->
+
+
     <!-- Theme js-->
     <script src="~/assets/js/script.js"></script>
     <script src="~/assets/js/theme-customizer/customizer.js"></script>
+    <script src="~/assets/js/error-handler.js"></script>
+    <script src="~/assets/js/session-handler.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>
-
 </html>

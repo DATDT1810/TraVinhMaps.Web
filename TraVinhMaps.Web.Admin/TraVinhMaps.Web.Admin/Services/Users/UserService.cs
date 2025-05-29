@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 using TraVinhMaps.Web.Admin.Models.Users;
-using TraVinhMaps.Web.Admin.Models.Users.Specs;
 
 namespace TraVinhMaps.Web.Admin.Services.Users
 {
@@ -133,10 +128,6 @@ namespace TraVinhMaps.Web.Admin.Services.Users
             throw new HttpRequestException("Unable to fetch user.");
         }
 
-        public Task<PaginationUserResponse.Pagination<UserResponse>> GetUsersAsync(UserSpecParams userSpecParams, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
         public async Task<bool> RestoreUser(string id, CancellationToken cancellationToken = default)
         {
             var contents = new StringContent("");
@@ -166,6 +157,25 @@ namespace TraVinhMaps.Web.Admin.Services.Users
                 return users.OrderByDescending(u => u.CreatedAt).Take(count).ToList();
             }
             throw new HttpRequestException("Unable to fetch recent users.");
+        }
+
+        public async Task<UserResponse> AddAdminAsync(UserRequest request, CancellationToken cancellationToken = default)
+        {
+            string data = JsonSerializer.Serialize(request);
+            var content = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _httpClient.PostAsync(userApi + "admin", content, cancellationToken);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                return JsonSerializer.Deserialize<UserResponse>(result, options) ?? throw new HttpRequestException("Unable to create admin.");
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException($"Unable to create admin. Status: {response.StatusCode}, Error: {errorContent}");
+            }
         }
     }
 }

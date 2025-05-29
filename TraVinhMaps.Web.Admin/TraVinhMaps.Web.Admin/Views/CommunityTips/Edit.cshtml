@@ -1,0 +1,78 @@
+@model TraVinhMaps.Web.Admin.Models.CommunityTips.CommunityTipsResponse
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>@ViewData["Title"]</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
+                                    style="font-size: 20px;"></i></a>
+                        </li>
+                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
+                        {
+                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
+                            {
+                                <li class="breadcrumb-item">@item</li>
+                            }
+                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
+                        }
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <form asp-action="Edit" method="post">
+                            <input type="hidden" asp-for="Id" />
+                            <div class="mb-3">
+                                <label asp-for="Title" class="form-label"></label>
+                                <input asp-for="Title" class="form-control" />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="Content" class="form-label"></label>
+                                <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+                                <span asp-validation-for="Content" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="TagId" class="form-label">Tag</label>
+                                <select asp-for="TagId" class="form-select" asp-items="ViewBag.Tags"></select>
+                                <span asp-validation-for="TagId" class="text-danger"></span>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col">
+                                    <div class="text-end">
+                                        <a class="btn btn-secondary me-4" asp-action="Index">Back</a>
+                                        <button type="submit" class="btn btn-success float-end">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

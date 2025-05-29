@@ -1,0 +1,381 @@
+@using TraVinhMaps.Web.Admin.Models.EventAndFestivalFeature;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
+@model CreateEventAndFestivalRequestViewModel
+@{
+    ViewData["Title"] = "CreateEventFestival";
+}
+
+<style>
+    .Delete-button-image {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        background-color: rgba(169, 169, 169, 0.6);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        padding: 0;
+    }
+
+    .add-image-box {
+        margin-top: 10px;
+        width: 100%;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #aaa;
+        position: relative;
+        cursor: pointer;
+        border-radius: 9px;
+        background-color: #f8f9fa;
+    }
+
+    .upload-placeholder {
+        font-size: 48px;
+        color: #aaa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    .upload-placeholder:hover {
+        background-color: #e0e0e0;
+    }
+</style>
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>
+                        Event And Festival Create</h4>
+                    @if (ViewBag.error != null)
+                    {
+                        <span class="text-danger">@ViewBag.error</span>
+                    }
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
+                                    style="font-size: 20px;"></i></a></li>
+                        <li class="breadcrumb-item"><a asp-action="Index">Management Event And Festival</a></li>
+                        <li class="breadcrumb-item active">Event And Festival Create Form</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form theme-form">
+                            <form asp-action="CreateEventFestival" method="post" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="mb-3">
+                                                <label>Event And Festival Title</label>
+                                                <input asp-for="NameEvent" class="form-control" type="text"
+                                                    placeholder="Event or festival title">
+                                                <span asp-validation-for="NameEvent" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label>Tag</label>
+                                                <select asp-for="TagId" class="form-select">
+                                                    <option selected value="682449f7d14510b9c087c29b">Introduce</option>
+                                                    <option value="682449f7d14510b9c087c29c">Ocop</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label>Address event and festival</label>
+                                            <input asp-for="Address" class="form-control" type="text"
+                                                placeholder="Address">
+                                            <span asp-validation-for="Address" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Name of Location</label>
+                                            <input asp-for="Name" class="form-control" type="text"
+                                                placeholder="Name of location">
+                                            <span asp-validation-for="Name" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Type Location</label>
+                                            <select asp-for="Type" class="form-select">
+                                                <option selected value="682449f7d14510b9c087c2a3">Buiding Destination
+                                                </option>
+                                                <option value="682449f7d14510b9c087c2a4">Natural Destination</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Type</label>
+                                            <select asp-for="Category" class="form-select">
+                                                <option selected value="Event">Event</option>
+                                                <option value="Festival">Festival</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Type Location</label>
+                                            <select asp-for="Type" class="form-select">
+                                                <option selected value="Point">Point</option>
+                                                <option value="Unknow">Unknow</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Longitude</label>
+                                            <input asp-for="longitude" class="form-control" type="number" step="any"
+                                                placeholder="Longitude of destination" data-language="en">
+                                            <span asp-validation-for="longitude" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Latitude</label>
+                                            <input asp-for="latitude" class="form-control" type="number" step="any"
+                                                placeholder="Latitude of destination" data-language="en">
+                                            <span asp-validation-for="latitude" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Marker</label>
+                                            <select asp-for="MarkerId" class="form-select">
+                                                <option selected value="682449f7d14510b9c087c2a3">Religious Buildings
+                                                </option>
+                                                <option value="682449f7d14510b9c087c2a4">Natural Destination</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Starting date</label>
+                                            <input asp-for="StartDate" class="datepicker-here form-control" type="text"
+                                                data-val="true" placeholder="MM/dd/yyyy"
+                                                data-val-datenotinpast="The date must not be in the past."
+                                                data-val-datenotinpast-format="MM/dd/yyyy" data-language="en"
+                                                data-date-format="mm/dd/yyyy" />
+
+                                            <span asp-validation-for="StartDate" class="text-danger"></span>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Ending date</label>
+                                            <input asp-for="EndDate" class="datepicker-here form-control" type="text"
+                                                data-val="true" placeholder="MM/dd/yyyy"
+                                                data-val-dategreaterthan="The ending date must be after the starting date."
+                                                data-val-dategreaterthan-other="StartDate"
+                                                data-val-dategreaterthan-format="mm/dd/yyyy" data-language="en"
+                                                data-date-format="mm/dd/yyyy" />
+
+                                            <span asp-validation-for="EndDate" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label>Description</label>
+                                            <textarea asp-for="Description" class="form-control"
+                                                placeholder="Description of Event and fesstival"
+                                                id="exampleFormControlTextarea4" rows="10"></textarea>
+                                            <span asp-validation-for="Description" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <label>Upload image event and festival file</label>
+                                        <div class="item add-image-box" id="addImageBox">
+                                            <div>
+                                                <div class="upload-placeholder">+</div>
+                                                <input asp-for="ImagesFile" hidden type="file" accept="image/*" multiple
+                                                    id="uploadImageInput" onchange="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="text-end">
+                                            <button type="submit" class="btn btn-success me-3">Create
+                                                Event And Festival</button>
+                                            <a asp-action="Index" class="btn btn-danger">Back</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+</div>
+
+@section Scripts {
+    @Html.AntiForgeryToken()
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+
+    <script src="jquery.js"></script>
+    <script src="jquery.validate.js"></script>
+    <script src="jquery.validate.unobtrusive.js"></script>
+    <script src="custom-date-validator.js"></script>
+
+    <script>
+        // Custom validator for datenotinpast
+        $.validator.addMethod("datenotinpast", function (value, element, param) {
+            if (!value) return false;
+
+            const parts = value.split('/');
+            if (parts.length !== 3) return false;
+
+            const month = parseInt(parts[0], 10) - 1;
+            const day = parseInt(parts[1], 10);
+            const year = parseInt(parts[2], 10);
+
+            const inputDate = new Date(year, month, day);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Remove time for comparison
+
+            return inputDate >= today;
+        }, "The date must not be in the past.");
+
+        // Adapter để lấy giá trị định dạng từ attribute
+        $.validator.unobtrusive.adapters.addSingleVal("datenotinpast", "format");
+
+
+        $.validator.addMethod("dategreaterthan", function (value, element, params) {
+            const startDateId = params.other;
+            const format = params.format || "mm/dd/yyyy";
+            const startValue = $(startDateId).val();
+
+            if (!value || !startValue) return false;
+
+            const parseDate = function (val) {
+                const parts = val.split('/');
+                if (parts.length !== 3) return null;
+                return new Date(parts[2], parts[0] - 1, parts[1]); // yyyy, mm, dd
+            };
+
+            const endDate = parseDate(value);
+            const startDate = parseDate(startValue);
+
+            if (!startDate || !endDate) return false;
+
+            return endDate > startDate;
+        }, "The ending date must be after the starting date.");
+
+        // Adapter to pass data-val attributes
+        $.validator.unobtrusive.adapters.add("dategreaterthan", ["other", "format"], function (options) {
+            options.rules["dategreaterthan"] = {
+                other: "#" + options.params.other,
+                format: options.params.format
+            };
+            options.messages["dategreaterthan"] = options.message;
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const addBox = document.getElementById("addImageBox");
+            const uploadInput = document.getElementById("uploadImageInput");
+
+            if (addBox && uploadInput) {
+                addBox.addEventListener("click", () => uploadInput.click());
+
+                // Tạo container hiển thị ảnh nếu chưa có
+                let previewContainer = document.createElement("div");
+                previewContainer.classList.add("row", "mt-3", "g-3");
+                addBox.parentElement.appendChild(previewContainer);
+
+                uploadInput.addEventListener("change", function () {
+                    previewContainer.innerHTML = "";
+                    const files = uploadInput.files;
+                    if (!files || files.length === 0) return;
+
+                    Array.from(files).forEach(file => {
+                        if (file.type.startsWith("image/")) {
+                            const reader = new FileReader();
+                            reader.onload = function (e) {
+                                const col = document.createElement("div");
+                                col.classList.add("col-sm-3");
+
+                                const itemDiv = document.createElement("div");
+                                itemDiv.classList.add("item", "position-relative");
+
+                                const img = document.createElement("img");
+                                img.src = e.target.result;
+                                img.classList.add("w-100", "rounded");
+
+                                itemDiv.appendChild(img);
+                                col.appendChild(itemDiv);
+                                previewContainer.appendChild(col);
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                });
+            }
+
+            @if (TempData["EditEventAndFestivalSuccess"] != null)
+                {
+                    <text>showSuccessAlert("Success!", "@TempData["EditEventAndFestivalSuccess"]");</text>
+            }
+                @if (TempData["successMessage"] != null)
+                {
+                    <text>showSuccessAlert("Success!", "@TempData["successMessage"]");</text>
+            }
+                @if (TempData["errorMessage"] != null)
+                {
+                    <text>showErrorAlert("Error!", "@TempData["errorMessage"]");</text>
+            }
+                                    });
+    </script>
+}

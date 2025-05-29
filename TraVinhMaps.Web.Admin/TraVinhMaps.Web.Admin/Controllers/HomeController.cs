@@ -1,12 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using TraVinhMaps.Web.Admin.Models;
 using TraVinhMaps.Web.Admin.Models.Dashboard;
 using TraVinhMaps.Web.Admin.Services.Users;
 
 namespace TraVinhMaps.Web.Admin.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly IUserService _userService;
