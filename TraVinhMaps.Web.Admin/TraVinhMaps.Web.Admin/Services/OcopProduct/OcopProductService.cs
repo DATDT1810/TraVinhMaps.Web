@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 using System.Text.Json;
 using TraVinhMaps.Web.Admin.Models.OcopProduct;
 using TraVinhMaps.Web.Admin.Models.SellLocation;
-using TraVinhMaps.Web.Admin.Models.Users.Specs;
 
 namespace TraVinhMaps.Web.Admin.Services.OcopProduct
 {

@@ -70,8 +70,8 @@
                             </div>
                         </div>
                         <div class="list-users">
-                            <table class="table" id="project-status">
-                                <thead>
+                            <table class="display" id="project-status">
+                                <thead class="bg-primary">
                                     <tr>
                                         <th>No. &nbsp</th>
                                         <th>Product Image</th>
@@ -134,15 +134,16 @@
                                                         </a>
                                                     </li>
                                                     <li>
+                                                        @* sửa script *@
                                                         @if (item.Status == false)
                                                         {
-                                                            <a class="undelete-ocop-product" href="javascript:void(0)"
-                                                               data-id="@item.Id"><i class="fa fa-unlock"></i> Restore</a>
+                                                            <a class="restore undelete-ocop-product" title="Restore" href="javascript:void(0)"
+                                                               data-id="@item.Id"><i class="fa fa-undo"></i></a>
                                                         }
                                                         else
                                                         {
-                                                            <a class="delete-ocop-product" href="javascript:void(0)"
-                                                               data-id="@item.Id"><i class="fa fa-ban"></i> Delete</a>
+                                                            <a class="delete delete-ocop-product" title="Delete" href="javascript:void(0)"
+                                                               data-id="@item.Id"><i class="fa fa-trash"></i></a>
                                                         }
                                                     </li>
 

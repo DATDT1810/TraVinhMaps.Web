@@ -132,12 +132,13 @@
                             // Update action dropdown from Ban -> Unban
                             const actionCell = row.find("td:last-child ul.action");
                             actionCell.find(".delete-ocop-product").replaceWith(
-                                `<a class="undelete-ocop-product" href="javascript:void(0)" data-id="${ocopProductId}">
-                      <i class="fa fa-unlock"></i> Restore
+                                `<a class="restore undelete-ocop-product" title="Restore" href="javascript:void(0)" data-id="${ocopProductId}">
+                      <i class="fa fa-undo"></i> 
                   </a>`
                             );
                             table.row(row).invalidate().draw(false);
-                            showSuccessAlert("Success", response.message);
+                            //showSuccessAlert("Success", response.message);
+                            showTimedAlert("Success!", response.message, "success", 3000);
                         } else {
                             showErrorAlert("Failed", response.message);
                         }
@@ -187,8 +188,8 @@
                             // Update action dropdown from Unban -> Ban
                             const actionCell = row.find("td:last-child ul.action");
                             actionCell.find(".undelete-ocop-product").replaceWith(
-                                `<a class="delete-ocop-product" href="javascript:void(0)" data-id="${ocopProductId}">
-                      <i class="fa fa-ban"></i> Delete
+                                `<a class="delete delete-ocop-product" title="Delete" href="javascript:void(0)" data-id="${ocopProductId}">
+                      <i class="fa fa-trash"></i> 
                   </a>`
                             );
 
