@@ -61,7 +61,7 @@
                         </div>
                         <div class="table-responsive custom-scrollbar">
                             <table class="display" id="basic-9">
-                                <thead>
+                                <thead class="bg-primary">
                                     <tr>
                                         <th>#</th>
                                         <th>Title</th>
@@ -79,10 +79,9 @@
                                         <tr data-tag-id="@item.TagId">
                                             <td>@count</td>
                                             <td>@item.Title</td>
-                                            <td>@Html.TruncateWords(item.Content, 16)</td>
+                                            <td>@Html.TruncateWords(item.Content, 9)</td>
                                             <td>
-                                                @item.CreatedAt.ToLocalTime().ToString("MMM dd yyyy, hh:mm tt",
-                                                System.Globalization.CultureInfo.InvariantCulture)
+                                                @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                         </td>
                                         <td>
                                             <ul class="action">
@@ -136,22 +135,22 @@
         (function () {
             const success = @Html.Raw(Json.Serialize(TempData["CreateTipsSuccess"]));
             const error   = @Html.Raw(Json.Serialize(TempData["CreateTipsError"]));
-            if (success) showSuccessAlert("Success!", success);
-            if (error)   showErrorAlert("Error!",   error);
+            if (success) showTimedAlert("Success!", "@TempData["EditTipsSuccess"]", "success", 3000);
+            if (error)    showTimedAlert("Error!", "@TempData["EditTipsError"]", "error", 3000);
         })();
     </script>
     <script>
         $(document).ready(function () {
-            @if (TempData["EditTipsSuccess"] != null)
+           @if (TempData["EditTipsSuccess"] != null)
             {
                 <text>
-                    showSuccessAlert("Success!", "@TempData["EditTipsSuccess"]");
+                    showTimedAlert("Success!", "@TempData["EditTipsSuccess"]", "success", 3000);
                 </text>
             }
             @if (TempData["EditTipsError"] != null)
             {
                 <text>
-                    showErrorAlert("Error!", "@TempData["EditTipsError"]");
+                    showTimedAlert("Error!", "@TempData["EditTipsError"]", "error", 3000);
                 </text>
             }
         });

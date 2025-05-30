@@ -115,7 +115,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
         {
             ViewData["Title"] = "Admin Management";
             ViewData["Breadcrumb"] = new List<string> { "Admin Management", "Admin List" };
-            var admins = await _adminService.ListAllAsync();
+            var admins = await _adminService.ListAllAsync() ?? new List<AdminResponse>();;
             return View(admins);
         }
 
@@ -148,66 +148,75 @@ namespace TraVinhMaps.Web.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(request);
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return Json(new { success = false, message = string.Join(", ", errors) });
             }
+
             try
             {
                 var admin = await _adminService.AddAsync(request, cancellationToken);
-                TempData["CreateAdminSuccess"] = "Create the admin successfully!";
-                return RedirectToAction(nameof(Index));
+                return Json(new
+                {
+                    success = true,
+                    message = "Create the admin successfully!"
+                });
             }
-            catch (Exception)
+            catch (InvalidOperationException ex)
             {
-                TempData["CreateAdminError"] = "Create the admin fail!";
-                return View(request);
+                // Return the specific error message from the repository
+                return Json(new { success = false, message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Failed to create admin" });
             }
         }
 
         // GET: Admin/Update
-        [HttpGet("Update/{id}")]
-        public async Task<IActionResult> Update(string id)
-        {
-            var admin = await _adminService.GetByIdAsync(id);
+        // [HttpGet("Update/{id}")]
+        // public async Task<IActionResult> Update(string id)
+        // {
+        //     var admin = await _adminService.GetByIdAsync(id);
 
-            if (admin == null)
-            {
-                return RedirectToAction("Index");
-            }
+        //     if (admin == null)
+        //     {
+        //         return RedirectToAction("Index");
+        //     }
 
-            var updateModel = new UpdateAdminRequest
-            {
-                Id = admin.Id,
-                PhoneNumber = admin.PhoneNumber,
-                Username = admin.Username,
-                Password = admin.Password
-            };
+        //     var updateModel = new UpdateAdminRequest
+        //     {
+        //         Id = admin.Id,
+        //         PhoneNumber = admin.PhoneNumber,
+        //         Username = admin.Username,
+        //         Password = admin.Password
+        //     };
 
-            ViewData["Title"] = "Admin Update";
-            ViewData["Breadcrumb"] = new List<string> { "Admin Update", "Update" };
-            return View(updateModel);
-        }
+        //     ViewData["Title"] = "Admin Update";
+        //     ViewData["Breadcrumb"] = new List<string> { "Admin Update", "Update" };
+        //     return View(updateModel);
+        // }
 
         // POST: Admin/Update
-        [HttpPost("Update")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Update(UpdateAdminRequest request, CancellationToken cancellationToken = default)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(request);
-            } 
-            try
-            {
-                var admin = await _adminService.UpdateAsync(request, cancellationToken);
-                TempData["Success"] = "Update the admin successfully!";
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception)
-            {
-                TempData["Error"] = "Update the admin fail!";
-                return View(request);
-            }
-        }
+        // [HttpPost("Update")]
+        // [ValidateAntiForgeryToken]
+        // public async Task<IActionResult> Update(UpdateAdminRequest request, CancellationToken cancellationToken = default)
+        // {
+        //     if (!ModelState.IsValid)
+        //     {
+        //         return View(request);
+        //     }
+        //     try
+        //     {
+        //         var admin = await _adminService.UpdateAsync(request, cancellationToken);
+        //         TempData["Success"] = "Update the admin successfully!";
+        //         return RedirectToAction(nameof(Index));
+        //     }
+        //     catch (Exception)
+        //     {
+        //         TempData["Error"] = "Update the admin fail!";
+        //         return View(request);
+        //     }
+        // }
 
         [HttpGet("Restore/{id}")]
         public async Task<IActionResult> Restore(string id)

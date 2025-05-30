@@ -4,77 +4,23 @@
     ViewData["Title"] = "Create";
 }
 
-
 <div class="page-body">
-    <div class="container-fluid">
-        <div class="page-title">
-            <div class="row">
-                <div class="col-6">
-                    <h4>@ViewData["Title"]</h4>
-                </div>
-                <div class="col-6">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a asp-controller="Home" asp-action="Index">
-                                <i class="fa fa-home" style="font-size: 20px;"></i>
-                            </a>
-                        </li>
-                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
-                        {
-                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
-                            {
-                                <li class="breadcrumb-item">@item</li>
-                            }
-                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
-                        }
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Container-fluid starts-->
+    <!-- Previous HTML remains the same -->
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-body">
                         <div class="form theme-form">
-                            <form id="createAdminForm" asp-controller="Admin" asp-action="Create"
-                                method="post">
+                            <form id="createAdminForm" asp-controller="Admin" asp-action="Create" method="post">
                                 @Html.AntiForgeryToken()
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label asp-for="Username" class="form-label">Username</label>
-                                            <input asp-for="Username" class="form-control" type="text"
-                                                placeholder="Enter username *">
-                                            <span asp-validation-for="Username" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="mb-3">
-                                            <label asp-for="PhoneNumber" class="form-label">PhoneNumber</label>
-                                            <input asp-for="PhoneNumber" class="form-control" type="text"
-                                                placeholder="Enter phonenumber *">
-                                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <div class="mb-3">
                                             <label asp-for="Email" class="form-label">Email</label>
-                                            <input asp-for="Email" class="form-control" type="text"
+                                            <input asp-for="Email" class="form-control" type="email"
                                                 placeholder="Enter email *">
                                             <span asp-validation-for="Email" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="mb-3">
-                                            <label asp-for="Password" class="form-label">Password</label>
-                                            <input asp-for="Password" class="form-control" type="text"
-                                                placeholder="Enter your password *">
-                                            <span asp-validation-for="Password" class="text-danger"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -101,10 +47,10 @@
             </div>
         </div>
     </div>
-    <!-- Container-fluid Ends-->
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script src="~/assets/js/admins/create.js"></script>
 }

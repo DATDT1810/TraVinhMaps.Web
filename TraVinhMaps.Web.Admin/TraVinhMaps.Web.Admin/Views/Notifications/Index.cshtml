@@ -48,7 +48,7 @@
                         </div>
                     <div class="table-responsive custom-scrollbar">
                         <table class="display" id="basic-9">
-                            <thead>
+                            <thead class="bg-primary">
                                 <tr>
                                     <th>#</th>
                                     <th>Title</th>
@@ -67,9 +67,7 @@
                                         <td>@count</td>
                                         <td>@Html.Raw(item.Title)</td>
                                         <td>@Html.TruncateWords(item.Content, 16)</td>
-                                        <td>@item.CreatedAt.ToLocalTime().ToString("MMM dd yyyy, hh:mm tt",
-                                                                                    System.Globalization.CultureInfo.InvariantCulture)</td>
-
+                                        <td>@item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</td>
                                     <td>
                                         <ul class="action">
                                             <li class="edit"> <a asp-controller="Notifications" asp-action="Details"
@@ -100,9 +98,11 @@
             const errorMessage = @Html.Raw(Json.Serialize(TempData["NotificationError"]));
 
             if (successMessage) {
-                showSuccessAlert("Success!", successMessage, "OK");
+               showTimedAlert("Success!", successMessage, "success", 3000);
+
             } else if (errorMessage) {
-                showErrorAlert("Error!", errorMessage, "OK");
+               showTimedAlert("Error!", successMessage, "error", 3000);
+
             }
         });
     </script>

@@ -72,17 +72,23 @@ $(document).ready(function () {
           if (success) {
             const row = $(this).closest("tr"); // Lấy hàng chứa nút ban
             // Cập nhật nút Ban -> Unban
-            row
-              .find(".ban-user")
-              .removeClass("ban-user")
-              .addClass("unban-user")
-              .attr("title", "Unban")
-              .html('<i class="fa fa-unlock"></i>');
+            const banBtn = row.find(".ban-user");
+            banBtn
+              .removeClass("ban-user delete")
+              .addClass("unban-user restore")
+              .attr("title", "Unban");
+
+            banBtn.find("i").removeClass("fa-ban").addClass("fa-unlock");
+
+            if (banBtn.find("i").length === 0) {
+              banBtn.html('<i class="fa fa-unlock"></i>');
+            }
+
             // Cập nhật trạng thái sang Inactive
             updateRow(row, false);
-            showSuccessAlert("Success", message);
+            showTimedAlert("Success!", message, "success", 3000);
           } else {
-            showErrorAlert("Failed", message);
+            showTimedAlert("Failed!", message, "error", 3000);
           }
         },
         error: (xhr) => {
@@ -118,17 +124,25 @@ $(document).ready(function () {
           if (success) {
             const row = $(this).closest("tr"); // Lấy hàng chứa nút unban
             // Cập nhật nút Unban -> Ban
-            row
-              .find(".unban-user")
-              .removeClass("unban-user")
-              .addClass("ban-user")
-              .attr("title", "Ban")
-              .html('<i class="fa fa-ban"></i>');
+            const unbanBtn = row.find(".unban-user");
+            unbanBtn
+              .removeClass("unban-user restore")
+              .addClass("ban-user delete")
+              .attr("title", "Ban");
+
+            // Cập nhật icon bên trong
+            unbanBtn.find("i").removeClass("fa-unlock").addClass("fa-ban");
+
+            // Nếu icon không có sẵn, thay bằng inner HTML
+            if (unbanBtn.find("i").length === 0) {
+              unbanBtn.html('<i class="fa fa-ban"></i>');
+            }
+
             // Cập nhật trạng thái sang Active
             updateRow(row, true);
-            showSuccessAlert("Success", message);
+            showTimedAlert("Success!", message, "success", 3000);
           } else {
-            showErrorAlert("Failed", message);
+            showTimedAlert("Failed!", message, "error", 3000);
           }
         },
         error: (xhr) => {

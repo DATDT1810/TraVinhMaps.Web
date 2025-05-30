@@ -106,20 +106,29 @@ namespace TraVinhMaps.Web.Admin.Services.Admin
         {
             string data = JsonConvert.SerializeObject(entity);
             var content = new StringContent(data, Encoding.UTF8, "application/json");
+
             HttpResponseMessage response = await _httpClient.PostAsync(adminApi + "create", content, cancellationToken);
+
+            // Read content response
+            var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
+
             if (response.IsSuccessStatusCode)
             {
-                var result = await response.Content.ReadAsStringAsync(cancellationToken);
-                return JsonConvert.DeserializeObject<AdminRequest>(result) 
+                return JsonConvert.DeserializeObject<AdminRequest>(responseContent)
                     ?? throw new HttpRequestException("Unable to create admin.");
             }
-            var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
 
             if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
-                throw new InvalidOperationException(errorContent);
+                var errorObj = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseContent);
+                if (errorObj != null && errorObj.TryGetValue("message", out var errorMessage))
+                {
+                    throw new InvalidOperationException(errorMessage);
+                }
+                throw new InvalidOperationException("Create admin failed");
             }
-            throw new HttpRequestException($"Unable to create admin. Status: {response.StatusCode}, Error: {errorContent}");
+
+            throw new HttpRequestException($"Unable to create admin. Status: {response.StatusCode}, Error: {responseContent}");
         }
 
         public async Task<bool> DeleteAdmin(string id, CancellationToken cancellationToken = default)
@@ -134,7 +143,7 @@ namespace TraVinhMaps.Web.Admin.Services.Admin
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync(cancellationToken);
-                return JsonConvert.DeserializeObject<AdminResponse>(content) 
+                return JsonConvert.DeserializeObject<AdminResponse>(content)
                     ?? throw new HttpRequestException("Admin not found.");
             }
             throw new HttpRequestException("Unable to fetch Admin.");
@@ -146,7 +155,7 @@ namespace TraVinhMaps.Web.Admin.Services.Admin
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync(cancellationToken);
-                return JsonConvert.DeserializeObject<IEnumerable<AdminResponse>>(content) 
+                return JsonConvert.DeserializeObject<IEnumerable<AdminResponse>>(content)
                     ?? new List<AdminResponse>();
             }
             throw new HttpRequestException("Unable to fetch all admins.");
@@ -164,24 +173,24 @@ namespace TraVinhMaps.Web.Admin.Services.Admin
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<UpdateAdminRequest> UpdateAsync(UpdateAdminRequest entity, CancellationToken cancellationToken = default)
-        {
-            string data = JsonConvert.SerializeObject(entity);
-            var content = new StringContent(data, Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _httpClient.PutAsync(adminApi, content, cancellationToken);
-            if (response.IsSuccessStatusCode)
-            {
-                var result = await response.Content.ReadAsStringAsync(cancellationToken);
-                return JsonConvert.DeserializeObject<UpdateAdminRequest>(result) 
-                    ?? throw new HttpRequestException("Unable to update admin.");
-            }
-            var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
+        // public async Task<UpdateAdminRequest> UpdateAsync(UpdateAdminRequest entity, CancellationToken cancellationToken = default)
+        // {
+        //     string data = JsonConvert.SerializeObject(entity);
+        //     var content = new StringContent(data, Encoding.UTF8, "application/json");
+        //     HttpResponseMessage response = await _httpClient.PutAsync(adminApi, content, cancellationToken);
+        //     if (response.IsSuccessStatusCode)
+        //     {
+        //         var result = await response.Content.ReadAsStringAsync(cancellationToken);
+        //         return JsonConvert.DeserializeObject<UpdateAdminRequest>(result)
+        //             ?? throw new HttpRequestException("Unable to update admin.");
+        //     }
+        //     var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
 
-            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-            {
-                throw new InvalidOperationException(errorContent);
-            }
-            throw new HttpRequestException($"Unable to update admin. Status: {response.StatusCode}, Error: {errorContent}");
-        }
+        //     if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        //     {
+        //         throw new InvalidOperationException(errorContent);
+        //     }
+        //     throw new HttpRequestException($"Unable to update admin. Status: {response.StatusCode}, Error: {errorContent}");
+        // }
     }
 }

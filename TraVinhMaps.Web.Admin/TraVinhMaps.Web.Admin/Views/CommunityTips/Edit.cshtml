@@ -54,9 +54,14 @@
                                 <select asp-for="TagId" class="form-select" asp-items="ViewBag.Tags"></select>
                                 <span asp-validation-for="TagId" class="text-danger"></span>
                             </div>
-                            <div class="card-footer">
-                                <a class="btn btn-secondary" asp-action="Index">Back</a>
-                                <button type="submit" class="btn btn-primary float-end">Save</button>
+                            
+                            <div class="row">
+                                <div class="col">
+                                    <div class="text-end">
+                                        <a class="btn btn-secondary me-4" asp-action="Index">Back</a>
+                                        <button type="submit" class="btn btn-success float-end">Save</button>
+                                    </div>
+                                </div>
                             </div>
                         </form>
                     </div>
