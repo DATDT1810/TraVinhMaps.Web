@@ -1,6 +1,5 @@
 using TraVinhMaps.Web.Admin.Services.OcopProduct;
 using DotNetEnv;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using TraVinhMaps.Web.Admin.Extensions;
 using TraVinhMaps.Web.Admin.Services.Admin;
@@ -35,10 +34,8 @@ builder.Services.AddScoped<IEventAndFestivalService, EventAndFestivalService>();
 //  Register AuthService
 builder.Services.AddScoped<IAuthService, AuthService>();
 // Register ITokenService
-builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ITokenService, TokenService>();
-// Admin services
-builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddHttpContextAccessor();
 // Load environment variables from .env file
 Env.Load();
 // Add environment variables to configuration 
@@ -70,7 +67,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Set the default challenge scheme to cookie authentication
 })
     .AddCookie(options =>
     {
@@ -81,24 +80,8 @@ builder.Services.AddAuthentication(options =>
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure cookies are only sent over HTTPS
         options.Cookie.SameSite = SameSiteMode.Lax; // Changed from Strict to Lax to allow cross-site redirects for OAuth
         options.ExpireTimeSpan = TimeSpan.FromHours(24);
-        options.SlidingExpiration = true;
+        //options.SlidingExpiration = true;
         options.Cookie.Name = "TVMaps.Auth"; // Custom name for the cookie
-
-        // Check cookie expiration on every request
-        options.Events = new CookieAuthenticationEvents
-        {
-            OnValidatePrincipal = async context =>
-            {
-                var tokenService = context.HttpContext.RequestServices.GetRequiredService<ITokenService>();
-                var sessionId = tokenService.GetSessionId();
-
-                if (string.IsNullOrEmpty(sessionId))
-                {
-                    context.RejectPrincipal();
-                    await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                }
-            }
-        };
     })
     .AddGoogle(googleOptions =>
     {
@@ -124,8 +107,12 @@ builder.Services.AddHttpClient("ApiClient", client =>
     client.Timeout = TimeSpan.FromMinutes(5); // config wait time out with 5 minutes
 }).AddHttpMessageHandler<AuthHttpMessageHandler>();
 
-// Add data protection services for more secure token storage
-builder.Services.AddDataProtection();
+// Add a client without the auth handler for token refresh to avoid circular dependencies
+builder.Services.AddHttpClient("ApiClientNoAuth", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7162/");
+    client.Timeout = TimeSpan.FromMinutes(5);
+});
 
 var app = builder.Build();
 
@@ -152,7 +139,7 @@ app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Add session expiration middleware after authentication but before controllers
+// Add session expiration middleware after authentication but before handling routes
 app.UseSessionExpiration();
 
 app.MapControllerRoute(

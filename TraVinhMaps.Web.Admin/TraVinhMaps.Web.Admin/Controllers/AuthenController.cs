@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TraVinhMaps.Web.Admin.Models.Auth;
@@ -43,23 +42,17 @@ namespace TraVinhMaps.Web.Admin.Controllers
     {
         private readonly ILogger<AuthenController> _logger;
         private readonly IAuthService _authService;
-        private readonly IDataProtector _dataProtector;
-        private readonly ITokenService _tokenService;
         private readonly IConfiguration _configuration;
         private readonly IHttpClientFactory _httpClientFactory;
 
         public AuthenController(
             ILogger<AuthenController> logger,
             IAuthService authService,
-            ITokenService tokenService,
-            IDataProtectionProvider dataProtectionProvider,
             IConfiguration configuration,
             IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
             _authService = authService;
-            _tokenService = tokenService;
-            _dataProtector = dataProtectionProvider.CreateProtector("Auth.TokenProtection");
             _configuration = configuration;
             _httpClientFactory = httpClientFactory;
         }
@@ -184,17 +177,27 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 {
                     // For login flow, continue using the regular OTP verification
                     var result = await _authService.VerifyOtp(model.Token, model.OtpCode);
+                    
+                    // Add debugging
+                    _logger.LogInformation("OTP verification result: {Result}", result != null ? "Success" : "Failed");
                     if (result != null)
                     {
-                        // Encrypt session tokens before storing
-                        bool isRemember = TempData["IsRememberMe"] as bool? ?? false;
+                        _logger.LogInformation("SessionId: {SessionId}, RefreshToken: {HasRefreshToken}", 
+                            result.SessionId, 
+                            !string.IsNullOrEmpty(result.RefreshToken));
 
-                        await _tokenService.StoreTokensAsync(result.SessionId, result.RefreshToken, isRemember);
+                        var isRememberMe = TempData["IsRememberMe"] as bool? ?? false;
+
                         // Create claims and login
                         var claims = new List<Claim>
                         {
-                            new Claim(ClaimTypes.Name, TempData["Username"]?.ToString() ?? "User")
+                            new Claim(ClaimTypes.Name, TempData["Username"]?.ToString() ?? "User"),
+                            new Claim("sessionId", result.SessionId),
                         };
+                        if (isRememberMe)
+                        {
+                            claims.Add(new Claim("refreshToken", result.RefreshToken));
+                        }
 
                         var claimsIdentity = new ClaimsIdentity(
                             claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -202,13 +205,25 @@ namespace TraVinhMaps.Web.Admin.Controllers
                         var authProperties = new AuthenticationProperties
                         {
                             IsPersistent = true,
-                            ExpiresUtc = DateTimeOffset.UtcNow.AddHours(24)
+                            ExpiresUtc = DateTimeOffset.UtcNow.AddHours(24),
+                            AllowRefresh = true,
                         };
 
-                        await HttpContext.SignInAsync(
-                            CookieAuthenticationDefaults.AuthenticationScheme,
-                            new ClaimsPrincipal(claimsIdentity),
-                            authProperties);
+                        try
+                        {
+                            _logger.LogInformation("Attempting to sign in user with cookie authentication");
+                            await HttpContext.SignInAsync(
+                                CookieAuthenticationDefaults.AuthenticationScheme,
+                                new ClaimsPrincipal(claimsIdentity),
+                                authProperties);
+                            _logger.LogInformation("SignInAsync completed successfully");
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "Error during SignInAsync");
+                            ModelState.AddModelError("", "Authentication error occurred. Please try again.");
+                            return View("OtpVerification", model);
+                        }
 
                         return RedirectToAction("Index", "Home");
                     }
@@ -234,9 +249,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
         {
             try
             {
-                // Get the encrypted sessionId from HttpContext.Session
-
-                string sessionId = _tokenService.GetSessionId();
+                // Get the sessionId from claims
+                var sessionId = User.FindFirst("sessionId")?.Value;
 
                 // Call the auth service to logout
                 var result = await _authService.Logout(sessionId);
@@ -247,14 +261,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     return RedirectToAction("Index");
                 }
 
-                await _tokenService.ClearTokensAsync();
-
                 // Sign out of auth cookie
                 await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                 TempData.Clear();
 
                 return RedirectToAction("Index");
-                // Clear session data
             }
             catch (Exception ex)
             {

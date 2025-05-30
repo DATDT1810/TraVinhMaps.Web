@@ -1,131 +1,164 @@
-using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Newtonsoft.Json;
+using System.Security.Claims;
 using TraVinhMaps.Web.Admin.Models.Auth;
 
 namespace TraVinhMaps.Web.Admin.Services.Auth
 {
     public class TokenService : ITokenService
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IHttpClientFactory _clientFactory;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger<TokenService> _logger;
         private readonly IConfiguration _configuration;
-        private readonly IDataProtector _dataProtector;
-        private const string SessionIdCookieName = "sessionId";
-        private const string RefreshTokenCookieName = "refreshToken";
+        private static readonly SemaphoreSlim _refreshSemaphore = new(1, 1);
 
-        public TokenService(IHttpContextAccessor httpContextAccessor,
-                        IHttpClientFactory clientFactory,
-                        IConfiguration configuration,
-                        IDataProtectionProvider dataProtectionProvider)
+        public TokenService(
+            IHttpClientFactory httpClientFactory,
+            ILogger<TokenService> logger,
+            IConfiguration configuration)
         {
-            _httpContextAccessor = httpContextAccessor;
-            _clientFactory = clientFactory;
+            _httpClientFactory = httpClientFactory;
+            _logger = logger;
             _configuration = configuration;
-            _dataProtector = dataProtectionProvider.CreateProtector("TraVinhMaps.TokenProtection");
         }
 
-        public string GetSessionId()
+        public string? GetSessionId(HttpContext? context)
         {
-            if (_httpContextAccessor.HttpContext == null)
-            {
+            if (context?.User?.Identity?.IsAuthenticated != true)
                 return null;
-            }
 
-            if (_httpContextAccessor.HttpContext.Request.Cookies.TryGetValue(SessionIdCookieName, out var encryptedSessionId))
-            {
-                return _dataProtector.Unprotect(encryptedSessionId);
-            }
-            return null;
+            return context.User.FindFirst("sessionId")?.Value;
         }
 
-        public async Task RefreshTokensIfNeededAsync()
+        public string? GetRefreshToken(HttpContext? context)
         {
-            // Check if HttpContext is available
-            if (_httpContextAccessor.HttpContext == null)
-                return;
+            if (context?.User?.Identity?.IsAuthenticated != true)
+                return null;
 
-            // Get sessionId
-            var sessionId = GetSessionId();
-            if (string.IsNullOrEmpty(sessionId))
-                return;
+            return context.User.FindFirst("refreshToken")?.Value;
+        }
 
-            // Get refreshToken safely
-            string refreshToken = null;
+        public async Task<bool> RefreshTokensIfNeededAsync(HttpContext context)
+        {
+            await _refreshSemaphore.WaitAsync();
             try
             {
-                if (_httpContextAccessor.HttpContext.Request.Cookies.TryGetValue(RefreshTokenCookieName, out var encryptedRefreshToken))
+                var refreshToken = GetRefreshToken(context);
+                if (string.IsNullOrEmpty(refreshToken))
                 {
-                    refreshToken = _dataProtector.Unprotect(encryptedRefreshToken);
+                    _logger.LogWarning("No refresh token available for token refresh");
+                    return false;
                 }
-            }
-            catch (Exception)
-            {
-                // If token is invalid or tampered with, clear cookies and return
-                await ClearTokensAsync();
-                return;
-            }
 
-            // If no refresh token is available, return
-            if (string.IsNullOrEmpty(refreshToken))
-                return;
-
-            // Call API to refresh tokens
-            try
-            {
-                var client = _clientFactory.CreateClient("APIClient");
-                var response = await client.PostAsJsonAsync("auth/refresh", new { refreshToken });
-
-                if (response.IsSuccessStatusCode)
+                var currentSessionId = GetSessionId(context);
+                if (!string.IsNullOrEmpty(currentSessionId))
                 {
-                    var result = await response.Content.ReadAsStringAsync();
-                    // Re-store with same rememberMe preference
-                    var data = JsonConvert.DeserializeObject<TokenResponse>(result);
-                    var authData = JsonConvert.DeserializeObject<AuthenData>(data.Data);
-                    bool rememberMe = _httpContextAccessor.HttpContext.Request.Cookies.ContainsKey(RefreshTokenCookieName);
-                    await StoreTokensAsync(authData.SessionId, authData.RefreshToken, rememberMe);
+                    _logger.LogInformation("Session ID is now available after waiting, skipping refresh");
+                    return true;
                 }
-                else
+
+                var httpClient = _httpClientFactory.CreateClient("ApiClientNoAuth");
+
+                var refreshRequest = new
                 {
-                    // If refresh fails, clear tokens
-                    await ClearTokensAsync();
+                    RefreshToken = refreshToken
+                };
+
+                var json = JsonConvert.SerializeObject(refreshRequest);
+                var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+                try
+                {
+                    var response = await httpClient.PostAsync("/api/auth/refresh", content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseContent = await response.Content.ReadAsStringAsync();
+                        var tokenResponse = JsonConvert.DeserializeObject<AuthenData>(responseContent);
+
+                        if (tokenResponse != null && !string.IsNullOrEmpty(tokenResponse.SessionId))
+                        {
+                            await UpdateTokensInCookieAsync(context, tokenResponse.SessionId, tokenResponse.RefreshToken);
+                            _logger.LogInformation("Tokens refreshed successfully");
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Token refresh failed with status: {StatusCode}", response.StatusCode);
+                    }
                 }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Exception occurred during token refresh");
+                }
+
+                return false;
             }
-            catch (Exception)
+            finally
             {
-                // If API call fails, clear tokens
-                await ClearTokensAsync();
+                _refreshSemaphore.Release();
             }
         }
 
-        public async Task StoreTokensAsync(string sessionId, string refreshToken, bool rememberMe)
+        public async Task<bool> UpdateTokensInCookieAsync(HttpContext context, string sessionId, string? refreshToken = null)
         {
-            var cookieOptions = new CookieOptions
+            try
             {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Lax
+                if (context.User?.Identity?.IsAuthenticated != true)
+                {
+                    _logger.LogWarning("Cannot update tokens for unauthenticated user");
+                    return false;
+                }
+
+                var existingClaims = context.User.Claims.Where(c =>
+                    c.Type != "sessionId" && c.Type != "refreshToken").ToList();
+
+                var newClaims = new List<Claim>(existingClaims)
+            {
+                new Claim("sessionId", sessionId)
             };
 
-            // Encrypt tokens before storing
-            var protectedSessionId = _dataProtector.Protect(sessionId);
-            var protectedRefreshToken = _dataProtector.Protect(refreshToken);
+                if (!string.IsNullOrEmpty(refreshToken))
+                {
+                    newClaims.Add(new Claim("refreshToken", refreshToken));
+                }
 
-            // sessionId cookie - expires in 1 day
-            cookieOptions.Expires = DateTimeOffset.Now.AddDays(1);
-            _httpContextAccessor.HttpContext.Response.Cookies.Append(SessionIdCookieName, protectedSessionId, cookieOptions);
+                var claimsIdentity = new ClaimsIdentity(
+                    newClaims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            // refreshToken - stored based on remember me preference
-            if (rememberMe)
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddHours(24)
+                };
+
+                await context.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties);
+
+                return true;
+            }
+            catch (Exception ex)
             {
-                cookieOptions.Expires = DateTimeOffset.Now.AddDays(7);
-                _httpContextAccessor.HttpContext.Response.Cookies.Append(RefreshTokenCookieName, protectedRefreshToken, cookieOptions);
+                _logger.LogError(ex, "Failed to update tokens in cookie");
+                return false;
             }
         }
 
-        public async Task ClearTokensAsync()
+        public async Task SignOutUserAsync(HttpContext context)
         {
-            _httpContextAccessor.HttpContext.Response.Cookies.Delete(SessionIdCookieName);
-            _httpContextAccessor.HttpContext.Response.Cookies.Delete(RefreshTokenCookieName);
+            try
+            {
+                await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                _logger.LogInformation("User signed out successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to sign out user");
+            }
         }
     }
 }
