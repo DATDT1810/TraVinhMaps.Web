@@ -1,0 +1,417 @@
+@using TraVinhMaps.Web.Admin.Models.TouristDestination
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
+@model TouristDestinationViewRequest;
+@{
+    ViewData["Title"] = "CreateDestination";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .Delete-button-image {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        background-color: rgba(169, 169, 169, 0.6);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        padding: 0;
+    }
+
+    .add-image-box {
+        margin-top: 10px;
+        width: 100%;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #aaa;
+        position: relative;
+        cursor: pointer;
+        border-radius: 9px;
+        background-color: #f8f9fa;
+    }
+
+    .upload-placeholder {
+        font-size: 48px;
+        color: #aaa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    .upload-placeholder:hover {
+        background-color: #e0e0e0;
+    }
+</style>
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>
+                        Destination Create</h4>
+                    @if (ViewBag.error != null)
+                    {
+                        <span class="text-danger">@ViewBag.error</span>
+                    }
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index-2.html">
+                                <svg class="stroke-icon">
+                                    <use
+                                        href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#stroke-home">
+                                    </use>
+                                </svg></a></li>
+                        <li class="breadcrumb-item"><a asp-action="Index">Management Destination</a></li>
+                        <li class="breadcrumb-item active">Destination Create form</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form theme-form">
+                            <form asp-action="CreateDestination" method="post" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label>Destination Title</label>
+                                            <input asp-for="Name" class="form-control" type="text"
+                                                placeholder="Destination title">
+                                            <span asp-validation-for="Name" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label>Address Destination</label>
+                                            <input asp-for="Address" class="form-control" type="text"
+                                                placeholder="Address of destination">
+                                            <span asp-validation-for="Address" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Ticket</label>
+                                            <input asp-for="Ticket" class="form-control" type="text"
+                                                placeholder="100k/people">
+                                            <span asp-validation-for="Ticket" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Capacity</label>
+                                            <input asp-for="Capacity" class="form-control" type="text"
+                                                placeholder="100 people">
+                                            <span asp-validation-for="Capacity" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Type Location</label>
+                                            <select asp-for="Type" class="form-select">
+                                                <option selected value="Point">Point</option>
+                                                <option value="Unknow">Unknow</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Longitude</label>
+                                            <input asp-for="longitude" class="form-control" type="number" step="any"
+                                                placeholder="Longitude of destination" data-language="en">
+                                            <span asp-validation-for="longitude" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Latitude</label>
+                                            <input asp-for="latitude" class="form-control" type="number" step="any"
+                                                placeholder="Latitude of destination" data-language="en">
+                                            <span asp-validation-for="latitude" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Destination Type</label>
+                                            <select asp-for="DestinationTypeId" class="form-select">
+                                                <option selected value="68244abd2b06dbe39f973e8c">Religious Buildings
+                                                </option>
+                                                <option value="68244abd2b06dbe39f973e8c">Tree</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Opent Time</label>
+                                            <input asp-for="OpeningHours.OpenTime" class="form-control" type="text"
+                                                placeholder="7 am" data-language="en">
+                                            <span asp-validation-for="OpeningHours.OpenTime" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Close Time</label>
+                                            <input asp-for="OpeningHours.CloseTime" class="form-control" type="text"
+                                                placeholder="6 pm" data-language="en">
+                                            <span asp-validation-for="OpeningHours.CloseTime"
+                                                class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Phone</label>
+                                            <input asp-for="Contact.Phone" class="form-control" type="tel"
+                                                placeholder="Phone number" data-language="en">
+                                            <span asp-validation-for="Contact.Phone" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Email</label>
+                                            <input asp-for="Contact.Email" class="form-control" type="email"
+                                                placeholder="Mail address" data-language="en">
+                                            <span asp-validation-for="Contact.Email" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Website</label>
+                                            <input asp-for="Contact.Website" class="form-control" type="text"
+                                                placeholder="Wedside" data-language="en">
+                                            <span asp-validation-for="Contact.Website" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label>Description</label>
+                                            <textarea asp-for="Description" class="form-control"
+                                                placeholder="Description of destination"
+                                                id="exampleFormControlTextarea4" rows="10"></textarea>
+                                            <span asp-validation-for="Description" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label>History Story</label>
+                                            <textarea asp-for="HistoryStory.Content" class="form-control"
+                                                placeholder="History content of destination"
+                                                id="exampleFormControlTextarea4" rows="10"></textarea>
+                                            <span asp-validation-for="HistoryStory.Content" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                @* <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label>Upload project file</label>
+                                            <input asp-for="ImagesFile" type="file" multiple id="productImages" />
+                                            <span asp-validation-for="ImagesFile" class="text-danger"></span>
+                                            <input asp-for="HistoryStory.ImagesFile" type="file" multiple
+                                                id="productImages" />
+                                            <span asp-validation-for="HistoryStory.ImagesFile"
+                                                class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div> *@
+                                <div class="row">
+                                    <div class="col">
+                                        <label>Upload image destination file</label>
+                                        <div class="item add-image-box" id="addImageBox">
+                                            <div>
+                                                <div class="upload-placeholder">+</div>
+                                                <input asp-for="ImagesFile" hidden type="file" accept="image/*" multiple
+                                                    id="uploadImageInput" onchange="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <label>Upload image destination history file</label>
+                                        <div class="item add-image-box" id="addImageHistoryBox">
+                                            <div>
+                                                <div class="upload-placeholder">+</div>
+                                                <input asp-for="HistoryStory.ImagesFile" hidden type="file"
+                                                    accept="image/*" multiple id="uploadImageHistoryInput"
+                                                    onchange="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="text-end">
+                                            <button type="submit" class="btn btn-success me-3">Create
+                                                Destination</button>
+                                            <a asp-action="Index" class="btn btn-danger">Back</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+</div>
+
+@section Scripts {
+    @Html.AntiForgeryToken()
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="~/assets/js/typeahead/handlebars.js"></script>
+    <script src="~/assets/js/dropzone/dropzone.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/dropzone.css">
+}
+
+<script>
+    function copyWebsiteToClipboard(element) {
+        const text = element.innerText.trim();
+        if (text) {
+            navigator.clipboard.writeText(text).then(function () {
+            }, function (err) {
+                alert("Failed to copy text: " + err);
+            });
+        }
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+        const addBox = document.getElementById("addImageBox");
+        const uploadInput = document.getElementById("uploadImageInput");
+
+        if (addBox && uploadInput) {
+            addBox.addEventListener("click", function () {
+                uploadInput.click();
+            });
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const addBox = document.getElementById("addImageHistoryBox");
+        const uploadInput = document.getElementById("uploadImageHistoryInput");
+
+        if (addBox && uploadInput) {
+            addBox.addEventListener("click", function () {
+                uploadInput.click();
+            });
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const uploadInput = document.getElementById("uploadImageInput");
+        const addImageBox = document.getElementById("addImageBox");
+
+        // Tạo container hiển thị ảnh nếu chưa có
+        let previewContainer = document.createElement("div");
+        previewContainer.classList.add("row", "mt-3", "g-3");
+        addImageBox.parentElement.appendChild(previewContainer);
+
+        uploadInput.addEventListener("change", function () {
+            previewContainer.innerHTML = "";
+
+            const files = uploadInput.files;
+            if (!files || files.length === 0) return;
+
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith("image/")) {
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        const col = document.createElement("div");
+                        col.classList.add("col-sm-3");
+
+                        const itemDiv = document.createElement("div");
+                        itemDiv.classList.add("item", "position-relative");
+
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        img.classList.add("w-100", "rounded");
+
+                        itemDiv.appendChild(img);
+                        col.appendChild(itemDiv);
+                        previewContainer.appendChild(col);
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const uploadInput = document.getElementById("uploadImageHistoryInput");
+        const addImageBox = document.getElementById("addImageHistoryBox");
+
+        // Tạo container hiển thị ảnh nếu chưa có
+        let previewContainer = document.createElement("div");
+        previewContainer.classList.add("row", "mt-3", "g-3");
+        addImageBox.parentElement.appendChild(previewContainer);
+
+        uploadInput.addEventListener("change", function () {
+            previewContainer.innerHTML = "";
+
+            const files = uploadInput.files;
+            if (!files || files.length === 0) return;
+
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith("image/")) {
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        const col = document.createElement("div");
+                        col.classList.add("col-sm-3");
+
+                        const itemDiv = document.createElement("div");
+                        itemDiv.classList.add("item", "position-relative");
+
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        img.classList.add("w-100", "rounded");
+
+                        itemDiv.appendChild(img);
+                        col.appendChild(itemDiv);
+                        previewContainer.appendChild(col);
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    });
+</script>

@@ -1,0 +1,158 @@
+@using TraVinhMaps.Web.Admin.Helper
+@using TraVinhMaps.Web.Admin.Models.CommunityTips
+@model IEnumerable<CommunityTipsResponse>
+@{
+    ViewData["Title"] = "Index";
+    
+}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>@ViewData["Title"]</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home" style="font-size: 20px;"></i>
+                            </a>
+                        </li>
+                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
+                        {
+                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
+                            {
+                                <li class="breadcrumb-item">@item</li>
+                            }
+                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
+                        }
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3">
+                            <div class="d-flex gap-2 mb-3">
+                                <a asp-controller="CommunityTips" asp-action="Create" class="btn btn-success">
+                                    <i class="fa fa-plus me-1"></i>Add Tips
+                                </a>
+
+                                <button class="btn btn-primary" id="exportBtn">
+                                    <i class="fa fa-file-excel-o me-1"></i>Export
+                                </button>
+                            </div>
+                            <div class="status-filter">
+                                <select id="statusFilter" class="form-select">
+                                    <option value="all">All</option>
+                                    <option value="inactive">Delete (Inactive)</option>
+                                    @foreach (var tag in ViewBag.Tags)
+        {
+            <option value="@tag.Id">@tag.Name</option> 
+        }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-responsive custom-scrollbar">
+                            <table class="display" id="basic-9">
+                                <thead class="bg-primary">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Title</th>
+                                        <th>Content</th>
+                                        <th>Create At</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int count = 1;
+                                    }
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr data-tag-id="@item.TagId">
+                                            <td>@count</td>
+                                            <td>@item.Title</td>
+                                            <td>@Html.TruncateWords(item.Content, 9)</td>
+                                            <td>
+                                                @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
+                                        </td>
+                                        <td>
+                                            <ul class="action">
+                                                <li>
+                                                    <a class="details" asp-controller="CommunityTips" asp-action="CommunityTipsDetails"
+                                                        asp-route-id="@item.Id" title="Details">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="edit" asp-controller="CommunityTips" asp-action="Edit"
+                                                        asp-route-id="@item.Id" title="Edit">
+                                                        <i class="fa fa-pencil"></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    @if (item.Status == true)
+                                                        {
+                                                            <a id="delete-tips" class="delete" href="javascript:void(0)"
+                                                                data-id="@item.Id" title="Delete">
+                                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a id="restore-tips" class="restore" href="javascript:void(0)"
+                                                                data-id="@item.Id" title="Restore">
+                                                                <i class="fa fa-undo"></i>
+                                                            </a>
+                                                        }
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        count++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @Html.AntiForgeryToken()
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script src="~/assets/js/tips/index.js"></script>
+     <script>
+        (function () {
+            const success = @Html.Raw(Json.Serialize(TempData["CreateTipsSuccess"]));
+            const error   = @Html.Raw(Json.Serialize(TempData["CreateTipsError"]));
+            if (success) showTimedAlert("Success!", "@TempData["EditTipsSuccess"]", "success", 3000);
+            if (error)    showTimedAlert("Error!", "@TempData["EditTipsError"]", "error", 3000);
+        })();
+    </script>
+    <script>
+        $(document).ready(function () {
+           @if (TempData["EditTipsSuccess"] != null)
+            {
+                <text>
+                    showTimedAlert("Success!", "@TempData["EditTipsSuccess"]", "success", 3000);
+                </text>
+            }
+            @if (TempData["EditTipsError"] != null)
+            {
+                <text>
+                    showTimedAlert("Error!", "@TempData["EditTipsError"]", "error", 3000);
+                </text>
+            }
+        });
+    </script>
+}

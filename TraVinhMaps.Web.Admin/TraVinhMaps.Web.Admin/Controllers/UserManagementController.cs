@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using TraVinhMaps.Web.Admin.Models.Users;
+using TraVinhMaps.Web.Admin.Services.Auth;
 using TraVinhMaps.Web.Admin.Services.Users;
 
 namespace TraVinhMaps.Web.Admin.Controllers
@@ -13,17 +9,18 @@ namespace TraVinhMaps.Web.Admin.Controllers
     public class UserManagementController : Controller
     {
         private readonly IUserService _userService;
-
-        public UserManagementController(IUserService userService)
+        private readonly ITokenService _tokenService;
+        public UserManagementController(IUserService userService, ITokenService tokenService)
         {
             _userService = userService;
+            _tokenService = tokenService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             ViewData["Title"] = "Account Management";
-            ViewData["Breadcrumb"] = new List<string> { "Account Management","Account List" };
+            ViewData["Breadcrumb"] = new List<string> { "Account Management", "Account List" };
             var users = await _userService.ListAllAsync();
             return View(users);
         }
@@ -40,6 +37,36 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(user);
         }
 
+        // POST: Admin/Users/Create
+        [HttpGet("Create")]
+        public IActionResult Create()
+        {
+            ViewData["Title"] = "Account Create";
+            ViewData["Breadcrumb"] = new List<string> { "Account Create", "Create" };
+            return View();
+        }
+
+        // POST: Admin/Users/Create
+        [HttpPost("Create")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(UserRequest request, CancellationToken cancellationToken = default)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(request);
+            }
+            try
+            {
+                var admin = await _userService.AddAdminAsync(request, cancellationToken);
+                TempData["Success"] = "Create the admin successfully!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "Create the admin fail!";
+                return View(request);
+            }
+        }
 
         [HttpGet("Restore/{id}")]
         public async Task<IActionResult> Restore(string id)

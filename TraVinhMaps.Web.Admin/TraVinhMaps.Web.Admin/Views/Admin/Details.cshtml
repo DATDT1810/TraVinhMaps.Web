@@ -1,0 +1,85 @@
+@using TraVinhMaps.Web.Admin.Models.Admins
+@model AdminResponse
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>@ViewData["Title"]</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home" style="font-size: 20px;"></i>
+                            </a>
+                        </li>
+                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
+                        {
+                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
+                            {
+                                <li class="breadcrumb-item">@item</li>
+                            }
+                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
+                        }
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="edit-profile">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title mb-0">Profile</h4>
+                            <div class="card-options"><a class="card-options-collapse" href="#"
+                                    data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a><a
+                                    class="card-options-remove" href="#" data-bs-toggle="card-remove"><i
+                                        class="fe fe-x"></i></a></div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="profile-title">
+                                    <div class="media">
+                                        <div class="media-body">
+                                            <h5 class="mb-1">@Model.Username</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input class="form-control" value="@Model.Email" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <div class="mb-3">
+                                    <label class="form-label">Password</label>
+                                    <input class="form-control" type="password" value="@Model.Password" readonly>
+                                </div>
+                                <label class="form-label">Create At</label>
+                                <input class="form-control" value="@Model.CreatedAt.ToLocalTime()" readonly>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="text-end">
+                                        <a asp-controller="Admin" asp-action="Index"
+                                            class="btn btn-danger">Back</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+</div>
