@@ -1,0 +1,182 @@
+@using TraVinhMaps.Web.Admin.Models.OcopProduct
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
+@model CreateOcopProductRequest;
+@{
+    ViewData["Title"] = "CreateOcopProduct";
+}
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>Ocop Product Create</h4>
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div id="alert-message" class="alert alert-danger">
+                            @TempData["ErrorMessage"]
+                        </div>
+                    }
+
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index-2.html">
+                                <svg class="stroke-icon">
+                                    <use
+                                        href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#stroke-home">
+                                    </use>
+                                </svg></a></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form theme-form">
+                            <form asp-controller="OcopProduct" asp-action="CreateOcopProductPost" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label asp-for="ProductName">Product Name</label>
+                                <input asp-for="ProductName" class="form-control" type="text" placeholder="Name of product" required />
+                                <span asp-validation-for="ProductName" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label asp-for="ProductDescription">Product Description</label>
+                                <textarea asp-for="ProductDescription" class="form-control" placeholder="Description of product" rows="10"></textarea>
+                                <span asp-validation-for="ProductDescription" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label asp-for="ProductImageFile">Product Images</label>
+                                <input asp-for="ProductImageFile" type="file" class="form-control" multiple required />
+                                <span asp-validation-for="ProductImageFile" class="text-danger"></span>
+                                <small class="text-muted">Please upload at least one photo.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label asp-for="ProductPrice">Product Price</label>
+                                <input asp-for="ProductPrice" class="form-control" type="text" placeholder="Price of product" />
+                                <span asp-validation-for="ProductPrice" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label asp-for="OcopTypeId">Ocop Type</label>
+                                <select asp-for="OcopTypeId" class="form-select" required>
+                                    <option selected value="681c791ecf4b6508ed09e831">Type 1 (681c791ecf4b6508ed09e831)</option>
+                                    <option value="681c791ecf4b6508ed09e832">Type 2 (681c791ecf4b6508ed09e832)</option>
+                                </select>
+                                <span asp-validation-for="OcopTypeId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label asp-for="CompanyId">Company</label>
+                                <select asp-for="CompanyId" class="form-select" required>
+                                    <option selected value="681c791ecf4b6508ed09e832">Company 1 (681c791ecf4b6508ed09e832)</option>
+                                    <option value="681c791ecf4b6508ed09e833">Company 2 (681c791ecf4b6508ed09e833)</option>
+                                    <option value="681c791ecf4b6508ed09e834">Company 3 (681c791ecf4b6508ed09e834)</option>
+                                    <option value="681c791ecf4b6508ed09e835">Company 4 (681c791ecf4b6508ed09e835)</option>
+                                </select>
+                                <span asp-validation-for="CompanyId" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="mb-3">
+                                <label asp-for="OcopPoint">Ocop Point</label>
+                                <select asp-for="OcopPoint" class="form-select" required>
+                                    <option selected value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                                <span asp-validation-for="OcopPoint" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="mb-3">
+                                <label asp-for="OcopYearRelease">Ocop Year Release</label>
+                                <select asp-for="OcopYearRelease" class="form-select" required>
+                                    @for (int year = DateTime.Now.Year; year >= 1900; year--)
+                                    {
+                                        <option value="@year">@year</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="OcopYearRelease" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="mb-3">
+                                <label asp-for="TagId">Ocop Product Tag</label>
+                                <select asp-for="TagId" class="form-select" required>
+                                    <option selected value="68244abd2b06dbe39f973e8c">Tag 1 (68244abd2b06dbe39f973e8c)</option>
+                                    <option value="68244abd2b06dbe39f973e8d">Tag 2 (68244abd2b06dbe39f973e8d)</option>
+                                </select>
+                                <span asp-validation-for="TagId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="mb-3">
+                                <label asp-for="SellingLinkId">Ocop Product Selling Link</label>
+                                <select asp-for="SellingLinkId" class="form-select" required>
+                                    <option selected value="68244abd2b06dbe39f973e8c">Link 1 (68244abd2b06dbe39f973e8c)</option>
+                                    <option value="68244abd2b06dbe39f973e8d">Link 2 (68244abd2b06dbe39f973e8d)</option>
+                                </select>
+                                <span asp-validation-for="SellingLinkId" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-success me-3">Create Ocop Product</button>
+                                <a asp-action="Index" asp-controller="OcopProduct" class="btn btn-danger">Back</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+</div>
+
+@section Scripts {
+    @Html.AntiForgeryToken()
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        setTimeout(function () {
+            var alert = document.getElementById("alert-message");
+            if (alert) {
+                alert.style.display = "none";
+            }
+        }, 2000); 
+    </script>
+}

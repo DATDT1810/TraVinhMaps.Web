@@ -1,3 +1,4 @@
+using TraVinhMaps.Web.Admin.Services.OcopProduct;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -17,6 +18,8 @@ builder.Services.AddControllersWithViews();
 
 // Register IUserService
 builder.Services.AddScoped<IUserService, UserService>();
+// Register IOcopProductService
+builder.Services.AddScoped<IOcopProductService, OcopProductService>();
 // Register IAdminService
 builder.Services.AddScoped<IAdminService, AdminService>();
 // Register INotificationsService

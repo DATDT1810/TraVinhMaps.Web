@@ -1,0 +1,121 @@
+@using TraVinhMaps.Web.Admin.Models.SellLocation
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
+@model SellLocationViewModel;
+@{
+    ViewData["Title"] = "UpdateSellLocation";
+}
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>Sell Location Edit</h4>
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div id="alert-message" class="alert alert-danger">
+                            @TempData["ErrorMessage"]
+                        </div>
+                    }
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index-2.html">
+                                <svg class="stroke-icon">
+                                    <use
+                                        href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#stroke-home">
+                                    </use>
+                                </svg></a></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form theme-form">
+                            <form asp-action="UpdateSellLocationPost" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="id" value="@ViewBag.OcopProductId" />
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label>Sell Location Name</label>
+                                            <input asp-for="LocationName" class="form-control" type="text"
+                                                placeholder="Name of product" readonly>
+                                            <span asp-validation-for="LocationName" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label>Sell Location Address</label>
+                                            <textarea asp-for="LocationAddress" class="form-control"
+                                                placeholder="Description of product"
+                                                id="exampleFormControlTextarea4" rows="10"></textarea>
+                                            <span asp-validation-for="LocationAddress" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Type Location</label>
+                                            <select asp-for="Type" class="form-select">
+                                                <option selected value="Point">Point</option>
+                                                <option value="Unknow">Unknow</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Longitude</label>
+                                            <input asp-for="Longitude" class="form-control" type="number" step="any"
+                                                placeholder="Longitude of sell location" data-language="en">
+                                            <span asp-validation-for="Longitude" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mb-3">
+                                            <label>Latitude</label>
+                                            <input asp-for="Latitude" class="form-control" type="number" step="any"
+                                                placeholder="Latitude of sell location" data-language="en">
+                                            <span asp-validation-for="Latitude" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="text-end">
+                                            <button type="submit" class="btn btn-success me-3">Edit sell Location</button>
+                                            <a asp-action="DetailOcopProduct" asp-route-id="@ViewBag.OcopProductId"
+                                                class="btn btn-danger">Back</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+</div>
+
+@section Scripts {
+    @Html.AntiForgeryToken()
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        setTimeout(function () {
+            var alert = document.getElementById("alert-message");
+            if (alert) {
+                alert.style.display = "none";
+            }
+        }, 2000); 
+    </script>
+}
