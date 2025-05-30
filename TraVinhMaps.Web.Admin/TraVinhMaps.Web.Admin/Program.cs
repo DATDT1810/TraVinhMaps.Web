@@ -20,7 +20,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserService, UserService>();
 // Register IOcopProductService
 builder.Services.AddScoped<IOcopProductService, OcopProductService>();
-
 // Register IAdminService
 builder.Services.AddScoped<IAdminService, AdminService>();
 // Register INotificationsService
