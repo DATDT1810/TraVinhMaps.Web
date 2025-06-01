@@ -1,0 +1,223 @@
+@using System.Text.Json
+@using TraVinhMaps.Web.Admin.Models.ItineraryPlans;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
+@model ItineraryPlanRequestViewModel
+@{
+    ViewData["Title"] = "CreateItineratyPlan";
+}
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/intltelinput.min.css">
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/tagify.css">
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>Itinerary Plan Create</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
+                                    style="font-size: 20px;"></i></a></li>
+                        <li class="breadcrumb-item"><a asp-action="Index">Management Event And Festival</a></li>
+                        <li class="breadcrumb-item active">Event And Festival Create Form</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form theme-form">
+                            <form asp-action="CreateItineratyPlan" method="post">
+                                <div class="row">
+                                    <div class="mb-3">
+                                        <label>EditItinerary Plan Title</label>
+                                        <input asp-for="Name" class="form-control" type="text"
+                                            placeholder="Event or festival title">
+                                        <span asp-validation-for="Name" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label>Duration</label>
+                                            <select asp-for="Duration" class="form-select">
+                                                <option selected value="One day<">One day</option>
+                                                <option value="2 days 1 night">2 days 1 night</option>
+                                                <option value="3 days 2 night">3 days 2 night</option>
+                                                <option value="4 days 3 night">4 days 3 night</option>
+                                                <option value="5 days 4 night">5 days 4 night</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label>Estimate Cost</label>
+                                            <select asp-for="EstimatedCost" class="form-select">
+                                                <option selected value="1 million">1 million</option>
+                                                <option value="2 million">2 million</option>
+                                                <option value="3 million">3 million</option>
+                                                <option value="4 million">4 million</option>
+                                                <option value="5 million">5 million</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h4>Choosing destination for itinerary plan</h4>
+                                                <p class="f-m-light mt-1">Please select at least 2 locations</p>
+                                            </div>
+                                            <div class="card-body">
+                                                <div>
+                                                    <input name="tags-manual-suggestions"
+                                                        placeholder="write or choose destination">
+                                                    <input type="hidden" asp-for="Locations" id="LocationsInput" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="text-end">
+                                            <button type="submit" class="btn btn-success me-3">Create Itinerary Plan</button>
+                                            <a asp-action="Index" class="btn btn-danger">Back</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+</div>
+
+@section Scripts {
+    @Html.AntiForgeryToken()
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+
+    <!-- Plugins JS start-->
+    <script src="~/assets/js/sidebar-menu.js"></script>
+    <script src="~/assets/js/sidebar-pin.js"></script>
+    <script src="~/assets/js/slick/slick.min.js"></script>
+    <script src="~/assets/js/slick/slick.js"></script>
+    <script src="~/assets/js/header-slick.js"></script>
+    <!-- calendar js-->
+    <script src="~/assets/js/select2/tagify.js"></script>
+    <script src="~/assets/js/select2/tagify.polyfills.min.js"></script>
+    <script src="~/assets/js/select2/intltelinput.min.js"></script>
+    <script src="~/assets/js/select2/telephone-input.js"></script>
+    <script src="~/assets/js/select2/custom-inputsearch.js"></script>
+    <script src="~/assets/js/height-equal.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            "use strict";
+
+            const tagWhitelist = @Html.Raw(JsonSerializer.Serialize(ViewBag.DestinationList));
+
+            var hiddenInput = document.getElementById("LocationsInput");
+
+            var input = document.querySelector("input[name=tags-manual-suggestions]"),
+                // init Tagify script on the above inputs
+                tagify = new Tagify(input, {
+                    whitelist: tagWhitelist,
+                    dropdown: {
+                        position: "manual",
+                        maxItems: Infinity,
+                        enabled: 0,
+                        classname: "customSuggestionsList",
+                    },
+                    templates: {
+                        dropdownItemNoMatch() {
+                            return `<div class='empty'>Nothing Found</div>`;
+                        },
+                    },
+                    enforceWhitelist: true,
+                });
+
+            // Đồng bộ giá trị Tagify vào input hidden khi có thay đổi
+            tagify.on('change', function (e) {
+                hiddenInput.value = JSON.stringify(tagify.value.map(item => item.value));
+            });
+
+            tagify
+                .on("dropdown:show", onSuggestionsListUpdate)
+                .on("dropdown:hide", onSuggestionsListHide)
+                .on("dropdown:scroll", onDropdownScroll);
+
+            renderSuggestionsList(); // defined down below
+
+            // ES2015 argument destructuring
+            function onSuggestionsListUpdate({ detail: suggestionsElm }) {
+                console.log(suggestionsElm);
+            }
+
+            function onSuggestionsListHide() {
+                console.log("hide dropdown");
+            }
+
+            function onDropdownScroll(e) {
+                console.log(e.detail);
+            }
+
+            function renderSuggestionsList() {
+                tagify.dropdown.show(); // load the list
+                tagify.DOM.scope.parentNode.appendChild(tagify.DOM.dropdown);
+            }
+
+            tagify.on("add", function (e) {
+                console.log("original Input:", tagify.DOM.originalInput);
+                console.log("original Input's value:", tagify.DOM.originalInput.value);
+                console.log("event detail:", e.detail);
+            });
+
+            // add the first 2 tags and makes them readonly
+            @* var tagsToAdd = tagify.whitelist.slice(0, 3);
+            tagify.addTags(tagsToAdd); *@
+
+            // bind events
+            tagify.on("add", onAddTag);
+            tagify.DOM.input.addEventListener("focus", onSelectFocus);
+                });
+    </script>
+    <script>
+        (function () {
+            const success = @Html.Raw(Json.Serialize(TempData["Success"]));
+            const error   = @Html.Raw(Json.Serialize(TempData["Error"]));
+            if (success) showSuccessAlert("Success!", success);
+            if (error)   showErrorAlert("Error!",   error);
+        })();
+            @if (TempData["EditEventAndFestivalSuccess"] != null)
+            {
+                <text>
+                    showSuccessAlert("Success!", "@TempData["EditEventAndFestivalSuccess"]");
+                </text>
+            }
+            @if (TempData["successMessage"] != null)
+            {
+                <text>
+                    showSuccessAlert("Success!", "@TempData["successMessage"]");
+                </text>
+            }
+            @if (TempData["errorMessage"] != null)
+            {
+                <text>
+                    showErrorAlert("Success!", "@TempData["errorMessage"]");
+                </text>
+            }
+    </script>
+}

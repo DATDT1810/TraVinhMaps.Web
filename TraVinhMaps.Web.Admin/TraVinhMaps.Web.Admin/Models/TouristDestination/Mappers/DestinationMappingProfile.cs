@@ -12,6 +12,7 @@ namespace TraVinhMaps.Web.Admin.Models.TouristDestination.Mappers
         {
             CreateMap<TouristDestinationResponse, UpdateDestinationRequest>().ReverseMap();
             CreateMap<HistoryStoryRequest, HistoryStoryUpdateRequest>().ReverseMap();
+            CreateMap<HistoryStoryRespont, HistoryStoryUpdateRequest>().ReverseMap();
             CreateMap<TouristDestinationRequest, TouristDestinationViewRequest>().ReverseMap();
             CreateMap<UpdateDestinationViewRequest, TouristDestinationResponse>().ReverseMap();
             CreateMap<UpdateDestinationRequest, UpdateDestinationViewRequest>().ReverseMap();
