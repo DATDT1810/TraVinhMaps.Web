@@ -60,17 +60,14 @@ namespace TraVinhMaps.Web.Admin.Services.Auth
 
                 var httpClient = _httpClientFactory.CreateClient("ApiClientNoAuth");
 
-                var refreshRequest = new
-                {
-                    RefreshToken = refreshToken
-                };
+                httpClient.DefaultRequestHeaders.Add("refreshToken", $"{refreshToken}");
 
-                var json = JsonConvert.SerializeObject(refreshRequest);
-                var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+                var content = new StringContent("", System.Text.Encoding.UTF8, "application/json");
 
                 try
                 {
-                    var response = await httpClient.PostAsync("/api/auth/refresh", content);
+                    var response = await httpClient.PostAsync("/api/auth/refresh-token", content);
 
                     if (response.IsSuccessStatusCode)
                     {

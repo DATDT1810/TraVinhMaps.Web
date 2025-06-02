@@ -1,8 +1,7 @@
 ﻿using Newtonsoft.Json;
+using System.Linq.Expressions;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Linq.Expressions;
-using System.Collections.Generic;
 using TraVinhMaps.Web.Admin.Models;
 using TraVinhMaps.Web.Admin.Models.Admins;
 using TraVinhMaps.Web.Admin.Models.Users;
@@ -173,24 +172,69 @@ namespace TraVinhMaps.Web.Admin.Services.Admin
             return response.IsSuccessStatusCode;
         }
 
-        // public async Task<UpdateAdminRequest> UpdateAsync(UpdateAdminRequest entity, CancellationToken cancellationToken = default)
-        // {
-        //     string data = JsonConvert.SerializeObject(entity);
-        //     var content = new StringContent(data, Encoding.UTF8, "application/json");
-        //     HttpResponseMessage response = await _httpClient.PutAsync(adminApi, content, cancellationToken);
-        //     if (response.IsSuccessStatusCode)
-        //     {
-        //         var result = await response.Content.ReadAsStringAsync(cancellationToken);
-        //         return JsonConvert.DeserializeObject<UpdateAdminRequest>(result)
-        //             ?? throw new HttpRequestException("Unable to update admin.");
-        //     }
-        //     var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
+        public async Task<SettingProfileResponse> GetSettingProfileAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync(adminApi + "setting-profile", cancellationToken);
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync(cancellationToken);
+                try
+                {
+                    // Try to deserialize directly using the generic BaseResponseModel
+                    var data = JsonConvert.DeserializeObject<BaseResponseModel<SettingProfileResponse>>(content);
+                    if (data == null || data.Data == null)
+                    {
+                        return null; // or throw an exception based on your error handling strategy
+                    }
+                    return data.Data;
+                }
+                catch (JsonException ex)
+                {
+                    // Log the exception
+                    Console.WriteLine($"Error deserializing response: {ex.Message}");
+                    // If direct deserialization fails, try the old approach as fallback
+                    try
+                    {
+                        var data = JsonConvert.DeserializeObject<BaseResponseModel>(content);
+                        if (data == null || data.Data == null)
+                        {
+                            return null;
+                        }
+                        return JsonConvert.DeserializeObject<SettingProfileResponse>(data.Data.ToString());
+                    }
+                    catch (Exception innerEx)
+                    {
+                        Console.WriteLine($"Fallback deserialization also failed: {innerEx.Message}");
+                        Console.WriteLine($"Raw content: {content}");
+                        return null;
+                    }
+                }
+            }
+            else
+            {
+                // Handle error response
+                return null; // or throw an exception based on your error handling strategy
+            }
 
-        //     if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-        //     {
-        //         throw new InvalidOperationException(errorContent);
-        //     }
-        //     throw new HttpRequestException($"Unable to update admin. Status: {response.StatusCode}, Error: {errorContent}");
-        // }
+            // public async Task<UpdateAdminRequest> UpdateAsync(UpdateAdminRequest entity, CancellationToken cancellationToken = default)
+            // {
+            //     string data = JsonConvert.SerializeObject(entity);
+            //     var content = new StringContent(data, Encoding.UTF8, "application/json");
+            //     HttpResponseMessage response = await _httpClient.PutAsync(adminApi, content, cancellationToken);
+            //     if (response.IsSuccessStatusCode)
+            //     {
+            //         var result = await response.Content.ReadAsStringAsync(cancellationToken);
+            //         return JsonConvert.DeserializeObject<UpdateAdminRequest>(result)
+            //             ?? throw new HttpRequestException("Unable to update admin.");
+            //     }
+            //     var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
+
+            //     if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            //     {
+            //         throw new InvalidOperationException(errorContent);
+            //     }
+            //     throw new HttpRequestException($"Unable to update admin. Status: {response.StatusCode}, Error: {errorContent}");
+            // }
+        }
     }
 }
