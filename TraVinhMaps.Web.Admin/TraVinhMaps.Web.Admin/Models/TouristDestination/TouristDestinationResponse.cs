@@ -22,7 +22,7 @@ namespace TraVinhMaps.Web.Admin.Models.TouristDestination
         public ContactDestination? Contact { get; set; }
         public string TagId { get; set; }
         public string? Ticket { get; set; }
-        public int? FavoriteCount { get; set; } = 0;
+        public int? FavoriteCount { get; set; }
         public bool status { get; set; } = true;
         public DateTime CreatedAt { get; set; }
     }

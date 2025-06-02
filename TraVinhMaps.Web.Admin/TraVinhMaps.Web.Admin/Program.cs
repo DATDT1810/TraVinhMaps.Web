@@ -5,6 +5,7 @@ using TraVinhMaps.Web.Admin.Services.Admin;
 using TraVinhMaps.Web.Admin.Services.Auth;
 using TraVinhMaps.Web.Admin.Services.CommunityTips;
 using TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature;
+using TraVinhMaps.Web.Admin.Services.ItineraryPlan;
 using TraVinhMaps.Web.Admin.Services.Notifications;
 using TraVinhMaps.Web.Admin.Services.OcopProduct;
 using TraVinhMaps.Web.Admin.Services.Tags;
@@ -31,6 +32,8 @@ builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<IDestinationService, DestinationService>();
 // Register Event And Festival
 builder.Services.AddScoped<IEventAndFestivalService, EventAndFestivalService>();
+// Register Itinerary Plan
+builder.Services.AddScoped<IItineraryPlanService, ItineraryPlanService>();
 //  Register AuthService
 builder.Services.AddScoped<IAuthService, AuthService>();
 // Register ITokenService

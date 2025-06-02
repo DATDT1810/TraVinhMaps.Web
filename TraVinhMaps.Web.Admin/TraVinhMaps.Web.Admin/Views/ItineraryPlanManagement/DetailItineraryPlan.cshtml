@@ -1,0 +1,141 @@
+@using TraVinhMaps.Web.Admin.Models.ItineraryPlans;
+@using TraVinhMaps.Web.Admin.Models.Tags
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
+@model ItineraryPlanResponseViewModel;
+@{
+    ViewData["Title"] = "DetailItineraryPlan";
+}
+
+@{
+    List<TagsResponse> tags = ViewBag.TagList;
+}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>Itinerary Plan Detail</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
+                                    style="font-size: 20px;"></i></a></li>
+                        <li class="breadcrumb-item"><a asp-action="Index">Itinerary plan management</a></li>
+                        <li class="breadcrumb-item active">Itinerary Plan Detail</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div>
+            <div class="row product-page-main p-0">
+
+                <div class="col-xxl-6 box-col-6 order-xxl-0 order-1">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="product-page-details">
+                                <h3>@Model.Name</h3>
+                            </div>
+                            <hr>
+                            <div>
+                                <table class="product-page-width">
+                                    <tbody>
+                                        <tr>
+                                            <td> <b>Duration &nbsp;&nbsp;&nbsp;:</b></td>
+                                            <td>@Model.Duration</td>
+                                        </tr>
+                                        <tr>
+                                            <td> <b>Estimate Cost &nbsp;&nbsp;&nbsp;:</b></td>
+                                            <td>@Model.EstimatedCost</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <hr>
+                            <div>
+                                <table class="product-page-width">
+                                    <tbody>
+                                        <tr>
+                                            <td> <b>Update Date &nbsp;&nbsp;&nbsp;:</b></td>
+                                            <td>@Model.UpdateAt</td>
+                                        </tr>
+                                        <tr>
+                                            <td> <b>Creation Date &nbsp;&nbsp;&nbsp;:</b></td>
+                                            <td>@Model.CreatedAt</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <hr>
+                            <div class="m-t-15 btn-showcase">
+                                <a class="btn btn-success" asp-action="EditItineraryPlan" asp-route-id="@Model.Id"><i
+                                        class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit Itinerary Plan</a>
+                                @if (Model.Status)
+                                {
+                                    <form asp-action="DeleteItineraryPlanByForm" asp-route-id="@Model.Id" method="post"
+                                        class="d-inline">
+                                        <button type="submit" class="btn btn-secondary">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>&nbsp; Delete Itinerary Plan
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="RestoreItineraryPlanlByForm" asp-route-id="@Model.Id" method="post"
+                                        class="d-inline">
+                                        <button type="submit" class="btn btn-success">
+                                            <i class="fa fa-trash" aria-hidden="true"></i>&nbsp; Restore Itinerary Plan
+                                        </button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xxl-6 col-md-6 box-col-6">
+                    <div class="card-body">
+                        <div class="card">
+                            <div class="card-header card-no-border total-revenue">
+                                <h4>Destination Place </h4>
+                            </div>
+                            <div class="card-body pt-0">
+                                <div class="activity-log-card">
+                                    <ul>
+                                        @foreach (var item in Model.Locations)
+                                        {
+                                            var tag = tags.FirstOrDefault(p => p.Id == item.TagId);
+                                            <li class="activity-log">
+                                                <div class="d-flex align-items-start gap-2"><img
+                                                        class="activity-log-img rounded-circle img-fluid me-2"
+                                                        src="@item.Images.First()" alt="user" />
+                                                    <div>
+                                                        <div class="common-space user-id">
+                                                            <h6> <a class="f-w-500 f-12"
+                                                                    href="user-profile.html">@item.Name</a></h6>
+                                                        </div>
+                                                        <div class="d-flex mb-2">
+                                                            <img class="activity-log-img rounded-circle img-fluid me-2"
+                                                                style="width: 20px; height: 20px; object-fit: cover;"
+                                                                src="@tag.Image" alt="user" />
+                                                            <span class="f-light f-w-500 f-12">@tag.Name</span>
+                                                        </div>
+                                                        <span class="f-light f-w-500 f-12 d-block">@item.Address</span><a
+                                                            class="f-12 f-w-500 username" href="user-profile.html"></a>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+</div>
