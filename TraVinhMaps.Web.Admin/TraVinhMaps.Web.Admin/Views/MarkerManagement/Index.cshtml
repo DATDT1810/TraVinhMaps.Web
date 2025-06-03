@@ -1,0 +1,150 @@
+@using TraVinhMaps.Web.Admin.Models.Markers;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
+@model IEnumerable<MarkerResponse>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>Marker List</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
+                                    style="font-size: 20px;"></i></a></li>
+                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
+                        {
+                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
+                            {
+                                <li class="breadcrumb-item">@item</li>
+                            }
+                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
+                        }
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3">
+                            <div>
+                                <a asp-controller="MarkerManagement" asp-action="CreateMarker" class="btn btn-success">
+                                    <i class="fa fa-plus me-1"></i>Create Marker
+                                </a>
+                                <button class="btn btn-primary" id="exportBtn">
+                                    <i class="fa fa-file-excel-o me-1"></i>Export
+                                </button>
+                            </div>
+                            <div class="status-filter">
+                                <select id="statusFilter" class="form-select">
+                                    <option value="active">All</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="list-users">
+                            <table class="display" id="project-status">
+                                <thead>
+                                    <tr>
+                                        <th>No. &nbsp</th>
+                                        <th>Name Of marker</th>
+                                        <th>Marker pointer &nbsp</th>
+                                        <th>Created At</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int count = 1;
+                                    }
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr class="user-removes">
+                                            <td>@count</td>
+                                            <td>
+                                                <div class="product-names">
+                                                    <p>@item.Name</p>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="product-names">
+                                                    <div class="light-product-box">
+                                                        <img class="img-fluid" src="@item.Image" alt="avatar">
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>@item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</td>
+                                            <td><span
+                                                    class="badge @(item.Status ? "badge-light-primary" : "badge-light-danger")">@(item.Status
+                                                                                                    ? "Active" : "Inactive")</span></td>
+                                        <td>
+                                            <ul class="action">
+                                                <li>
+                                                    <a class="edit" asp-controller="MarkerManagement" asp-action="MarkerDetail"
+                                                        asp-route-id="@item.Id" title="Details">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    @if (@item.Status == false)
+                                                        {
+                                                                    <a title="Restore" class="restore undelete-eventandfestival" href="javascript:void(0)"
+                                                                    data-id="@item.Id"><i class="fa fa-undo"></i></a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a title="Delete" class="delete delete-eventandfestival" href="javascript:void(0)"
+                                                                    data-id="@item.Id"><i class="fa fa-trash"></i></a>
+                                                        }
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        count++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+</div>
+
+@section Scripts {
+    @Html.AntiForgeryToken()
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script src="~/assets/js/markermanagement/index.js"></script>
+    <script>
+        (function () {
+            const success = @Html.Raw(Json.Serialize(TempData["Success"]));
+            const error   = @Html.Raw(Json.Serialize(TempData["Error"]));
+            if (success) showSuccessAlert("Success!", success);
+            if (error)   showErrorAlert("Error!",   error);
+        })();
+            @if (TempData["successMessage"] != null)
+            {
+                <text>
+                    showSuccessAlert("Success!", "@TempData["successMessage"]");
+                </text>
+            }
+            @if (TempData["errorMessage"] != null)
+            {
+                <text>
+                    showErrorAlert("Success!", "@TempData["errorMessage"]");
+                </text>
+            }
+    </script>
+}

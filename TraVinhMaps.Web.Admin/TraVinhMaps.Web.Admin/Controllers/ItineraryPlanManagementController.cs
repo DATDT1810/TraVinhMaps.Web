@@ -55,6 +55,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [HttpPost("CreateItineratyPlan")]
         public async Task<IActionResult> CreateItineratyPlan(ItineraryPlanRequestViewModel itineraryPlanRequestViewModel)
         {
+            if (!ModelState.IsValid)
+            {
+                TempData["errorMessage"] = "Create itinerary plan failed, please try again";
+                return View(itineraryPlanRequestViewModel);
+            }
             List<string> listDestination = JsonSerializer.Deserialize<List<string>>(itineraryPlanRequestViewModel.Locations);
             if (listDestination.Count < 2)
             {
@@ -135,14 +140,25 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [HttpPost("EditItineraryPlan")]
         public async Task<IActionResult> EditItineraryPlan(UpdateItineraryPlanResponse updateItineraryPlanResponse)
         {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.DurationValue = GetDurationList();
+                ViewBag.EstimatedCostValue = GetEstimatedCostList();
+                TempData["errorMessage"] = "Update itinerary plan failed, please try again";
+                return View(updateItineraryPlanResponse);
+            }
             if (updateItineraryPlanResponse == null)
             {
+                ViewBag.DurationValue = GetDurationList();
+                ViewBag.EstimatedCostValue = GetEstimatedCostList();
                 TempData["errorMessage"] = "Update itinerary plan failed, please try again";
                 return View(updateItineraryPlanResponse);
             }
             var updatedItineraryPlan = await _itineraryPlanService.UpdateItineraryPlan(updateItineraryPlanResponse);
             if (updatedItineraryPlan == null)
             {
+                ViewBag.DurationValue = GetDurationList();
+                ViewBag.EstimatedCostValue = GetEstimatedCostList();
                 TempData["errorMessage"] = "Update itinerary plan failed, please try again";
                 return View(updateItineraryPlanResponse);
             }
@@ -264,5 +280,22 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return destinationList;
         }
 
+        private List<SelectListItem> GetDurationList() => new List<SelectListItem>
+        {
+            new SelectListItem { Value = "One day", Text = "One day" },
+            new SelectListItem { Value = "2 days 1 night", Text = "2 days 1 night" },
+            new SelectListItem { Value = "3 days 2 night", Text = "3 days 2 night" },
+            new SelectListItem { Value = "4 days 3 night", Text = "4 days 3 night" },
+            new SelectListItem { Value = "5 days 4 night", Text = "5 days 4 night" },
+        };
+
+        private List<SelectListItem> GetEstimatedCostList() => new List<SelectListItem>
+        {
+            new SelectListItem { Value = "1 million", Text = "1 million" },
+            new SelectListItem { Value = "2 million", Text = "2 million" },
+            new SelectListItem { Value = "3 million", Text = "3 million" },
+            new SelectListItem { Value = "4 million", Text = "4 million" },
+            new SelectListItem { Value = "5 million", Text = "5 million" },
+        };
     }
 }
