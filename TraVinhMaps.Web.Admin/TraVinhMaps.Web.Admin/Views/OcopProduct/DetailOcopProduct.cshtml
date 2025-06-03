@@ -184,11 +184,19 @@
                                         var isLast = i == Model.Sellocations.Count - 1;
                                         <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; @(isLast ? "" : "border-bottom: 1px solid #ddd;")">
                                             <div>
-                                                <b>@(item?.LocationName ?? "No Location Name.")</b><br />
-                                                <b style="display: inline-block; margin-right: 8px;">Location:</b>
+                                                <b>Location Name: @(item?.LocationName ?? "No Location Name.")</b><br />
+                                                <b style="display: inline-block; margin-right: 8px;">Location Adress:</b>
                                                 <span>@(item?.LocationAddress ?? "No Location Address.")</span>
                                             </div>
                                             <div style="display: flex; gap: 6px;">
+                                                <a asp-action="CreateSellLocation"
+                                                asp-route-id="@Model.Id"
+                                                class="btn btn-success btn-sm px-2 py-1"
+                                                title="Create Location"
+                                                style="font-size: 14px; line-height: 1;">
+                                                <span style="font-size: 20px;">&#43;</span>
+                                                </a>
+
                                                 <a asp-action="UpdateSellLocation"
                                                 asp-route-id="@Model.Id"
                                                 asp-route-locationName="@item.LocationName"
@@ -200,7 +208,7 @@
 
                                                 <button type="button" 
                                                         class="delete-sell-location btn btn-danger btn-sm px-2 py-1" 
-                                                        title="Xoá địa điểm"
+                                                        title="Delete Location"
                                                         style="font-size: 14px; line-height: 1;"
                                                         data-product-id="@Model.Id"
                                                         data-location-name="@item.LocationName">
@@ -219,7 +227,7 @@
                                         <tr>
                                             <td style="white-space: nowrap;"> <b style="display: inline-block; width: 160px;">Created At</b><b>: &nbsp;&nbsp;&nbsp;</b></td>
                                             <td>
-                                                @Model.CreatedAt
+                                                @Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                             </td>
                                         </tr>
                                         <tr>
@@ -227,7 +235,7 @@
                                             <td class="txt-success">
                                                 @(
                                                     Model.UpdateAt.HasValue
-                                                    ? Model.UpdateAt
+                                                    ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                                     : "No update"
                                                     )
                                             </td>
@@ -331,13 +339,17 @@
                                         <td style="white-space: nowrap;">
                                             <b>Ocop Type Id</b><b>: &nbsp;&nbsp;</b>
                                         </td>
-                                        <p>@Model.OcopTypeId</p>
+                                        @if(Model.OcopTypeId == "681c791ecf4b6508ed09e831"){
+                                            <p>Ocop Product</p>
+                                        }
                                     </li>
                                     <li>
                                         <td style="white-space: nowrap;">
                                             <b>Company Id</b><b>: &nbsp;&nbsp;</b>
                                         </td>
-                                        <p>@Model.CompanyId</p>
+                                        @if(Model.CompanyId == "681c791ecf4b6508ed09e832"){
+                                            <p>An Nam Company</p>
+                                        }
                                     </li>
                                     <li>
                                         <td style="white-space: nowrap;">
@@ -349,13 +361,38 @@
                                         <td style="white-space: nowrap;">
                                             <b>Tag Id</b><b>: &nbsp;&nbsp;</b>
                                         </td>
-                                        <p>@Model.TagId</p>
+                                        @if(Model.TagId == "6826c8a67b645c6f8e188155"){
+                                            <p>Introduce</p>
+                                        }
+                                        @if(Model.TagId == "6826c8a67b645c6f8e188156"){
+                                            <p>Ocop</p>
+                                        }
+                                        @if(Model.TagId == "6826c8a67b645c6f8e188157"){
+                                            <p>Tip Travel</p>
+                                        }
+                                        @if(Model.TagId == "6826c8a67b645c6f8e188158"){
+                                            <p>Destination</p>
+                                        }
+                                        @if(Model.TagId == "6826c8a67b645c6f8e188159"){
+                                            <p>Local specialty</p>
+                                        }
+                                        @if(Model.TagId == "6826c8a67b645c6f8e18815a"){
+                                            <p>Stay</p>
+                                        }
+                                        @if(Model.TagId == "6826c8a67b645c6f8e18815b"){
+                                            <p>Festivals</p>
+                                        }
+                                        @if(Model.TagId == "6826c8a67b645c6f8e18815c"){
+                                            <p>Utilities</p>
+                                        }
                                     </li>
                                     <li>
                                         <td style="white-space: nowrap;">
                                             <b>Selling Link Id</b><b>: &nbsp;&nbsp;</b>
                                         </td>
-                                        <p>@Model.SellingLinkId</p>
+                                        @if(Model.SellingLinkId == "681c791ecf4b6508ed09e834"){
+                                            <a>https://shopee.vn/</a>
+                                        }
                                     </li>
                                 </ul>
                             </div>
