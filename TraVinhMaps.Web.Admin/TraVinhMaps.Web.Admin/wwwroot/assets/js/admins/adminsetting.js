@@ -18,7 +18,6 @@ $(document).ready(function () {
 
     // Hàm gọi API request OTP
     function requestOTP(identifier, fieldType) {
-        showLoading();
         return $.ajax({
             url: `https://localhost:7162/api/Admins/request-otp-update?identifier=${encodeURIComponent(identifier)}`,
             method: "GET",
@@ -31,10 +30,9 @@ $(document).ready(function () {
                     otpRequestToken = response.data;
                     console.log("OTP request token stored:", otpRequestToken);
                 }
-                hideLoading();
             },
             error: function() {
-                hideLoading();
+                // Error handling
             }
         });
     }
@@ -117,7 +115,6 @@ $(document).ready(function () {
                         // Gọi API request OTP
                         requestOTP(identifier, 'email')
                             .done(function(response) {
-                                hideLoading();
                                 showOTPModal('email', identifier, false);
                             })
                             .fail(function(error) {
@@ -146,11 +143,9 @@ $(document).ready(function () {
                         // Gọi API request OTP
                         requestOTP(identifier, 'phone')
                             .done(function(response) {
-                                hideLoading();
                                 showOTPModal('phone', identifier);
                             })
                             .fail(function(error) {
-                                hideLoading();
                                 showErrorAlert("Error", "Cannot send OTP. Please try again.");
                             });
                     } else {
@@ -187,15 +182,12 @@ $(document).ready(function () {
                         if (identifier) {
                             requestOTP(identifier, 'password')
                                 .done(function(response) {
-                                    hideLoading();
                                     showOTPModal('password', identifier);
                                 })
                                 .fail(function(error) {
-                                    hideLoading();
                                     showErrorAlert("Error", "Cannot send OTP. Please try again.");
                                 });
                         } else {
-                            hideLoading();
                             showErrorAlert("Error", "Need email or phone number to verify.");
                         }
                     } else {
@@ -216,7 +208,6 @@ $(document).ready(function () {
         }
 
         // Gọi API verify OTP
-        showLoading();
         $.ajax({
             url: `https://localhost:7162/api/Admins/confirm-otp-update?otp=${otpCode}`,
             method: "PUT",
@@ -226,7 +217,6 @@ $(document).ready(function () {
             },
             contentType: "application/json",
             success: function(response) {
-                hideLoading();
                 $('#otpModal').modal('hide');
 
                 // Sau khi xác thực thành công, hiển thị modal tương ứng
@@ -239,7 +229,6 @@ $(document).ready(function () {
                 }
             },
             error: function(error) {
-                hideLoading();
                 showErrorAlert("Error", "OTP is not correct or expired.");
             }
         });
@@ -249,7 +238,6 @@ $(document).ready(function () {
     $('#resendOtpBtn').click(function() {
         if (!$(this).prop('disabled')) {
             // Call the specific resend OTP endpoint with the current identifier
-            showLoading();
             $.ajax({
                 url: `https://localhost:7162/api/Admins/resend-otp-update-by-email?identifier=${encodeURIComponent(currentIdentifier)}`,
                 method: 'Get',
@@ -260,12 +248,10 @@ $(document).ready(function () {
                 },
             })
             .done(function(response) {
-                hideLoading();
                 showSuccessAlert("Success", "New OTP has been sent.");
                 startCountdown();
             })
             .fail(function(error) {
-                hideLoading();
                 showErrorAlert("Error", "Cannot send new OTP.");
             });
         }
@@ -316,7 +302,6 @@ $(document).ready(function () {
                     }
                     
                     // Verify OTP for new email
-                    showLoading();
                     $.ajax({
                         url: `https://localhost:7162/api/Admins/confirm-otp-update?otp=${otpCode}`,
                         method: "PUT",
@@ -326,14 +311,12 @@ $(document).ready(function () {
                         },
                         contentType: "application/json",
                         success: function(response) {
-                            hideLoading();
                             $('#otpModal').modal('hide');
                             
                             // Update the email with the PUT request
                             updateEmailFinal(newEmailValue);
                         },
                         error: function(error) {
-                            hideLoading();
                             showErrorAlert("Error", "OTP is not correct or expired.");
                         }
                     });
@@ -374,7 +357,6 @@ $(document).ready(function () {
                     }
                     
                     // Verify OTP for new phone
-                    showLoading();
                     $.ajax({
                         url: `https://localhost:7162/api/Admins/confirm-otp-update?otp=${otpCode}`,
                         method: "PUT",
@@ -384,14 +366,12 @@ $(document).ready(function () {
                         },
                         contentType: "application/json",
                         success: function(response) {
-                            hideLoading();
                             $('#otpModal').modal('hide');
                             
                             // Update the phone with the PUT request
                             updatePhoneFinal(newPhoneValue);
                         },
                         error: function(error) {
-                            hideLoading();
                             showErrorAlert("Error", "OTP is not correct or expired.");
                         }
                     });
@@ -493,7 +473,6 @@ $(document).ready(function () {
 
     // Function to update email after all verifications
     function updateEmailFinal(newEmail) {
-        showLoading();
         $.ajax({
             url: `https://localhost:7162/api/Admins/update-setting-admin`,
             method: "PUT",
@@ -506,7 +485,6 @@ $(document).ready(function () {
                 "updateType": "email"
             }),
             success: function (res) {
-                hideLoading();
                 showSuccessAlert("Success", "Email has been updated!");
                 // Reload page after successful update
                 setTimeout(function() {
@@ -514,7 +492,6 @@ $(document).ready(function () {
                 }, 1500);
             },
             error: function (err) {
-                hideLoading();
                 showErrorAlert("Error", "Cannot update email.");
             }
         });
@@ -522,7 +499,6 @@ $(document).ready(function () {
     
     // Function to update phone after all verifications
     function updatePhoneFinal(newPhone) {
-        showLoading();
         $.ajax({
             url: `https://localhost:7162/api/Admins/update-setting-admin`,
             method: "PUT",
@@ -535,7 +511,6 @@ $(document).ready(function () {
                 "updateType": "phone"
             }),
             success: function (res) {
-                hideLoading();
                 showSuccessAlert("Success", "Phone number has been updated!");
                 // Reload page after successful update
                 setTimeout(function() {
@@ -543,7 +518,6 @@ $(document).ready(function () {
                 }, 1500);
             },
             error: function (err) {
-                hideLoading();
                 showErrorAlert("Error", "Cannot update phone number.");
             }
         });
@@ -551,7 +525,6 @@ $(document).ready(function () {
 
     // Function to update password
     function updatePasswordFinal(currentPassword, newPassword) {
-        showLoading();
         $.ajax({
             url: `https://localhost:7162/api/Admins/update-password-admin`,
             method: "PUT",
@@ -564,7 +537,6 @@ $(document).ready(function () {
                 "newPassword": newPassword
             }),
             success: function (res) {
-                hideLoading();
                 showSuccessAlert("Success", "Password has been updated!");
                 // Reload page after successful update
                 setTimeout(function() {
@@ -572,7 +544,6 @@ $(document).ready(function () {
                 }, 1500);
             },
             error: function (err) {
-                hideLoading();
                 showErrorAlert("Error", "Cannot update password. Please check your current password and try again.");
             }
         });
