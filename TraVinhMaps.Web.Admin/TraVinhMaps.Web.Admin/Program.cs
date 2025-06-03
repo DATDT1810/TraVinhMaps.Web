@@ -11,6 +11,7 @@ using TraVinhMaps.Web.Admin.Services.Notifications;
 using TraVinhMaps.Web.Admin.Services.Tags;
 using TraVinhMaps.Web.Admin.Services.TouristDestination;
 using TraVinhMaps.Web.Admin.Services.Users;
+using TraVinhMaps.Web.Admin.Services.Markers;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -34,6 +35,8 @@ builder.Services.AddScoped<IDestinationService, DestinationService>();
 builder.Services.AddScoped<IEventAndFestivalService, EventAndFestivalService>();
 // Register Itinerary Plan
 builder.Services.AddScoped<IItineraryPlanService, ItineraryPlanService>();
+// Register Marker Service
+builder.Services.AddScoped<IMarkerService, MarkerService>();
 //  Register AuthService
 builder.Services.AddScoped<IAuthService, AuthService>();
 // Register ITokenService
