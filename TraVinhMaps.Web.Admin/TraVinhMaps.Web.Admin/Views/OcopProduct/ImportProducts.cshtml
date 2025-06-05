@@ -1,0 +1,667 @@
+@{
+    ViewData["Title"] = "Import Products";
+}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>Tạo Sản Phẩm Hàng Loạt</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home" style="font-size: 20px;"></i>
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a asp-controller="OcopProduct" asp-action="Index">Products</a>
+                        </li>
+                        <li class="breadcrumb-item active">Import Products</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- First card with upload section -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-box me-3">
+                                        <i class="fa fa-file-excel-o fa-2x text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="mb-0">Tạo Sản Phẩm Hàng Loạt</h4>
+                                        <small class="text-muted">Tải lên file Excel để tạo nhiều sản phẩm OCOP cùng lúc</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="dropzone-area" id="excelDropzone">
+                                    <div class="dz-message text-center">
+                                        <div class="mb-3">
+                                            <img src="/assets/images/dashboard_icon/excel-icon.png" alt="Excel Icon" width="80" class="mb-3" onerror="this.src='/assets/images/logo/logo-icon.png'" />
+                                        </div>
+                                        <h5>Kéo thả file Excel vào đây hoặc nhấn để chọn file</h5>
+                                        <p class="text-muted">Hỗ trợ định dạng: .xlsx, .xls (Tối đa 10MB)</p>
+                                        <button type="button" class="btn btn-success" id="browseBtn">
+                                            <i class="fa fa-folder-open me-1"></i>Chọn File Excel
+                                        </button>
+                                        <input type="file" id="excelFileInput" accept=".xlsx,.xls" class="d-none" />
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-3">
+                                    <div>
+                                        <a href="#" class="btn btn-primary" id="downloadTemplateBtn">
+                                            <i class="fa fa-download me-1"></i>Tải Template Excel
+                                        </a>
+                                        <button class="btn btn-success ms-2" id="exportTableBtn">
+                                            <i class="fa fa-file-excel-o me-1"></i>Export Data
+                                        </button>
+                                    </div>
+                                    <div class="text-end">
+                                        <a href="#" class="btn btn-info" id="showInstructionsBtn">
+                                            <i class="fa fa-info-circle me-1"></i>Hướng Dẫn Sử Dụng
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Data preview section -->
+                        <div id="dataPreviewSection" class="d-none">
+                            <div class="alert alert-warning" id="validationIssues">
+                                <h5 class="alert-heading">
+                                    <i class="fa fa-exclamation-triangle me-1"></i>Phát hiện một số vấn đề:
+                                </h5>
+                                <ul id="issuesList">
+                                    <!-- Issues will be populated here -->
+                                </ul>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="excelDataTable">
+                                    <thead class="bg-primary">
+                                        <tr>
+                                            <th>STT</th>
+                                            <th>Trạng thái</th>
+                                            <th>Tên sản phẩm</th>
+                                            <th>Mô tả</th>
+                                            <th>Giá (VND)</th>
+                                            <th>Năm OCOP</th>
+                                            <th>Hình ảnh</th>
+                                            <th>Ghi chú</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="excelDataBody">
+                                        <!-- Data will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <div>
+                                    <span class="text-muted" id="productCountInfo">Tổng cộng: <span id="productCount">0</span> sản phẩm | Thời gian ước tính: <span id="estimatedTime">~0</span> phút</span>
+                                </div>
+                                <div>
+                                    <button class="btn btn-danger me-2" id="clearDataBtn">
+                                        <i class="fa fa-trash me-1"></i>Xóa dữ liệu
+                                    </button>
+                                    <button class="btn btn-success" id="startImportBtn">
+                                        <i class="fa fa-upload me-1"></i>Bắt đầu Import
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+</div>
+
+@section Scripts {
+    <!-- SheetJS libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            let excelData = [];
+            let excelHeaders = [];
+            
+            // Setup the Excel file input and dropzone
+            $('#browseBtn').click(function() {
+                $('#excelFileInput').click();
+            });
+            
+            $('#excelFileInput').change(function(e) {
+                handleExcelFile(e.target.files[0]);
+            });
+            
+            // Handle drag and drop
+            const dropzone = document.getElementById('excelDropzone');
+            
+            dropzone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                dropzone.classList.add('dropzone-active');
+            });
+            
+            dropzone.addEventListener('dragleave', function() {
+                dropzone.classList.remove('dropzone-active');
+            });
+            
+            dropzone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                dropzone.classList.remove('dropzone-active');
+                
+                if (e.dataTransfer.files.length) {
+                    const file = e.dataTransfer.files[0];
+                    if (file.name.match(/\.(xlsx|xls)$/)) {
+                        handleExcelFile(file);
+                    } else {
+                        alert('Please upload a valid Excel file (.xlsx, .xls)');
+                    }
+                }
+            });
+            
+            // Handle the Excel file
+            function handleExcelFile(file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    // Get the first worksheet
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    
+                    // Convert to JSON
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                    
+                    // Store headers
+                    if (jsonData.length > 0) {
+                        excelHeaders = jsonData[0];
+                    }
+                    
+                    // Store data
+                    excelData = jsonData;
+                    
+                    // Process the data
+                    processExcelData(excelData);
+                };
+                
+                reader.readAsArrayBuffer(file);
+            }
+            
+            // Process and display the Excel data
+            function processExcelData(data) {
+                // Check if data is valid
+                if (!data || data.length < 2) {
+                    alert('Invalid data format. Please use the provided template.');
+                    return;
+                }
+                
+                // Clear existing data
+                $('#excelDataBody').empty();
+                $('#issuesList').empty();
+                
+                // Track validation issues
+                const issues = [];
+                let validProducts = 0;
+                let warningProducts = 0;
+                let errorProducts = 0;
+                
+                // Process each row (skip header)
+                for (let i = 1; i < data.length; i++) {
+                    const row = data[i];
+                    if (!row || row.length === 0 || (row.length === 1 && !row[0])) continue; // Skip empty rows
+                    
+                    // Simulate validation
+                    let status = 'Hợp lệ';
+                    let statusClass = 'badge-light-primary';
+                    let note = '-';
+                    
+                    // Simple validation rules based on the screenshots
+                    if (!row[3]) { // Assuming index 3 is price
+                        status = 'Lỗi';
+                        statusClass = 'badge-light-danger';
+                        note = 'Thiếu giá sản phẩm';
+                        issues.push(`• Dòng ${i}: Thiếu thông tin giá sản phẩm`);
+                        errorProducts++;
+                    } else if (row[0] && row[0].toString().includes('Mật ong')) {
+                        status = 'Cảnh báo';
+                        statusClass = 'badge-light-warning';
+                        note = 'Tên sản phẩm trùng lặp với "Mật ong Rừng U Minh"';
+                        issues.push(`• Dòng ${i}: Tên sản phẩm trùng lặp với "Mật ong Rừng U Minh"`);
+                        warningProducts++;
+                    } else if (row[4] && row[4] > new Date().getFullYear()) {
+                        status = 'Cảnh báo';
+                        statusClass = 'badge-light-warning';
+                        note = `Năm phát hành OCOP không hợp lệ (${row[4]})`;
+                        issues.push(`• Dòng ${i}: Năm phát hành OCOP không hợp lệ (${row[4]})`);
+                        warningProducts++;
+                    } else {
+                        validProducts++;
+                    }
+                    
+                    // Create table row
+                    const tr = $('<tr>').attr('data-row', i);
+                    
+                    // Add row number
+                    tr.append($('<td>').text(i));
+                    
+                    // Add status with badge
+                    const statusBadge = $('<span>')
+                        .addClass('badge ' + statusClass)
+                        .text(status);
+                    tr.append($('<td>').append(statusBadge));
+                    
+                    // Add product data cells
+                    tr.append($('<td contenteditable="true">').attr('data-col', 0).text(row[0] || '')); // Product name
+                    tr.append($('<td contenteditable="true">').attr('data-col', 1).text(row[1] || '')); // Description
+                    tr.append($('<td contenteditable="true">').attr('data-col', 3).text(row[3] ? formatPrice(row[3]) : '')); // Price
+                    tr.append($('<td contenteditable="true">').attr('data-col', 4).text(row[4] || '')); // OCOP Year
+                    
+                    // Add image column
+                    const imageCol = $('<td contenteditable="true">').attr('data-col', 5);
+                    if (row[5]) {
+                        imageCol.text(row[5]);
+                    } else {
+                        imageCol.text('Thiếu hình ảnh').addClass('text-muted');
+                    }
+                    tr.append(imageCol);
+                    
+                    // Add note column (non-editable)
+                    tr.append($('<td>').text(note));
+                    
+                    // Add row to table
+                    $('#excelDataBody').append(tr);
+                }
+                
+                // Setup editable cells functionality
+                setupEditableCells();
+                
+                // Show validation issues if any
+                if (issues.length > 0) {
+                    issues.forEach(issue => {
+                        $('#issuesList').append($('<li>').html(issue));
+                    });
+                    $('#validationIssues').removeClass('d-none');
+                } else {
+                    $('#validationIssues').addClass('d-none');
+                }
+                
+                // Update product count and estimated time
+                const totalProducts = validProducts + warningProducts + errorProducts;
+                $('#productCount').text(totalProducts);
+                
+                // Estimate about 1 minute per 10 products
+                const estimatedMinutes = Math.ceil(totalProducts / 10) * 2;
+                $('#estimatedTime').text(`~${estimatedMinutes}`);
+                
+                // Show the data preview section
+                $('#dataPreviewSection').removeClass('d-none');
+            }
+            
+            // Setup editable cells
+            function setupEditableCells() {
+                $('[contenteditable="true"]').on('focus', function() {
+                    // Store original value
+                    $(this).data('original', $(this).text());
+                }).on('blur', function() {
+                    // Get new value
+                    const newValue = $(this).text();
+                    const oldValue = $(this).data('original');
+                    
+                    // If value changed
+                    if (newValue !== oldValue) {
+                        // Get row and column
+                        const rowIdx = parseInt($(this).closest('tr').attr('data-row'));
+                        const colIdx = parseInt($(this).attr('data-col'));
+                        
+                        // Update data
+                        if (!excelData[rowIdx]) excelData[rowIdx] = [];
+                        
+                        // Special handling for price column
+                        if (colIdx === 3) {
+                            const numValue = parseFloat(newValue.replace(/[^\d.-]/g, ''));
+                            if (!isNaN(numValue)) {
+                                excelData[rowIdx][colIdx] = numValue;
+                                $(this).text(formatPrice(numValue));
+                            }
+                        } else {
+                            excelData[rowIdx][colIdx] = newValue;
+                        }
+                        
+                        // Revalidate
+                        validateRow(rowIdx);
+                    }
+                });
+            }
+            
+            // Validate a row
+            function validateRow(rowIndex) {
+                const row = excelData[rowIndex];
+                const tr = $(`tr[data-row="${rowIndex}"]`);
+                const badge = tr.find('td:nth-child(2) .badge');
+                const noteCell = tr.find('td:last-child');
+                
+                let status = 'Hợp lệ';
+                let statusClass = 'badge-light-primary';
+                let note = '-';
+                
+                // Validate
+                if (!row[3]) {
+                    status = 'Lỗi';
+                    statusClass = 'badge-light-danger';
+                    note = 'Thiếu giá sản phẩm';
+                } else if (row[0] && row[0].toString().includes('Mật ong')) {
+                    status = 'Cảnh báo';
+                    statusClass = 'badge-light-warning';
+                    note = 'Tên sản phẩm trùng lặp với "Mật ong Rừng U Minh"';
+                } else if (row[4] && parseInt(row[4]) > new Date().getFullYear()) {
+                    status = 'Cảnh báo';
+                    statusClass = 'badge-light-warning';
+                    note = `Năm phát hành OCOP không hợp lệ (${row[4]})`;
+                }
+                
+                // Update UI
+                badge.removeClass('badge-light-primary badge-light-warning badge-light-danger')
+                    .addClass(statusClass)
+                    .text(status);
+                
+                noteCell.text(note);
+                
+                // Refresh validation issues
+                refreshValidationIssues();
+            }
+            
+            // Refresh validation issues
+            function refreshValidationIssues() {
+                const issues = [];
+                
+                // Check all rows
+                for (let i = 1; i < excelData.length; i++) {
+                    const row = excelData[i];
+                    if (!row || row.length === 0) continue;
+                    
+                    if (!row[3]) {
+                        issues.push(`• Dòng ${i}: Thiếu thông tin giá sản phẩm`);
+                    } else if (row[0] && row[0].toString().includes('Mật ong')) {
+                        issues.push(`• Dòng ${i}: Tên sản phẩm trùng lặp với "Mật ong Rừng U Minh"`);
+                    } else if (row[4] && parseInt(row[4]) > new Date().getFullYear()) {
+                        issues.push(`• Dòng ${i}: Năm phát hành OCOP không hợp lệ (${row[4]})`);
+                    }
+                }
+                
+                // Update UI
+                $('#issuesList').empty();
+                
+                if (issues.length > 0) {
+                    issues.forEach(issue => {
+                        $('#issuesList').append($('<li>').html(issue));
+                    });
+                    $('#validationIssues').removeClass('d-none');
+                } else {
+                    $('#validationIssues').addClass('d-none');
+                }
+            }
+            
+            // Helper function to format price
+            function formatPrice(price) {
+                return new Intl.NumberFormat('vi-VN').format(price);
+            }
+            
+            // Handle clear data button
+            $('#clearDataBtn').click(function() {
+                excelData = [];
+                $('#excelDataBody').empty();
+                $('#issuesList').empty();
+                $('#dataPreviewSection').addClass('d-none');
+                $('#excelFileInput').val('');
+            });
+            
+            // Handle start import button
+            $('#startImportBtn').click(function() {
+                // Count valid records
+                let validCount = 0;
+                for (let i = 1; i < excelData.length; i++) {
+                    if (excelData[i] && excelData[i].length > 0) validCount++;
+                }
+                
+                if (validCount <= 0) {
+                    alert('No valid records to import');
+                    return;
+                }
+                
+                if (confirm(`Are you sure you want to import ${validCount} products?`)) {
+                    // Here you would send the data to the server
+                    // For demonstration, we'll just show a success message
+                    alert('Import started. This may take a few minutes.');
+                    
+                    // Redirect to index page after "import"
+                    setTimeout(function() {
+                        window.location.href = '/OcopProduct/Index';
+                    }, 2000);
+                }
+            });
+            
+            // Handle export table data button
+            $('#exportTableBtn').click(function() {
+                exportTableToExcel();
+            });
+            
+            // Export table data to Excel file
+            function exportTableToExcel() {
+                // Check if there's data to export
+                if (!excelData || excelData.length < 2) {
+                    alert('No data to export. Please load or enter data first.');
+                    return;
+                }
+                
+                // Create a new workbook
+                const wb = XLSX.utils.book_new();
+                
+                // Prepare data for export (excluding status and notes columns which are UI-only)
+                const exportData = [];
+                
+                // Add header row
+                const header = ['STT', 'Tên sản phẩm', 'Mô tả', 'Giá (VND)', 'Năm OCOP', 'Hình ảnh', 'Ghi chú'];
+                exportData.push(header);
+                
+                // Add data rows
+                for (let i = 1; i < excelData.length; i++) {
+                    const row = excelData[i];
+                    if (!row || row.length === 0) continue;
+                    
+                    // Get current data from table (to include any edits)
+                    const exportRow = [];
+                    exportRow.push(i); // STT
+                    exportRow.push(row[0] || ''); // Name
+                    exportRow.push(row[1] || ''); // Description
+                    
+                    // For price, use the numeric value
+                    let priceValue = row[3];
+                    if (typeof priceValue === 'string') {
+                        priceValue = parseFloat(priceValue.replace(/[^\d.-]/g, ''));
+                    }
+                    exportRow.push(priceValue || ''); // Price
+                    
+                    exportRow.push(row[4] || ''); // Year
+                    exportRow.push(row[5] || ''); // Image
+                    
+                    // Get note from UI
+                    const tr = $(`tr[data-row="${i}"]`);
+                    const note = tr ? tr.find('td:last-child').text() : '-';
+                    exportRow.push(note); // Note
+                    
+                    exportData.push(exportRow);
+                }
+                
+                // Create worksheet
+                const ws = XLSX.utils.aoa_to_sheet(exportData);
+                
+                // Set column widths for better readability
+                const colWidths = [
+                    { wpx: 40 },  // STT
+                    { wpx: 200 }, // Name
+                    { wpx: 300 }, // Description
+                    { wpx: 100 }, // Price
+                    { wpx: 80 },  // Year
+                    { wpx: 180 }, // Image
+                    { wpx: 150 }  // Note
+                ];
+                
+                ws['!cols'] = colWidths;
+                
+                // Add the worksheet to the workbook
+                XLSX.utils.book_append_sheet(wb, ws, 'OCOP Products');
+                
+                // Generate Excel file
+                const fileName = 'ocop_products_' + new Date().toISOString().slice(0,10) + '.xlsx';
+                XLSX.writeFile(wb, fileName);
+            }
+            
+            // Template download handler
+            $('#downloadTemplateBtn').click(function(e) {
+                e.preventDefault();
+                
+                // Create template workbook
+                const wb = XLSX.utils.book_new();
+                
+                // Create headers
+                const templateData = [
+                    ['Tên sản phẩm', 'Mô tả', 'Loại sản phẩm', 'Giá (VND)', 'Năm OCOP', 'Hình ảnh URL', 'Công ty', 'Điểm OCOP'],
+                    ['Mật ong rừng', 'Mật ong nguyên chất từ rừng tràm U Minh', 'Ocop', '250000', '2023', 'honey.jpg', 'An Nam Company', '5'],
+                    ['Bánh tráng nướng', 'Bánh tráng nướng truyền thống', 'Ocop', '45000', '2022', 'banh_trang.jpg', 'Công ty Truyền thống', '4'],
+                ];
+                
+                // Create worksheet
+                const ws = XLSX.utils.aoa_to_sheet(templateData);
+                
+                // Set column widths
+                ws['!cols'] = [
+                    { wpx: 200 }, // Name
+                    { wpx: 300 }, // Description
+                    { wpx: 100 }, // Type
+                    { wpx: 100 }, // Price
+                    { wpx: 80 },  // Year
+                    { wpx: 180 }, // Image
+                    { wpx: 150 }, // Company
+                    { wpx: 80 }   // Points
+                ];
+                
+                // Add to workbook
+                XLSX.utils.book_append_sheet(wb, ws, 'Template');
+                
+                // Generate Excel file
+                XLSX.writeFile(wb, 'ocop_product_template.xlsx');
+            });
+            
+            // Instructions button handler
+            $('#showInstructionsBtn').click(function(e) {
+                e.preventDefault();
+                alert('Hướng dẫn sử dụng:\n\n1. Tải template Excel để xem định dạng chuẩn\n2. Điền thông tin sản phẩm vào file Excel\n3. Tải lên file Excel đã điền thông tin\n4. Kiểm tra và chỉnh sửa dữ liệu nếu cần\n5. Nhấn "Bắt đầu Import" để nhập sản phẩm');
+            });
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .dropzone-area {
+            border: 2px dashed #1B8754;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            background-color: #eafaf1;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .dropzone-active {
+            background-color: #d4edda;
+            border-color: #146642;
+        }
+        
+        #excelDropzone {
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .badge-light-primary {
+            background-color: #e6f7ee;
+            color: #146642;
+            border: 1px solid #a3e0c1;
+        }
+        
+        .badge-light-warning {
+            background-color: #fff8e6;
+            color: #b06000;
+            border: 1px solid #ffe0a3;
+        }
+        
+        .badge-light-danger {
+            background-color: #ffeef0;
+            color: #dc3545;
+            border: 1px solid #ffc1c7;
+        }
+        
+        .badge {
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        /* Editable cell styles */
+        [contenteditable="true"] {
+            position: relative;
+            background-color: #ffffff;
+            transition: all 0.2s ease;
+            min-height: 32px;
+            cursor: text;
+        }
+        
+        [contenteditable="true"]:hover {
+            background-color: #f8f9fa;
+        }
+        
+        [contenteditable="true"]:focus {
+            outline: 2px solid #1B8754;
+            background-color: #f8f9fa;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        
+        [contenteditable="true"]::after {
+            content: '\f040';
+            font-family: FontAwesome;
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        [contenteditable="true"]:hover::after {
+            opacity: 1;
+        }
+    </style>
+}
+

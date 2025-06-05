@@ -1,18 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Logging;
 using TraVinhMaps.Web.Admin.Models.CommunityTips;
 using TraVinhMaps.Web.Admin.Services.CommunityTips;
 using TraVinhMaps.Web.Admin.Services.Tags;
 
 namespace TraVinhMaps.Web.Admin.Controllers
 {
-    // Controller responsible for handling Community Tips-related actions
+    [Authorize]
     [Route("[controller]")]
     public class CommunityTipsController : Controller
     {
@@ -41,7 +36,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             foreach (var tip in tips)
             {
                 var tag = await _tagService.GetByIdAsync(tip.TagId);
-                tip.TagName = tag?.Name ?? ""; 
+                tip.TagName = tag?.Name ?? "";
                 tipsWithTags.Add(tip);
             }
 

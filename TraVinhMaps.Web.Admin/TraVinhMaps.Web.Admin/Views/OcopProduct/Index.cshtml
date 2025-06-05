@@ -3,7 +3,6 @@
 @model IEnumerable<OcopProductResponse>;
 @{
     ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="page-body">
@@ -55,9 +54,15 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
                             <div>
-                                <a asp-controller="OcopProduct" asp-action="CreateOcopProduct" class="btn btn-success">
-                                    <i class="fa fa-plus me-1"></i>Create Ocop Product
-                                </a>
+                                <div class="dropdown d-inline-block">
+                                    <button class="btn btn-success" type="button" id="createOcopDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 200px;">
+                                        <i class="fa fa-plus me-1"></i>Create Ocop Product
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="createOcopDropdown" style="min-width: 200px;">
+                                        <li><a class="dropdown-item py-3 ocop-dropdown-item" asp-controller="OcopProduct" asp-action="CreateOcopProduct"><i class="fa fa-file me-2"></i>Create Single Product</a></li>
+                                        <li><a class="dropdown-item py-3 ocop-dropdown-item" asp-controller="OcopProduct" asp-action="ImportProducts"><i class="fa fa-upload me-2"></i>Import Products</a></li>
+                                    </ul>
+                                </div>
                                 <button class="btn btn-primary" id="exportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
@@ -181,4 +186,51 @@
             }
         }, 2000);
     </script>
+}
+
+@section Styles {
+    <style>
+        .dropdown-toggle::after {
+            display: none;
+        }
+        
+        .ocop-dropdown-item {
+            background-color: #0a3b26;
+            color: white !important;
+            transition: all 0.2s ease;
+            margin-bottom: 2px;
+            font-weight: 500;
+        }
+        
+        .ocop-dropdown-item:hover {
+            background-color: #072c1b !important;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            transform: translateY(-2px);
+            color: #ffffff !important;
+        }
+        
+        .dropdown-menu {
+            background-color: #d4e9dd;
+            border-radius: 8px;
+            border: 1px solid #a3c9b3;
+            padding: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); 
+        }
+        
+        .dropdown-item {
+            color: #032213 !important;
+        }
+        
+        #createOcopDropdown {
+            color: #ffffff;
+            font-weight: 500;
+            background-color: #0a3b26;
+            border-color: #062318;
+        }
+        
+        #createOcopDropdown:hover {
+            background-color: #072c1b;
+            border-color: #021d10;
+        }
+    </style>
 }

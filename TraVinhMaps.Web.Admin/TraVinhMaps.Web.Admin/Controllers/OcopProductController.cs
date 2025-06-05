@@ -379,5 +379,13 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return View("CreateOcopProduct", createOcopProductRequest);
             }
         }
+    
+        [HttpGet("ImportProducts")]
+        public IActionResult ImportProducts()
+        {
+            ViewData["Title"] = "Create Ocop Product";
+            ViewData["Breadcrumb"] = new List<string> { "Ocop Product", "Import Products" };
+            return View();
+        }
     }
 }
