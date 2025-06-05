@@ -26,9 +26,9 @@ namespace TraVinhMaps.Web.Admin.Models.EventAndFestivalFeature
         [StringLength(300, ErrorMessage = "Address cannot exceed 300 characters.")]
         public string? Address { get; set; }
         public string? Type { get; set; }
-        [Required(ErrorMessage = "longitude of destination is required")]
+        [Required(ErrorMessage = "Longitude of destination is required")]
         public double longitude { get; set; }
-        [Required(ErrorMessage = "latitude of destination is required")]
+        [Required(ErrorMessage = "Latitude of destination is required")]
         public double latitude { get; set; }
         public string MarkerId { get; set; }
         public string TagId { get; set; }

@@ -1,0 +1,107 @@
+@using TraVinhMaps.Web.Admin.Models.LocalSpecialties
+@model UpdateLocalSpecialtiesRequest
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Edit Local Specialty";
+}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>@ViewData["Title"]</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home" style="font-size: 20px;"></i>
+                            </a>
+                        </li>
+                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
+                        {
+                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
+                            {
+                                <li class="breadcrumb-item">@item</li>
+                            }
+                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
+                        }
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form theme-form">
+                            <form asp-action="EditLocalSpecialty" method="post" enctype="multipart/form-data"
+                                id="editLocalSpecialtyForm">
+                                @Html.AntiForgeryToken()
+                                <input asp-for="Id" type="hidden" /> 
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="mb-3">
+                                            <label>Food Name</label>
+                                            <input asp-for="FoodName" class="form-control" type="text"
+                                                placeholder="Enter food name (e.g., Bánh Tét Trà Vinh)" />
+                                            <span asp-validation-for="FoodName" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label asp-for="TagId" class="control-label">Tag</label>
+                                            <select asp-for="TagId" class="form-control" asp-items="ViewBag.Tags"
+                                                required>
+                                                <option value="">-- Select a tag --</option>
+                                            </select>
+                                            <span asp-validation-for="TagId" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label>Description</label>
+                                            <textarea asp-for="Description" class="form-control"
+                                                placeholder="Description of the local specialty" rows="7"></textarea>
+                                            <span asp-validation-for="Description" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="text-end">
+                                            <button type="submit" class="btn btn-success me-3">Save Changes</button>
+                                            <a asp-action="Index" class="btn btn-danger">Back</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends -->
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script>
+        $(document).ready(function () {
+            @if (TempData["EditLocalSpecialtyError"] != null)
+                {
+                    <text>
+                        showErrorAlert("Error!", "@TempData["EditLocalSpecialtyError"]");
+                    </text>
+            }
+    </script>
+}

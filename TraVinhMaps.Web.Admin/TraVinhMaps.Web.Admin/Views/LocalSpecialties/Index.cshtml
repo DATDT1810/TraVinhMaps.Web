@@ -1,7 +1,9 @@
-@using TraVinhMaps.Web.Admin.Models.Admins
-@model IEnumerable<AdminResponse>
+@using TraVinhMaps.Web.Admin.Helper
+@using TraVinhMaps.Web.Admin.Models.LocalSpecialties
+@model IEnumerable<LocalSpecialtiesResponse>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
 @{
-    ViewData["Title"] = "Admin List";
+    ViewData["Title"] = "Local Specialties List";
 }
 
 <div class="page-body">
@@ -38,8 +40,8 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
                             <div class="d-flex gap-2 mb-3">
-                                <a asp-controller="Admin" asp-action="Create" class="btn btn-success">
-                                    <i class="fa fa-plus me-1"></i>Add Admin
+                                <a asp-controller="LocalSpecialties" asp-action="Create" class="btn btn-success">
+                                    <i class="fa fa-plus me-1"></i>Add Local Specialties
                                 </a>
 
                                 <button class="btn btn-primary" id="exportBtn">
@@ -48,7 +50,7 @@
                             </div>
                             <div class="status-filter">
                                 <select id="statusFilter" class="form-select">
-                                    <option value="active">Active</option>
+                                    <option value="all">Active</option>
                                     <option value="inactive">Inactive</option>
                                 </select>
                             </div>
@@ -57,9 +59,9 @@
                             <table class="display" id="basic-9">
                                 <thead class="bg-primary">
                                     <tr>
-                                        <th>#</th>
-                                        <th>Username</th>
-                                        <th>Email</th>
+                                        <th>No.</th>
+                                        <th>Name of LocalSpecialties</th>
+                                        <th>Description</th>
                                         <th>Status</th>
                                         <th>Create At</th>
                                         <th>Action</th>
@@ -71,19 +73,21 @@
                                     }
                                     @foreach (var item in Model)
                                     {
-                                        <tr data-admin-id="@item.Id">
+                                        <tr>
                                             <td>@count</td>
                                             <td>
-                                                <div class="user-names">
-                                                    <p>@item.Username</p>
+                                                <div class="product-names">
+                                                    <div class="light-product-box"><img class="img-fluid"
+                                                            src="@item.Images.First()" alt="img">
+                                                    </div>
+                                                    <p>@item.FoodName</p>
                                                 </div>
                                             </td>
-                                            <td>@item.Email</td>
+                                            <td>@Html.TruncateWords(item.Description, 15)</td>
                                             <td>
                                                 <span
-                                                    class="badge @(item.Status ? "badge-light-primary" : "badge-light-danger")">
-                                                    @(item.Status ? "Active" : "Inactive")
-                                                </span>
+                                                    class="badge @(item.Status ? "badge-light-primary" : "badge-light-danger")">@(item.Status
+                                                                                                    ? "Active" : "Inactive")</span>
                                             </td>
                                             <td>
                                                 @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
@@ -91,26 +95,29 @@
                                             <td>
                                                 <ul class="action">
                                                     <li>
-                                                        <a class="details" asp-controller="Admin" asp-action="Details"
+                                                        <a class="details" asp-controller="LocalSpecialties" asp-action="Details"
                                                             asp-route-id="@item.Id" title="Details">
                                                             <i class="fa fa-eye"></i>
                                                         </a>
                                                     </li>
                                                     <li>
-                                                        <ul class="action">
-                                                            <li>
-                                                                <a class="delete" href="javascript:void(0)"
+                                                        @if (item.Status == true)
+                                                            {
+                                                                <a id="delete-localSpecialties" class="delete" href="javascript:void(0)"
                                                                     data-id="@item.Id" title="Delete">
-                                                                    <i class="fa fa-trash"></i>
+                                                                    <i class="fa fa-trash" aria-hidden="true"></i>
                                                                 </a>
-                                                                <a class="restore" href="javascript:void(0)"
+                                                            }
+                                                            else
+                                                            {
+                                                                <a id="restore-localSpecialties" class="restore" href="javascript:void(0)"
                                                                     data-id="@item.Id" title="Restore">
                                                                     <i class="fa fa-undo"></i>
                                                                 </a>
-                                                            </li>
-                                                        </ul>
-                                                </ul>
-                                            </td>
+                                                            }
+                                                        </li>
+                                                    </ul>
+                                                </td>
                                         </tr>
                                         count++;
                                     }
@@ -125,22 +132,31 @@
 </div>
 @section Scripts {
     @Html.AntiForgeryToken()
+    <link rel="stylesheet" href="~/assets/css/LocalSpecialties/details.css">
     <script src="~/assets/js/sweetalert-custom.js"></script>
-    <script src="~/assets/js/admins/update.js"></script>
+    <script src="~/assets/js/local-specialties/index.js"></script>
+     <script>
+        (function () {
+            const success = @Html.Raw(Json.Serialize(TempData["CreateLocalSpecialtiesSuccess"]));
+            const error   = @Html.Raw(Json.Serialize(TempData["CreateLocalSpecialtiesError"]));
+            if (success) showTimedAlert("Success!", "@TempData["EditLocalSpecialtySuccess"]", "success", 3000);
+            if (error)    showTimedAlert("Error!", "@TempData["EditLocalSpecialtyError"]", "error", 3000);
+        })();
+    </script>
     <script>
         $(document).ready(function () {
-            @if (TempData["CreateAdminSuccess"] != null)
-                {
-                    <text>
-                        showSuccessAlert("Success!", "@TempData["CreateAdminSuccess"]");
-                    </text>
+           @if (TempData["EditLocalSpecialtySuccess"] != null)
+            {
+                <text>
+                    showTimedAlert("Success!", "@TempData["EditLocalSpecialtySuccess"]", "success", 3000);
+                </text>
             }
-                @if (TempData["CreateAdminError"] != null)
-                {
-                    <text>
-                        showErrorAlert("Error!", "@TempData["CreateAdminError"]");
-                    </text>
+            @if (TempData["EditLocalSpecialtyError"] != null)
+            {
+                <text>
+                    showTimedAlert("Error!", "@TempData["EditLocalSpecialtyError"]", "error", 3000);
+                </text>
             }
-                                        });
+        });
     </script>
 }
