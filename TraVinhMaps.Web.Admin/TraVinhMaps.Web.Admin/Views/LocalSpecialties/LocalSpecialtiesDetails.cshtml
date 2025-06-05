@@ -1,0 +1,336 @@
+@using TraVinhMaps.Web.Admin.Models.LocalSpecialties
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model LocalSpecialtiesResponse
+@{
+    ViewData["Title"] = "Local Specialties Details";
+}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>@ViewData["Title"]</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home" style="font-size: 20px;"></i>
+                            </a>
+                        </li>
+                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
+                        {
+                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
+                            {
+                                <li class="breadcrumb-item">@item</li>
+                            }
+                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
+                        }
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div>
+            <div class="row product-page-main p-0">
+                <div class="col-xxl-4 col-md-6 box-col-12">
+                    <div class="card">
+                        <div class="card-body" style="height: 650px;">
+                            <div class="product-slider owl-carousel owl-theme" id="sync1">
+                                @if (Model.Images != null && Model.Images.Any())
+                                {
+                                    @foreach (var item in Model.Images)
+                                    {
+                                        <div class="item" style="height: 400px;">
+                                            <img src="@item" alt="image" style="width: 100%; height: 400px;" />
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="item" style="height: 90px; width: 70px;">
+                                        <img class="img-fluid" src="/assets/images/no-image.png" alt="no image available"
+                                            style="width: 100%; height: 100%;" />
+                                    </div>
+                                }
+                            </div>
+                            <div class="owl-carousel owl-theme" id="sync2">
+                                @if (Model.Images != null && Model.Images.Any())
+                                {
+                                    @foreach (var item in Model.Images)
+                                    {
+                                        <div class="item" style="height: 90px; width: 70px;">
+                                            <img src="@item" alt="image ocop product"
+                                                style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                                            <button type="button" class="delete-button-image delete-image-btn"
+                                                    data-id="@Model.Id" data-image-url="@item"
+                                                    onclick="deleteImage(this)">
+                                                ×
+                                            </button>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="item" style="height: 90px; width: 70px;">
+                                        <img class="img-fluid" src="/assets/images/no-image.png" alt="no image available"
+                                            style="width: 100%; height: 100%;" />
+                                    </div>
+                                }
+                            </div>
+                             <div class="item add-image-box">
+                                <form id="addImageForm" asp-controller="LocalSpecialties" asp-action="AddLocalSpecialtiesImage" method="post"
+                                    class="upload-placeholder" enctype="multipart/form-data">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@Model.Id" />
+                                    <div class="upload-placeholder" id="uploadPlaceholder">+</div>
+                                    <input hidden type="file" name="imageFile" multiple id="imageInput" />
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xxl-8 box-col-5 order-xxl-0 order-1">
+                    <div class="card">
+                        <div class="card-body" style="height: 650px;">
+                            <div class="product-page-details">
+                                <h3 title="Food Name">@Model.FoodName</h3>
+                            </div>
+                            <hr>
+                            <!-- Point of Sell -->
+                            <div class="filter-block">
+                                <div class="d-flex justify-content-between">
+                                    <h3>Point of sell</h3>
+                                        <a class="btn btn-success btn-sm px-2 py-1" title="Create Point of Sell" data-bs-toggle="modal" data-bs-target="#addLocationModal"><i class="fa fa-plus"></i></a>
+                                    </a>
+                                </div>
+                                <hr>
+                                <div id="locationList" style="display: flex; flex-direction: column; gap: 12px;">
+                                    @if (Model.Locations == null || !Model.Locations.Any())
+                                    {
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <b>No Location Name.</b><br />
+                                                <span>No Location Address.</span>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        @for (int i = 0; i < Model.Locations.Count; i++)
+                                        {
+                                            var item = Model.Locations[i];
+                                            var isLast = i == Model.Locations.Count - 1;
+                                            <div data-location-id="@item.LocationId" style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; @(isLast ? "" : "border-bottom: 1px solid #ddd;")">
+                                                <div style="flex: 1;">
+                                                    <b>@(item.Name ?? "No Location Name.")</b><br />
+                                                    <span style="display: inline-block; margin-right: 8px;"><b>Address:</b></span>
+                                                    <span>@(item.Address ?? "No Location Address.")</span><br />
+                                                    <span style="display: inline-block; margin-right: 8px;"><b>Location Type:</b></span>
+                                                    <span>@(item.Location?.Type ?? "No Location Type.")</span><br />
+                                                    <span style="display: inline-block; margin-right: 8px;"><b>Longitude/Latitude:</b></span>
+                                                    <span>@(item.Location?.Coordinates != null && item.Location.Coordinates.Any() ? string.Join(", ", item.Location.Coordinates) : "No Location Coordinates.")</span>
+                                                </div>
+                                                <div style="display: flex; gap: 6px;">
+                                                    <button type="button" class="btn btn-success btn-sm px-2 py-1 edit-location-btn"
+                                                            title="Edit" style="font-size: 14px; line-height: 1;"
+                                                            data-bs-toggle="modal" data-bs-target="#editLocationModal"
+                                                            data-id="@Model.Id"
+                                                            data-location-id="@item.LocationId"
+                                                            data-name="@item.Name"
+                                                            data-address="@item.Address"
+                                                            data-marker-id="@item.MarkerId"
+                                                            data-type="@(item.Location?.Type ?? "Point")"
+                                                            data-longitude="@(item.Location?.Coordinates?.FirstOrDefault() ?? 0)"
+                                                            data-latitude="@(item.Location?.Coordinates?.Skip(1).FirstOrDefault() ?? 0)">
+                                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                    </button>
+                                                    <button type="button" class="delete-sell-location btn btn-danger btn-sm px-2 py-1"
+                                                            title="Delete" style="font-size: 14px; line-height: 1;"
+                                                            data-product-id="@Model.Id" data-location-id="@item.LocationId" data-location-name="@item.Name">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                                <div>
+                                    <table class="product-page-width">
+                                        <tbody>
+                                            <tr>
+                                                <td><b>Create At:</b></td>
+                                                <td>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Update At:</b></td>
+                                                <td class="txt-success">
+                                                    @(Model.UpdateAt?.ToLocalTime().ToString("dd/MM/yy, HH:mm") ?? "No update")
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="m-t-15 btn-showcase">
+                                <div class="d-inline">
+                                    <a class="btn btn-success" asp-action="EditLocalSpecialty" asp-route-id="@Model.Id">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i> Edit Local Specialties
+                                    </a>
+                                </div>
+                                <div class="d-inline">
+                                    <a class="btn btn-danger" asp-action="Index">
+                                        Back
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="row product-page-main">
+                    <div class="col-sm-12">
+                        <ul class="nav nav-tabs border-tab nav-primary mb-0" id="top-tab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="top-home-tab" data-bs-toggle="tab" href="#top-home"
+                                    role="tab" aria-controls="top-home" aria-selected="false">Description</a>
+                                <div class="material-border"></div>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="top-tabContent">
+                            <div class="tab-pane fade active show" id="top-home" role="tabpanel"
+                                aria-labelledby="top-home-tab">
+                                <p class="mb-0 m-t-20">@Model.Description</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Container-fluid Ends-->
+    </div>
+</div>
+
+<!-- Modal for Adding Location -->
+<div class="modal fade" id="addLocationModal" tabindex="-1" aria-labelledby="addLocationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addLocationModalLabel">Add New Location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="addLocationForm" asp-action="CreatePointOfSell" asp-controller="LocalSpecialties" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="Id" value="@Model.Id" />
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Name of Location</label>
+                        <input type="text" name="Name" class="form-control" placeholder="Enter location name" required />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <input type="text" name="Address" class="form-control" placeholder="Enter address" required />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Address" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Marker Type</label>
+                        <select name="MarkerId" class="form-select" required>
+                            <option value="">Select marker type</option>
+                            <option value="682449f7d14510b9c087c2a3">Religious Buildings</option>
+                            <option value="682449f7d14510b9c087c2a4">Natural Destination</option>
+                        </select>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="MarkerId" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Location Type</label>
+                        <input type="text" name="Location.Type" class="form-control" value="Point" readonly />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Location.Type" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Longitude</label>
+                        <input type="number" name="Location.Coordinates[0]" class="form-control" step="any" placeholder="Enter longitude" required min="-180" max="180" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Location.Coordinates[0]" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Latitude</label>
+                        <input type="number" name="Location.Coordinates[1]" class="form-control" step="any" placeholder="Enter latitude" required min="-90" max="90" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Location.Coordinates[1]" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Location</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Editing Location -->
+<div class="modal fade" id="editLocationModal" tabindex="-1" aria-labelledby="editLocationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editLocationModalLabel">Edit Location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editLocationForm" asp-action="UpdateSellLocation" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="Id" id="editId" value="@Model.Id" />
+                <input type="hidden" name="LocationId" id="editLocationId" />
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Name of Location</label>
+                        <input type="text" name="Name" id="editName" class="form-control" placeholder="Enter location name" required />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <input type="text" name="Address" id="editAddress" class="form-control" placeholder="Enter address" required />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Address" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Marker Type</label>
+                        <select name="MarkerId" id="editMarkerId" class="form-select" required>
+                            <option value="">Select marker type</option>
+                            <option value="682449f7d14510b9c087c2a3">Religious Buildings</option>
+                            <option value="682449f7d14510b9c087c2a4">Natural Destination</option>
+                        </select>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="MarkerId" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Location Type</label>
+                        <input type="text" name="Type" id="editType" class="form-control" value="Point" readonly />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Type" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Longitude</label>
+                        <input type="number" name="Longitude" id="editLongitude" class="form-control" step="any" placeholder="Enter longitude" required min="-180" max="180" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Longitude" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Latitude</label>
+                        <input type="number" name="Latitude" id="editLatitude" class="form-control" step="any" placeholder="Enter latitude" required min="-90" max="90" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Latitude" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Html.AntiForgeryToken()
+    <link rel="stylesheet" href="~/assets/css/LocalSpecialties/details.css">
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script src="~/assets/js/local-specialties/add-image.js"></script>
+}
