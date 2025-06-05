@@ -1,7 +1,6 @@
-﻿using TraVinhMaps.Web.Admin.Models.Users;
-using Microsoft.AspNetCore.Http;
+﻿using System.Linq.Expressions;
 using TraVinhMaps.Web.Admin.Models.Admins;
-using System.Linq.Expressions;
+using TraVinhMaps.Web.Admin.Models.Users;
 
 namespace TraVinhMaps.Web.Admin.Services.Admin
 {
@@ -17,5 +16,7 @@ namespace TraVinhMaps.Web.Admin.Services.Admin
         // Task<UpdateAdminRequest> UpdateAsync(UpdateAdminRequest entity, CancellationToken cancellationToken = default);
         Task<bool> DeleteAdmin(string id, CancellationToken cancellationToken = default);
         Task<bool> RestoreAdmin(string id, CancellationToken cancellationToken = default);
+        // Get setting profile admin
+        Task<SettingProfileResponse> GetSettingProfileAsync(CancellationToken cancellationToken = default);
     }
 }

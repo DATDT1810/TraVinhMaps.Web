@@ -157,7 +157,7 @@
                                         <i data-feather="user"></i><span>My Profile</span>
                                     </a>
                                 </li>
-                                <li> <a href="edit-profile.html"> <i
+                                <li> <a asp-controller="Admin" asp-action="Settings"> <i
                                             data-feather="settings"></i><span>Settings</span></a></li>
                                 <li>
                                     <form asp-controller="Authen" asp-action="Logout" method="post">
@@ -411,6 +411,8 @@
     <script src="~/assets/js/ecommerce.js"></script>
     <!-- Plugins JS Ends-->
 
+    <!-- ckeditor5 js-->
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 
     <!-- Theme js-->
     <script src="~/assets/js/script.js"></script>

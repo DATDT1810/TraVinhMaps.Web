@@ -1,4 +1,4 @@
-@model TraVinhMaps.Web.Admin.Models.Auth.OtpVerificationViewModel
+﻿@model TraVinhMaps.Web.Admin.Models.Auth.OtpVerificationViewModel
 @{
     ViewData["Title"] = "OTP Verification";
     Layout = "";
@@ -265,7 +265,16 @@
         
           // Store the remaining time in localStorage to persist across page loads
           let timerKey = 'otpCountdownEndTime';
-          
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const isNewRequest = urlParams.get("new") === "true";
+        if (isNewRequest) {
+            localStorage.removeItem(timerKey);
+            // Xoá query để tránh reset lại khi reload sau này
+            const newUrl = window.location.origin + window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+
           // Handle digit input focus and validation
           $('.digit-input').on('keyup', function(e) {
             // Get current input details

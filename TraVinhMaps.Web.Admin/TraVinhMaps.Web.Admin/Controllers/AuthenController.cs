@@ -90,7 +90,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     TempData["IsRememberMe"] = model.RememberMe;
 
                     // Redirect to OTP verification page
-                    return RedirectToAction("OtpVerification");
+                    return RedirectToAction("OtpVerification", new { newRequest = true });
                 }
                 else
                 {
@@ -177,13 +177,13 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 {
                     // For login flow, continue using the regular OTP verification
                     var result = await _authService.VerifyOtp(model.Token, model.OtpCode);
-                    
+
                     // Add debugging
                     _logger.LogInformation("OTP verification result: {Result}", result != null ? "Success" : "Failed");
                     if (result != null)
                     {
-                        _logger.LogInformation("SessionId: {SessionId}, RefreshToken: {HasRefreshToken}", 
-                            result.SessionId, 
+                        _logger.LogInformation("SessionId: {SessionId}, RefreshToken: {HasRefreshToken}",
+                            result.SessionId,
                             !string.IsNullOrEmpty(result.RefreshToken));
 
                         var isRememberMe = TempData["IsRememberMe"] as bool? ?? false;
@@ -204,9 +204,9 @@ namespace TraVinhMaps.Web.Admin.Controllers
 
                         var authProperties = new AuthenticationProperties
                         {
-                            IsPersistent = true,
-                            ExpiresUtc = DateTimeOffset.UtcNow.AddHours(24),
-                            AllowRefresh = true,
+                            IsPersistent = isRememberMe,
+                            ExpiresUtc = isRememberMe ? DateTimeOffset.UtcNow.AddHours(24) : null,
+                            AllowRefresh = isRememberMe,
                         };
 
                         try
@@ -469,7 +469,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
 
                     // Sign out of the cookie authentication scheme to prevent automatic cookie creation
                     await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                    return RedirectToAction("OtpVerification");
+                    return RedirectToAction("OtpVerification", new { newRequest = true });
                 }
                 else
                 {

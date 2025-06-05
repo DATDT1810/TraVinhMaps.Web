@@ -26,6 +26,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
         {
             var ocopProduct = await _ocopProductService.GetByIdAsync(id);
             ViewBag.OcopProductId = id;
+            if (ocopProduct != null)
+    {
+        // Chuyển ObjectId thành chuỗi nếu cần
+        ocopProduct.TagId = ocopProduct.TagId?.ToString().Replace("ObjectId(\"", "").Replace("\")", "");
+    }
             return View(ocopProduct);
         }
 

@@ -265,5 +265,14 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return Json(new { success = false, message = $"Error banning admin: {ex.Message}" });
             }
         }
+
+        [HttpGet("setting")]
+        public async Task<IActionResult> Settings()
+        {
+            ViewData["Title"] = "Security Settings";
+            ViewData["Breadcrumb"] = new List<string> { "Settings", "Security" };
+            var settingProfile = await _adminService.GetSettingProfileAsync();
+            return View(settingProfile);
+        }
     }
 }

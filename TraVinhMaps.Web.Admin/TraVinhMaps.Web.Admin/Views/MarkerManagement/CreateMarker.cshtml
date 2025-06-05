@@ -1,0 +1,175 @@
+@using TraVinhMaps.Web.Admin.Models.Markers;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
+@model CreateMarkerRequest
+@{
+    ViewData["Title"] = "CreateMarker";
+}
+
+<style>
+    .add-image-box {
+        margin-top: 10px;
+        width: 100%;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #aaa;
+        position: relative;
+        cursor: pointer;
+        border-radius: 9px;
+        background-color: #f8f9fa;
+    }
+
+    .upload-placeholder {
+        font-size: 48px;
+        color: #aaa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    .image-preview {
+        max-width: 100%;
+        max-height: 120px;
+        object-fit: contain;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        padding: 2px;
+    }
+</style>
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>
+                        Marker Create</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="index-2.html">
+                                <svg class="stroke-icon">
+                                    <use
+                                        href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#stroke-home">
+                                    </use>
+                                </svg></a></li>
+                        <li class="breadcrumb-item"><a asp-action="Index">Management Marker</a></li>
+                        <li class="breadcrumb-item active">Marker Create form</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form theme-form">
+                            <form asp-action="CreateMarker" method="post" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label>Marker Title</label>
+                                            <input asp-for="Name" class="form-control" type="text"
+                                                placeholder="Marker title">
+                                            <span asp-validation-for="Name" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <label>Upload image marker file</label>
+                                        <span asp-validation-for="ImageFile" class="text-danger"></span>
+                                        <div class="item add-image-box" id="addImageBox">
+                                            <div>
+                                                <div class="upload-placeholder">+</div>
+                                                <input asp-for="ImageFile" hidden type="file" accept=".png,.jpg,.jpeg"
+                                                    id="uploadImageInput" onchange="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="text-end">
+                                            <button type="submit" class="btn btn-success me-3">Create
+                                                marker</button>
+                                            <a asp-action="Index" class="btn btn-danger">Back</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+</div>
+
+@section Scripts {
+    @Html.AntiForgeryToken()
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="~/assets/js/typeahead/handlebars.js"></script>
+    <script src="~/assets/js/dropzone/dropzone.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/dropzone.css">
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const addBox = document.getElementById("addImageBox");
+            const uploadInput = document.getElementById("uploadImageInput");
+
+            // Gắn sự kiện click để mở input file
+            if (addBox && uploadInput) {
+                addBox.addEventListener("click", function () {
+                    uploadInput.click();
+                });
+            }
+
+            // Tạo container hiển thị ảnh nếu chưa có
+            let previewContainer = document.createElement("div");
+            previewContainer.classList.add("row", "mt-3", "g-3");
+            addBox.parentElement.appendChild(previewContainer);
+
+            uploadInput.addEventListener("change", function () {
+                previewContainer.innerHTML = "";
+
+                const files = uploadInput.files;
+                if (!files || files.length === 0) return;
+
+                const file = files[0];
+                if (file && file.type.startsWith("image/")) {
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        const col = document.createElement("div");
+                        col.classList.add("col-sm-3");
+
+                        const itemDiv = document.createElement("div");
+                        itemDiv.classList.add("item", "position-relative");
+
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        img.classList.add("image-preview");
+
+                        itemDiv.appendChild(img);
+                        col.appendChild(itemDiv);
+                        previewContainer.appendChild(col);
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+
+            });
+        });
+    </script>
+}

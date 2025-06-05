@@ -71,22 +71,21 @@
 
                                 <!-- Hidden ID for POST -->
                                 <input type="hidden" name="Id" value="@Model.Id" />
+                                <!-- Hidden fields for maintaining data during form submit -->
+                                <input type="hidden" name="PhoneNumber" value="@Model.PhoneNumber" />
+                                <input type="hidden" name="Password" value="@Model.Password" />
 
-                                <div class="mb-3">
+                                <div class="mb-3" style="display : none">
                                     <label class="form-label">User ID</label>
                                     <input class="form-control" value="@Model.Id" readonly />
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Email</label>
-                                    <input class="form-control" name="Email" value="@Model.Email" />
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Phone Number</label>
-                                    <input class="form-control" name="PhoneNumber" value="@Model.PhoneNumber" />
-                                </div>
-                                <div class="mb-3" hidden>
-                                    <label class="form-label">Password</label>
-                                    <input class="form-control" type="password" name="Password" value="@Model.Password" />
+                                
+                                    <input type="hidden" class="form-control" name="Email" value="@Model.Email" />
+                              
+                                <div class="mb-4">
+                                    <a asp-action="Settings" asp-controller="Admin" class="btn btn-outline-primary w-100">
+                                        <i class="fa fa-lock me-2"></i>Security Settings
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -117,7 +116,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Role</label>
-                                            <input class="form-control" type="text" value="@Model.RoleName" readonly />
+                                            <input class="form-control" type="text" value="@Model.RoleName.ToUpper()" readonly />
                                         </div>
                                     </div>
                                     <div class="col-md-6">

@@ -1,4 +1,3 @@
-using TraVinhMaps.Web.Admin.Services.OcopProduct;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using TraVinhMaps.Web.Admin.Extensions;
@@ -6,11 +5,15 @@ using TraVinhMaps.Web.Admin.Services.Admin;
 using TraVinhMaps.Web.Admin.Services.Auth;
 using TraVinhMaps.Web.Admin.Services.CommunityTips;
 using TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature;
+using TraVinhMaps.Web.Admin.Services.ItineraryPlan;
 using TraVinhMaps.Web.Admin.Services.Notifications;
+using TraVinhMaps.Web.Admin.Services.OcopProduct;
 using TraVinhMaps.Web.Admin.Services.Tags;
 using TraVinhMaps.Web.Admin.Services.TouristDestination;
 using TraVinhMaps.Web.Admin.Services.Users;
 using TraVinhMaps.Web.Admin.Services.LocalSpecialties;
+using TraVinhMaps.Web.Admin.Services.Markers;
+using TraVinhMaps.Web.Admin.Services.DestinationTypes;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -34,6 +37,12 @@ builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<IDestinationService, DestinationService>();
 // Register Event And Festival
 builder.Services.AddScoped<IEventAndFestivalService, EventAndFestivalService>();
+// Register Itinerary Plan
+builder.Services.AddScoped<IItineraryPlanService, ItineraryPlanService>();
+// Register Marker Service
+builder.Services.AddScoped<IMarkerService, MarkerService>();
+// Register DestinationType Service
+builder.Services.AddScoped<IDestinationTypeService, DestinationTypeService>();
 //  Register AuthService
 builder.Services.AddScoped<IAuthService, AuthService>();
 // Register ITokenService
@@ -71,7 +80,7 @@ builder.Services.AddAuthentication(options =>
         options.Cookie.HttpOnly = true;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure cookies are only sent over HTTPS
         options.Cookie.SameSite = SameSiteMode.Lax; // Changed from Strict to Lax to allow cross-site redirects for OAuth
-        options.ExpireTimeSpan = TimeSpan.FromHours(24);
+        //options.ExpireTimeSpan = TimeSpan.FromHours(24);
         //options.SlidingExpiration = true;
         options.Cookie.Name = "TVMaps.Auth"; // Custom name for the cookie
     })

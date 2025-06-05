@@ -1,0 +1,339 @@
+﻿@model TraVinhMaps.Web.Admin.Models.Users.SettingProfileResponse
+@{
+    ViewData["Title"] = "Settings";
+    var sessionId = User?.FindFirst("SessionId")?.Value;
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>Security Settings</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home"></i>
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">Admin</li>
+                        <li class="breadcrumb-item active">Settings</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- LEFT COLUMN -->
+            <div class="col-lg-6">
+                <div class="card shadow-sm mb-4 rounded-3">
+                    <div class="card-header bg-success bg-opacity-25">
+                        <h5 class="mb-0 text-white fw-semibold">
+                            <i class="fas fa-shield-alt me-2"></i>Security Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Email -->
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <div>
+                                <h6 class="mb-1">
+                                    <i class="fas fa-envelope text-success me-2"></i>Email
+                                </h6>
+                                @if (!string.IsNullOrEmpty(Model?.Email))
+                                {
+                                    <p class="mb-1">@Model.Email</p>
+                                    <a href="#" class="btn btn-sm btn-outline-success email-options-btn" data-field-type="email" data-identifier="@Model.Email">Change Email</a>
+                                }
+                                else
+                                {
+                                    <p class="text-muted mb-1">No email yet.</p>
+                                    <a href="#" class="btn btn-sm btn-outline-warning email-options-btn" data-field-type="email">Change Email</a>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Số điện thoại -->
+                        <div class="d-flex justify-content-between align-items-start mb-4">
+                            <div>
+                                <h6 class="mb-1">
+                                    <i class="fas fa-phone text-success me-2"></i>Số điện thoại
+                                </h6>
+                                @if (!string.IsNullOrEmpty(Model?.PhoneNumber))
+                                {
+                                    <p class="mb-1">@Model.PhoneNumber</p>
+                                    <a href="#" class="btn btn-sm btn-outline-success mt-1 phone-options-btn" data-field-type="phone" data-identifier="@Model.PhoneNumber">Change Phone Number</a>
+                                }
+                                else
+                                {
+                                    <p class="text-muted mb-1">No phone number yet.</p>
+                                    <a href="#" class="btn btn-sm btn-outline-warning phone-options-btn" data-field-type="phone">Change Phone Number</a>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Mật khẩu -->
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="mb-1">
+                                    <i class="fas fa-lock text-success me-2"></i>Password
+                                </h6>
+                                @if (!string.IsNullOrEmpty(Model?.Password))
+                                {
+                                    <p class="text-muted mb-1">Password has been set.</p>
+                                    <a href="#" class="btn btn-sm btn-outline-success change-password-btn" data-field-type="password" data-identifier="password">Change Password</a>
+                                }
+                                else
+                                {
+                                    <p class="text-muted mb-1">Password has not been set.</p>
+                                    <a href="#" class="btn btn-sm btn-outline-success change-password-btn" data-field-type="password" data-identifier="password">Change Password</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="col-lg-6">
+                <!-- Bạn có thể thêm nội dung bổ sung ở đây -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden field to store session ID for JavaScript -->
+<input type="hidden" name="sessionId" value="@sessionId" />
+
+<!-- Hidden fields for user data -->
+<input type="hidden" id="userEmail" value="@Model?.Email" />
+<input type="hidden" id="userPhone" value="@Model?.PhoneNumber" />
+
+<!-- OTP Verification Modal -->
+<div class="modal fade" id="otpModal" tabindex="-1" role="dialog" aria-labelledby="otpModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+        <div class="modal-content" style="background: white; border-radius: 15px; border: 2px solid #8bc34a; min-height: 400px;">
+            <div class="modal-body text-center p-4" style="color: #2e7d32;">
+                <!-- Back button -->
+                <div class="d-flex align-items-center mb-3">
+                    <button type="button" class="btn btn-link text-success p-0" id="backBtn" style="font-size: 1rem;">
+                        <i class="fas fa-arrow-left me-2"></i>Back
+                    </button>
+                </div>
+
+                <!-- Icon -->
+                <div class="mb-4">
+                    <div class="rounded-circle bg-success bg-opacity-25 d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px; box-shadow: 0 5px 15px rgba(139, 195, 74, 0.3);">
+                        <i class="fas fa-envelope text-success" style="font-size: 2.5rem;" id="otpIcon"></i>
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <h3 class="mb-3" id="otpTitle" style="font-size: 1.5rem; font-weight: 600; color: #2e7d32;">Verify Current Email</h3>
+
+                <!-- Subtitle -->
+                <p class="mb-4 text-muted" id="otpSubtitle" style="font-size: 0.9rem; line-height: 1.5;">Your OTP is sent to joongnguyen2712@gmail.com now</p>
+
+                <!-- OTP Input -->
+                <div class="mb-4">
+                    <label class="form-label text-success mb-2" style="font-size: 0.9rem;">Confirm OTP</label>
+                    <div class="d-flex justify-content-center gap-2 mb-2">
+                        <input type="text" class="form-control otp-digit text-center" maxlength="1" 
+                               style="width: 45px; height: 50px; background: white; border: 2px solid #8bc34a; color: #2e7d32; font-size: 1.3rem; border-radius: 8px;">
+                        <input type="text" class="form-control otp-digit text-center" maxlength="1" 
+                               style="width: 45px; height: 50px; background: white; border: 2px solid #8bc34a; color: #2e7d32; font-size: 1.3rem; border-radius: 8px;">
+                        <input type="text" class="form-control otp-digit text-center" maxlength="1" 
+                               style="width: 45px; height: 50px; background: white; border: 2px solid #8bc34a; color: #2e7d32; font-size: 1.3rem; border-radius: 8px;">
+                        <input type="text" class="form-control otp-digit text-center" maxlength="1" 
+                               style="width: 45px; height: 50px; background: white; border: 2px solid #8bc34a; color: #2e7d32; font-size: 1.3rem; border-radius: 8px;">
+                        <input type="text" class="form-control otp-digit text-center" maxlength="1" 
+                               style="width: 45px; height: 50px; background: white; border: 2px solid #8bc34a; color: #2e7d32; font-size: 1.3rem; border-radius: 8px;">
+                        <input type="text" class="form-control otp-digit text-center" maxlength="1" 
+                               style="width: 45px; height: 50px; background: white; border: 2px solid #8bc34a; color: #2e7d32; font-size: 1.3rem; border-radius: 8px;">
+                    </div>
+                    <input type="hidden" id="otpInput">
+                </div>
+
+                <!-- Verify Button -->
+                <button type="button" class="btn btn-success btn-lg w-100 mb-3" id="verifyOtpBtn" style="height: 50px; font-size: 1rem; border-radius: 10px; font-weight: 600; box-shadow: 0 3px 10px rgba(139, 195, 74, 0.3);">
+                    <i class="fas fa-check-circle me-2"></i>Verify
+                </button>
+
+                <!-- Resend Button -->
+                <div class="mb-0">
+                    <button type="button" class="btn btn-link text-success" id="resendOtpBtn" style="font-size: 0.9rem;">
+                        <i class="fas fa-redo-alt me-2"></i>Resend OTP after <span id="countdown" style="font-weight: bold; color: #ff9800;">5:00</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- New Email Modal -->
+<div class="modal fade" id="newEmailModal" tabindex="-1" role="dialog" aria-labelledby="newEmailModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="background: white; border-radius: 15px; border: 2px solid #8bc34a;">
+            <div class="modal-body text-center p-4" style="color: #2e7d32;">
+                <!-- Modal header -->
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h4 class="modal-title" style="color: #2e7d32;">Update Email</h4>
+                    <button type="button" class="btn-close text-success" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Icon -->
+                <div class="mb-3">
+                    <div class="rounded-circle bg-success bg-opacity-25 d-inline-flex align-items-center justify-content-center" style="width: 70px; height: 70px; box-shadow: 0 5px 15px rgba(139, 195, 74, 0.3);">
+                        <i class="fas fa-envelope text-success" style="font-size: 1.8rem;"></i>
+                    </div>
+                </div>
+
+                <!-- Form -->
+                <form id="newEmailForm">
+                    <div class="mb-3">
+                        <label for="newEmail" class="form-label text-success text-start d-block mb-2">New Email Address</label>
+                        <input type="email" class="form-control form-control-lg" id="newEmail" 
+                               placeholder="Enter your new email" required
+                               style="background: white; border: 2px solid #8bc34a; color: #2e7d32; border-radius: 10px;">
+                        <div class="invalid-feedback text-start">Please enter a valid email address.</div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg" 
+                                style="height: 45px; font-size: 1rem; border-radius: 10px; font-weight: 600; box-shadow: 0 3px 10px rgba(139, 195, 74, 0.3);">
+                            <i class="fas fa-check-circle me-2"></i>Update Email
+                        </button>
+                        <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal"
+                                style="height: 45px; font-size: 1rem; border-radius: 10px;">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- New Phone Modal -->
+<div class="modal fade" id="newPhoneModal" tabindex="-1" role="dialog" aria-labelledby="newPhoneModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="background: white; border-radius: 15px; border: 2px solid #8bc34a;">
+            <div class="modal-body text-center p-4" style="color: #2e7d32;">
+                <!-- Modal header -->
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h4 class="modal-title" style="color: #2e7d32;">Update Phone Number</h4>
+                    <button type="button" class="btn-close text-success" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Icon -->
+                <div class="mb-3">
+                    <div class="rounded-circle bg-success bg-opacity-25 d-inline-flex align-items-center justify-content-center" style="width: 70px; height: 70px; box-shadow: 0 5px 15px rgba(139, 195, 74, 0.3);">
+                        <i class="fas fa-phone text-success" style="font-size: 1.8rem;"></i>
+                    </div>
+                </div>
+
+                <!-- Form -->
+                <form id="newPhoneForm">
+                    <div class="mb-3">
+                        <label for="newPhone" class="form-label text-success text-start d-block mb-2">New Phone Number</label>
+                        <input type="tel" class="form-control form-control-lg" id="newPhone" 
+                               placeholder="Enter your new phone number" required
+                               style="background: white; border: 2px solid #8bc34a; color: #2e7d32; border-radius: 10px;">
+                        <div class="invalid-feedback text-start">Please enter a valid phone number.</div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg" 
+                                style="height: 45px; font-size: 1rem; border-radius: 10px; font-weight: 600; box-shadow: 0 3px 10px rgba(139, 195, 74, 0.3);">
+                            <i class="fas fa-check-circle me-2"></i>Update Phone Number
+                        </button>
+                        <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal"
+                                style="height: 45px; font-size: 1rem; border-radius: 10px;">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- New Password Modal -->
+<div class="modal fade" id="newPasswordModal" tabindex="-1" role="dialog" aria-labelledby="newPasswordModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="background: white; border-radius: 15px; border: 2px solid #8bc34a;">
+            <div class="modal-body text-center p-4" style="color: #2e7d32;">
+                <!-- Modal header -->
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h4 class="modal-title" style="color: #2e7d32;">Update Password</h4>
+                    <button type="button" class="btn-close text-success" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Icon -->
+                <div class="mb-3">
+                    <div class="rounded-circle bg-success bg-opacity-25 d-inline-flex align-items-center justify-content-center" style="width: 70px; height: 70px; box-shadow: 0 5px 15px rgba(139, 195, 74, 0.3);">
+                        <i class="fas fa-lock text-success" style="font-size: 1.8rem;"></i>
+                    </div>
+                </div>
+
+                <!-- Form -->
+                <form id="newPasswordForm">
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label text-success text-start d-block mb-2">Current Password</label>
+                        <input type="password" class="form-control form-control-lg" id="currentPassword" 
+                               placeholder="Enter your current password" required
+                               style="background: white; border: 2px solid #8bc34a; color: #2e7d32; border-radius: 10px;">
+                        <div class="invalid-feedback text-start">Please enter your current password.</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label text-success text-start d-block mb-2">New Password</label>
+                        <input type="password" class="form-control form-control-lg" id="newPassword" 
+                               placeholder="Enter your new password" required
+                               style="background: white; border: 2px solid #8bc34a; color: #2e7d32; border-radius: 10px;">
+                        <div class="invalid-feedback text-start">Password must be at least 8 characters.</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label text-success text-start d-block mb-2">Confirm New Password</label>
+                        <input type="password" class="form-control form-control-lg" id="confirmPassword" 
+                               placeholder="Confirm your new password" required
+                               style="background: white; border: 2px solid #8bc34a; color: #2e7d32; border-radius: 10px;">
+                        <div class="invalid-feedback text-start">Passwords must match.</div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg" 
+                                style="height: 45px; font-size: 1rem; border-radius: 10px; font-weight: 600; box-shadow: 0 3px 10px rgba(139, 195, 74, 0.3);">
+                            <i class="fas fa-check-circle me-2"></i>Update Password
+                        </button>
+                        <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal"
+                                style="height: 45px; font-size: 1rem; border-radius: 10px;">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script src="~/assets/js/admins/adminsetting.js"></script>
+}
+
+<!-- Loading Spinner -->
+<div id="loadingSpinner" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" style="background-color: rgba(255, 255, 255, 0.7); z-index: 9999; display: none !important;">
+    <div class="d-flex flex-column align-items-center">
+        <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <span class="mt-2 text-success fw-bold">Processing...</span>
+    </div>
+</div>

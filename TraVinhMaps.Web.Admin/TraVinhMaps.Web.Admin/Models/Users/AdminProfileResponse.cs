@@ -13,7 +13,6 @@
         public string? RoleName { get; set; }
         public bool IsForbidden { get; set; }
         public bool Status { get; set; }
-    
     }
 }
 
