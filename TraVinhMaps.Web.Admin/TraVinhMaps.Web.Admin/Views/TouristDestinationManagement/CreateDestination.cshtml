@@ -160,10 +160,8 @@
                                     <div class="col-sm-4">
                                         <div class="mb-3">
                                             <label>Destination Type</label>
-                                            <select asp-for="DestinationTypeId" class="form-select">
-                                                <option selected value="68244abd2b06dbe39f973e8c">Religious Buildings
-                                                </option>
-                                                <option value="68244abd2b06dbe39f973e8c">Tree</option>
+                                            <select asp-for="DestinationTypeId" class="form-select"
+                                                asp-items="ViewBag.DestinationTypes">
                                             </select>
                                         </div>
                                     </div>
@@ -217,8 +215,8 @@
                                         <div class="mb-3">
                                             <label>Description</label>
                                             <textarea asp-for="Description" class="form-control"
-                                                placeholder="Description of destination"
-                                                id="exampleFormControlTextarea4" rows="10"></textarea>
+                                                placeholder="Description of destination" rows="10"
+                                                id="descriptionEditor"></textarea>
                                             <span asp-validation-for="Description" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -228,8 +226,8 @@
                                         <div class="mb-3">
                                             <label>History Story</label>
                                             <textarea asp-for="HistoryStory.Content" class="form-control"
-                                                placeholder="History content of destination"
-                                                id="exampleFormControlTextarea4" rows="10"></textarea>
+                                                placeholder="History content of destination" id="historyEditor"
+                                                rows="10"></textarea>
                                             <span asp-validation-for="HistoryStory.Content" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -292,6 +290,7 @@
 </div>
 
 @section Scripts {
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
     @Html.AntiForgeryToken()
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
@@ -299,119 +298,74 @@
     <script src="~/assets/js/typeahead/handlebars.js"></script>
     <script src="~/assets/js/dropzone/dropzone.js"></script>
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/dropzone.css">
+
+    <script>
+        function copyWebsiteToClipboard(element) {
+            const text = element.innerText.trim();
+            if (text) {
+                navigator.clipboard.writeText(text).catch(function (err) {
+                    alert("Failed to copy text: " + err);
+                });
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            ClassicEditor
+                .create(document.querySelector('#descriptionEditor'))
+                .catch(error => {
+                    console.error(error);
+                });
+            ClassicEditor
+                .create(document.querySelector('#historyEditor'))
+                .catch(error => {
+                    console.error(error);
+                });
+            const setupUploadBox = (boxId, inputId) => {
+                const addBox = document.getElementById(boxId);
+                const uploadInput = document.getElementById(inputId);
+
+                if (!addBox || !uploadInput) return;
+
+                // Click to open file dialog
+                addBox.addEventListener("click", () => uploadInput.click());
+
+                // Preview container
+                let previewContainer = document.createElement("div");
+                previewContainer.classList.add("row", "mt-3", "g-3");
+                addBox.parentElement.appendChild(previewContainer);
+
+                // Handle file preview
+                uploadInput.addEventListener("change", function () {
+                    previewContainer.innerHTML = "";
+
+                    Array.from(uploadInput.files).forEach(file => {
+                        if (file.type.startsWith("image/")) {
+                            const reader = new FileReader();
+                            reader.onload = function (e) {
+                                const col = document.createElement("div");
+                                col.classList.add("col-sm-3");
+
+                                const itemDiv = document.createElement("div");
+                                itemDiv.classList.add("item", "position-relative");
+
+                                const img = document.createElement("img");
+                                img.src = e.target.result;
+                                img.classList.add("w-100", "rounded");
+
+                                itemDiv.appendChild(img);
+                                col.appendChild(itemDiv);
+                                previewContainer.appendChild(col);
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                });
+            };
+
+            // Gọi hàm setup cho cả 2 upload box
+            setupUploadBox("addImageBox", "uploadImageInput");
+            setupUploadBox("addImageHistoryBox", "uploadImageHistoryInput");
+        });
+    </script>
+
 }
-
-<script>
-    function copyWebsiteToClipboard(element) {
-        const text = element.innerText.trim();
-        if (text) {
-            navigator.clipboard.writeText(text).then(function () {
-            }, function (err) {
-                alert("Failed to copy text: " + err);
-            });
-        }
-    }
-    document.addEventListener("DOMContentLoaded", function () {
-        const addBox = document.getElementById("addImageBox");
-        const uploadInput = document.getElementById("uploadImageInput");
-
-        if (addBox && uploadInput) {
-            addBox.addEventListener("click", function () {
-                uploadInput.click();
-            });
-        }
-    });
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const addBox = document.getElementById("addImageHistoryBox");
-        const uploadInput = document.getElementById("uploadImageHistoryInput");
-
-        if (addBox && uploadInput) {
-            addBox.addEventListener("click", function () {
-                uploadInput.click();
-            });
-        }
-    });
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const uploadInput = document.getElementById("uploadImageInput");
-        const addImageBox = document.getElementById("addImageBox");
-
-        // Tạo container hiển thị ảnh nếu chưa có
-        let previewContainer = document.createElement("div");
-        previewContainer.classList.add("row", "mt-3", "g-3");
-        addImageBox.parentElement.appendChild(previewContainer);
-
-        uploadInput.addEventListener("change", function () {
-            previewContainer.innerHTML = "";
-
-            const files = uploadInput.files;
-            if (!files || files.length === 0) return;
-
-            Array.from(files).forEach(file => {
-                if (file.type.startsWith("image/")) {
-                    const reader = new FileReader();
-
-                    reader.onload = function (e) {
-                        const col = document.createElement("div");
-                        col.classList.add("col-sm-3");
-
-                        const itemDiv = document.createElement("div");
-                        itemDiv.classList.add("item", "position-relative");
-
-                        const img = document.createElement("img");
-                        img.src = e.target.result;
-                        img.classList.add("w-100", "rounded");
-
-                        itemDiv.appendChild(img);
-                        col.appendChild(itemDiv);
-                        previewContainer.appendChild(col);
-                    };
-
-                    reader.readAsDataURL(file);
-                }
-            });
-        });
-    });
-
-    document.addEventListener("DOMContentLoaded", function () {
-        const uploadInput = document.getElementById("uploadImageHistoryInput");
-        const addImageBox = document.getElementById("addImageHistoryBox");
-
-        // Tạo container hiển thị ảnh nếu chưa có
-        let previewContainer = document.createElement("div");
-        previewContainer.classList.add("row", "mt-3", "g-3");
-        addImageBox.parentElement.appendChild(previewContainer);
-
-        uploadInput.addEventListener("change", function () {
-            previewContainer.innerHTML = "";
-
-            const files = uploadInput.files;
-            if (!files || files.length === 0) return;
-
-            Array.from(files).forEach(file => {
-                if (file.type.startsWith("image/")) {
-                    const reader = new FileReader();
-
-                    reader.onload = function (e) {
-                        const col = document.createElement("div");
-                        col.classList.add("col-sm-3");
-
-                        const itemDiv = document.createElement("div");
-                        itemDiv.classList.add("item", "position-relative");
-
-                        const img = document.createElement("img");
-                        img.src = e.target.result;
-                        img.classList.add("w-100", "rounded");
-
-                        itemDiv.appendChild(img);
-                        col.appendChild(itemDiv);
-                        previewContainer.appendChild(col);
-                    };
-
-                    reader.readAsDataURL(file);
-                }
-            });
-        });
-    });
-</script>
