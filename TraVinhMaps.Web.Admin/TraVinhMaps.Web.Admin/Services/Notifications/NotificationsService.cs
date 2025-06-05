@@ -29,21 +29,6 @@ namespace TraVinhMaps.Web.Admin.Services.Notifications
             throw new NotImplementedException();
         }
 
-        public Task<long> CountAsync(Expression<Func<NotificationResponse, bool>> predicate = null, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteAsync(NotificationResponse entity, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<NotificationResponse> GetAsyns(Expression<Func<NotificationResponse, bool>> predicate, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<NotificationResponse> GetByIdAsync(string id, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient.GetAsync(notificationApi + id, cancellationToken);
@@ -57,11 +42,6 @@ namespace TraVinhMaps.Web.Admin.Services.Notifications
         }
 
         public Task UpdateAsync(NotificationResponse entity, CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<NotificationResponse>> GetNotificationsByUserIdAsync(string userId, bool? isRead = null, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

@@ -15,12 +15,8 @@ namespace TraVinhMaps.Web.Admin.Services.Notifications
         Task<NotificationResponse> AddAsync(NotificationResponse entity, CancellationToken cancellationToken = default);
         Task<IEnumerable<NotificationResponse>> AddRangeAsync(IEnumerable<NotificationResponse> entities, CancellationToken cancellationToken = default);
         Task UpdateAsync(NotificationResponse entity, CancellationToken cancellationToken = default);
-        Task DeleteAsync(NotificationResponse entity, CancellationToken cancellationToken = default);
-        Task<long> CountAsync(Expression<Func<NotificationResponse, bool>> predicate = null, CancellationToken cancellationToken = default);
-        Task<NotificationResponse> GetAsyns(Expression<Func<NotificationResponse, bool>> predicate, CancellationToken cancellationToken = default);
         Task<bool> SendNotificationAsync(NotificationRequest notificationRequest, CancellationToken cancellation = default);
         Task<bool> MarkNotificationAsReadAsync(string notificationId, CancellationToken cancellationToken = default);
-        Task<IEnumerable<NotificationResponse>> GetNotificationsByUserIdAsync(string userId, bool? isRead = null, CancellationToken cancellationToken = default);
         Task<IEnumerable<NotificationResponse>> GetUniqueNotificationsAsync(CancellationToken cancellationToken = default);
     }
 }

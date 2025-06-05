@@ -50,12 +50,12 @@
                             </div>
                             <div class="status-filter">
                                 <select id="statusFilter" class="form-select">
-                                    <option value="all">All</option>
-                                    <option value="inactive">Delete (Inactive)</option>
+                                    <option value="all">Active</option>
+                                    <option value="inactive">Inactive</option>
                                     @foreach (var tag in ViewBag.Tags)
-        {
-            <option value="@tag.Id">@tag.Name</option> 
-        }
+                                    {
+                                        <option value="@tag.Id">@tag.Name</option> 
+                                    }
                                 </select>
                             </div>
                         </div>

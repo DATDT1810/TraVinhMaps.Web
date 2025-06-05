@@ -10,6 +10,7 @@ using TraVinhMaps.Web.Admin.Services.Notifications;
 using TraVinhMaps.Web.Admin.Services.Tags;
 using TraVinhMaps.Web.Admin.Services.TouristDestination;
 using TraVinhMaps.Web.Admin.Services.Users;
+using TraVinhMaps.Web.Admin.Services.LocalSpecialties;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -19,6 +20,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserService, UserService>();
 // Register IOcopProductService
 builder.Services.AddScoped<IOcopProductService, OcopProductService>();
+// Register ILocalSpecialtiesService
+builder.Services.AddScoped<ILocalSpecialtiesService, LocalSpecialtiesService>();
 // Register IAdminService
 builder.Services.AddScoped<IAdminService, AdminService>();
 // Register INotificationsService
@@ -51,17 +54,6 @@ builder.Services.AddSession(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure cookies are only sent over HTTPS
     options.Cookie.SameSite = SameSiteMode.Lax; // Changed from Strict to Lax to allow cross-site redirects for OAuth
 });
-
-// Register IUserService
-builder.Services.AddScoped<IUserService, UserService>();
-// Register INotificationsService
-builder.Services.AddScoped<INotificationsService, NotificationsService>();
-// Register TouristDestination
-builder.Services.AddScoped<IDestinationService, DestinationService>();
-//Register Event And Festival
-builder.Services.AddScoped<IEventAndFestivalService, EventAndFestivalService>();
-// Register IAuthService
-builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Configure cookie authentication
 builder.Services.AddAuthentication(options =>

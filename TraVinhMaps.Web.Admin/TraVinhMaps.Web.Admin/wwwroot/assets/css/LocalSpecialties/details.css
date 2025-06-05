@@ -1,0 +1,87 @@
+.delete-button-image {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        background-color: rgba(169, 169, 169, 0.6);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        padding: 0;
+    }
+
+    .add-image-box {
+        margin-top: 10px;
+        width: 100%;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #aaa;
+        position: relative;
+        cursor: pointer;
+        border-radius: 9px;
+        background-color: #f8f9fa;
+        margin-bottom: 12px;
+    }
+
+    .add-image-history-box {
+        margin-top: 10px;
+        width: 100%;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #aaa;
+        position: relative;
+        cursor: pointer;
+        border-radius: 9px;
+        background-color: #f8f9fa;
+    }
+
+    .upload-placeholder {
+        font-size: 48px;
+        color: #aaa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    div.gallery {
+        margin: 5px;
+        border-radius: 9px;
+        float: left;
+        width: 180px;
+    }
+
+    div.add_gallery {
+        margin: 5px;
+        border-radius: 9px;
+        float: left;
+        width: 180px;
+    }
+
+    div.gallery:hover {
+        border: 1px solid #777;
+    }
+
+    div.gallery img {
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+    }
+
+    div.desc {
+        padding: 15px;
+        text-align: center;
+    }
