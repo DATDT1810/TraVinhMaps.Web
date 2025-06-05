@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TraVinhMaps.Web.Admin.Models.Location;
 using TraVinhMaps.Web.Admin.Models.OcopProduct;
@@ -54,7 +55,6 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 OcopPoint = findOcopProduct.OcopPoint,
                 OcopYearRelease = findOcopProduct.OcopYearRelease,
                 TagId = findOcopProduct.TagId,
-                SellingLinkId = findOcopProduct.SellingLinkId
             };
             return View(updateOcopProductRequest);
         }
@@ -79,7 +79,6 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 OcopPoint = request.OcopPoint,
                 OcopYearRelease = request.OcopYearRelease,
                 TagId = request.TagId,
-                SellingLinkId = request.SellingLinkId
             };
 
             try
@@ -360,7 +359,6 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     OcopPoint = result.value.data.OcopPoint,
                     OcopYearRelease = result.value.data.OcopYearRelease,
                     TagId = result.value.data.TagId,
-                    SellingLinkId = result.value.data.SellingLinkId,
                     CreatedAt = result.value.data.CreatedAt,
                     UpdateAt = result.value.data.UpdateAt
                 };
@@ -381,11 +379,88 @@ namespace TraVinhMaps.Web.Admin.Controllers
         }
     
         [HttpGet("ImportProducts")]
-        public IActionResult ImportProducts()
+        public async Task<IActionResult> ImportProducts()
         {
-            ViewData["Title"] = "Create Ocop Product";
-            ViewData["Breadcrumb"] = new List<string> { "Ocop Product", "Import Products" };
-            return View();
+            try {
+                var lookUp = await _ocopProductService.GetLookUpAsync();
+                if (lookUp == null)
+                {
+                    TempData["ErrorMessage"] = "Failed to load lookup data: lookup result is null";
+                    return RedirectToAction("Index");
+                }
+                
+                // Add diagnostic information
+                if (lookUp.OcopTypes == null || !lookUp.OcopTypes.Any())
+                {
+                    TempData["ErrorMessage"] = "Warning: No OcopTypes were loaded";
+                }
+                
+                if (lookUp.Companies == null || !lookUp.Companies.Any())
+                {
+                    TempData["ErrorMessage"] = "Warning: No Companies were loaded";
+                }
+                
+                if (lookUp.Tags == null || !lookUp.Tags.Any())
+                {
+                    TempData["ErrorMessage"] = "Warning: No Tags were loaded";
+                }
+                
+                // Ensure each list is initialized to avoid null reference exceptions in the view
+                ViewBag.OcopTypes = lookUp.OcopTypes ?? new List<OcopTypeResponse>();
+                ViewBag.Companies = lookUp.Companies ?? new List<CompanyResponse>();
+                ViewBag.Tags = lookUp.Tags ?? new List<TagResponse>();
+                
+                ViewData["Title"] = "Create Ocop Product";
+                ViewData["Breadcrumb"] = new List<string> { "Ocop Product", "Import Products" };
+                return View();
+            }
+            catch (HttpRequestException ex)
+            {
+                TempData["ErrorMessage"] = $"Error loading lookup data: {ex.Message}";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Unexpected error: {ex.Message}";
+                return RedirectToAction("Index");
+            }
+        }
+        
+        [HttpPost("ProcessImportProducts")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ProcessImportProducts([FromBody] List<CreateOcopProductRequest> products)
+        {
+            try
+            {
+                var results = new List<object>();
+                
+                foreach (var product in products)
+                {
+                    try
+                    {
+                        var result = await _ocopProductService.AddAsync(product);
+                        results.Add(new { 
+                            success = true, 
+                            productName = product.ProductName,
+                            message = "Product created successfully" 
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        results.Add(new { 
+                            success = false, 
+                            productName = product.ProductName,
+                            message = ex.Message 
+                        });
+                    }
+                }
+                
+                return Json(new { success = true, results });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
     }
 }

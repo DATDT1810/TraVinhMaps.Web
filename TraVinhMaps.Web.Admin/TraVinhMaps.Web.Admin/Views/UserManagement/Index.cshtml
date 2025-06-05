@@ -270,8 +270,13 @@
                             const today = new Date().toISOString().slice(0, 10);
                             const fileName = `user_list_${today}.xlsx`;
                             XLSX.writeFile(wb, fileName);
+
                             
-                            showSuccessAlert("Export Successful", `${response.length} users have been exported to Excel with detailed profile data.`);
+                            setTimeout(() => {
+                                showSuccessAlert("Export Successful", `${response.length} Items have been exported to Excel.`);
+                            }, 3000);
+                            
+                            // showSuccessAlert("Export Successful", `${response.length} Items have been exported to Excel.`);
                         } else {
                             showErrorAlert("Export Error", "No user data available for export.");
                         }
