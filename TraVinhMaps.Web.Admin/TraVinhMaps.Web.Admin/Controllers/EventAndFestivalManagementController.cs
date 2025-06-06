@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Logging;
+using System.Globalization;
 using TraVinhMaps.Web.Admin.Models.EventAndFestivalFeature;
-using TraVinhMaps.Web.Admin.Models.TouristDestination;
 using TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature;
 
 namespace TraVinhMaps.Web.Admin.Controllers
 {
+    [Authorize]
     [Route("Admin/[controller]")]
     public class EventAndFestivalManagementController : Controller
     {

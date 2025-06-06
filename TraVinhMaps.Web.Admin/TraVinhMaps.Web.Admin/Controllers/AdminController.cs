@@ -1,16 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using TraVinhMaps.Web.Admin.Models.Admins;
 using TraVinhMaps.Web.Admin.Models.Users;
 using TraVinhMaps.Web.Admin.Services.Admin;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using TraVinhMaps.Web.Admin.Models.Admins;
 
 namespace TraVinhMaps.Web.Admin.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     public class AdminController : Controller
     {
@@ -115,7 +111,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
         {
             ViewData["Title"] = "Admin Management";
             ViewData["Breadcrumb"] = new List<string> { "Admin Management", "Admin List" };
-            var admins = await _adminService.ListAllAsync() ?? new List<AdminResponse>();;
+            var admins = await _adminService.ListAllAsync() ?? new List<AdminResponse>(); ;
             return View(admins);
         }
 
@@ -171,52 +167,6 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return Json(new { success = false, message = "Failed to create admin" });
             }
         }
-
-        // GET: Admin/Update
-        // [HttpGet("Update/{id}")]
-        // public async Task<IActionResult> Update(string id)
-        // {
-        //     var admin = await _adminService.GetByIdAsync(id);
-
-        //     if (admin == null)
-        //     {
-        //         return RedirectToAction("Index");
-        //     }
-
-        //     var updateModel = new UpdateAdminRequest
-        //     {
-        //         Id = admin.Id,
-        //         PhoneNumber = admin.PhoneNumber,
-        //         Username = admin.Username,
-        //         Password = admin.Password
-        //     };
-
-        //     ViewData["Title"] = "Admin Update";
-        //     ViewData["Breadcrumb"] = new List<string> { "Admin Update", "Update" };
-        //     return View(updateModel);
-        // }
-
-        // POST: Admin/Update
-        // [HttpPost("Update")]
-        // [ValidateAntiForgeryToken]
-        // public async Task<IActionResult> Update(UpdateAdminRequest request, CancellationToken cancellationToken = default)
-        // {
-        //     if (!ModelState.IsValid)
-        //     {
-        //         return View(request);
-        //     }
-        //     try
-        //     {
-        //         var admin = await _adminService.UpdateAsync(request, cancellationToken);
-        //         TempData["Success"] = "Update the admin successfully!";
-        //         return RedirectToAction(nameof(Index));
-        //     }
-        //     catch (Exception)
-        //     {
-        //         TempData["Error"] = "Update the admin fail!";
-        //         return View(request);
-        //     }
-        // }
 
         [HttpGet("Restore/{id}")]
         public async Task<IActionResult> Restore(string id)

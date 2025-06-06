@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.Design;
-using System.IO.Pipes;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Text.Json;
 using TraVinhMaps.Web.Admin.Models.OcopProduct;
 using TraVinhMaps.Web.Admin.Models.SellLocation;
@@ -151,7 +149,7 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
         {
             var encodedImageUrl = Uri.EscapeDataString(imageUrl);
             var response = await _httpClient.DeleteAsync(ocopProductApi + "DeleteImageOcopProduct/" + id + "/" + encodedImageUrl);
-            if(response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
                 var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -185,7 +183,7 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
             var data = JsonSerializer.Serialize(sellLocation);
             var content = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
             HttpResponseMessage responseMessage = await _httpClient.PostAsync(ocopProductApi + "AddSellLocation", content);
-            if(responseMessage.IsSuccessStatusCode)
+            if (responseMessage.IsSuccessStatusCode)
             {
                 var contentResult = await responseMessage.Content.ReadAsStringAsync();
                 var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -201,7 +199,7 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
         public async Task<OcopProductMessage> DeleteOcopProductAsync(string id, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient.DeleteAsync(ocopProductApi + "DeleteOcopProduct/" + id);
-            if(response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
                 var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -289,6 +287,47 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
             {
                 var errorResult = await responseMessage.Content.ReadAsStringAsync();
                 throw new HttpRequestException($"Unable to fetch update sell location. Status: {responseMessage.StatusCode}, Error: {errorResult}");
+            }
+        }
+
+        public async Task<ProductLookUpResponse> GetLookUpAsync()
+        {
+            var response = await _httpClient.GetAsync(ocopProductApi + "get-lookup-product");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var option = new JsonSerializerOptions { 
+                    PropertyNameCaseInsensitive = true,
+                    AllowTrailingCommas = true
+                };
+                
+                try {
+                    var responseWrapper = JsonSerializer.Deserialize<ProductLookUpResponseWrapper>(content, option);
+                    
+                    if (responseWrapper?.Data != null) {
+                        // Convert single Tags object to a List for view compatibility
+                        var tagsList = new List<TagResponse>();
+                        if (responseWrapper.Data.Tags != null) {
+                            tagsList.Add(responseWrapper.Data.Tags);
+                        }
+                        
+                        return new ProductLookUpResponse {
+                            OcopTypes = responseWrapper.Data.OcopTypes ?? new List<OcopTypeResponse>(),
+                            Companies = responseWrapper.Data.Companies ?? new List<CompanyResponse>(),
+                            Tags = tagsList
+                        };
+                    }
+                    
+                    throw new HttpRequestException("Fail to get lookup data for ocop product: No data returned");
+                }
+                catch (JsonException ex) {
+                    throw new HttpRequestException($"Failed to parse lookup data: {ex.Message}\nJSON: {content.Substring(0, Math.Min(content.Length, 500))}");
+                }
+            }
+            else
+            {
+                var errorResult = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException($"Unable to fetch lookup data for ocop product. Status: {response.StatusCode}, Error: {errorResult}");
             }
         }
     }

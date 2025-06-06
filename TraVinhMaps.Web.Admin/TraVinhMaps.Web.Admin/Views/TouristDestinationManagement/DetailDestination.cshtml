@@ -198,9 +198,10 @@
                             <div class="product-page-details">
                                 <h3>@Model.Name</h3>
                             </div>
-                            <div class="product-price">Tag @Model.TagId
+                            <div style="margin-top: 10px;">
+                                <img class="activity-log-img rounded-circle img-fluid me-2" src="@ViewBag.DestinationTag.Image" alt="user" style="width: 24px; height: 24px;" />
+                                    @ViewBag.DestinationTag.Name
                             </div>
-
                             <hr>
                             <p>@Model.Address</p>
                             <hr>
@@ -208,11 +209,11 @@
                                 <table class="product-page-width">
                                     <tbody>
                                         <tr>
-                                            <td> <b>Create At &nbsp;&nbsp;&nbsp;:</b></td>
+                                            <td> <b>Create At :</b></td>
                                             <td>@Model.CreatedAt</td>
                                         </tr>
                                         <tr>
-                                            <td> <b>Update At &nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</b></td>
+                                            <td> <b>Update At : &nbsp;&nbsp;&nbsp;</b></td>
                                             <td class="txt-success">@(
                                                 Model.UpdateAt.HasValue
                                                 ? Model.UpdateAt.Value.ToString("dd/MM/yyyy HH:mm")
@@ -220,11 +221,11 @@
                                                                                                 )</ td >
                                         </tr>
                                         <tr>
-                                            <td> <b>Location Type &nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</b></td>
+                                            <td> <b>Location Type : &nbsp;&nbsp;&nbsp;</b></td>
                                             <td>@(Model.Location.Type ?? "No type")</td>
                                         </tr>
                                         <tr>
-                                            <td> <b>longitude/latitude &nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</b></td>
+                                            <td> <b>longitude/latitude : &nbsp;&nbsp;&nbsp;</b></td>
                                             <td>@Model.Location.Coordinates[0] ,&nbsp @Model.Location.Coordinates[1]
                                             </td>
                                         </tr>
@@ -268,15 +269,18 @@
                                 <table class="product-page-width">
                                     <tbody>
                                         <tr>
-                                            <td> <b>Destination Type&nbsp;:</b></td>
-                                            <td>@Model.DestinationTypeId</td>
+                                            <td> <b>Destination Type :</b></td>
+                                            <td>
+                                                <img class="activity-log-img rounded-circle img-fluid me-2" src="@ViewBag.marker.Image" alt="user" style="width: 24px; height: 24px; margin-left: 10px;" />
+                                                @ViewBag.DestinationType.Name
+                                            </td>
                                         </tr>
                                         <tr>
-                                            <td> <b>Ticket &nbsp;&nbsp;:</b></td>
+                                            <td> <b>Ticket :</b></td>
                                             <td>@(Model.Ticket ?? "")</td>
                                         </tr>
                                         <tr>
-                                            <td> <b>Capacity &nbsp;&nbsp;:</b></td>
+                                            <td> <b>Capacity :</b></td>
                                             <td>@(Model.Capacity ?? "")</td>
                                         </tr>
                                     </tbody>
@@ -405,7 +409,7 @@
                     <div class="tab-content" id="top-tabContent">
                         <div class="tab-pane fade active show" id="top-home" role="tabpanel"
                             aria-labelledby="top-home-tab">
-                            <p class="mb-0 m-t-20">@(Model.Description??"No description available.")</p>
+                            @Html.Raw(Model.Description ?? "<p>No description available.</p>")
                         </div>
                         <div class="tab-pane fade" id="top-profile" role="tabpanel" aria-labelledby="profile-top-tab">
                             <p class="mb-0 m-t-20">

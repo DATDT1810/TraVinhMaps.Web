@@ -20,5 +20,6 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
         Task<SellLocationResponse> AddSellLocation(string id, SellLocationResponse sellLocation, CancellationToken cancellationToken = default);
         Task<UpdateSellLocationResponse> UpdateSellLocation(string id, SellLocationResponse sellLocation, CancellationToken cancellationToken = default);
         Task<DeleteSellLocationResponse> DeleteSellLocation(string ocopProductId, string sellLocationName, CancellationToken cancellationToken = default);
+        Task<ProductLookUpResponse> GetLookUpAsync();
     }
 }

@@ -130,15 +130,16 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-sm-3">
-                                         <div class="mb-3">
+                                    <div class="row">
+                                      <div class="col-sm-4">
+                                        <div class="mb-3">
                                             <label>Ocop Product Selling Link</label>
-                                            <select asp-for="SellingLinkId" class="form-select">
-                                                <option selected value="68244abd2b06dbe39f973e8c">https://shopee.vn/</option>
-                                                <option value="68244abd2b06dbe39f973e8d">https://shopee.vn/vn</option>
-                                            </select>
+                                            <input asp-for="SellingLinkId" class="form-control" type="text"
+                                                placeholder="Selling link of product">
+                                            <span asp-validation-for="SellingLinkId" class="text-danger"></span>
                                         </div>
                                     </div>
+                                </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
