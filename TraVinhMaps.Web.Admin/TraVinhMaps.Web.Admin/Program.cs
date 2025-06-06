@@ -8,6 +8,8 @@ using TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature;
 using TraVinhMaps.Web.Admin.Services.ItineraryPlan;
 using TraVinhMaps.Web.Admin.Services.Notifications;
 using TraVinhMaps.Web.Admin.Services.OcopProduct;
+using TraVinhMaps.Web.Admin.Services.OcopType;
+using TraVinhMaps.Web.Admin.Services.SellingLink;
 using TraVinhMaps.Web.Admin.Services.Tags;
 using TraVinhMaps.Web.Admin.Services.TouristDestination;
 using TraVinhMaps.Web.Admin.Services.Users;
@@ -20,6 +22,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserService, UserService>();
 // Register IOcopProductService
 builder.Services.AddScoped<IOcopProductService, OcopProductService>();
+// Register IOcopTypeService
+builder.Services.AddScoped<IOcopTypeService, OcopTypeService>();
+// Register IOSellingLinkService
+builder.Services.AddScoped<ISellingLinkService, SellingLinkService>();
 // Register IAdminService
 builder.Services.AddScoped<IAdminService, AdminService>();
 // Register INotificationsService

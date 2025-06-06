@@ -96,7 +96,7 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
             content.Add(new StringContent(entity.OcopPoint.ToString()), "OcopPoint");
             content.Add(new StringContent(entity.OcopYearRelease.ToString()), "OcopYearRelease");
             content.Add(new StringContent(entity.TagId ?? string.Empty), "TagId");
-            content.Add(new StringContent(entity.SellingLinkId ?? string.Empty), "SellingLinkId");
+            content.Add(new StringContent(entity.SellingLinkId != null ? string.Join(",", entity.SellingLinkId) : string.Empty), "SellingLinkId");
             foreach (var file in entity.ProductImageFile)
             {
                 var streamContent = new StreamContent(file.OpenReadStream());
@@ -198,14 +198,14 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
             }
         }
 
-        public async Task<DeleteOcopProductResponse> DeleteOcopProductAsync(string id, CancellationToken cancellationToken = default)
+        public async Task<OcopProductMessage> DeleteOcopProductAsync(string id, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient.DeleteAsync(ocopProductApi + "DeleteOcopProduct/" + id);
             if(response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
                 var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return JsonSerializer.Deserialize<DeleteOcopProductResponse>(content, option) ?? throw new HttpRequestException("Fail to delete ocop product.");
+                return JsonSerializer.Deserialize<OcopProductMessage>(content, option) ?? throw new HttpRequestException("Fail to delete ocop product.");
             }
             else
             {
@@ -230,14 +230,14 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
             }
         }
 
-        public async Task<RestoreOcopProductResponse> RestoreOcopProductAsync(string id, CancellationToken cancellationToken = default)
+        public async Task<OcopProductMessage> RestoreOcopProductAsync(string id, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient.PutAsync(ocopProductApi + "RestoreOcopProduct/" + id, new StringContent(""));
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
                 var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return JsonSerializer.Deserialize<RestoreOcopProductResponse>(content, option) ?? throw new HttpRequestException("Fail to restore ocop product.");;
+                return JsonSerializer.Deserialize<OcopProductMessage>(content, option) ?? throw new HttpRequestException("Fail to restore ocop product.");;
             }
             else
             {
@@ -246,7 +246,7 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
             }
         }
 
-        public async Task<UpdateOcopProductResponse> UpdateAsync(UpdateOcopProductRequest entity, CancellationToken cancellationToken = default)
+        public async Task<OcopProductMessage> UpdateAsync(UpdateOcopProductRequest entity, CancellationToken cancellationToken = default)
         {
             var options = new JsonSerializerOptions
             {
@@ -260,7 +260,7 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
             {
                 var contentResponse = await responseMessage.Content.ReadAsStringAsync();
                 var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return JsonSerializer.Deserialize<UpdateOcopProductResponse>(contentResponse, option) ?? throw new HttpRequestException("Fail to update ocop product.");
+                return JsonSerializer.Deserialize<OcopProductMessage>(contentResponse, option) ?? throw new HttpRequestException("Fail to update ocop product.");
             }
             else
             {

@@ -1,6 +1,6 @@
-﻿﻿@using TraVinhMaps.Web.Admin.Models.OcopProduct;
+@using TraVinhMaps.Web.Admin.Models.OcopType;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@model IEnumerable<OcopProductResponse>;
+@model IEnumerable<OcopTypeResponse>;
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -55,8 +55,8 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
                             <div>
-                                <a asp-controller="OcopProduct" asp-action="CreateOcopProduct" class="btn btn-success">
-                                    <i class="fa fa-plus me-1"></i>Create Ocop Product
+                                <a asp-controller="OcopType" asp-action="CreateOcopType" class="btn btn-success">
+                                    <i class="fa fa-plus me-1"></i>Create Ocop Type
                                 </a>
                                 <button class="btn btn-primary" id="exportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
@@ -74,12 +74,10 @@
                                 <thead class="bg-primary">
                                     <tr>
                                         <th>No. &nbsp</th>
-                                        <th>Product Image</th>
-                                        <th>Product Name</th>
-                                        <th>Product Price</th>
+                                        <th>Ocop Type Name</th>
                                         <th>Status</th>
-                                        <th>Ocop Year Release</th>
                                         <th>Created At</th>
+                                        <th>Update At</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -92,59 +90,25 @@
                                         <tr class="user-removes">
                                             <td>@count</td>
                                             <td>
-                                                <div class="product-names">
-                                                    <div class="light-product-box">
-                                                        @if (item.ProductImage != null && item.ProductImage.Any())
-                                                        {
-                                                            <img class="img-fluid" src="@item.ProductImage[0]" alt="image ocop product" />
-                                                        }
-                                                        else
-                                                        {
-                                                            <img class="img-fluid" src="/assets/images/no-image.png" alt="no image available" />
-                                                        }
-                                                    </div>
-                                                </div>
+                                                @item.OcopTypeName
                                             </td>
                                             <td>
-                                                @item.ProductName
-                                            </td>
-                                           
-                                            <td>
-                                                @item.ProductPrice
-                                            </td>
-                                            <td>
-                                                <span class="badge @(item.Status ? "badge-light-primary" : "badge-light-danger")">
-                                                    @(item.Status
+                                                <span class="badge @(item.OcopTypeStatus ? "badge-light-primary" : "badge-light-danger")">
+                                                    @(item.OcopTypeStatus
                                                         ? "Active" : "Inactive")
                                                 </span>
                                             </td>
                                             <td>
-                                                @item.OcopYearRelease
-                                            </td>
-                                            
-                                            <td>
                                                 @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                             </td>
-                                            <td>
-                                                <ul class="action">
+                                             <td>
+                                                @item.UpdateAt?.ToLocalTime().ToString("dd/MM/yy, HH:mm")
+                                            </td>
+                                            <td class="text-center align-middle">
+                                                <ul class="action d-flex justify-content-center align-items-center mb-0" style="height: 100%;">
                                                     <li>
-                                                        <a class="detail" asp-controller="OcopProduct" asp-action="DetailOcopProduct" asp-route-id="@item.Id" title="Details">
-                                                            <i class="fa fa-eye"></i>
-                                                        </a>
+                                                        <a asp-controller="OcopType" asp-action="UpdateOcopType" asp-route-id="@item.Id"><i class="fa fa-pencil"></i> </a>
                                                     </li>
-                                                    <li>
-                                                        @if (item.Status == false)
-                                                        {
-                                                            <a class="restore undelete-ocop-product" href="javascript:void(0)"
-                                                               data-id="@item.Id" title="Restore"><i class="fa fa-undo"></i></a>
-                                                        }
-                                                        else
-                                                        {
-                                                            <a class="delete delete-ocop-product" href="javascript:void(0)"
-                                                               data-id="@item.Id" title="Delete"><i class="fa fa-trash"></i></a>
-                                                        }
-                                                    </li>
-
                                                 </ul>
                                             </td>
                                         </tr>
@@ -164,7 +128,7 @@
 @section Scripts {
     @Html.AntiForgeryToken()
     <script src="~/assets/js/sweetalert-custom.js"></script>
-    <script src="~/assets/js/ocopproduct/index.js"></script>
+    <script src="~/assets/js/ocoptype/index.js"></script>
     <script>
         (function () {
             const success = @Html.Raw(Json.Serialize(TempData["Success"]));
