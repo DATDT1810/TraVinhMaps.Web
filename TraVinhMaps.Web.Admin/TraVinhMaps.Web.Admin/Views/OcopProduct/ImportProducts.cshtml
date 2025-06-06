@@ -1,10 +1,10 @@
 @using TraVinhMaps.Web.Admin.Models.OcopProduct
 @{
     ViewData["Title"] = "Import Products";
+    var sessionId = User.Claims.FirstOrDefault(c => c.Type == "sessionId")?.Value;
 }
 
 @Html.AntiForgeryToken()
-
 <div class="page-body">
     <div class="container-fluid">
         <div class="page-title">
@@ -214,12 +214,19 @@
                         <!-- Data preview section -->
                         <div id="dataPreviewSection" class="d-none">
                             <div class="alert alert-warning" id="validationIssues">
-                                <h5 class="alert-heading">
-                                    <i class="fa fa-exclamation-triangle me-1"></i>Detected some issues:
-                                </h5>
-                                <ul id="issuesList">
-                                    <!-- Issues will be populated here -->
-                                </ul>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="alert-heading mb-0">
+                                        <i class="fa fa-exclamation-triangle me-1"></i>Detected some issues:
+                                    </h5>
+                                    <button type="button" class="btn btn-sm btn-outline-warning" id="toggleIssuesBtn">
+                                        <i class="fa fa-chevron-up" id="issuesToggleIcon"></i>
+                                    </button>
+                                </div>
+                                <div id="issuesContentWrapper">
+                                    <ul id="issuesList" class="mt-3">
+                                        <!-- Issues will be populated here -->
+                                    </ul>
+                                </div>
                             </div>
 
                             <div class="table-responsive">
@@ -298,6 +305,18 @@
     
     <script>
         $(document).ready(function() {
+            // Handle toggle issues button
+            $('#toggleIssuesBtn').click(function() {
+                $('#issuesContentWrapper').slideToggle(300, function() {
+                    const isVisible = $(this).is(':visible');
+                    $('#issuesToggleIcon').toggleClass('fa-chevron-up', isVisible);
+                    $('#issuesToggleIcon').toggleClass('fa-chevron-down', !isVisible);
+                    
+                    // Store preference in session storage
+                    sessionStorage.setItem('issuesExpanded', isVisible ? 'true' : 'false');
+                });
+            });
+            
             // Handle lookup values button
             $('#showLookupValuesBtn').click(function(e) {
                 e.preventDefault();
@@ -636,6 +655,13 @@
                         $('#issuesList').append($('<li>').html(issue));
                     });
                     $('#validationIssues').removeClass('d-none');
+                    
+                    // Check for saved preference on issues panel state
+                    const issuesExpanded = sessionStorage.getItem('issuesExpanded');
+                    if (issuesExpanded === 'false') {
+                        $('#issuesContentWrapper').hide();
+                        $('#issuesToggleIcon').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+                    }
                 } else {
                     $('#validationIssues').addClass('d-none');
                 }
@@ -990,6 +1016,21 @@
                 $('#nextPageBtn').toggleClass('disabled', currentPage === totalPages || totalPages === 0);
             }
             
+            // Add progress bar to UI before the import button
+            $('#dataPreviewSection').find('.d-flex.justify-content-between.mt-4').before(`
+                <div class="progress mt-3" id="importProgressContainer" style="display: none; height: 25px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
+                         role="progressbar" 
+                         style="width: 0%" 
+                         id="importProgressBar">0%</div>
+                </div>
+                <div id="importStatusText" class="mt-2 text-center" style="display: none;">
+                    <span class="badge bg-primary">Processing batch 0 of 0</span>
+                    <span class="ms-2">Success: <span id="successCount" class="text-success fw-bold">0</span></span>
+                    <span class="ms-2">Failed: <span id="failedCount" class="text-danger fw-bold">0</span></span>
+                </div>
+            `);
+            
             // Handle start import button
             $('#startImportBtn').click(function() {
                 // Count valid records
@@ -1041,43 +1082,190 @@
                 }
                 
                 if (confirm(`Are you sure you want to import ${validCount} products?`)) {
+                    // Show progress bar and status
+                    $('#importProgressContainer, #importStatusText').show();
+                    
                     // Show loading state
                     $('#startImportBtn').prop('disabled', true).html('<i class="fa fa-spinner fa-spin me-1"></i>Importing...');
                     
-                    // Process products with images one by one
-                    const processProductsWithImages = function(index) {
-                        // Find products with images
-                        const productsWithImages = productsToImport.filter(p => p.hasImages);
+                    // Initialize counters for tracking progress
+                    let totalProcessed = 0;
+                    let successCount = 0;
+                    let failedCount = 0;
+                    
+                    // Split products into batches of 5
+                    const BATCH_SIZE = 5;
+                    const productsWithImages = productsToImport.filter(p => p.hasImages);
+                    const productsWithoutImages = productsToImport.filter(p => !p.hasImages);
+                    
+                    // Calculate total number of batches
+                    const totalImagesProducts = productsWithImages.length;
+                    const totalNoImagesProducts = productsWithoutImages.length;
+                    const totalProducts = totalImagesProducts + totalNoImagesProducts;
+                    
+                    // Process batches of products with images
+                    const processImageProductBatches = function(batchIndex) {
+                        // Calculate start and end indices for this batch
+                        const startIdx = batchIndex * BATCH_SIZE;
+                        const endIdx = Math.min(startIdx + BATCH_SIZE, productsWithImages.length);
                         
-                        if (index >= productsWithImages.length) {
-                            // All products with images processed, now process the rest in bulk
-                            processProductsWithoutImages();
+                        // If we've processed all batches with images, move to products without images
+                        if (startIdx >= productsWithImages.length) {
+                            processNoImageProductBatches(0);
                             return;
                         }
                         
-                        const product = productsWithImages[index];
-                        const rowIndex = product.rowIndex;
+                        // Get current batch
+                        const currentBatch = productsWithImages.slice(startIdx, endIdx);
+                        const batchCount = Math.ceil(productsWithImages.length / BATCH_SIZE);
                         
-                        // Create form data for this product
-                        const formData = new FormData();
-                        formData.append('ProductName', product.productName);
-                        formData.append('ProductDescription', product.productDescription);
-                        formData.append('ProductPrice', product.productPrice);
-                        formData.append('OcopTypeId', product.ocopTypeId);
-                        formData.append('CompanyId', product.companyId);
-                        formData.append('OcopPoint', product.ocopPoint);
-                        formData.append('OcopYearRelease', product.ocopYearRelease);
-                        formData.append('TagId', product.tagId);
+                        // Update status text
+                        $('#importStatusText .badge').html(`Processing images batch ${batchIndex + 1} of ${batchCount}`);
                         
-                        // Add images
-                        const files = excelData[rowIndex].files;
-                        for (let i = 0; i < files.length; i++) {
-                            formData.append('ProductImageFile', files[i]);
+                        // Process each product in the batch sequentially
+                        const processProduct = function(productIndex) {
+                            if (productIndex >= currentBatch.length) {
+                                // Batch complete, move to next batch
+                                processImageProductBatches(batchIndex + 1);
+                                return;
+                            }
+                            
+                            const product = currentBatch[productIndex];
+                            const rowIndex = product.rowIndex;
+                            
+                            // Create form data for this product
+                            const formData = new FormData();
+                            formData.append('ProductName', product.productName);
+                            formData.append('ProductDescription', product.productDescription);
+                            formData.append('ProductPrice', product.productPrice);
+                            formData.append('OcopTypeId', product.ocopTypeId);
+                            formData.append('CompanyId', product.companyId);
+                            formData.append('OcopPoint', product.ocopPoint);
+                            formData.append('OcopYearRelease', product.ocopYearRelease);
+                            formData.append('TagId', product.tagId);
+                            
+                            // Add images
+                            const files = excelData[rowIndex].files;
+                            for (let i = 0; i < files.length; i++) {
+                                formData.append('ProductImageFile', files[i]);
+                            }
+                            
+                            // Send request to create product
+                            $.ajax({
+                                url: '/Admin/OcopProduct/CreateOcopProductPost',
+                                type: 'POST',
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                                headers: {
+                                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                                },
+                                success: function(response) {
+                                    // Update counters
+                                    totalProcessed++;
+                                    successCount++;
+                                    $('#successCount').text(successCount);
+                                    
+                                    // Update progress bar
+                                    const progress = Math.round((totalProcessed / totalProducts) * 100);
+                                    $('#importProgressBar').css('width', `${progress}%`).text(`${progress}%`);
+                                    
+                                    // Mark row as processed in the table
+                                    $(`tr[data-row="${rowIndex}"]`).find('td:nth-child(2) .badge')
+                                        .removeClass('badge-light-primary badge-light-warning badge-light-danger')
+                                        .addClass('badge-light-success')
+                                        .text('Imported');
+                                    
+                                    // Process next product in batch
+                                    processProduct(productIndex + 1);
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error(`Failed to import product at row ${rowIndex}: ${error}`);
+                                    
+                                    // Update counters
+                                    totalProcessed++;
+                                    failedCount++;
+                                    $('#failedCount').text(failedCount);
+                                    
+                                    // Update progress bar
+                                    const progress = Math.round((totalProcessed / totalProducts) * 100);
+                                    $('#importProgressBar').css('width', `${progress}%`).text(`${progress}%`);
+                                    
+                                    // Mark row as failed in the table
+                                    $(`tr[data-row="${rowIndex}"]`).find('td:nth-child(2) .badge')
+                                        .removeClass('badge-light-primary badge-light-warning badge-light-success')
+                                        .addClass('badge-light-danger')
+                                        .text('Failed');
+                                    
+                                    // Process next product in batch
+                                    processProduct(productIndex + 1);
+                                }
+                            });
+                        };
+                        
+                        // Start processing the first product in the batch
+                        processProduct(0);
+                    };
+                    
+                    // Process batches of products without images
+                    const processNoImageProductBatches = function(batchIndex) {
+                        // Calculate start and end indices for this batch
+                        const startIdx = batchIndex * BATCH_SIZE;
+                        const endIdx = Math.min(startIdx + BATCH_SIZE, productsWithoutImages.length);
+                        
+                        // If we've processed all batches, we're done
+                        if (startIdx >= productsWithoutImages.length) {
+                            // All done!
+                            $('#importProgressBar').removeClass('progress-bar-animated').text('Import Complete');
+                            $('#startImportBtn').html('<i class="fa fa-check me-1"></i>Import Complete');
+                            $('#importStatusText .badge').html('Import Complete');
+                            
+                            // Show completion message
+                            const message = `Import completed with ${successCount} successful and ${failedCount} failed products.`;
+                            if (failedCount > 0) {
+                                Swal.fire({
+                                    title: 'Import Completed',
+                                    html: message + '<br><small>Please check the rows marked as "Failed"</small>',
+                                    icon: 'info',
+                                    confirmButtonText: 'OK'
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: message,
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then(() => {
+                                    window.location.href = '/Admin/OcopProduct';
+                                });
+                            }
+                            return;
                         }
                         
-                        // Send request to create product
+                        // Get current batch
+                        const currentBatch = productsWithoutImages.slice(startIdx, endIdx);
+                        const batchCount = Math.ceil(productsWithoutImages.length / BATCH_SIZE);
+                        
+                        // Update status text
+                        $('#importStatusText .badge').html(`Processing batch ${batchIndex + 1} of ${batchCount}`);
+                        
+                        // Prepare the products JSON and form data
+                        const formData = new FormData();
+                        formData.append('products', JSON.stringify(currentBatch));
+                        
+                        // Add product images if any
+                        currentBatch.forEach((product, index) => {
+                            if (product.hasImages) {
+                                const files = excelData[product.rowIndex].files;
+                                for (let i = 0; i < files.length; i++) {
+                                    formData.append(`productImages[${index}]`, files[i]);
+                                }
+                            }
+                        });
+                        
+                        // Send batch to server
                         $.ajax({
-                            url: '/Admin/OcopProduct/CreateOcopProductPost',
+                            url: '/Admin/OcopProduct/import-product',
                             type: 'POST',
                             data: formData,
                             processData: false,
@@ -1086,71 +1274,64 @@
                                 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
                             },
                             success: function(response) {
-                                // Update progress
-                                const progress = Math.round(((index + 1) / productsWithImages.length) * 50);
-                                $('#startImportBtn').html(`<i class="fa fa-spinner fa-spin me-1"></i>Importing images (${progress}%)`);
+                                // Update counters
+                                const successfulInBatch = currentBatch.length;
+                                totalProcessed += currentBatch.length;
+                                successCount += successfulInBatch;
                                 
-                                // Process next product
-                                processProductsWithImages(index + 1);
+                                $('#successCount').text(successCount);
+                                $('#failedCount').text(failedCount);
+                                
+                                // Update progress bar
+                                const progress = Math.round((totalProcessed / totalProducts) * 100);
+                                $('#importProgressBar').css('width', `${progress}%`).text(`${progress}%`);
+                                
+                                // Update rows in the table
+                                currentBatch.forEach(p => {
+                                    const rowSelector = `tr[data-row="${p.rowIndex}"]`;
+                                    const badge = $(rowSelector).find('td:nth-child(2) .badge');
+                                    
+                                    badge.removeClass('badge-light-primary badge-light-warning badge-light-danger')
+                                        .addClass('badge-light-success')
+                                        .text('Imported');
+                                });
+                                
+                                // Process next batch
+                                processNoImageProductBatches(batchIndex + 1);
                             },
                             error: function(xhr, status, error) {
-                                console.error(`Failed to import product at row ${rowIndex}: ${error}`);
+                                console.error(`Failed to import batch ${batchIndex}: ${error}`);
                                 
-                                // Update progress
-                                const progress = Math.round(((index + 1) / productsWithImages.length) * 50);
-                                $('#startImportBtn').html(`<i class="fa fa-spinner fa-spin me-1"></i>Importing images (${progress}%)`);
+                                // Update counters
+                                totalProcessed += currentBatch.length;
+                                failedCount += currentBatch.length;
+                                $('#failedCount').text(failedCount);
                                 
-                                // Continue with next product
-                                processProductsWithImages(index + 1);
+                                // Update progress bar
+                                const progress = Math.round((totalProcessed / totalProducts) * 100);
+                                $('#importProgressBar').css('width', `${progress}%`).text(`${progress}%`);
+                                
+                                // Mark batch rows as failed
+                                currentBatch.forEach(p => {
+                                    const rowSelector = `tr[data-row="${p.rowIndex}"]`;
+                                    $(rowSelector).find('td:nth-child(2) .badge')
+                                        .removeClass('badge-light-primary badge-light-warning badge-light-success')
+                                        .addClass('badge-light-danger')
+                                        .text('Failed');
+                                });
+                                
+                                // Process next batch
+                                processNoImageProductBatches(batchIndex + 1);
                             }
                         });
                     };
                     
-                    // Process products without images in bulk
-                    const processProductsWithoutImages = function() {
-                        // Get products without images
-                        const productsWithoutImages = productsToImport.filter(p => !p.hasImages);
-                        
-                        if (productsWithoutImages.length === 0) {
-                            // No products without images, we're done
-                            $('#startImportBtn').html('<i class="fa fa-check me-1"></i>Import Complete');
-                            
-                            alert('Import completed successfully!');
-                            window.location.href = '/Admin/OcopProduct';
-                            return;
-                        }
-                        
-                        // Create batch request
-                        $.ajax({
-                            url: '/Admin/OcopProduct/ProcessImportProducts',
-                            type: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify(productsWithoutImages),
-                            headers: {
-                                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                            },
-                            success: function(response) {
-                                $('#startImportBtn').html('<i class="fa fa-check me-1"></i>Import Complete');
-                                
-                                if (response.success) {
-                                    alert('Import completed successfully!');
-                                } else {
-                                    alert('Import completed with some errors. Please check the log.');
-                                }
-                                
-                                // Redirect to index
-                                window.location.href = '/Admin/OcopProduct';
-                            },
-                            error: function(xhr, status, error) {
-                                $('#startImportBtn').html('<i class="fa fa-times me-1"></i>Import Failed');
-                                alert('Failed to import products: ' + error);
-                                console.error('Import error:', error);
-                            }
-                        });
-                    };
-                    
-                    // Start processing products with images
-                    processProductsWithImages(0);
+                    // Start with products with images first, if any
+                    if (productsWithImages.length > 0) {
+                        processImageProductBatches(0);
+                    } else {
+                        processNoImageProductBatches(0);
+                    }
                 }
             });
             
@@ -1194,6 +1375,29 @@
 
 @section Styles {
     <style>
+        /* Styles for the issues toggle button */
+        #toggleIssuesBtn {
+            min-width: 38px;
+            height: 38px;
+            padding: 8px 12px;
+            transition: all 0.2s ease;
+            border-color: rgba(0,0,0,0.1);
+        }
+        
+        #toggleIssuesBtn:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        #issuesContentWrapper {
+            transition: max-height 0.3s ease;
+            overflow: hidden;
+        }
+        
+        #issuesList li {
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+        
         .dropzone-area {
             border: 2px dashed #1B8754;
             border-radius: 8px;

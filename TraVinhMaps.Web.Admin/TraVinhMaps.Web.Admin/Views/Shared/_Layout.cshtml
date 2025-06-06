@@ -58,8 +58,8 @@
 
 
 <body>
-    @await RenderSectionAsync("Styles", required: false)    
-    
+    @await RenderSectionAsync("Styles", required: false)
+
     <!-- loader starts-->
     <div class="loader-wrapper">
         <div class="loader">
@@ -158,7 +158,12 @@
                                         <i data-feather="user"></i><span>My Profile</span>
                                     </a>
                                 </li>
-                               
+                                <li>
+                                    <a asp-controller="Admin" asp-action="Settings">
+                                        <i data-feather="settings"></i><span>Settings</span>
+                                    </a>
+                                </li>
+                                <li>
                                     <form asp-controller="Authen" asp-action="Logout" method="post">
                                         @Html.AntiForgeryToken()
                                         <button type="submit" class="btn btn-pill btn-outline-primary btn-sm">Log
