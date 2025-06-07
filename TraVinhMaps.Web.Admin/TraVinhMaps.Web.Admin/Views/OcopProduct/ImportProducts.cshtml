@@ -37,14 +37,15 @@
                     <div class="card-body">
                         <!-- First card with upload section -->
                         <div class="card mb-4">
-                            <div class="card-header">
+                            <div class="card-header bg-success text-white">
                                 <div class="d-flex align-items-center">
                                     <div class="icon-box me-3">
-                                        <i class="fa fa-file-excel-o fa-2x text-primary"></i>
+                                        <i class="fa fa-file-excel-o fa-2x"></i>
                                     </div>
                                     <div>
                                         <h4 class="mb-0">Create Multiple OCOP Products</h4>
-                                        <small class="text-muted">Upload an Excel file to create multiple OCOP products at once</small>
+                                        <small>Upload an Excel file to create multiple OCOP products
+                                            at once</small>
                                     </div>
                                 </div>
                             </div>
@@ -52,7 +53,9 @@
                                 <div class="dropzone-area" id="excelDropzone">
                                     <div class="dz-message text-center">
                                         <div class="mb-3">
-                                            <img src="/assets/images/dashboard_icon/excel-icon.png" alt="Excel Icon" width="80" class="mb-3" onerror="this.src='/assets/images/logo/logo-icon.png'" />
+                                            <img src="/assets/images/dashboard_icon/excel-icon.png" alt="Excel Icon"
+                                                width="80" class="mb-3"
+                                                onerror="this.src='/assets/images/logo/logo-icon.png'" />
                                         </div>
                                         <h5>Drag and drop the Excel file here or click to select the file</h5>
                                         <p class="text-muted">Supported formats: .xlsx, .xls (Maximum 10MB)</p>
@@ -70,10 +73,10 @@
                                         </a>
                                     </div>
                                     <div class="text-end">
-                                        <a href="#" class="btn btn-info me-2" id="showLookupValuesBtn">
+                                        <a href="#" class="btn btn-success me-2" id="showLookupValuesBtn">
                                             <i class="fa fa-list me-1"></i>Show Valid Values
                                         </a>
-                                        <a href="#" class="btn btn-info" id="showInstructionsBtn">
+                                        <a href="#" class="btn btn-success" id="showInstructionsBtn">
                                             <i class="fa fa-info-circle me-1"></i>Usage Instructions
                                         </a>
                                     </div>
@@ -85,9 +88,10 @@
                         <div class="modal fade" id="lookupValuesModal" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
-                                    <div class="modal-header">
+                                    <div class="modal-header bg-success text-white">
                                         <h5 class="modal-title">Available Lookup Values</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <div class="row">
@@ -148,7 +152,8 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
                                     </div>
                                 </div>
                             </div>
@@ -158,9 +163,10 @@
                         <div class="modal fade" id="instructionsModal" tabindex="-1" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <div class="modal-header bg-info text-white">
+                                    <div class="modal-header bg-success text-white">
                                         <h5 class="modal-title">Usage Instructions</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <div class="p-3">
@@ -197,15 +203,16 @@
                                                     </div>
                                                 </li>
                                             </ol>
-                                            
-                                            <div class="alert alert-info">
+
+                                            <div class="alert alert-success">
                                                 <i class="fa fa-info-circle me-2"></i>
-                                                <strong>Note:</strong> Tags are automatically set to the default tag
+                                                <strong>Note:</strong> Tags are automatically set to the OCOP tag
                                             </div>
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
                                     </div>
                                 </div>
                             </div>
@@ -213,17 +220,17 @@
 
                         <!-- Data preview section -->
                         <div id="dataPreviewSection" class="d-none">
-                            <div class="alert alert-warning" id="validationIssues">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h5 class="alert-heading mb-0">
-                                        <i class="fa fa-exclamation-triangle me-1"></i>Detected some issues:
-                                    </h5>
-                                    <button type="button" class="btn btn-sm btn-outline-warning" id="toggleIssuesBtn">
-                                        <i class="fa fa-chevron-up" id="issuesToggleIcon"></i>
-                                    </button>
-                                </div>
-                                <div id="issuesContentWrapper">
-                                    <ul id="issuesList" class="mt-3">
+                                                    <div class="alert alert-warning" id="validationIssues">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="alert-heading mb-0">
+                        <i class="fa fa-exclamation-triangle me-1"></i>Detected some issues:
+                    </h5>
+                    <button type="button" class="btn btn-sm btn-outline-warning" id="toggleIssuesBtn">
+                        <i class="fa fa-chevron-up" id="issuesToggleIcon"></i>
+                    </button>
+                </div>
+                <div id="issuesContentWrapper" style="display: none;">
+                    <ul id="issuesList" class="mt-3 issue-list">
                                         <!-- Issues will be populated here -->
                                     </ul>
                                 </div>
@@ -231,7 +238,7 @@
 
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="excelDataTable">
-                                    <thead class="bg-primary">
+                                    <thead class="bg-info text-white">
                                         <tr>
                                             <th style="min-width: 50px;">STT</th>
                                             <th style="min-width: 100px;">Status</th>
@@ -243,7 +250,6 @@
                                             <th style="min-width: 100px;">OcopPoint</th>
                                             <th style="min-width: 100px;">OcopYear</th>
                                             <th style="min-width: 200px;">Images</th>
-                                            <th style="min-width: 200px;">Note</th>
                                         </tr>
                                     </thead>
                                     <tbody id="excelDataBody">
@@ -255,7 +261,8 @@
                             <!-- Pagination controls -->
                             <div class="d-flex justify-content-between align-items-center mt-3">
                                 <div class="pagination-info">
-                                    Showing <span id="pageStart">0</span> to <span id="pageEnd">0</span> of <span id="totalItems">0</span> items
+                                    Showing <span id="pageStart">0</span> to <span id="pageEnd">0</span> of <span
+                                        id="totalItems">0</span> items
                                 </div>
                                 <div class="pagination-controls">
                                     <ul class="pagination">
@@ -265,7 +272,8 @@
                                             </a>
                                         </li>
                                         <li class="page-item">
-                                            <span class="page-link">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
+                                            <span class="page-link">Page <span id="currentPage">1</span> of <span
+                                                    id="totalPages">1</span></span>
                                         </li>
                                         <li class="page-item" id="nextPageBtn">
                                             <a class="page-link" href="#" aria-label="Next">
@@ -278,7 +286,9 @@
 
                             <div class="d-flex justify-content-between mt-4">
                                 <div>
-                                    <span class="text-muted" id="productCountInfo">Total: <span id="productCount">0</span> products | Estimated time: <span id="estimatedTime">~0</span> minutes</span>
+                                    <span class="text-muted" id="productCountInfo">Total: <span
+                                            id="productCount">0</span> products | Estimated time: <span
+                                            id="estimatedTime">~0</span> minutes</span>
                                 </div>
                                 <div>
                                     <button class="btn btn-danger me-2" id="clearDataBtn">
@@ -302,1149 +312,122 @@
     <!-- SheetJS libraries -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
-    
+    <!-- Custom alert styles -->
+    <script src="/assets/js/sweetalert-custom.js"></script>
+    <!-- Custom import product script -->
     <script>
-        $(document).ready(function() {
-            // Handle toggle issues button
-            $('#toggleIssuesBtn').click(function() {
-                $('#issuesContentWrapper').slideToggle(300, function() {
-                    const isVisible = $(this).is(':visible');
-                    $('#issuesToggleIcon').toggleClass('fa-chevron-up', isVisible);
-                    $('#issuesToggleIcon').toggleClass('fa-chevron-down', !isVisible);
-                    
-                    // Store preference in session storage
-                    sessionStorage.setItem('issuesExpanded', isVisible ? 'true' : 'false');
-                });
-            });
-            
-            // Handle lookup values button
-            $('#showLookupValuesBtn').click(function(e) {
-                e.preventDefault();
-                $('#lookupValuesModal').modal('show');
-            });
-            
-            let excelData = [];
-            let excelHeaders = [];
-            let currentPage = 1;
-            let pageSize = 10;
-            let totalPages = 1;
-            
-            // Handle show lookup values button
-            $('#showLookupValuesBtn').click(function(e) {
-                e.preventDefault();
-                $('#lookupValuesModal').modal('show');
-            });
-            
-            // Handle instructions button
-            $('#showInstructionsBtn').click(function(e) {
-                e.preventDefault();
-                $('#instructionsModal').modal('show');
-            });
-            
-            // Setup the Excel file input and dropzone
-            $('#browseBtn').click(function() {
-                $('#excelFileInput').click();
-            });
-            
-            $('#excelFileInput').change(function(e) {
-                handleExcelFile(e.target.files[0]);
-            });
-            
-            // Handle drag and drop
-            const dropzone = document.getElementById('excelDropzone');
-            
-            dropzone.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                dropzone.classList.add('dropzone-active');
-            });
-            
-            dropzone.addEventListener('dragleave', function() {
-                dropzone.classList.remove('dropzone-active');
-            });
-            
-            dropzone.addEventListener('drop', function(e) {
-                e.preventDefault();
-                dropzone.classList.remove('dropzone-active');
-                
-                if (e.dataTransfer.files.length) {
-                    const file = e.dataTransfer.files[0];
-                    if (file.name.match(/\.(xlsx|xls)$/)) {
-                        handleExcelFile(file);
-                    } else {
-                        alert('Please upload a valid Excel file (.xlsx, .xls)');
-                    }
-                }
-            });
-            
-            // Handle the Excel file
-            function handleExcelFile(file) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    
-                    // Get the first worksheet
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    
-                    // Convert to JSON
-                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-                    
-                    // Store headers
-                    if (jsonData.length > 0) {
-                        excelHeaders = jsonData[0];
-                    }
-                    
-                    // Store data
-                    excelData = jsonData;
-                    
-                    // Reset pagination to first page
-                    currentPage = 1;
-                    
-                    // Process the data
-                    processExcelData();
-                };
-                
-                reader.readAsArrayBuffer(file);
-            }
-            
-            // Process and display the Excel data
-            function processExcelData() {
-                // Check if data is valid
-                if (!excelData || excelData.length < 2) {
-                    alert('Invalid data format. Please use the provided template.');
-                    return;
-                }
-                
-                // Clear existing data
-                $('#excelDataBody').empty();
-                $('#issuesList').empty();
-                
-                // Get lookup data
-                const ocopTypes = @Html.Raw(Json.Serialize(ViewBag.OcopTypes ?? new TraVinhMaps.Web.Admin.Models.OcopProduct.OcopTypeResponse[0]));
-                const companies = @Html.Raw(Json.Serialize(ViewBag.Companies ?? new TraVinhMaps.Web.Admin.Models.OcopProduct.CompanyResponse[0]));
-                const tags = @Html.Raw(Json.Serialize(ViewBag.Tags ?? new TraVinhMaps.Web.Admin.Models.OcopProduct.TagResponse[0]));
-                
-                // Track validation issues
-                const issues = [];
-                let validProducts = 0;
-                let warningProducts = 0;
-                let errorProducts = 0;
-                
-                // Calculate pagination
-                const dataRowsCount = excelData.length - 1; // excluding header
-                totalPages = Math.ceil(dataRowsCount / pageSize);
-                
-                // Update pagination UI
-                $('#currentPage').text(currentPage);
-                $('#totalPages').text(totalPages);
-                $('#totalItems').text(dataRowsCount);
-                
-                // Calculate page bounds
-                const startIdx = (currentPage - 1) * pageSize + 1; // +1 to skip header
-                const endIdx = Math.min(startIdx + pageSize - 1, excelData.length - 1);
-                
-                $('#pageStart').text(startIdx);
-                $('#pageEnd').text(endIdx);
-                
-                // Update pagination buttons
-                $('#prevPageBtn').toggleClass('disabled', currentPage === 1);
-                $('#nextPageBtn').toggleClass('disabled', currentPage === totalPages || totalPages === 0);
-                
-                // Process rows for the current page only
-                for (let i = startIdx; i <= endIdx; i++) {
-                    const row = excelData[i];
-                    if (!row || row.length === 0 || (row.length === 1 && !row[0])) continue; // Skip empty rows
-                    
-                    // Simulate validation
-                    let status = 'Valid';
-                    let statusClass = 'badge-light-primary';
-                    let note = '-';
-                    let hasError = false;
-                    
-                    // Product Name validation (index 0)
-                    if (!row[0]) {
-                        status = 'Error';
-                        statusClass = 'badge-light-danger';
-                        note = 'Product name is required';
-                        issues.push(`• Row ${i}: Product name is required`);
-                        errorProducts++;
-                        hasError = true;
-                    }
-                    
-                    // Price validation (index 2)
-                    if (!row[2]) {
-                        status = 'Error';
-                        statusClass = 'badge-light-danger';
-                        note = 'Product price is required';
-                        issues.push(`• Row ${i}: Product price is required`);
-                        errorProducts++;
-                        hasError = true;
-                    }
-                    
-                    // OcopType validation (index 3)
-                    let ocopTypeId = null;
-                    if (row[3]) {
-                        const matchedType = ocopTypes.find(t => t.name.toLowerCase() === row[3].toString().toLowerCase());
-                        if (!matchedType) {
-                            status = 'Error';
-                            statusClass = 'badge-light-danger';
-                            note = `OcopType "${row[3]}" not found in database`;
-                            issues.push(`• Row ${i}: OcopType "${row[3]}" not found in database`);
-                            errorProducts++;
-                            hasError = true;
-                        } else {
-                            ocopTypeId = matchedType.id;
-                        }
-                    } else {
-                        status = 'Error';
-                        statusClass = 'badge-light-danger';
-                        note = 'OcopType is required';
-                        issues.push(`• Row ${i}: OcopType is required`);
-                        errorProducts++;
-                        hasError = true;
-                    }
-                    
-                    // Company validation (index 4)
-                    let companyId = null;
-                    if (row[4]) {
-                        const matchedCompany = companies.find(c => c.name.toLowerCase() === row[4].toString().toLowerCase());
-                        if (!matchedCompany) {
-                            status = 'Error';
-                            statusClass = 'badge-light-danger';
-                            note = `Company "${row[4]}" not found in database`;
-                            issues.push(`• Row ${i}: Company "${row[4]}" not found in database`);
-                            errorProducts++;
-                            hasError = true;
-                        } else {
-                            companyId = matchedCompany.id;
-                        }
-                    } else {
-                        status = 'Error';
-                        statusClass = 'badge-light-danger';
-                        note = 'Company is required';
-                        issues.push(`• Row ${i}: Company is required`);
-                        errorProducts++;
-                        hasError = true;
-                    }
-                    
-                    // OcopPoint validation (index 5)
-                    if (!row[5] || isNaN(parseInt(row[5])) || parseInt(row[5]) < 1 || parseInt(row[5]) > 5) {
-                        status = 'Error';
-                        statusClass = 'badge-light-danger';
-                        note = 'OcopPoint must be a number between 1 and 5';
-                        issues.push(`• Row ${i}: OcopPoint must be a number between 1 and 5`);
-                        errorProducts++;
-                        hasError = true;
-                    }
-                    
-                    // OcopYear validation (index 6)
-                    if (!row[6] || isNaN(parseInt(row[6])) || parseInt(row[6]) > new Date().getFullYear()) {
-                        status = 'Error';
-                        statusClass = 'badge-light-danger';
-                        note = 'OcopYear must be a valid year not in the future';
-                        issues.push(`• Row ${i}: OcopYear must be a valid year not in the future`);
-                        errorProducts++;
-                        hasError = true;
-                    }
-                    
-                    // Tag validation (index 7)
-                    let tagId = null;
-                    if (row[7]) {
-                        const matchedTag = tags.find(t => t.name.toLowerCase() === row[7].toString().toLowerCase());
-                        if (!matchedTag) {
-                            status = 'Error';
-                            statusClass = 'badge-light-danger';
-                            note = `Tag "${row[7]}" not found in database`;
-                            issues.push(`• Row ${i}: Tag "${row[7]}" not found in database`);
-                            errorProducts++;
-                            hasError = true;
-                        } else {
-                            tagId = matchedTag.id;
-                        }
-                    } else {
-                        status = 'Warning';
-                        statusClass = 'badge-light-warning';
-                        note = 'Tag is recommended';
-                        issues.push(`• Row ${i}: Tag is recommended`);
-                        warningProducts++;
-                    }
-                    
-                    if (!hasError) {
-                        validProducts++;
-                    }
-                    
-                    // Store IDs for later use
-                    if (!excelData[i].ids) {
-                        excelData[i].ids = {};
-                    }
-                    excelData[i].ids.ocopTypeId = ocopTypeId;
-                    excelData[i].ids.companyId = companyId;
-                    excelData[i].ids.tagId = tagId;
-                    
-                    // Create table row
-                    const tr = $('<tr>').attr('data-row', i);
-                    
-                    // Add row number
-                    tr.append($('<td>').text(i));
-                    
-                    // Add status with badge
-                    const statusBadge = $('<span>')
-                        .addClass('badge ' + statusClass)
-                        .text(status);
-                    tr.append($('<td>').append(statusBadge));
-                    
-                    // Add product data cells
-                    tr.append($('<td contenteditable="true">').attr('data-col', 0).text(row[0] || '')); // Product name
-                    tr.append($('<td contenteditable="true">').attr('data-col', 1).text(row[1] || '')); // Description
-                    tr.append($('<td contenteditable="true">').attr('data-col', 2).text(row[2] ? formatPrice(row[2]) : '')); // Price
-                    
-                    // OcopType with validation indicator
-                    const ocopTypeCell = $('<td contenteditable="true">').attr('data-col', 3).text(row[3] || '');
-                    if (ocopTypeId) {
-                        ocopTypeCell.append($('<i class="fa fa-check-circle text-success ms-2"></i>'));
-                    } else if (row[3]) {
-                        ocopTypeCell.append($('<i class="fa fa-times-circle text-danger ms-2"></i>'));
-                    }
-                    tr.append(ocopTypeCell);
-                    
-                    // Company with validation indicator
-                    const companyCell = $('<td contenteditable="true">').attr('data-col', 4).text(row[4] || '');
-                    if (companyId) {
-                        companyCell.append($('<i class="fa fa-check-circle text-success ms-2"></i>'));
-                    } else if (row[4]) {
-                        companyCell.append($('<i class="fa fa-times-circle text-danger ms-2"></i>'));
-                    }
-                    tr.append(companyCell);
-                    
-                    // OcopPoint
-                    tr.append($('<td contenteditable="true">').attr('data-col', 5).text(row[5] || '')); // OcopPoint
-                    
-                    // OcopYear
-                    tr.append($('<td contenteditable="true">').attr('data-col', 6).text(row[6] || '')); // OcopYear
-                    
-                    // Add image upload control
-                    const imageCell = $('<td>');
-                    const imageUploadGroup = $('<div class="input-group">')
-                        .append($('<input type="file" class="form-control product-image-upload" accept="image/*" multiple>'))
-                        .append($('<button type="button" class="btn btn-outline-primary upload-image-btn"><i class="fa fa-upload"></i></button>'));
-                    imageCell.append(imageUploadGroup);
-                    
-                    // Display thumbnails of selected images
-                    const imagePreviewDiv = $('<div class="image-preview mt-2">');
-                    imageCell.append(imagePreviewDiv);
-                    
-                    tr.append(imageCell);
-                    
-                    // Add note column (non-editable)
-                    tr.append($('<td>').text(note));
-                    
-                    // Add row to table
-                    $('#excelDataBody').append(tr);
-                }
-                
-                // Setup editable cells functionality
-                setupEditableCells();
-                
-                // Setup image upload functionality
-                setupImageUpload();
-                
-                // Show validation issues if any
-                if (issues.length > 0) {
-                    issues.forEach(issue => {
-                        $('#issuesList').append($('<li>').html(issue));
-                    });
-                    $('#validationIssues').removeClass('d-none');
-                    
-                    // Check for saved preference on issues panel state
-                    const issuesExpanded = sessionStorage.getItem('issuesExpanded');
-                    if (issuesExpanded === 'false') {
-                        $('#issuesContentWrapper').hide();
-                        $('#issuesToggleIcon').removeClass('fa-chevron-up').addClass('fa-chevron-down');
-                    }
-                } else {
-                    $('#validationIssues').addClass('d-none');
-                }
-                
-                // Count all products across all pages
-                let totalProductCount = 0;
-                for (let i = 1; i < excelData.length; i++) {
-                    const row = excelData[i];
-                    if (row && row.length > 0) totalProductCount++;
-                }
-                
-                // Update product count and estimated time
-                $('#productCount').text(totalProductCount);
-                
-                // Estimate about 1 minute per 10 products
-                const estimatedMinutes = Math.ceil(totalProductCount / 10) * 2;
-                $('#estimatedTime').text(`~${estimatedMinutes}`);
-                
-                // Show the data preview section
-                $('#dataPreviewSection').removeClass('d-none');
-            }
-            
-            // Collect validation issues from all rows
-            function collectAllValidationIssues() {
-                const issues = [];
-                
-                // Get lookup data
-                const ocopTypes = @Html.Raw(Json.Serialize(ViewBag.OcopTypes ?? new TraVinhMaps.Web.Admin.Models.OcopProduct.OcopTypeResponse[0]));
-                const companies = @Html.Raw(Json.Serialize(ViewBag.Companies ?? new TraVinhMaps.Web.Admin.Models.OcopProduct.CompanyResponse[0]));
-                const tags = @Html.Raw(Json.Serialize(ViewBag.Tags ?? new TraVinhMaps.Web.Admin.Models.OcopProduct.TagResponse[0]));
-                
-                // Check all rows, not just the current page
-                for (let i = 1; i < excelData.length; i++) {
-                    const row = excelData[i];
-                    if (!row || row.length === 0) continue;
-                    
-                    // Clear previous IDs
-                    if (!excelData[i].ids) {
-                        excelData[i].ids = {};
-                    }
-                    
-                    // Product Name validation
-                    if (!row[0]) {
-                        issues.push(`• Row ${i}: Product name is required`);
-                    }
-                    
-                    // Price validation
-                    if (!row[2]) {
-                        issues.push(`• Row ${i}: Product price is required`);
-                    }
-                    
-                    // OcopType validation
-                    if (row[3]) {
-                        const matchedType = ocopTypes.find(t => t.name.toLowerCase() === row[3].toString().toLowerCase());
-                        if (!matchedType) {
-                            issues.push(`• Row ${i}: OcopType "${row[3]}" not found in database`);
-                        } else {
-                            excelData[i].ids.ocopTypeId = matchedType.id;
-                        }
-                    } else {
-                        issues.push(`• Row ${i}: OcopType is required`);
-                    }
-                    
-                    // Company validation
-                    if (row[4]) {
-                        const matchedCompany = companies.find(c => c.name.toLowerCase() === row[4].toString().toLowerCase());
-                        if (!matchedCompany) {
-                            issues.push(`• Row ${i}: Company "${row[4]}" not found in database`);
-                        } else {
-                            excelData[i].ids.companyId = matchedCompany.id;
-                        }
-                    } else {
-                        issues.push(`• Row ${i}: Company is required`);
-                    }
-                    
-                    // OcopPoint validation
-                    if (!row[5] || isNaN(parseInt(row[5])) || parseInt(row[5]) < 1 || parseInt(row[5]) > 5) {
-                        issues.push(`• Row ${i}: OcopPoint must be a number between 1 and 5`);
-                    }
-                    
-                    // OcopYear validation
-                    if (!row[6] || isNaN(parseInt(row[6])) || parseInt(row[6]) > new Date().getFullYear()) {
-                        issues.push(`• Row ${i}: OcopYear must be a valid year not in the future`);
-                    }
-                    
-                    // Use default Tag ID
-                    const defaultTagId = tags.length > 0 ? tags[0].id : null;
-                    excelData[i].ids.tagId = defaultTagId;
-                }
-                
-                // Update UI
-                $('#issuesList').empty();
-                
-                if (issues.length > 0) {
-                    issues.forEach(issue => {
-                        $('#issuesList').append($('<li>').html(issue));
-                    });
-                    $('#validationIssues').removeClass('d-none');
-                } else {
-                    $('#validationIssues').addClass('d-none');
-                }
-            }
-            
-            // Handle pagination clicks
-            $('#prevPageBtn').click(function(e) {
-                e.preventDefault();
-                if (currentPage > 1) {
-                    currentPage--;
-                    processExcelData();
-                }
-            });
-            
-            $('#nextPageBtn').click(function(e) {
-                e.preventDefault();
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    processExcelData();
-                }
-            });
-            
-            // Setup editable cells
-            function setupEditableCells() {
-                $('[contenteditable="true"]').on('focus', function() {
-                    // Store original value
-                    $(this).data('original', $(this).text());
-                }).on('blur', function() {
-                    // Get new value
-                    const newValue = $(this).text();
-                    const oldValue = $(this).data('original');
-                    
-                    // If value changed
-                    if (newValue !== oldValue) {
-                        // Get row and column
-                        const rowIdx = parseInt($(this).closest('tr').attr('data-row'));
-                        const colIdx = parseInt($(this).attr('data-col'));
-                        
-                        // Update data
-                        if (!excelData[rowIdx]) excelData[rowIdx] = [];
-                        
-                        // Special handling for price column
-                        if (colIdx === 2) {
-                            const numValue = parseFloat(newValue.replace(/[^\d.-]/g, ''));
-                            if (!isNaN(numValue)) {
-                                excelData[rowIdx][colIdx] = numValue;
-                                $(this).text(formatPrice(numValue));
-                            }
-                        } else {
-                            excelData[rowIdx][colIdx] = newValue;
-                        }
-                        
-                        // Revalidate
-                        validateRow(rowIdx);
-                    }
-                });
-            }
-            
-            // Validate a row
-            function validateRow(rowIndex) {
-                const row = excelData[rowIndex];
-                const tr = $(`tr[data-row="${rowIndex}"]`);
-                
-                // If row is not visible on current page, just update the data
-                if (tr.length === 0) {
-                    collectAllValidationIssues();
-                    return;
-                }
-                
-                // Get lookup data
-                const ocopTypes = @Html.Raw(Json.Serialize(ViewBag.OcopTypes ?? new TraVinhMaps.Web.Admin.Models.OcopProduct.OcopTypeResponse[0]));
-                const companies = @Html.Raw(Json.Serialize(ViewBag.Companies ?? new TraVinhMaps.Web.Admin.Models.OcopProduct.CompanyResponse[0]));
-                const tags = @Html.Raw(Json.Serialize(ViewBag.Tags ?? new TraVinhMaps.Web.Admin.Models.OcopProduct.TagResponse[0]));
-                
-                const badge = tr.find('td:nth-child(2) .badge');
-                const noteCell = tr.find('td:last-child');
-                
-                let status = 'Valid';
-                let statusClass = 'badge-light-primary';
-                let note = '-';
-                let hasError = false;
-                
-                // Clear previous IDs
-                if (!excelData[rowIndex].ids) {
-                    excelData[rowIndex].ids = {};
-                }
-                
-                // Product Name validation
-                if (!row[0]) {
-                    status = 'Error';
-                    statusClass = 'badge-light-danger';
-                    note = 'Product name is required';
-                    hasError = true;
-                }
-                
-                // Price validation
-                if (!row[2]) {
-                    status = 'Error';
-                    statusClass = 'badge-light-danger';
-                    note = 'Product price is required';
-                    hasError = true;
-                }
-                
-                // OcopType validation
-                const ocopTypeCell = tr.find('td:nth-child(6)');
-                if (row[3]) {
-                    const matchedType = ocopTypes.find(t => t.name.toLowerCase() === row[3].toString().toLowerCase());
-                    if (!matchedType) {
-                        status = 'Error';
-                        statusClass = 'badge-light-danger';
-                        note = `OcopType "${row[3]}" not found in database`;
-                        hasError = true;
-                        ocopTypeCell.find('i').remove();
-                        ocopTypeCell.append($('<i class="fa fa-times-circle text-danger ms-2"></i>'));
-                    } else {
-                        excelData[rowIndex].ids.ocopTypeId = matchedType.id;
-                        ocopTypeCell.find('i').remove();
-                        ocopTypeCell.append($('<i class="fa fa-check-circle text-success ms-2"></i>'));
-                    }
-                } else {
-                    status = 'Error';
-                    statusClass = 'badge-light-danger';
-                    note = 'OcopType is required';
-                    hasError = true;
-                    ocopTypeCell.find('i').remove();
-                }
-                
-                // Company validation
-                const companyCell = tr.find('td:nth-child(7)');
-                if (row[4]) {
-                    const matchedCompany = companies.find(c => c.name.toLowerCase() === row[4].toString().toLowerCase());
-                    if (!matchedCompany) {
-                        status = 'Error';
-                        statusClass = 'badge-light-danger';
-                        note = `Company "${row[4]}" not found in database`;
-                        hasError = true;
-                        companyCell.find('i').remove();
-                        companyCell.append($('<i class="fa fa-times-circle text-danger ms-2"></i>'));
-                    } else {
-                        excelData[rowIndex].ids.companyId = matchedCompany.id;
-                        companyCell.find('i').remove();
-                        companyCell.append($('<i class="fa fa-check-circle text-success ms-2"></i>'));
-                    }
-                } else {
-                    status = 'Error';
-                    statusClass = 'badge-light-danger';
-                    note = 'Company is required';
-                    hasError = true;
-                    companyCell.find('i').remove();
-                }
-                
-                // OcopPoint validation
-                if (!row[5] || isNaN(parseInt(row[5])) || parseInt(row[5]) < 1 || parseInt(row[5]) > 5) {
-                    status = 'Error';
-                    statusClass = 'badge-light-danger';
-                    note = 'OcopPoint must be a number between 1 and 5';
-                    hasError = true;
-                }
-                
-                // OcopYear validation
-                if (!row[6] || isNaN(parseInt(row[6])) || parseInt(row[6]) > new Date().getFullYear()) {
-                    status = 'Error';
-                    statusClass = 'badge-light-danger';
-                    note = 'OcopYear must be a valid year not in the future';
-                    hasError = true;
-                }
-                
-                // Get default Tag ID
-                const defaultTagId = tags.length > 0 ? tags[0].id : null;
-                excelData[rowIndex].ids.tagId = defaultTagId;
-                
-                // Update UI
-                badge.removeClass('badge-light-primary badge-light-warning badge-light-danger')
-                    .addClass(statusClass)
-                    .text(status);
-                
-                noteCell.text(note);
-                
-                // Refresh validation issues
-                collectAllValidationIssues();
-            }
-            
-            // Setup image upload functionality
-            function setupImageUpload() {
-                // Handle file selection change
-                $('.product-image-upload').on('change', function() {
-                    const files = this.files;
-                    const previewDiv = $(this).closest('td').find('.image-preview');
-                    previewDiv.empty();
-                    
-                    // Store row index
-                    const rowIdx = parseInt($(this).closest('tr').attr('data-row'));
-                    
-                    // Store files in the excelData
-                    if (!excelData[rowIdx].files) {
-                        excelData[rowIdx].files = [];
-                    }
-                    
-                    // Clear previous files
-                    excelData[rowIdx].files = [];
-                    
-                    // Add new files
-                    for (let i = 0; i < files.length; i++) {
-                        const file = files[i];
-                        excelData[rowIdx].files.push(file);
-                        
-                        // Create preview thumbnail
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            const img = $('<img>')
-                                .addClass('img-thumbnail me-2 mb-2')
-                                .attr('src', e.target.result)
-                                .css({ 'width': '60px', 'height': '60px', 'object-fit': 'cover' });
-                            previewDiv.append(img);
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-                
-                // Handle upload button click
-                $('.upload-image-btn').on('click', function() {
-                    const fileInput = $(this).closest('.input-group').find('.product-image-upload');
-                    fileInput.click();
-                });
-            }
-            
-            // Helper function to format price
-            function formatPrice(price) {
-                return new Intl.NumberFormat('vi-VN').format(price);
-            }
-            
-            // Handle clear data button
-            $('#clearDataBtn').click(function() {
-                excelData = [];
-                $('#excelDataBody').empty();
-                $('#issuesList').empty();
-                $('#dataPreviewSection').addClass('d-none');
-                $('#excelFileInput').val('');
-                
-                // Reset pagination
-                currentPage = 1;
-                totalPages = 1;
-                updatePaginationUI();
-            });
-            
-            // Update pagination UI
-            function updatePaginationUI() {
-                $('#currentPage').text(currentPage);
-                $('#totalPages').text(totalPages);
-                $('#pageStart').text(0);
-                $('#pageEnd').text(0);
-                $('#totalItems').text(0);
-                $('#prevPageBtn').toggleClass('disabled', currentPage === 1);
-                $('#nextPageBtn').toggleClass('disabled', currentPage === totalPages || totalPages === 0);
-            }
-            
-            // Add progress bar to UI before the import button
-            $('#dataPreviewSection').find('.d-flex.justify-content-between.mt-4').before(`
-                <div class="progress mt-3" id="importProgressContainer" style="display: none; height: 25px;">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
-                         role="progressbar" 
-                         style="width: 0%" 
-                         id="importProgressBar">0%</div>
-                </div>
-                <div id="importStatusText" class="mt-2 text-center" style="display: none;">
-                    <span class="badge bg-primary">Processing batch 0 of 0</span>
-                    <span class="ms-2">Success: <span id="successCount" class="text-success fw-bold">0</span></span>
-                    <span class="ms-2">Failed: <span id="failedCount" class="text-danger fw-bold">0</span></span>
-                </div>
-            `);
-            
-            // Handle start import button
-            $('#startImportBtn').click(function() {
-                // Count valid records
-                let validCount = 0;
-                let invalidCount = 0;
-                
-                // Collect all products to import
-                const productsToImport = [];
-                
-                for (let i = 1; i < excelData.length; i++) {
-                    const row = excelData[i];
-                    if (!row || row.length === 0) continue;
-                    
-                    // Check if product has required data and valid IDs
-                    if (row[0] && row[2] && excelData[i].ids && 
-                        excelData[i].ids.ocopTypeId && excelData[i].ids.companyId) {
-                        
-                        validCount++;
-                        
-                        // Prepare product data
-                        const product = {
-                            productName: row[0],
-                            productDescription: row[1] || '',
-                            productPrice: row[2].toString(),
-                            ocopTypeId: excelData[i].ids.ocopTypeId,
-                            companyId: excelData[i].ids.companyId,
-                            ocopPoint: parseInt(row[5]) || 1,
-                            ocopYearRelease: parseInt(row[6]) || new Date().getFullYear(),
-                            tagId: excelData[i].ids.tagId || '',
-                            rowIndex: i,
-                            hasImages: !!(excelData[i].files && excelData[i].files.length > 0)
-                        };
-                        
-                        productsToImport.push(product);
-                    } else {
-                        invalidCount++;
-                    }
-                }
-                
-                if (validCount <= 0) {
-                    alert('No valid records to import. Please fix the validation errors.');
-                    return;
-                }
-                
-                if (invalidCount > 0) {
-                    if (!confirm(`There are ${invalidCount} invalid products. Do you want to continue importing only the ${validCount} valid products?`)) {
-                        return;
-                    }
-                }
-                
-                if (confirm(`Are you sure you want to import ${validCount} products?`)) {
-                    // Show progress bar and status
-                    $('#importProgressContainer, #importStatusText').show();
-                    
-                    // Show loading state
-                    $('#startImportBtn').prop('disabled', true).html('<i class="fa fa-spinner fa-spin me-1"></i>Importing...');
-                    
-                    // Initialize counters for tracking progress
-                    let totalProcessed = 0;
-                    let successCount = 0;
-                    let failedCount = 0;
-                    
-                    // Split products into batches of 5
-                    const BATCH_SIZE = 5;
-                    const productsWithImages = productsToImport.filter(p => p.hasImages);
-                    const productsWithoutImages = productsToImport.filter(p => !p.hasImages);
-                    
-                    // Calculate total number of batches
-                    const totalImagesProducts = productsWithImages.length;
-                    const totalNoImagesProducts = productsWithoutImages.length;
-                    const totalProducts = totalImagesProducts + totalNoImagesProducts;
-                    
-                    // Process batches of products with images
-                    const processImageProductBatches = function(batchIndex) {
-                        // Calculate start and end indices for this batch
-                        const startIdx = batchIndex * BATCH_SIZE;
-                        const endIdx = Math.min(startIdx + BATCH_SIZE, productsWithImages.length);
-                        
-                        // If we've processed all batches with images, move to products without images
-                        if (startIdx >= productsWithImages.length) {
-                            processNoImageProductBatches(0);
-                            return;
-                        }
-                        
-                        // Get current batch
-                        const currentBatch = productsWithImages.slice(startIdx, endIdx);
-                        const batchCount = Math.ceil(productsWithImages.length / BATCH_SIZE);
-                        
-                        // Update status text
-                        $('#importStatusText .badge').html(`Processing images batch ${batchIndex + 1} of ${batchCount}`);
-                        
-                        // Process each product in the batch sequentially
-                        const processProduct = function(productIndex) {
-                            if (productIndex >= currentBatch.length) {
-                                // Batch complete, move to next batch
-                                processImageProductBatches(batchIndex + 1);
-                                return;
-                            }
-                            
-                            const product = currentBatch[productIndex];
-                            const rowIndex = product.rowIndex;
-                            
-                            // Create form data for this product
-                            const formData = new FormData();
-                            formData.append('ProductName', product.productName);
-                            formData.append('ProductDescription', product.productDescription);
-                            formData.append('ProductPrice', product.productPrice);
-                            formData.append('OcopTypeId', product.ocopTypeId);
-                            formData.append('CompanyId', product.companyId);
-                            formData.append('OcopPoint', product.ocopPoint);
-                            formData.append('OcopYearRelease', product.ocopYearRelease);
-                            formData.append('TagId', product.tagId);
-                            
-                            // Add images
-                            const files = excelData[rowIndex].files;
-                            for (let i = 0; i < files.length; i++) {
-                                formData.append('ProductImageFile', files[i]);
-                            }
-                            
-                            // Send request to create product
-                            $.ajax({
-                                url: '/Admin/OcopProduct/CreateOcopProductPost',
-                                type: 'POST',
-                                data: formData,
-                                processData: false,
-                                contentType: false,
-                                headers: {
-                                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                                },
-                                success: function(response) {
-                                    // Update counters
-                                    totalProcessed++;
-                                    successCount++;
-                                    $('#successCount').text(successCount);
-                                    
-                                    // Update progress bar
-                                    const progress = Math.round((totalProcessed / totalProducts) * 100);
-                                    $('#importProgressBar').css('width', `${progress}%`).text(`${progress}%`);
-                                    
-                                    // Mark row as processed in the table
-                                    $(`tr[data-row="${rowIndex}"]`).find('td:nth-child(2) .badge')
-                                        .removeClass('badge-light-primary badge-light-warning badge-light-danger')
-                                        .addClass('badge-light-success')
-                                        .text('Imported');
-                                    
-                                    // Process next product in batch
-                                    processProduct(productIndex + 1);
-                                },
-                                error: function(xhr, status, error) {
-                                    console.error(`Failed to import product at row ${rowIndex}: ${error}`);
-                                    
-                                    // Update counters
-                                    totalProcessed++;
-                                    failedCount++;
-                                    $('#failedCount').text(failedCount);
-                                    
-                                    // Update progress bar
-                                    const progress = Math.round((totalProcessed / totalProducts) * 100);
-                                    $('#importProgressBar').css('width', `${progress}%`).text(`${progress}%`);
-                                    
-                                    // Mark row as failed in the table
-                                    $(`tr[data-row="${rowIndex}"]`).find('td:nth-child(2) .badge')
-                                        .removeClass('badge-light-primary badge-light-warning badge-light-success')
-                                        .addClass('badge-light-danger')
-                                        .text('Failed');
-                                    
-                                    // Process next product in batch
-                                    processProduct(productIndex + 1);
-                                }
-                            });
-                        };
-                        
-                        // Start processing the first product in the batch
-                        processProduct(0);
-                    };
-                    
-                    // Process batches of products without images
-                    const processNoImageProductBatches = function(batchIndex) {
-                        // Calculate start and end indices for this batch
-                        const startIdx = batchIndex * BATCH_SIZE;
-                        const endIdx = Math.min(startIdx + BATCH_SIZE, productsWithoutImages.length);
-                        
-                        // If we've processed all batches, we're done
-                        if (startIdx >= productsWithoutImages.length) {
-                            // All done!
-                            $('#importProgressBar').removeClass('progress-bar-animated').text('Import Complete');
-                            $('#startImportBtn').html('<i class="fa fa-check me-1"></i>Import Complete');
-                            $('#importStatusText .badge').html('Import Complete');
-                            
-                            // Show completion message
-                            const message = `Import completed with ${successCount} successful and ${failedCount} failed products.`;
-                            if (failedCount > 0) {
-                                Swal.fire({
-                                    title: 'Import Completed',
-                                    html: message + '<br><small>Please check the rows marked as "Failed"</small>',
-                                    icon: 'info',
-                                    confirmButtonText: 'OK'
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Success!',
-                                    text: message,
-                                    icon: 'success',
-                                    confirmButtonText: 'OK'
-                                }).then(() => {
-                                    window.location.href = '/Admin/OcopProduct';
-                                });
-                            }
-                            return;
-                        }
-                        
-                        // Get current batch
-                        const currentBatch = productsWithoutImages.slice(startIdx, endIdx);
-                        const batchCount = Math.ceil(productsWithoutImages.length / BATCH_SIZE);
-                        
-                        // Update status text
-                        $('#importStatusText .badge').html(`Processing batch ${batchIndex + 1} of ${batchCount}`);
-                        
-                        // Prepare the products JSON and form data
-                        const formData = new FormData();
-                        formData.append('products', JSON.stringify(currentBatch));
-                        
-                        // Add product images if any
-                        currentBatch.forEach((product, index) => {
-                            if (product.hasImages) {
-                                const files = excelData[product.rowIndex].files;
-                                for (let i = 0; i < files.length; i++) {
-                                    formData.append(`productImages[${index}]`, files[i]);
-                                }
-                            }
-                        });
-                        
-                        // Send batch to server
-                        $.ajax({
-                            url: '/Admin/OcopProduct/import-product',
-                            type: 'POST',
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                            headers: {
-                                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                            },
-                            success: function(response) {
-                                // Update counters
-                                const successfulInBatch = currentBatch.length;
-                                totalProcessed += currentBatch.length;
-                                successCount += successfulInBatch;
-                                
-                                $('#successCount').text(successCount);
-                                $('#failedCount').text(failedCount);
-                                
-                                // Update progress bar
-                                const progress = Math.round((totalProcessed / totalProducts) * 100);
-                                $('#importProgressBar').css('width', `${progress}%`).text(`${progress}%`);
-                                
-                                // Update rows in the table
-                                currentBatch.forEach(p => {
-                                    const rowSelector = `tr[data-row="${p.rowIndex}"]`;
-                                    const badge = $(rowSelector).find('td:nth-child(2) .badge');
-                                    
-                                    badge.removeClass('badge-light-primary badge-light-warning badge-light-danger')
-                                        .addClass('badge-light-success')
-                                        .text('Imported');
-                                });
-                                
-                                // Process next batch
-                                processNoImageProductBatches(batchIndex + 1);
-                            },
-                            error: function(xhr, status, error) {
-                                console.error(`Failed to import batch ${batchIndex}: ${error}`);
-                                
-                                // Update counters
-                                totalProcessed += currentBatch.length;
-                                failedCount += currentBatch.length;
-                                $('#failedCount').text(failedCount);
-                                
-                                // Update progress bar
-                                const progress = Math.round((totalProcessed / totalProducts) * 100);
-                                $('#importProgressBar').css('width', `${progress}%`).text(`${progress}%`);
-                                
-                                // Mark batch rows as failed
-                                currentBatch.forEach(p => {
-                                    const rowSelector = `tr[data-row="${p.rowIndex}"]`;
-                                    $(rowSelector).find('td:nth-child(2) .badge')
-                                        .removeClass('badge-light-primary badge-light-warning badge-light-success')
-                                        .addClass('badge-light-danger')
-                                        .text('Failed');
-                                });
-                                
-                                // Process next batch
-                                processNoImageProductBatches(batchIndex + 1);
-                            }
-                        });
-                    };
-                    
-                    // Start with products with images first, if any
-                    if (productsWithImages.length > 0) {
-                        processImageProductBatches(0);
-                    } else {
-                        processNoImageProductBatches(0);
-                    }
-                }
-            });
-            
-            // Template download handler
-            $('#downloadTemplateBtn').click(function(e) {
-                e.preventDefault();
-                
-                // Create template workbook
-                const wb = XLSX.utils.book_new();
-                
-                // Create headers
-                const templateData = [
-                    ['Product Name', 'Description', 'Price (VND)', 'OcopType', 'Company', 'OcopPoint', 'OcopYear'],
-                    ['Honey', 'Pure honey from U Minh forest', '250000', 'Thực phẩm', 'An Nam Company', '5', '2023'],
-                    ['Bánh tráng nướng', 'Bánh tráng nướng truyền thống', '45000', 'Thực phẩm', 'Công ty Truyền thống', '4', '2022'],
-                ];
-                
-                // Create worksheet
-                const ws = XLSX.utils.aoa_to_sheet(templateData);
-                
-                // Set column widths
-                ws['!cols'] = [
-                    { wpx: 200 }, // Name
-                    { wpx: 300 }, // Description
-                    { wpx: 100 }, // Price
-                    { wpx: 120 }, // OcopType
-                    { wpx: 150 }, // Company
-                    { wpx: 80 },  // OcopPoint
-                    { wpx: 80 },  // OcopYear
-                ];
-                
-                // Add to workbook
-                XLSX.utils.book_append_sheet(wb, ws, 'Template');
-                
-                // Generate Excel file
-                XLSX.writeFile(wb, 'ocop_product_template.xlsx');
-            });
-        });
+        // Pass server-side data to JavaScript
+        window.ocopTypes = @Html.Raw(Json.Serialize(ViewBag.OcopTypes ?? new TraVinhMaps.Web.Admin.Models.OcopProduct.OcopTypeResponse[0]));
+        window.companies = @Html.Raw(Json.Serialize(ViewBag.Companies ?? new TraVinhMaps.Web.Admin.Models.OcopProduct.CompanyResponse[0]));
+        window.tags = @Html.Raw(Json.Serialize(ViewBag.Tags ?? new TraVinhMaps.Web.Admin.Models.OcopProduct.TagResponse[0]));
+        window.sessionId = '@User.Claims.FirstOrDefault(c => c.Type == "sessionId")?.Value';
     </script>
+    <script src="/assets/js/add-product/import-product.js"></script>
 }
 
 @section Styles {
     <style>
+        /* Color overrides for system theme */
+        .bg-success {
+            background-color: #66bb6a !important;  /* Lighter green */
+        }
+        
+        .btn-success {
+            background-color: #66bb6a !important;
+            border-color: #4caf50 !important;
+        }
+        
+        .alert-success {
+            background-color: #e8f5e9 !important;
+            border-color: #a5d6a7 !important;
+            color: #388e3c !important;
+        }
+        
+        /* Table headers in contrasting blue */
+        #excelDataTable thead {
+            background-color: #26c6da !important;
+        }
+        
+        /* Issue styling with yellow theme */
+        .issue-list li {
+            margin-bottom: 12px;
+            line-height: 1.8;
+            padding: 8px;
+            border-left: 4px solid #ffc107;
+            background-color: rgba(255, 193, 7, 0.05);
+            border-radius: 0 4px 4px 0;
+            font-weight: 500;
+        }
+        
+        .issue-list li:nth-child(odd) {
+            background-color: rgba(255, 193, 7, 0.1);
+        }
+
         /* Styles for the issues toggle button */
         #toggleIssuesBtn {
             min-width: 38px;
             height: 38px;
             padding: 8px 12px;
             transition: all 0.2s ease;
-            border-color: rgba(0,0,0,0.1);
+            border-color: rgba(0, 0, 0, 0.1);
         }
-        
+
         #toggleIssuesBtn:hover {
-            background-color: rgba(255,255,255,0.2);
+            background-color: rgba(255, 255, 255, 0.2);
         }
-        
+
         #issuesContentWrapper {
             transition: max-height 0.3s ease;
             overflow: hidden;
         }
-        
-        #issuesList li {
-            margin-bottom: 6px;
-            line-height: 1.5;
-        }
-        
+
         .dropzone-area {
-            border: 2px dashed #1B8754;
+            border: 2px dashed #4caf50;
             border-radius: 8px;
             padding: 40px 20px;
             text-align: center;
-            background-color: #eafaf1;
+            background-color: #f1f8e9;
             transition: all 0.3s ease;
             cursor: pointer;
         }
-        
+
         .dropzone-active {
-            background-color: #d4edda;
-            border-color: #146642;
+            background-color: #e8f5e9;
+            border-color: #388e3c;
         }
-        
+
         #excelDropzone {
             min-height: 250px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        
+
         .badge-light-primary {
-            background-color: #e6f7ee;
-            color: #146642;
-            border: 1px solid #a3e0c1;
+            background-color: #e8f5e9;
+            color: #388e3c;
+            border: 1px solid #a5d6a7;
         }
-        
+
         .badge-light-warning {
-            background-color: #fff8e6;
-            color: #b06000;
-            border: 1px solid #ffe0a3;
+            background-color: #fff8e1;
+            color: #f57c00;
+            border: 1px solid #ffe082;
         }
-        
+
         .badge-light-danger {
-            background-color: #ffeef0;
-            color: #dc3545;
-            border: 1px solid #ffc1c7;
+            background-color: #ffebee;
+            color: #d32f2f;
+            border: 1px solid #ef9a9a;
         }
-        
+
         .badge {
             padding: 8px 12px;
             border-radius: 4px;
             font-weight: 500;
             display: inline-block;
         }
-        
+
         /* Editable cell styles */
         [contenteditable="true"] {
             position: relative;
@@ -1453,17 +436,17 @@
             min-height: 32px;
             cursor: text;
         }
-        
+
         [contenteditable="true"]:hover {
             background-color: #f8f9fa;
         }
-        
+
         [contenteditable="true"]:focus {
-            outline: 2px solid #1B8754;
-            background-color: #f8f9fa;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            outline: 2px solid #4caf50;
+            background-color: #f1f8e9;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
-        
+
         [contenteditable="true"]::after {
             content: '\f040';
             font-family: FontAwesome;
@@ -1475,81 +458,146 @@
             opacity: 0;
             transition: opacity 0.2s;
         }
-        
+
         [contenteditable="true"]:hover::after {
             opacity: 1;
         }
-        
+
         /* Pagination styles */
         .pagination {
             margin-bottom: 0;
         }
-        
+
         .page-link {
-            color: #1B8754;
-            border-color: #a3e0c1;
+            color: #4caf50;
+            border-color: #a5d6a7;
         }
-        
+
         .page-item.active .page-link {
-            background-color: #1B8754;
-            border-color: #1B8754;
+            background-color: #4caf50;
+            border-color: #4caf50;
         }
-        
+
         .page-item.disabled .page-link {
             color: #6c757d;
         }
-        
+
         .pagination-info {
             color: #6c757d;
             font-size: 14px;
         }
-        
+
         /* Enhanced table styles for horizontal scrolling */
         .table-responsive {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             max-width: 100%;
         }
-        
+
         #excelDataTable {
             width: 100%;
-            min-width: 1200px; /* Ensure the table has a minimum width to trigger scrolling */
+            min-width: 1200px;
+            /* Ensure the table has a minimum width to trigger scrolling */
         }
-        
+
         #excelDataTable th {
             white-space: nowrap;
             position: sticky;
             top: 0;
             z-index: 1;
         }
-        
-        #excelDataTable th:nth-child(1) { min-width: 50px; }  /* STT */
-        #excelDataTable th:nth-child(2) { min-width: 100px; } /* Status */
-        #excelDataTable th:nth-child(3) { min-width: 200px; } /* Product Name */
-        #excelDataTable th:nth-child(4) { min-width: 250px; } /* Description */
-        #excelDataTable th:nth-child(5) { min-width: 120px; } /* Price */
-        #excelDataTable th:nth-child(6) { min-width: 150px; } /* OcopType */
-        #excelDataTable th:nth-child(7) { min-width: 150px; } /* Company */
-        #excelDataTable th:nth-child(8) { min-width: 100px; } /* OcopPoint */
-        #excelDataTable th:nth-child(9) { min-width: 100px; } /* OcopYear */
-        #excelDataTable th:nth-child(10) { min-width: 200px; } /* Images */
-        #excelDataTable th:nth-child(11) { min-width: 200px; } /* Note */
-        
+
+        #excelDataTable th:nth-child(1) {
+            min-width: 50px;
+        }
+
+        /* STT */
+        #excelDataTable th:nth-child(2) {
+            min-width: 100px;
+        }
+
+        /* Status */
+        #excelDataTable th:nth-child(3) {
+            min-width: 200px;
+        }
+
+        /* Product Name */
+        #excelDataTable th:nth-child(4) {
+            min-width: 250px;
+        }
+
+        /* Description */
+        #excelDataTable th:nth-child(5) {
+            min-width: 120px;
+        }
+
+        /* Price */
+        #excelDataTable th:nth-child(6) {
+            min-width: 150px;
+        }
+
+        /* OcopType */
+        #excelDataTable th:nth-child(7) {
+            min-width: 150px;
+        }
+
+        /* Company */
+        #excelDataTable th:nth-child(8) {
+            min-width: 100px;
+        }
+
+        /* OcopPoint */
+        #excelDataTable th:nth-child(9) {
+            min-width: 100px;
+        }
+
+        /* OcopYear */
+        #excelDataTable th:nth-child(10) {
+            min-width: 200px;
+        }
+
+        /* Images */
+        #excelDataTable th:nth-child(11) {
+            min-width: 200px;
+        }
+
+        /* Note */
+
         /* Image upload preview styles */
         .image-preview {
             display: flex;
             flex-wrap: wrap;
             max-width: 100%;
         }
-        
+
         .image-preview img {
             border-radius: 4px;
             object-fit: cover;
             width: 60px;
             height: 60px;
-            margin-right: 5px;
-            margin-bottom: 5px;
+        }
+        
+        .img-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .image-delete-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .required-image-label {
+            font-style: italic;
         }
     </style>
 }
-
