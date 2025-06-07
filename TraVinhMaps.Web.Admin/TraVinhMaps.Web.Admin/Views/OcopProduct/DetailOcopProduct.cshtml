@@ -1,4 +1,4 @@
-﻿@using TraVinhMaps.Web.Admin.Models.OcopProduct;
+﻿﻿@using TraVinhMaps.Web.Admin.Models.OcopProduct;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model OcopProductResponse;
 @{
@@ -196,13 +196,12 @@
                                                 style="font-size: 14px; line-height: 1;">
                                                 <span style="font-size: 20px;">&#43;</span>
                                                 </a>
-
-                                                <a asp-action="UpdateSellLocation"
+                                               <a asp-action="UpdateSellLocation"
                                                 asp-route-id="@Model.Id"
                                                 asp-route-locationName="@item.LocationName"
-                                                class="btn btn-success btn-sm px-2 py-1"
-                                                title="Edit Location"
-                                                style="font-size: 14px; line-height: 1;">
+                                                class="btn btn-warning d-flex align-items-center justify-content-center"
+                                                style="width: 30px; height: 30px; padding: 0; border-radius: 6px; font-size: 14px;"
+                                                title="Edit Location">
                                                     <i class="fa fa-pencil" aria-hidden="true"></i>
                                                 </a>
 
@@ -220,6 +219,52 @@
                                     }
                                 }
                             </div>
+                            <hr>
+                            @* <div style="display: flex; flex-direction: column; gap: 12px;">
+                                @if (Model.SellingLinkId == null || !Model.SellingLinkId.Any())
+                                {
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <b>No Selling Link.</b><br />
+                                        </div>
+                                        <a asp-action="CreateSellingLink" asp-route-id="@Model.Id"
+                                        class="btn btn-success btn-sm px-2 py-1"
+                                        title="Create Location"
+                                        style="font-size: 14px; line-height: 1;">+</a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @for (int i = 0; i < Model.SellingLinkId.Count; i++)
+                                    {
+                                        var item = Model.SellingLinkId[i];
+                                        var isLast = i == Model.Sellocations.Count - 1;
+                                        <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; @(isLast ? "" : "border-bottom: 1px solid #ddd;")">
+                                            <div>
+                                                <b>Selling Link: @(item ?? "No Selling Link.")</b><br />
+                                            </div>
+                                            <div style="display: flex; gap: 6px;">
+                                                <a asp-action="CreateSellLocation"
+                                                asp-route-id="@Model.Id"
+                                                class="btn btn-success btn-sm px-2 py-1"
+                                                title="Create Location"
+                                                style="font-size: 14px; line-height: 1;">
+                                                <span style="font-size: 20px;">&#43;</span>
+                                                </a>
+
+                                                <button type="button" 
+                                                        class="delete-selling-link btn btn-danger btn-sm px-2 py-1" 
+                                                        title="Delete Selling Link"
+                                                        style="font-size: 14px; line-height: 1;"
+                                                        data-product-id="@Model.Id">
+                                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                                </button>
+
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div> *@
                             <hr>
                             <div>
                                 <table class="product-page-width">
@@ -384,12 +429,6 @@
                                         }
                                         @if(Model.TagId == "6826c8a67b645c6f8e18815c"){
                                             <p>Utilities</p>
-                                        }
-                                    </li>
-                                    <li>
-                                        <td style="white-space: nowrap;">
-                                            <b>Selling Link Id</b><b>: &nbsp;&nbsp;</b>
-                                        </td>
                                         }
                                     </li>
                                 </ul>

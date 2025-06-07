@@ -9,9 +9,9 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
         Task<OcopProductResponse> GetByIdAsync(string id, CancellationToken cancellationToken = default);
         Task<IEnumerable<OcopProductResponse>> ListAllAsync(CancellationToken cancellationToken = default);
         Task<CreateOcopProductResponse<OcopProductResponse>> AddAsync(CreateOcopProductRequest entity, CancellationToken cancellationToken = default);
-        Task<UpdateOcopProductResponse> UpdateAsync(UpdateOcopProductRequest entity, CancellationToken cancellationToken = default);
-        Task<DeleteOcopProductResponse> DeleteOcopProductAsync(string id, CancellationToken cancellationToken = default);
-        Task<RestoreOcopProductResponse> RestoreOcopProductAsync(string id, CancellationToken cancellationToken = default);
+        Task<OcopProductMessage> UpdateAsync(UpdateOcopProductRequest entity, CancellationToken cancellationToken = default);
+        Task<OcopProductMessage> DeleteOcopProductAsync(string id, CancellationToken cancellationToken = default);
+        Task<OcopProductMessage> RestoreOcopProductAsync(string id, CancellationToken cancellationToken = default);
         Task<long> CountAsync(Expression<Func<OcopProductResponse, bool>> predicate = null, CancellationToken cancellationToken = default);
         Task<IEnumerable<OcopProductResponse>> GetOcopProductByOcopTypeId(string ocopTypeId, CancellationToken cancellationToken = default);
         Task<IEnumerable<OcopProductResponse>> GetOcopProductByCompanyId(string companyId, CancellationToken cancellationToken = default);

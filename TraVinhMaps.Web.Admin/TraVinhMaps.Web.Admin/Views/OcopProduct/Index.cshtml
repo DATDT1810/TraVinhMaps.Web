@@ -1,4 +1,4 @@
-﻿@using TraVinhMaps.Web.Admin.Models.OcopProduct;
+﻿﻿@using TraVinhMaps.Web.Admin.Models.OcopProduct;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model IEnumerable<OcopProductResponse>;
 @{
@@ -70,7 +70,7 @@
                             </div>
                             <div class="status-filter">
                                 <select id="statusFilter" class="form-select">
-                                    <option value="active">All</option>
+                                    <option value="active">Active</option>
                                     <option value="inactive">Inactive</option>
                                 </select>
                             </div>
@@ -129,13 +129,12 @@
                                             </td>
                                             
                                             <td>
-                                                @item.CreatedAt.ToString("MMM dd yyyy, hh:mm tt",
-                                                         System.Globalization.CultureInfo.InvariantCulture)
+                                                @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                             </td>
                                             <td>
                                                 <ul class="action">
                                                     <li>
-                                                        <a class="edit" asp-controller="OcopProduct" asp-action="DetailOcopProduct" asp-route-id="@item.Id" title="Details">
+                                                        <a class="detail" asp-controller="OcopProduct" asp-action="DetailOcopProduct" asp-route-id="@item.Id" title="Details">
                                                             <i class="fa fa-eye"></i>
                                                         </a>
                                                     </li>
@@ -371,6 +370,7 @@
             }
         }, 2000);
     </script>
+}
 }
 
 @section Styles {
