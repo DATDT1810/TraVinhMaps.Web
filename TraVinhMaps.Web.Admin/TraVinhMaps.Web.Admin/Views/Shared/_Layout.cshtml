@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 
@@ -58,6 +58,8 @@
 
 
 <body>
+    @await RenderSectionAsync("Styles", required: false)
+
     <!-- loader starts-->
     <div class="loader-wrapper">
         <div class="loader">
@@ -103,8 +105,7 @@
                     <div>
                         <a class="toggle-sidebar" href="#"> <i class="iconly-Category icli"> </i></a>
                         <div class="d-flex align-items-center gap-2 ">
-                            <h4 class="f-w-600">Welcome Admin</h4><img class="mt-0" src="../assets/images/hand.gif"
-                                alt="hand-gif">
+                            <h4 class="f-w-600">Welcome Admin</h4>
                         </div>
                     </div>
                     <div class="welcome-content d-xl-block d-none"><span class="text-truncate col-12">Here's what's
@@ -157,8 +158,11 @@
                                         <i data-feather="user"></i><span>My Profile</span>
                                     </a>
                                 </li>
-                                <li> <a asp-controller="Admin" asp-action="Settings"> <i
-                                            data-feather="settings"></i><span>Settings</span></a></li>
+                                <li>
+                                    <a asp-controller="Admin" asp-action="Settings">
+                                        <i data-feather="settings"></i><span>Settings</span>
+                                    </a>
+                                </li>
                                 <li>
                                     <form asp-controller="Authen" asp-action="Logout" method="post">
                                         @Html.AntiForgeryToken()
@@ -255,8 +259,16 @@
                                 <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav"
                                     asp-controller="OcopProduct" asp-action="Index">
                                     <i class="fa fa-shopping-bag"
-                                        style="color: white; font-size: 14px; padding-right: 10px;"></i>
+                                       style="color: white; font-size: 18px; padding-right: 10px;"></i>
                                     <span>Ocop Product</span>
+                                </a>
+                            </li>
+                            <!-- > Ocop Type -->
+                            <li class="sidebar-list">
+                                <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" asp-controller="OcopType" asp-action="Index">
+                                    <i class="fa fa-suitcase"
+                                       style="color: white; font-size: 18px; padding-right: 10px;"></i>
+                                    <span>Ocop Type</span>
                                 </a>
                             </li>
                             <!-- > Local Specialties Management -->
@@ -337,13 +349,6 @@
                                     <li><a href="">Stay</a></li>
                                     <li><a href="">Utilities</a></li>
                                 </ul>
-                            </li>
-                            <!-- > Setting -->
-                            <li class="sidebar-list">
-                                <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="">
-                                    <i class="fa fa-cog" style="color: white; font-size: 20px; padding-right: 8px;"></i>
-                                    <span>Setting</span>
-                                </a>
                             </li>
                         </ul>
                         <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>

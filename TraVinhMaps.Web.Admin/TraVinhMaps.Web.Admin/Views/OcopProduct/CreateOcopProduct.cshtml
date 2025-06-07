@@ -136,14 +136,13 @@
                                 <span asp-validation-for="TagId" class="text-danger"></span>
                             </div>
                         </div>
-                        <div class="col-sm-3">
-                            <div class="mb-3">
-                                <label asp-for="SellingLinkId">Ocop Product Selling Link</label>
-                                <select asp-for="SellingLinkId" class="form-select" required>
-                                    <option selected value="68244abd2b06dbe39f973e8c">https://shopee.vn/</option>
-                                    <option value="68244abd2b06dbe39f973e8d">https://shopee.vn/vn</option>
-                                </select>
-                                <span asp-validation-for="SellingLinkId" class="text-danger"></span>
+                        <div class="row">
+                            <div class="col">
+                                <div class="mb-3">
+                                    <label asp-for="SellingLinkId">Ocop Product Selling Link</label>
+                                    <input asp-for="SellingLinkId" class="form-control" type="text" placeholder="Selling link of product" required />
+                                    <span asp-validation-for="SellingLinkId" class="text-danger"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
