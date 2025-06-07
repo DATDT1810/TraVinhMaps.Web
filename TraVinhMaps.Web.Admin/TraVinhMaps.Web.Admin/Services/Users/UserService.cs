@@ -177,5 +177,33 @@ namespace TraVinhMaps.Web.Admin.Services.Users
                 throw new HttpRequestException($"Unable to create admin. Status: {response.StatusCode}, Error: {errorContent}");
             }
         }
+        public async Task<Dictionary<string, object>> GetUserStatisticsAsync(string groupBy, string timeRange, CancellationToken cancellationToken = default)
+        {
+            var url = $"{userApi}stats?groupBy={groupBy}&timeRange={timeRange}";
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync(cancellationToken);
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var baseResult = JsonSerializer.Deserialize<UserBase<JsonElement>>(content, options);
+
+                if (baseResult?.Data.ValueKind == JsonValueKind.Object)
+                {
+                    var result = new Dictionary<string, object>();
+                    foreach (var prop in baseResult.Data.EnumerateObject())
+                    {
+                        // If groupBy is specific (e.g., "age"), only process that key
+                        if (groupBy != "all" && prop.Name != groupBy) continue;
+                        var subDict = JsonSerializer.Deserialize<Dictionary<string, int>>(prop.Value.GetRawText(), options);
+                        result[prop.Name] = subDict;
+                    }
+                    return result;
+                }
+                return new Dictionary<string, object>();
+            }
+            throw new HttpRequestException("Unable to fetch user statistics.");
+        }
+
     }
 }
