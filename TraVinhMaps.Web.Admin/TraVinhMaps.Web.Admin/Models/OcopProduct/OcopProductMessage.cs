@@ -1,6 +1,11 @@
-﻿namespace TraVinhMaps.Web.Admin.Models.OcopProduct
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace TraVinhMaps.Web.Admin.Models.OcopProduct
 {
-    public class UpdateOcopProductResponse
+    public class OcopProductMessage
     {
         public string Message { get; set; }
         public string Status { get; set; }

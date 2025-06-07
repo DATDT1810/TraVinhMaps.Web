@@ -1,4 +1,4 @@
-﻿$(document).ready(function () {
+﻿﻿$(document).ready(function () {
     const table = $("#project-status").DataTable({
         paging: true,
         ordering: true,
@@ -63,7 +63,7 @@
     }
 
 
-    //
+    //Delete Sell Location
     $(document).on("click", ".delete-sell-location", function(e) {
     e.preventDefault();
     const productId = $(this).data("product-id");
@@ -71,10 +71,10 @@
     const token = $('input[name="__RequestVerificationToken"]').val();
 
     showConfirmAlert(
-        "Xác nhận",
-        `Bạn có chắc chắn muốn xoá địa điểm "${locationName}" không?`,
-        "Xoá",
-        "Huỷ"
+        "Confirmation",
+        `Are you sure you want to delete this "${locationName}"?`,
+        "Delete",
+        "Cancel"
     ).then((confirmed) => {
         if (!confirmed) return;
 
@@ -87,15 +87,57 @@
             },
             success: function(response) {
                 if (response.success) {
-                    showSuccessAlert("Thành công", "Xoá địa điểm thành công!");
+                    table.row(row).invalidate().draw(false);
+                    showTimedAlert("Success!", response.message, "success", 3000);
                     // Reload lại trang chi tiết sản phẩm
                     window.location.href = `/Admin/OcopProduct/Detail/${productId}`;
                 } else {
-                    showErrorAlert("Lỗi", response.message);
+                    showTimedAlert("Error!", response.message, "error", 3000);
                 }
             },
             error: function(xhr) {
-                showErrorAlert("Lỗi", "Lỗi khi gọi API xoá: " + (xhr.responseJSON?.message || "Không xác định"));
+                "Error",
+                "An error occurred while delete the sell location: " +
+                (xhr.responseJSON?.message || "Unknown error")
+            }
+        });
+    });
+});
+//Delete Selling Link
+$(document).on("click", ".delete-selling-link", function(e) {
+    e.preventDefault();
+    const productId = $(this).data("product-id");
+    const token = $('input[name="__RequestVerificationToken"]').val();
+
+    showConfirmAlert(
+        "Confirmation",
+        "Are you sure you want to delete this selling link?",
+        "Delete",
+        "Cancel"
+    ).then((confirmed) => {
+        if (!confirmed) return;
+
+        $.ajax({
+            url: `/Admin/OcopProduct/DeleteSellingLink/${productId}`,
+            method: "DELETE",
+            headers: {
+                "RequestVerificationToken": token,
+                "Content-Type": "application/json"
+            },
+            success: function(response) {
+                if (response.success) {
+                    table.row(row).invalidate().draw(false);
+                    showTimedAlert("Success!", response.message, "success", 3000);
+                    // Reload lại trang chi tiết sản phẩm
+                    window.location.href = `/Admin/OcopProduct/Detail/${productId}`;
+                } else {
+                    showTimedAlert("Error!", response.message, "error", 3000);
+                }
+            },
+            error: function(xhr) {
+                "Error",
+                "An error occurred while delete the selling link: " +
+                (xhr.responseJSON?.message || "Unknown error")
             }
         });
     });
@@ -122,7 +164,6 @@
                     },
                     success: function (response) {
                         if (response.success) {
-                            // const row = $(`a[data-id="${destinationId}"]`).closest("tr");
                             const row = $('a[data-id="' + ocopProductId + '"]').closest("tr");
                             row
                                 .find("td:eq(4) span")
@@ -144,7 +185,7 @@
                     error: function (xhr) {
                         showErrorAlert(
                             "Error",
-                            "An error occurred while banning the ocop product: " +
+                            "An error occurred while delete the ocop product: " +
                             (xhr.responseJSON?.message || "Unknown error")
                         );
                     },
@@ -162,7 +203,7 @@
         showConfirmAlert(
             "Confirmation",
             "Are you sure you want to restore this ocop product?",
-            "restore",
+            "Restore",
             "Cancel"
         ).then((confirmed) => {
             if (confirmed) {
@@ -199,7 +240,7 @@
                     error: function (xhr) {
                         showErrorAlert(
                             "Error",
-                            "An error occurred while unbanning the ocop product: " +
+                            "An error occurred while restore the ocop product: " +
                             (xhr.responseJSON?.message || "Unknown error")
                         );
                     },

@@ -22,6 +22,8 @@ namespace TraVinhMaps.Web.Admin.Models.OcopProduct
         public required int OcopPoint { get; set; }
         public required int OcopYearRelease { get; set; }
         public required string TagId { get; set; }
+        [Required(ErrorMessage = "Selling link is required.")]
+        [Url(ErrorMessage = "SellingLinkId must be a valid URL.")]
         public required string SellingLinkId { get; set; } 
     }
 }
