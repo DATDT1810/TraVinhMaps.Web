@@ -40525,6 +40525,51 @@ table.table-bordered thead tr th p {
 /**=====================
     5.4 Navs CSS Start
 ==========================**/
+
+.sidebar-list {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+  .sidebar-link {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.sidebar-link i {
+  width: 18px;
+  height: 18px;
+  line-height: 24px;
+  text-align: center;
+  font-size: 18px;
+  margin-right: 6px;
+  color: white;
+}
+
+.fa-thumb-tack {
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  font-size: 18px;
+  color: white;
+  margin-right: 10px;
+}
+
+.sidebar-link span {
+  flex: 1;
+}
+
+.sidebar-submenu {
+  padding-left: 44px;
+}
+
+.logo-icon-wrapper img {
+  width: 50px;
+}
+
 #accordionoc #collapseicon,
 #accordionoc #collapseicon1 {
   padding-top: 0px;
