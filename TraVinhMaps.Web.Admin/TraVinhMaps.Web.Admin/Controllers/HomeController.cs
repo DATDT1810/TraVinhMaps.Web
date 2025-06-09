@@ -54,7 +54,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
             catch (Exception ex)
             {
-                ViewData["Error"] = "Không thể tải thống kê người dùng: " + ex.Message;
+                ViewData["Error"] = "Unable to load user statistics: " + ex.Message;
             }
 
             // Pass the selected timeRange to the view for pre-selecting the dropdowns
