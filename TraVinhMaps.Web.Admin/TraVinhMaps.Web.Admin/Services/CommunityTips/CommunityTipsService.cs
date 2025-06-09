@@ -15,7 +15,7 @@ namespace TraVinhMaps.Web.Admin.Services.CommunityTips
 
         public CommunityTipsService(IHttpClientFactory clientFactory)
         {
-            _httpClient = clientFactory.CreateClient(("ApiClient"));
+            _httpClient = clientFactory.CreateClient("ApiClient");
             this.tipsApi = "api/CommunityTips/";
         }
 

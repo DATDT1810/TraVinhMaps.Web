@@ -27,7 +27,6 @@ namespace TraVinhMaps.Web.Admin.Services.LocalSpecialties
                 var content = await response.Content.ReadAsStringAsync();
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 var apiResult = JsonSerializer.Deserialize<LocalSpecialtiesBase<List<LocalSpecialtiesResponse>>>(content, options);
-                System.Console.WriteLine(apiResult.Data.Count);
                 return apiResult?.Data ?? new List<LocalSpecialtiesResponse>();
             }
             throw new HttpRequestException("Unable to fetch get all local specialties.");

@@ -5,15 +5,13 @@ function initializeCharts(initialData) {
     console.error(
       "Chart.js failed to load. Check the script source or network."
     );
-    alert("Failed to load charting library. Please refresh the page.");
-    return;
+     showTimedAlert("Error!", "Failed to load charting library. Please refresh the page.", "error", 2000);
   }
   if (typeof ChartDataLabels === "undefined") {
     console.error(
       "ChartDataLabels plugin failed to load. Check the script source or network."
     );
-    alert("Failed to load chart plugins. Please refresh the page.");
-    return;
+    showTimedAlert("Error!", "Failed to load chart plugins. Please refresh the page.", "error", 2000);
   }
 
   // Register the datalabels plugin
@@ -74,16 +72,12 @@ function initializeCharts(initialData) {
           }
         } else {
           console.error(`Invalid response for ${chartId}:`, result);
-          alert(
-            `Failed to update ${chartId} chart: ${
-              result.message || "Invalid response format"
-            }`
-          );
+          showTimedAlert("Error!", `Failed to update ${chartId} chart: ${result.message || "Invalid response format"}`, "error", 2000);
         }
       })
       .catch((error) => {
         console.error(`Failed to fetch statistics for ${chartId}:`, error);
-        alert(`Failed to update ${chartId} chart: ${error.message}`);
+        showTimedAlert("Error", `Failed to update ${chartId} chart: ${error.message}`, "error", 3000);
       })
       .finally(() => {
         if (loadingElement) loadingElement.style.display = "none";
@@ -126,16 +120,30 @@ function initializeCharts(initialData) {
       {
         responsive: true,
         maintainAspectRatio: false,
+        aspectRatio: 1,
+        layout: {
+          padding: {
+            top: 30,    
+            bottom: 10, 
+          }
+        },
         scales: {
-          y: {
-            beginAtZero: true,
-            title: { display: true, text: "Number of Users" },
-          },
-          x: { title: { display: true, text: "Age Groups" } },
+          // y: {
+          //   beginAtZero: true,
+          //   title: { 
+          //     display: true, 
+          //     text: "Number of Users",
+          //     padding: { top: 20, bottom: 0 }
+          //   },
+          //   ticks: {
+          //     padding: 10 
+          //   }
+          // },
+          x: { title: { display: true, text: "Age Groups"} },
         },
         plugins: {
           datalabels: {
-            color: "#fff",
+            color: "#000",
             font: { weight: "bold", size: 12 },
             formatter: (value, context) => {
               const total = context.dataset.data.reduce(
@@ -146,7 +154,11 @@ function initializeCharts(initialData) {
             },
             anchor: "end",
             align: "top",
+            clip: false
           },
+          legend: {
+            display: false 
+          }
         },
       }
     );

@@ -56,7 +56,6 @@
     <link rel="stylesheet" type="text/css" href="~/assets/css/responsive.css">
 </head>
 
-
 <body>
     @await RenderSectionAsync("Styles", required: false)
 
@@ -191,12 +190,14 @@
         <div class="page-body-wrapper">
             <!-- Page Sidebar Start-->
             <div class="sidebar-wrapper" data-layout="stroke-svg">
-                <div class="logo-wrapper"><a asp-controller="Home" asp-action="Index"><img class="img-fluid"
-                            src="~/assets/images/logo/logo.png" alt="Logo"
-                            style="width: 100px; margin-left: 50px; margin-top: -20px;"></a>
-                    <div class="back-btn"><i class="fa fa-angle-left"> </i></div>
+                <div class="logo-wrapper">
+                    <a asp-controller="Home" asp-action="Index">
+                        <img class="img-fluid" src="~/assets/images/logo/logo.png" alt="Logo"
+                            style="width: 100px; margin-left: 50px; margin-top: -20px;">
+                    </a>
+                    <div class="back-btn"><i class="fa fa-angle-left"></i></div>
                     <div class="toggle-sidebar">
-                        <i class="status_toggle middle sidebar-toggle" data-feather="grid"> </i>
+                        <i class="status_toggle middle sidebar-toggle" data-feather="grid"></i>
                     </div>
                 </div>
                 <div class="logo-icon-wrapper">
@@ -213,133 +214,130 @@
                                     <img class="img-fluid" src="~/assets/images/logo/logo-icon.png" alt="logo-icon">
                                 </a>
                                 <div class="mobile-back text-end">
-                                    <span>Back </span><i class="fa fa-angle-right ps-2" aria-hidden="true"></i>
-                                </div>
-                            </li>
-                            <li class="pin-title sidebar-main-title">
-                                <div>
-                                    <h6>Pinned</h6>
+                                    <span>Back</span><i class="fa fa-angle-right ps-2" aria-hidden="true"></i>
                                 </div>
                             </li>
                             <li class="sidebar-main-title">
                             </li>
                             <!-- Dashboard -->
                             <li class="sidebar-list">
-                                <i class="fa fa-thumb-tack"></i>
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="Home" asp-action="Index">
-                                    <i class="fa fa-home"
-                                        style="color: white; font-size: 20px; padding-right: 6px;"></i>
+                                    <i class="fa fa-home"></i>
                                     <span class="lan-3">Dashboard</span>
                                 </a>
                             </li>
-                            <!-- > Account Management -->
+                            <!-- Account Management -->
                             <li class="sidebar-list">
-                                <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav"
-                                    asp-controller="UserManagement" asp-action="Index">
-                                    <i class="fa fa-user"
-                                        style="color: white; font-size: 20px; padding-right: 10px;"></i>
-                                    <span>Account Management</span></a>
-                            </li>
-                            <!-- > Admin Management -->
-                            <li class="sidebar-list" id="adminManagementMenu"><i class="fa fa-thumb-tack"></i><a
-                                    class="sidebar-link sidebar-title link-nav" asp-controller="Admin"
+                                <a class="sidebar-link sidebar-title link-nav" asp-controller="UserManagement"
                                     asp-action="Index">
-                                    <i class="fa fa-user-secret"
-                                        style="color: white; font-size: 20px; padding-right: 7px;"></i>
-                                    <span>Admin Management</span></a></li>
-                            <!-- > Destination Management -->
-                            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
-                                    class="sidebar-link sidebar-title link-nav"
-                                    asp-controller="TouristDestinationManagement" asp-action="Index">
-                                    <i class="fa fa-globe"
-                                        style="color: white; font-size: 18px; padding-right: 8px;"></i>
-                                    <span>Destination Management</span></a></li>
-                            <!-- > Ocop Product -->
+                                    <i class="fa fa-user"></i>
+                                    <span>Account Management</span>
+                                </a>
+                            </li>
+                            <!-- Admin Management -->
+                            <li class="sidebar-list" id="adminManagementMenu">
+                                <a class="sidebar-link sidebar-title link-nav" asp-controller="Admin"
+                                    asp-action="Index">
+                                    <i class="fa fa-user-secret"></i>
+                                    <span>Admin Management</span>
+                                </a>
+                            </li>
+                            <!-- Destination Management -->
                             <li class="sidebar-list">
-                                <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav"
-                                    asp-controller="OcopProduct" asp-action="Index">
-                                    <i class="fa fa-shopping-bag"
-                                       style="color: white; font-size: 18px; padding-right: 10px;"></i>
+                                <a class="sidebar-link sidebar-title link-nav"
+                                    asp-controller="TouristDestinationManagement" asp-action="Index">
+                                    <i class="fa fa-globe"></i>
+                                    <span>Destination</span>
+                                </a>
+                            </li>
+                            <!-- Ocop Product -->
+                            <li class="sidebar-list">
+                                <a class="sidebar-link sidebar-title link-nav" asp-controller="OcopProduct"
+                                    asp-action="Index">
+                                    <i class="fa fa-shopping-bag"></i>
                                     <span>Ocop Product</span>
                                 </a>
                             </li>
-                            <!-- > Ocop Type -->
+                            <!-- Ocop Type -->
                             <li class="sidebar-list">
-                                <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" asp-controller="OcopType" asp-action="Index">
-                                    <i class="fa fa-suitcase"
-                                       style="color: white; font-size: 18px; padding-right: 10px;"></i>
+                                <a class="sidebar-link sidebar-title link-nav" asp-controller="OcopType"
+                                    asp-action="Index">
+                                    <i class="fa fa-suitcase"></i>
                                     <span>Ocop Type</span>
                                 </a>
                             </li>
-                            <!-- > Local Specialties Management -->
+                            <!-- Local Specialties Management -->
                             <li class="sidebar-list">
-                                <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav"
-                                    asp-controller="LocalSpecialties" asp-action="Index">
-                                    <i class="fa fa-cutlery"
-                                        style="color: white; font-size: 16px; padding-right: 10px;"></i>
+                                <a class="sidebar-link sidebar-title link-nav" asp-controller="LocalSpecialties"
+                                    asp-action="Index">
+                                    <i class="fa fa-cutlery"></i>
                                     <span>Local Specialties</span>
                                 </a>
                             </li>
-                            <!-- > Event and festival Management -->
-                            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
-                                    class="sidebar-link sidebar-title link-nav"
+                            <!-- Event and Festival Management -->
+                            <li class="sidebar-list">
+                                <a class="sidebar-link sidebar-title link-nav"
                                     asp-controller="EventAndFestivalManagement" asp-action="Index">
-                                    <i class="fa fa-calendar"
-                                        style="color: white; font-size: 16px; padding-right: 8px;"></i>
-                                    <span>Event And Festival</span></a></li>
-                            <!-- > Tips Managment -->
-                            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
-                                    class="sidebar-link sidebar-title link-nav" asp-controller="CommunityTips"
+                                    <i class="fa fa-calendar"></i>
+                                    <span>Event And Festival</span>
+                                </a>
+                            </li>
+                            <!-- Tips Management -->
+                            <li class="sidebar-list">
+                                <a class="sidebar-link sidebar-title link-nav" asp-controller="CommunityTips"
                                     asp-action="Index">
-                                    <i class="fa fa-lightbulb-o"
-                                        style="color: white; font-size: 20px; padding-right: 13px;"></i>
+                                    <i class="fa fa-lightbulb-o"></i>
                                     <span>Tips Managment</span>
                                 </a>
                             </li>
-                            <!-- > Send Notifications -->
-                            <li class="sidebar-list"><i class="fa fa-thumb-tack"></i><a
-                                    class="sidebar-link sidebar-title link-nav" asp-controller="Notifications"
-                                    asp-action="Index">
-                                    <i class="fa fa-bell"
-                                        style="color: white; font-size: 16px; padding-right: 8px;"></i>
-                                    <span>Send Notifications</span></a></li>
-                            <!-- > Maker Managment -->
+                            <!-- Send Notifications -->
                             <li class="sidebar-list">
-                                <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="">
-                                    <i class="fa fa-map-marker"
-                                        style="color: white; font-size: 20px; padding-right: 12px;"></i>
+                                <a class="sidebar-link sidebar-title link-nav" asp-controller="Notifications"
+                                    asp-action="Index">
+                                    <i class="fa fa-bell"></i>
+                                    <span>Send Notifications</span>
+                                </a>
+                            </li>
+                            <!-- Maker Management -->
+                            <li class="sidebar-list">
+                                <a class="sidebar-link sidebar-title link-nav" href="">
+                                    <i class="fa fa-map-marker"></i>
                                     <span>Maker Managment</span>
                                 </a>
                             </li>
-                            <!-- > Itineraries Management -->
+                            <!-- Itineraries Management -->
                             <li class="sidebar-list">
-                                <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title link-nav" href="">
-                                    <i class="fa fa-compass"
-                                        style="color: white; font-size: 18px; padding-right: 6px;"></i>
+                                <a class="sidebar-link sidebar-title link-nav" asp-controller="ItineraryPlanManagement"
+                                    asp-action="Index">
+                                    <i class="fa fa-compass"></i>
                                     <span>Itineraries</span>
                                 </a>
                             </li>
-                            <!-- > Content Management -->
+                            <!-- Feedback Management -->
                             <li class="sidebar-list">
-                                <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
-                                    <i class="fa fa-globe"
-                                        style="color: white; font-size: 18px; padding-right: 8px;"></i>
+                                <a class="sidebar-link sidebar-title link-nav" asp-controller="Feedback"
+                                    asp-action="Index">
+                                    <i class="fa fa-envelope"></i>
+                                    <span>Feedback</span>
+                                </a>
+                            </li>
+                            <!-- Content Management -->
+                            <li class="sidebar-list">
+                                <a class="sidebar-link sidebar-title" href="#">
+                                    <i class="fa fa-globe"></i>
                                     <span>Map Data</span>
                                 </a>
                                 <ul class="sidebar-submenu">
-                                    <li> <a href="">Ocop</a></li>
+                                    <li><a href="">Ocop</a></li>
                                     <li><a href="">Destination</a></li>
                                     <li><a href="">Local specialty</a></li>
                                     <li><a href="">Utilities</a></li>
                                 </ul>
                             </li>
-
-
-                            <!-- > Analytics -->
+                            <!-- Analytics -->
                             <li class="sidebar-list">
-                                <i class="fa fa-thumb-tack"></i><a class="sidebar-link sidebar-title" href="#">
-                                    <i class="fa fa-bar-chart"
-                                        style="color: white; font-size: 14px; padding-right: 8px;"></i>
+                                <a class="sidebar-link sidebar-title" href="#">
+                                    <i class="fa fa-bar-chart"></i>
                                     <span>Analytics</span>
                                 </a>
                                 <ul class="sidebar-submenu">
