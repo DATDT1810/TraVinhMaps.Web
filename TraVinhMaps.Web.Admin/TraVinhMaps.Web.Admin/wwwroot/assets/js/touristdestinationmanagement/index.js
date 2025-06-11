@@ -99,17 +99,14 @@ $(document).ready(function () {
                   </a>`
                 );
                 table.row(row).invalidate().draw(false);
-                showSuccessAlert("Success", response.message);
+                showTimedAlert("Success!", response.message, "success", 2000);
               } else {
-                showErrorAlert("Failed", response.message);
+                showTimedAlert("Failed!", response.message, "error", 2000);
               }
             },
             error: function (xhr) {
-              showErrorAlert(
-                "Error",
-                "An error occurred while banning the destination: " +
-                  (xhr.responseJSON?.message || "Unknown error")
-              );
+                showTimedAlert("Error!", "An error occurred while banning the destination: " +
+                  (xhr.responseJSON?.message || "Unknown error"), "error", 2000);
             },
           });
         }
@@ -125,7 +122,7 @@ $(document).ready(function () {
       showConfirmAlert(
         "Confirmation",
         "Are you sure you want to restore this destination?",
-        "restore",
+        "Restore",
         "Cancel"
       ).then((confirmed) => {
         if (confirmed) {
@@ -138,7 +135,6 @@ $(document).ready(function () {
             },
             success: function (response) {
               if (response.success) {
-                // const row = $(`a[data-id="${destinationId}"]`).closest("tr");
                 const row = $('a[data-id="' + destinationId + '"]').closest("tr");
 
                 row
@@ -156,17 +152,16 @@ $(document).ready(function () {
                 );
 
                 table.row(row).invalidate().draw(false);
-                showSuccessAlert("Success", response.message);
+                showTimedAlert("Success!", response.message, "success", 2000);
+
               } else {
-                showErrorAlert("Failed", response.message);
+                showTimedAlert("Failed!", response.message, "error", 2000);
               }
             },
             error: function (xhr) {
-              showErrorAlert(
-                "Error",
+                showTimedAlert("Error!", "Error",
                 "An error occurred while unbanning the user: " +
-                  (xhr.responseJSON?.message || "Unknown error")
-              );
+                  (xhr.responseJSON?.message || "Unknown error"), "error", 2000);
             },
           });
         }

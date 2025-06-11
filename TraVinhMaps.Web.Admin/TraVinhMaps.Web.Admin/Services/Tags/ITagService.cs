@@ -11,5 +11,6 @@ namespace TraVinhMaps.Web.Admin.Services.Tags
     {
         Task<TagsResponse> GetByIdAsync(string id, CancellationToken cancellationToken = default);
         Task<IEnumerable<TagsResponse>> ListAllAsync(CancellationToken cancellationToken = default);
+        Task<string> GetTagIdByNameAsync(string tagName, CancellationToken cancellationToken = default);
     }
 }

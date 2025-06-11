@@ -42,7 +42,7 @@
                                 </div>
                                 <div class="card-body"><span>@Model.Content</span>
                                 </div>
-                                <div class="card-body"><span>@Model.CreatedAt.ToLocalTime()</span>
+                                <div class="card-body"><span>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span>
                                 </div>
                                 <div class="card-footer">
                                     <a class="btn btn-success float-end" asp-controller="Notifications" asp-action="Index">Back</a>

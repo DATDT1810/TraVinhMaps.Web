@@ -43,7 +43,7 @@
                             <form asp-action="EditLocalSpecialty" method="post" enctype="multipart/form-data"
                                 id="editLocalSpecialtyForm">
                                 @Html.AntiForgeryToken()
-                                <input asp-for="Id" type="hidden" /> 
+                                <input asp-for="Id" type="hidden" />
                                 <div class="row">
                                     <div class="col-md-8">
                                         <div class="mb-3">
@@ -56,10 +56,10 @@
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label asp-for="TagId" class="control-label">Tag</label>
-                                            <select asp-for="TagId" class="form-control" asp-items="ViewBag.Tags"
-                                                required>
+                                            <select asp-for="TagId" class="form-control" asp-items="ViewBag.Tags" disabled>
                                                 <option value="">-- Select a tag --</option>
                                             </select>
+                                            <input type="hidden" asp-for="TagId" />
                                             <span asp-validation-for="TagId" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -100,7 +100,7 @@
             @if (TempData["EditLocalSpecialtyError"] != null)
                 {
                     <text>
-                        showErrorAlert("Error!", "@TempData["EditLocalSpecialtyError"]");
+                        showTimedAlert("Error!", "@TempData["EditLocalSpecialtyError"]", "error", 2000);
                     </text>
             }
     </script>
