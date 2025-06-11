@@ -25,9 +25,9 @@ namespace TraVinhMaps.Web.Admin.Models.TouristDestination
         [Required(ErrorMessage = "Address of destination is required")]
         public string Address { get; set; }
         public string Type { get; set; }
-        [Required(ErrorMessage = "longitude of destination is required")]
+        [Required(ErrorMessage = "Longitude of destination is required")]
         public double longitude { get; set; }
-        [Required(ErrorMessage = "latitude of destination is required")]
+        [Required(ErrorMessage = "Latitude of destination is required")]
         public double latitude { get; set; }
         [MinFilesRequired(1, ErrorMessage = "At least one image file is required.")]
         [AllowedImageExtensions(new[] { ".jpg", ".jpeg", ".png", ".gif" }, ErrorMessage = "Only JPG, JPEG, PNG, and GIF files are allowed.")]

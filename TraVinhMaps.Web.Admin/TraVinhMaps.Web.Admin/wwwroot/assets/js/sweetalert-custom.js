@@ -64,8 +64,24 @@ function showInfoAlert(title = "Information", text = "This is an informational m
     });
 }
 
+// Reuse info alert function with callback
+function showInfoAlert(title, text, confirmButtonText, callback) {
+  Swal.fire({
+    title: title,
+    text: text,
+    icon: "info",
+    confirmButtonText: confirmButtonText,
+    confirmButtonColor: "#17a2b8"
+  }).then((result) => {
+    if (result.isConfirmed && typeof callback === "function") {
+      callback(); 
+    }
+  });
+}
+
+
 // Timed alert (auto-closes after 3 seconds, no buttons)
-function showTimedAlert(title = "Notification", text = "This notification will auto-close after 3 seconds.", icon = "info", timer = 3000) {
+function showTimedAlert(title = "Notification", text = "This notification will auto-close after 3 seconds.", icon = "info", timer = 2000) {
     Swal.fire({
         title: title,
         text: text,

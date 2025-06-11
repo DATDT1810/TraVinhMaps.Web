@@ -73,7 +73,6 @@ namespace TraVinhMaps.Web.Admin.Services.LocalSpecialties
             {
                 FoodName = entity.FoodName,
                 Description = entity.Description,
-                TagId = entity.TagId,
                 Status = true
             };
 
@@ -81,7 +80,6 @@ namespace TraVinhMaps.Web.Admin.Services.LocalSpecialties
             {
                 { new StringContent(createRequest.FoodName), "FoodName" },
                 { new StringContent(createRequest.Description ?? ""), "Description" },
-                { new StringContent(createRequest.TagId), "TagId" },
                 { new StringContent(createRequest.Status.ToString()), "Status" }
             };
 
@@ -124,7 +122,7 @@ namespace TraVinhMaps.Web.Admin.Services.LocalSpecialties
                         {
                             Name = loc.Name,
                             Address = loc.Address,
-                            MarkerId = loc.MarkerId,
+                            // MarkerId = loc.MarkerId,
                             Location = new LocationRequest
                             {
                                 Type = "Point",

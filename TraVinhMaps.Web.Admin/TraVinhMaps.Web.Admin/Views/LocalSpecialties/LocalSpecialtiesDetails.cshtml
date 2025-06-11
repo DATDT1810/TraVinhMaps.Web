@@ -142,7 +142,6 @@
                                                             data-location-id="@item.LocationId"
                                                             data-name="@item.Name"
                                                             data-address="@item.Address"
-                                                            data-marker-id="@item.MarkerId"
                                                             data-type="@(item.Location?.Type ?? "Point")"
                                                             data-longitude="@(item.Location?.Coordinates?.FirstOrDefault() ?? 0)"
                                                             data-latitude="@(item.Location?.Coordinates?.Skip(1).FirstOrDefault() ?? 0)">
@@ -239,12 +238,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Marker Type</label>
-                        <select name="MarkerId" class="form-select" required>
-                            <option value="">Select marker type</option>
-                            <option value="682449f7d14510b9c087c2a3">Religious Buildings</option>
-                            <option value="682449f7d14510b9c087c2a4">Natural Destination</option>
-                        </select>
-                        <span class="text-danger field-validation-valid" data-valmsg-for="MarkerId" data-valmsg-replace="true"></span>
+                        <input type="text" class="form-control" value="@(ViewBag.SellLocationMarker?.Name ?? "Sell Location")" readonly />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Location Type</label>
@@ -296,12 +290,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Marker Type</label>
-                        <select name="MarkerId" id="editMarkerId" class="form-select" required>
-                            <option value="">Select marker type</option>
-                            <option value="682449f7d14510b9c087c2a3">Religious Buildings</option>
-                            <option value="682449f7d14510b9c087c2a4">Natural Destination</option>
-                        </select>
-                        <span class="text-danger field-validation-valid" data-valmsg-for="MarkerId" data-valmsg-replace="true"></span>
+                        <input type="text" class="form-control" value="@(ViewBag.SellLocationMarker?.Name ?? "Sell Location")" readonly />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Location Type</label>

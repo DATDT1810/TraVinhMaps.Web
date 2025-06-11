@@ -44,11 +44,11 @@
                                 <table class="product-page-width">
                                     <tbody>
                                         <tr>
-                                            <td> <b>Duration &nbsp;&nbsp;&nbsp;:</b></td>
+                                            <td> <b>Duration:</b></td>
                                             <td>@Model.Duration</td>
                                         </tr>
                                         <tr>
-                                            <td> <b>Estimate Cost &nbsp;&nbsp;&nbsp;:</b></td>
+                                            <td> <b>Estimate Cost:</b>&nbsp;</td>
                                             <td>@Model.EstimatedCost</td>
                                         </tr>
                                     </tbody>
@@ -59,12 +59,12 @@
                                 <table class="product-page-width">
                                     <tbody>
                                         <tr>
-                                            <td> <b>Update Date &nbsp;&nbsp;&nbsp;:</b></td>
-                                            <td>@Model.UpdateAt</td>
+                                            <td> <b>Update At:</b></td>
+                                            <td>@(Model.UpdateAt != null ? Model.UpdateAt.Value.ToString("dd/MM/yyyy HH:mm") : "No update")</td>
                                         </tr>
                                         <tr>
-                                            <td> <b>Creation Date &nbsp;&nbsp;&nbsp;:</b></td>
-                                            <td>@Model.CreatedAt</td>
+                                            <td> <b>Creation At:</b>&nbsp;</td>
+                                            <td>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
                                         </tr>
                                     </tbody>
                                 </table>

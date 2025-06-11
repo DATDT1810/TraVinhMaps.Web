@@ -17,9 +17,6 @@ namespace TraVinhMaps.Web.Admin.Models.LocalSpecialties
         [Required(ErrorMessage = "Address is required.")]
         public string Address { get; set; }
 
-        [Required(ErrorMessage = "Marker type is required.")]
-        public string MarkerId { get; set; }
-
         public string Type { get; set; } = "point"; // Default to "Point"
 
         [Range(-180, 180, ErrorMessage = "Longitude must be between -180 and 180.")]
