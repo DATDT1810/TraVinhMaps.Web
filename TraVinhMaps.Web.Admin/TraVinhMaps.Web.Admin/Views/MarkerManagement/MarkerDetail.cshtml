@@ -57,12 +57,9 @@
                 </div>
                 <div class="col-6">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index-2.html">
-                                <svg class="stroke-icon">
-                                    <use
-                                        href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#stroke-home">
-                                    </use>
-                                </svg></a></li>
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home" style="font-size: 20px;"></i>
+                            </a></li>
                         <li class="breadcrumb-item"><a asp-action="Index">Management marker</a></li>
                         <li class="breadcrumb-item active">marker detail</li>
                     </ol>
@@ -109,8 +106,8 @@
                                         <div class="item add-image-box" id="addImageBox">
                                             <div>
                                                 <div class="upload-placeholder">+</div>
-                                                <input name="markerImage" hidden type="file" accept="image/*" id="uploadImageInput"
-                                                    onchange="" />
+                                                <input name="markerImage" hidden type="file" accept="image/*"
+                                                    id="uploadImageInput" onchange="" />
                                             </div>
                                         </div>
 
@@ -207,18 +204,17 @@
 
             // Hiển thị thông báo thành công hoặc lỗi nếu có TempData
             @if (TempData["successMessage"] != null)
-            {
-                <text>
-                    showSuccessAlert("Success!", "@TempData["successMessage"]");
-                </text>
+                {
+                    <text>
+                        showSuccessAlert("Success!", "@TempData["successMessage"]");
+                    </text>
             }
-            @if (TempData["errorMessage"] != null)
-            {
-                <text>
-                    showErrorAlert("Error!", "@TempData["errorMessage"]");
-                </text>
+                @if (TempData["errorMessage"] != null)
+                {
+                    <text>
+                        showErrorAlert("Error!", "@TempData["errorMessage"]");
+                    </text>
             }
-        });
+            });
     </script>
 }
-

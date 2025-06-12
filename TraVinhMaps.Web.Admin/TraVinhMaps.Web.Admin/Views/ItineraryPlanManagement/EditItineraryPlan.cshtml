@@ -85,12 +85,16 @@
         $(document).ready(function () {
             @if (TempData["successMessage"] != null)
                 {
-                    <text>showSuccessAlert("Success!", "@TempData["successMessage"]");</text>
+                    <text>s
+                        showTimedAlert("Success!", "@TempData["successMessage"]", "success", 2000);
+                    </text>
             }
                 @if (TempData["errorMessage"] != null)
                 {
-                    <text>showErrorAlert("Error!", "@TempData["errorMessage"]");</text>
+                    <text>
+                        showTimedAlert("Error!", "@TempData["errorMessage"]", "error", 2000);
+                    </text>
             }
-                });
+                    });
     </script>
 }
