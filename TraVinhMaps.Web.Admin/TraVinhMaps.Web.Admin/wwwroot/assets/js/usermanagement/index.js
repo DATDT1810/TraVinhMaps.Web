@@ -19,6 +19,16 @@ $(document).ready(function () {
     ],
   });
 
+   /* ========== Vẽ lại số thứ tự No. ========== */
+    table.on('order.dt search.dt draw.dt', function () {
+    let i = 1;
+    table
+      .cells(null, 0, { search: 'applied', order: 'applied' })
+      .every(function () {
+        this.data(i++);
+      });
+  }).draw();
+
   /* ========== 2. BỘ LỌC THEO COMBOBOX ========== */
   $("#statusFilter").on("change", () => table.draw());
 
@@ -86,9 +96,9 @@ $(document).ready(function () {
 
             // Cập nhật trạng thái sang Inactive
             updateRow(row, false);
-            showTimedAlert("Success!", message, "success", 3000);
+            showTimedAlert("Success!", message, "success", 2000);
           } else {
-            showTimedAlert("Failed!", message, "error", 3000);
+            showTimedAlert("Failed!", message, "error", 2000);
           }
         },
         error: (xhr) => {
@@ -140,9 +150,9 @@ $(document).ready(function () {
 
             // Cập nhật trạng thái sang Active
             updateRow(row, true);
-            showTimedAlert("Success!", message, "success", 3000);
+            showTimedAlert("Success!", message, "success", 2000);
           } else {
-            showTimedAlert("Failed!", message, "error", 3000);
+            showTimedAlert("Failed!", message, "error", 2000);
           }
         },
         error: (xhr) => {
@@ -156,3 +166,154 @@ $(document).ready(function () {
     });
   });
 });
+
+// Handle Excel export
+$("#exportBtn").on("click", function () {
+  showInfoAlert("Exporting Data", "Retrieving all user data for export...", "OK", exportTableToExcel);
+});
+
+// Get session ID from page
+const sessionId = "@sessionId";
+
+// Function to export table data to Excel
+function exportTableToExcel() {
+  // Fetch all user data directly from the API
+  $.ajax({
+    url: "https://localhost:7162/api/Users/all",
+    type: "GET",
+    headers: {
+      sessionId: sessionId,
+    },
+    success: function (response) {
+      if (response && response.length > 0) {
+        // Create a workbook
+        const wb = XLSX.utils.book_new();
+
+        // Create header row with all fields and separate profile fields
+        const headerRow = [
+          "#",
+          "User ID",
+          "Username",
+          "Email",
+          "Phone Number",
+          "Role ID",
+          "Status",
+          "Is Forbidden",
+          "Created At",
+          "Updated At",
+          "Password Hash",
+          // Profile fields as separate columns
+          "Full Name",
+          "Date of Birth",
+          "Profile Phone",
+          "Gender",
+          "Address",
+          "Avatar URL",
+          // Other data
+          "Favorites",
+        ];
+
+        const data = [headerRow];
+
+        // Process the data from the API
+        response.forEach((user, index) => {
+          // Format favorites if exists
+          let favoritesData = "—";
+          if (user.favorites && user.favorites.length > 0) {
+            try {
+              favoritesData = JSON.stringify(user.favorites);
+            } catch (e) {
+              favoritesData = "Invalid favorites data";
+            }
+          }
+
+          // Extract profile data
+          const profile = user.profile || {};
+
+          const rowData = [
+            (index + 1).toString(),
+            user.id || "—",
+            user.username || "—",
+            user.email || "—",
+            user.phoneNumber || "—",
+            user.roleId || "—",
+            user.status ? "Active" : "Inactive",
+            user.isForbidden ? "Yes" : "No",
+            user.createdAt ? new Date(user.createdAt).toLocaleString() : "—",
+            user.updatedAt ? new Date(user.updatedAt).toLocaleString() : "—",
+            user.password || "—",
+            // Profile fields as separate values
+            profile.fullName || "—",
+            profile.dateOfBirth || "—",
+            profile.phoneNumber || "—",
+            profile.gender || "—",
+            profile.address || "—",
+            profile.avatar || "—",
+            // Other data
+            favoritesData,
+          ];
+          data.push(rowData);
+        });
+
+        // Create worksheet from data
+        const ws = XLSX.utils.aoa_to_sheet(data);
+
+        // Set column widths for better readability
+        ws["!cols"] = [
+          { wch: 5 }, // #
+          { wch: 25 }, // User ID
+          { wch: 20 }, // Username
+          { wch: 30 }, // Email
+          { wch: 15 }, // Phone
+          { wch: 25 }, // Role ID
+          { wch: 10 }, // Status
+          { wch: 12 }, // Is Forbidden
+          { wch: 20 }, // Created At
+          { wch: 20 }, // Updated At
+          { wch: 70 }, // Password Hash
+          // Profile field widths
+          { wch: 25 }, // Full Name
+          { wch: 15 }, // Date of Birth
+          { wch: 15 }, // Profile Phone
+          { wch: 10 }, // Gender
+          { wch: 50 }, // Address
+          { wch: 70 }, // Avatar URL
+          // Other data
+          { wch: 50 }, // Favorites
+        ];
+
+        // Add the worksheet to the workbook
+        XLSX.utils.book_append_sheet(wb, ws, "User List");
+
+        // Generate Excel file and trigger download
+        const today = new Date().toISOString().slice(0, 10);
+        const fileName = `user_list_${today}.xlsx`;
+        XLSX.writeFile(wb, fileName);
+
+        showTimedAlert(
+          "Export Successful!",
+          `${response.length} items have been exported to Excel.`,
+          "success",
+          2000
+        );
+      } else {
+        showTimedAlert(
+          "Export Error!",
+          "No user data available for export.",
+          "error",
+          2000
+        );
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("Error fetching user data:", error);
+      showTimedAlert(
+        "Export Error!",
+        "Could not retrieve user data. Please check your connection or permissions.",
+        "error",
+        2000
+      );
+    },
+  });
+}
+

@@ -269,13 +269,13 @@
                                     <li>
                                         <div class="media-body">
                                             <h6>Start date:</h6>
-                                            <p>@Model.StartDate.ToLocalTime().ToString("MM/dd/yyyy")</p>
+                                            <p>@Model.StartDate.ToLocalTime().ToString("dd/MM/yy, HH:mm")</p>
                                         </div>
                                     </li>
                                     <li>
                                         <div class="media-body">
                                             <h6>End date:</h6>
-                                            <p>@Model.EndDate.ToLocalTime().ToString("MM/dd/yyyy")</p>
+                                            <p>@Model.EndDate.ToLocalTime().ToString("dd/MM/yy, HH:mm")</p>
                                         </div>
                                     </li>
                                 </ul>
@@ -304,7 +304,7 @@
                     <div class="tab-content" id="top-tabContent">
                         <div class="tab-pane fade active show" id="top-home" role="tabpanel"
                             aria-labelledby="top-home-tab">
-                            <p class="mb-0 m-t-20">@(Model.Description??"No description available.")</p>
+                            <p class="mb-0 m-t-20"> @Html.Raw(Model.Description ?? "<p>No description available.</p>")</p>
                         </div>
                     </div>
                 </div>
@@ -350,19 +350,20 @@
             @if (TempData["EditEventAndFestivalSuccess"] != null)
             {
                 <text>
-                    showSuccessAlert("Success!", "@TempData["EditEventAndFestivalSuccess"]");
+                    showTimedAlert("Success!", "@TempData["EditEventAndFestivalSuccess"]", "success", 2000);
                 </text>
             }
             @if (TempData["successMessage"] != null)
             {
                 <text>
-                    showSuccessAlert("Success!", "@TempData["successMessage"]");
+                    showTimedAlert("Success!", "@TempData["successMessage"]", "success", 2000);
+
                 </text>
             }
             @if (TempData["errorMessage"] != null)
             {
                 <text>
-                    showErrorAlert("Success!", "@TempData["errorMessage"]");
+                    showTimedAlert("Error!", "@TempData["errorMessage"]", "error", 2000);
                 </text>
             }
         });

@@ -1,8 +1,9 @@
+@using TraVinhMaps.Web.Admin.Helper
 @using TraVinhMaps.Web.Admin.Models.TouristDestination;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
 @model IEnumerable<TouristDestinationResponse>
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Destination List";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -50,7 +51,7 @@
                             </div>
                             <div class="status-filter">
                                 <select id="statusFilter" class="form-select">
-                                    <option value="active">All</option>
+                                    <option value="active">Active</option>
                                     <option value="inactive">Inactive</option>
                                 </select>
                             </div>
@@ -61,8 +62,8 @@
                                     <tr>
                                         <th>No.</th>
                                         <th>Name Of Destination</th>
-                                        <th style="width: 150px;">AvarageRating</th>
-                                        <th style="width: 100px;">Favorite</th>
+                                        <th>AvarageRating</th>
+                                        <th>Favorite</th>
                                         <th>Status</th>
                                         <th>Created At</th>
                                         <th>Action</th>
@@ -74,18 +75,18 @@
                                     }
                                     @foreach (var item in Model)
                                     {
-                                        <tr class="user-removes">
+                                        <tr class="destination">
                                             <td>@count</td>
                                             <td>
                                                 <div class="product-names">
                                                     <div class="light-product-box"><img class="img-fluid"
-                                                            src="@item.Images.First()" alt="avatar">
+                                                            src="@item.Images.First()" alt="image">
                                                     </div>
-                                                    <p>@item.Name</p>
+                                                    <p>@Html.TruncateWords(item.Name, 10)</p>
                                                 </div>
                                             </td>
-                                            <td>@item.AvarageRating</td>
-                                            <td>@item.FavoriteCount</td>
+                                            <td class="text-end">@item.AvarageRating</td>
+                                            <td class="text-end">@item.FavoriteCount</td>
                                             <td><span
                                                     class="badge @(item.status ? "badge-light-primary" : "badge-light-danger")">@(item.status
                                                                                                     ? "Active" : "Inactive")</span></td>

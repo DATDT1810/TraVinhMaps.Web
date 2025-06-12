@@ -1,7 +1,7 @@
 @using TraVinhMaps.Web.Admin.Models.CommunityTips
 @model CommunityTipsResponse
 @{
-    ViewData["Title"] = "CommunityTipsDetails";
+    ViewData["Title"] = "Community Tips Details";
 }
 
 <div class="page-body">
@@ -56,7 +56,7 @@
                                     </div>
                                     <div class="col-md-3 mt-3 mb-3">
                                         <label class="form-label">Update At</label>
-                                        <input class="form-control" value="@Model.UpdateAt " readonly>
+                                        <input class="form-control" value="@(Model.UpdateAt?.ToLocalTime().ToString("dd/MM/yy, HH:mm") ?? "No update")" readonly>
                                     </div>
                                 </div>
                             </div>

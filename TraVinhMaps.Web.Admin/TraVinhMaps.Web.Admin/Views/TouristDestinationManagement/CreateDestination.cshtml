@@ -70,12 +70,8 @@
                 </div>
                 <div class="col-6">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index-2.html">
-                                <svg class="stroke-icon">
-                                    <use
-                                        href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#stroke-home">
-                                    </use>
-                                </svg></a></li>
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
+                                    style="font-size: 20px;"></i></a></li>
                         <li class="breadcrumb-item"><a asp-action="Index">Management Destination</a></li>
                         <li class="breadcrumb-item active">Destination Create form</li>
                     </ol>
@@ -277,7 +273,6 @@
 </div>
 
 @section Scripts {
-    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
     @Html.AntiForgeryToken()
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

@@ -193,165 +193,221 @@ $(document).ready(function () {
   });
 });
 
-
 $(document).ready(function () {
-    // Populate Edit Location Modal
-    $(".edit-location-btn").on("click", function () {
-        var button = $(this);
-        console.log("Button Data:", button.data());
-        $("#editId").val(button.data("id") || "");
-        $("#editLocationId").val(button.data("location-id") || "");
-        $("#editName").val(button.data("name") || "");
-        $("#editAddress").val(button.data("address") || "");
-        $("#editMarkerId").val(button.data("marker-id") || "");
-        $("#editType").val(button.data("type") || "Point");
-        $("#editLongitude").val(button.data("longitude") || 0);
-        $("#editLatitude").val(button.data("latitude") || 0);
-    });
+  // Populate Edit Location Modal
+  $(".edit-location-btn").on("click", function () {
+    var button = $(this);
+    console.log("Button Data:", button.data());
+    $("#editId").val(button.data("id") || "");
+    $("#editLocationId").val(button.data("location-id") || "");
+    $("#editName").val(button.data("name") || "");
+    $("#editAddress").val(button.data("address") || "");
+    $("#editType").val(button.data("type") || "Point");
+    $("#editLongitude").val(button.data("longitude") || 0);
+    $("#editLatitude").val(button.data("latitude") || 0);
+  });
 
-    // Handle Edit Location Form Submission
-    $("#editLocationForm").on("submit", function (e) {
-        e.preventDefault();
-        var form = $(this);
-        var token = $('input[name="__RequestVerificationToken"]').val();
-        var formData = form.serialize();
-        console.log("Form Data:", formData);
-        console.log("CSRF Token:", token);
+  // Handle Edit Location Form Submission
+  $("#editLocationForm").on("submit", function (e) {
+    e.preventDefault();
+    var form = $(this);
+    var token = $('input[name="__RequestVerificationToken"]').val();
+    var formData = form.serialize();
+    console.log("Form Data:", formData);
+    console.log("CSRF Token:", token);
 
-        $.ajax({
-            url: "/LocalSpecialties/UpdateSellLocation",
-            type: "POST",
-            data: formData,
-            headers: {
-                "X-CSRF-TOKEN": token
-            },
-            success: function (response) {
-                console.log("AJAX Success Response:", response);
-                if (response.success) {
-                    showTimedAlert("Success!", response.message || "Location updated successfully!", "success", 2000);
-                    $("#editLocationModal").modal("hide");
+    $.ajax({
+      url: "/LocalSpecialties/UpdateSellLocation",
+      type: "POST",
+      data: formData,
+      headers: {
+        "X-CSRF-TOKEN": token,
+      },
+      success: function (response) {
+        console.log("AJAX Success Response:", response);
+        if (response.success) {
+          showTimedAlert(
+            "Success!",
+            response.message || "Location updated successfully!",
+            "success",
+            2000
+          );
+          $("#editLocationModal").modal("hide");
 
-                    // Load ngầm dữ liệu mới từ server
-                    var localSpecialtyId = $("#editId").val();
-                    $.ajax({
-                        url: `/LocalSpecialties/Details/${localSpecialtyId}`,
-                        type: "GET",
-                        success: function (data) {
-                            console.log("Reload Data:", data);
-                            // Cập nhật phần danh sách địa điểm
-                            var newLocationList = $(data).find("#locationList").html();
-                            $("#locationList").html(newLocationList);
-                        },
-                        error: function (xhr, status, error) {
-                            console.log("Reload Error:", xhr.responseText);
-                            showTimedAlert("Error!", "Failed to reload location data.", "error", 2000);
-                        }
-                    });
-                } else {
-                    showTimedAlert("Error!", response.message || "Failed to update location.", "error", 2000);
-                }
+          // Load ngầm dữ liệu mới từ server
+          var localSpecialtyId = $("#editId").val();
+          $.ajax({
+            url: `/LocalSpecialties/Details/${localSpecialtyId}`,
+            type: "GET",
+            success: function (data) {
+              console.log("Reload Data:", data);
+              // Cập nhật phần danh sách địa điểm
+              var newLocationList = $(data).find("#locationList").html();
+              $("#locationList").html(newLocationList);
             },
             error: function (xhr, status, error) {
-                console.log("AJAX Error:", xhr.responseJSON || xhr.responseText);
-                var errorMessage = xhr.responseJSON?.message || "An error occurred while updating the location.";
-                showTimedAlert("Error!", errorMessage, "error", 2000);
-            }
-        });
+              console.log("Reload Error:", xhr.responseText);
+              showTimedAlert(
+                "Error!",
+                "Failed to reload location data.",
+                "error",
+                2000
+              );
+            },
+          });
+        } else {
+          showTimedAlert(
+            "Error!",
+            response.message || "Failed to update location.",
+            "error",
+            2000
+          );
+        }
+      },
+      error: function (xhr, status, error) {
+        console.log("AJAX Error:", xhr.responseJSON || xhr.responseText);
+        var errorMessage =
+          xhr.responseJSON?.message ||
+          "An error occurred while updating the location.";
+        showTimedAlert("Error!", errorMessage, "error", 2000);
+      },
     });
+  });
 });
-// Add Sell location
+
+// Add Sell Location
 $(document).ready(function () {
-    // Handle Add Location Form Submission
-    $("#addLocationForm").on("submit", function (e) {
-        e.preventDefault();
-        var form = $(this);
-        var token = $('input[name="__RequestVerificationToken"]').val();
-        var formData = form.serialize();
-        console.log("Add Location Form Data:", formData);
-        console.log("CSRF Token:", token);
+  // Handle Add Location Form Submission
+  $("#addLocationForm").on("submit", function (e) {
+    e.preventDefault();
+    var form = $(this);
+    var token = $('input[name="__RequestVerificationToken"]').val();
+    var formData = form.serialize();
+    console.log("Add Location Form Data:", formData);
+    console.log("CSRF Token:", token);
 
-        $.ajax({
-            url: "/LocalSpecialties/CreatePointOfSell",
-            type: "POST",
-            data: formData,
-            headers: {
-                "X-CSRF-TOKEN": token
-            },
-            success: function (response) {
-                console.log("AJAX Success Response:", response);
-                if (response.success) {
-                    showTimedAlert("Success!", response.message || "Location added successfully!", "success", 2000);
-                    $("#addLocationModal").modal("hide");
+    $.ajax({
+      url: "/LocalSpecialties/CreatePointOfSell",
+      type: "POST",
+      data: formData,
+      headers: {
+        "X-CSRF-TOKEN": token,
+      },
+      success: function (response) {
+        console.log("AJAX Success Response:", response);
+        if (response.success) {
+          showTimedAlert(
+            "Success!",
+            response.message || "Location added successfully!",
+            "success",
+            2000
+          );
+          $("#addLocationModal").modal("hide");
 
-                    // Load ngầm dữ liệu mới từ server
-                    var localSpecialtyId = form.find('input[name="Id"]').val();
-                    $.ajax({
-                        url: `/LocalSpecialties/Details/${localSpecialtyId}`,
-                        type: "GET",
-                        success: function (data) {
-                            console.log("Reload Data:", data);
-                            // Cập nhật phần danh sách địa điểm
-                            var newLocationList = $(data).find("#locationList").html();
-                            $("#locationList").html(newLocationList);
-                            // Reset form
-                            form[0].reset();
-                        },
-                        error: function (xhr, status, error) {
-                            console.log("Reload Error:", xhr.responseText);
-                            showTimedAlert("Error!", "Failed to reload location data.", "error", 2000);
-                        }
-                    });
-                } else {
-                    showTimedAlert("Error!", response.message || "Failed to add location.", "error", 2000);
-                }
+          // Load ngầm dữ liệu mới từ server
+          var localSpecialtyId = form.find('input[name="Id"]').val();
+          $.ajax({
+            url: `/LocalSpecialties/Details/${localSpecialtyId}`,
+            type: "GET",
+            success: function (data) {
+              console.log("Reload Data:", data);
+              // Cập nhật phần danh sách địa điểm
+              var newLocationList = $(data).find("#locationList").html();
+              $("#locationList").html(newLocationList);
+              // Reset form
+              form[0].reset();
             },
             error: function (xhr, status, error) {
-                console.log("AJAX Error:", xhr.responseJSON || xhr.responseText);
-                var errorMessage = xhr.responseJSON?.message || "An error occurred while adding the location.";
-                showTimedAlert("Error!", errorMessage, "error", 2000);
-            }
-        });
+              console.log("Reload Error:", xhr.responseText);
+              showTimedAlert(
+                "Error!",
+                "Failed to reload location data.",
+                "error",
+                2000
+              );
+            },
+          });
+        } else {
+          showTimedAlert(
+            "Error!",
+            response.message || "Failed to add location.",
+            "error",
+            2000
+          );
+        }
+      },
+      error: function (xhr, status, error) {
+        console.log("AJAX Error:", xhr.responseJSON || xhr.responseText);
+        var errorMessage =
+          xhr.responseJSON?.message ||
+          "An error occurred while adding the location.";
+        showTimedAlert("Error!", errorMessage, "error", 2000);
+      },
     });
+  });
 });
 
 // Delete Sell Location
 $(document).ready(function () {
-  $(".delete-sell-location").on("click", function () {
+  // Use event delegation for dynamically loaded elements
+  $(document).on("click", ".delete-sell-location", function () {
+    console.log("Delete button clicked!");
     var button = $(this);
     var productId = button.data("product-id");
     var locationId = button.data("location-id");
     var locationName = button.data("location-name");
+    var token = $('input[name="__RequestVerificationToken"]').val();
 
-    Swal.fire({
-      title: "Are you sure?",
-      text: `Do you want to delete the location "${locationName}"?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
-      cancelButtonText: "No, cancel!",
-      reverseButtons: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
+    showConfirmAlert(
+      "Confirm Deletion",
+      `Do you want to delete the location "${locationName}"?`,
+      "Delete",
+      "Cancel"
+    ).then((confirmed) => {
+      if (confirmed) {
         $.ajax({
           url: `/LocalSpecialties/DeleteSellLocation/${productId}/${locationId}`,
           type: "DELETE",
           headers: {
-            RequestVerificationToken: $(
-              'input[name="__RequestVerificationToken"]'
-            ).val(),
+            RequestVerificationToken: token,
           },
           success: function (response) {
             if (response.success) {
-              showTimedAlert("Deleted!", "The location has been deleted.", "success", 2000).then(() => {
-                button.closest('div[style*="flex"]').remove();
-              });
+              // Remove the deleted location from the DOM
+              $(`div[data-location-id="${locationId}"]`).remove();
+
+              // Check if there are any locations left
+              if ($("#locationList").children().length === 0) {
+                $("#locationList").html(`
+                                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                <div>
+                                                    <b>No Location Name.</b><br />
+                                                    <span>No Location Address.</span>
+                                                </div>
+                                            </div>
+                                        `);
+              }
+
+              showTimedAlert(
+                "Success!",
+                "Location deleted successfully!",
+                "success",
+                2000
+              );
             } else {
-              showTimedAlert("Error!", response.message || "Failed to delete the location.", "error", 2000);
+              showTimedAlert(
+                "Error!",
+                response.message || "Failed to delete location.",
+                "error",
+                2000
+              );
             }
           },
           error: function (xhr, status, error) {
-            showTimedAlert("Error!", "An error occurred while deleting the location: " +
-                (xhr.responseJSON?.message || error), "error", 2000);
+            var errorMessage =
+              xhr.responseJSON?.message ||
+              "An error occurred while deleting the location.";
+            showTimedAlert("Error!", errorMessage, "error", 2000);
           },
         });
       }

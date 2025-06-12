@@ -17,12 +17,7 @@ namespace TraVinhMaps.Web.Admin.Models.LocalSpecialties
         public string Description { get; set; } = default!;
 
         [Required(ErrorMessage = "TagId is required.")]
-        public string TagId { get; set; } = default!;
-
-        // Danh sách địa điểm
         public List<LocationViewModel> Locations { get; set; } = new List<LocationViewModel>();
-
-        // Danh sách hình ảnh
         public List<IFormFile> Images { get; set; } = new List<IFormFile>();
     }
 
@@ -34,8 +29,8 @@ namespace TraVinhMaps.Web.Admin.Models.LocalSpecialties
         [Required(ErrorMessage = "Location address is required.")]
         public string Address { get; set; } = default!;
 
-        [Required(ErrorMessage = "MarkerId is required.")]
-        public string MarkerId { get; set; } = default!;
+        // [Required(ErrorMessage = "MarkerId is required.")]
+        // public string MarkerId { get; set; } = default!;
 
         [Required(ErrorMessage = "Longitude is required.")]
         [Range(-180, 180, ErrorMessage = "Longitude must be between -180 and 180.")]

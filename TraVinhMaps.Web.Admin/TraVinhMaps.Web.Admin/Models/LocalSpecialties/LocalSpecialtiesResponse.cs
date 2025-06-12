@@ -23,7 +23,6 @@ namespace TraVinhMaps.Web.Admin.Models.LocalSpecialties
         public string LocationId { get; set; }
         public required string Name { get; set; }
         public required string Address { get; set; }
-        public required string MarkerId { get; set; }
         public required Location Location { get; set; }
     }
     public class Location

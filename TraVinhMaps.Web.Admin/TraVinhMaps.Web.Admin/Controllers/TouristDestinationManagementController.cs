@@ -85,6 +85,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 ViewBag.error = "Something went wrong, please try again";
                 return View(touristDestinationViewRequest);
             }
+            ViewBag.DestinationTypes = await GetDestinationTypeList();
             return RedirectToAction("Index");
         }
 
@@ -123,6 +124,9 @@ namespace TraVinhMaps.Web.Admin.Controllers
             touristDestinationData.longitude = destinationDetail.Location.Coordinates[0];
             touristDestinationData.latitude = destinationDetail.Location.Coordinates[1];
             touristDestinationData.Type = destinationDetail.Location.Type;
+
+            ViewBag.DestinationTypes = await GetDestinationTypeList();
+
             return View(touristDestinationData);
         }
 
@@ -196,7 +200,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             try
             {
                 await _destinationService.RestoreDestination(id);
-                return Json(new { success = true, message = "destination restore successfully" });
+                return Json(new { success = true, message = "Destination restore successfully" });
             }
             catch (Exception ex)
             {
