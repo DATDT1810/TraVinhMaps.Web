@@ -64,7 +64,7 @@
                                     <div class="col">
                                         <div class="mb-3">
                                             <label>Description</label>
-                                            <textarea asp-for="Description" class="form-control"
+                                            <textarea asp-for="Description" id="Description" class="form-control"
                                                 placeholder="Description of the local specialty" rows="5"></textarea>
                                             <span asp-validation-for="Description" class="text-danger"></span>
                                         </div>
@@ -88,7 +88,7 @@
                                         <span id="imageValidationMessage" class="text-danger"></span>
                                     </div>
                                 </div>
-
+                                <hr>
                                 <!-- Locations -->
                                 <div class="row">
                                     <div class="col">
@@ -227,8 +227,8 @@
     <link rel="stylesheet" href="~/assets/css/LocalSpecialties/details.css">
     <script src="~/assets/js/sweetalert-custom.js"></script>
     <script src="~/assets/js/local-specialties/create.js"></script>
+    <script src="~/assets/js/ckeditor5.js"></script>
     <script>
-
         window.sellLocationMarkerName = "@(ViewBag.SellLocationMarker?.Name ?? "Sell Location")";
         window.locationIndex = @(Model != null && Model.Locations != null ? Model.Locations.Count : 1);
 
@@ -239,18 +239,18 @@
                         showErrorAlert("Error!", "@TempData["CreateLocalSpecialtiesError"]", "error", 2000);
                     </text>
             }
-                            else if (TempData["CreateLocalSpecialtiesError"] != null)
+                                    else if (TempData["CreateLocalSpecialtiesError"] != null)
                 {
                     <text>
                         showErrorAlert("Error!", "@TempData["CreateLocalSpecialtiesError"]", "error", 2000);
                     </text>
             }
-                            else if (TempData["CreateLocalSpecialtiesSuccess"] != null)
+                                    else if (TempData["CreateLocalSpecialtiesSuccess"] != null)
                 {
                     <text>
                         showTimedAlert("Success!", "@TempData["CreateLocalSpecialtiesSuccess"]", "success", 2000);
                     </text>
             }
-                        });
+                                });
     </script>
 }

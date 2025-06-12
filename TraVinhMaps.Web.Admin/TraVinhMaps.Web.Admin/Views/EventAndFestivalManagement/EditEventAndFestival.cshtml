@@ -151,10 +151,6 @@
                                     <div class="col-sm-4">
                                         <div class="mb-3">
                                             <label>Type Location</label>
-                                            @* <select asp-for="Type" class="form-select">
-                                                <option selected value="Point">Point</option>
-                                                <option value="Unknow">Unknow</option>
-                                            </select> *@
                                             <select asp-for="Type" asp-items="ViewBag.TypeLocation"
                                                 class="form-select"></select>
                                         </div>
@@ -220,7 +216,7 @@
                                             <label>Description</label>
                                             <textarea asp-for="Description" class="form-control"
                                                 placeholder="Description of destination"
-                                                id="exampleFormControlTextarea4" rows="10"></textarea>
+                                                id="exampleFormControlTextarea4 Description" rows="7"></textarea>
                                             <span asp-validation-for="Description" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -254,6 +250,8 @@
     <script src="jquery.validate.js"></script>
     <script src="jquery.validate.unobtrusive.js"></script>
     <script src="custom-date-validator.js"></script>
+    <script src="~/assets/js/ckeditor5.js"></script>
+
 
     <script>
         // Custom validator for datenotinpast
@@ -328,6 +326,6 @@
                 {
                     <text>showErrorAlert("Error!", "@TempData["errorMessage"]");</text>
             }
-                        });
+                            });
     </script>
 }

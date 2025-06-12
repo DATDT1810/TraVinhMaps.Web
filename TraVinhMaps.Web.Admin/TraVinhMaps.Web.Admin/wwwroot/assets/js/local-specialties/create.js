@@ -65,7 +65,9 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log("validationMessage:", validationMessage);
 
   if (!addBox || !uploadInput || !imagePreview || !validationMessage) {
-    console.error("One or more elements not found: addImageBox, uploadInput, imagePreview, validationMessage");
+    console.error(
+      "One or more elements not found: addImageBox, uploadInput, imagePreview, validationMessage"
+    );
     return;
   }
 
@@ -105,7 +107,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     if (hasInvalidFormat) {
-      validationMessage.textContent = `Unsupported file format. Allowed formats are: ${allowedExtensions.join(", ")}.`;
+      validationMessage.textContent = `Unsupported file format. Allowed formats are: ${allowedExtensions.join(
+        ", "
+      )}.`;
       uploadInput.value = "";
       console.log("Invalid file format");
       return;
@@ -180,7 +184,9 @@ $(document).ready(function () {
       });
 
       if (hasInvalidFormat) {
-        validationMessage.textContent = `Unsupported file format. Allowed formats are: ${allowedExtensions.join(", ")}.`;
+        validationMessage.textContent = `Unsupported file format. Allowed formats are: ${allowedExtensions.join(
+          ", "
+        )}.`;
         isValid = false;
       }
     }

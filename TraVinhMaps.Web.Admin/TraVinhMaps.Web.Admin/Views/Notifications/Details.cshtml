@@ -3,7 +3,6 @@
 @model NotificationResponse;
 @{
     ViewData["Title"] = "Details";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="page-body">
@@ -40,7 +39,7 @@
                                 <div class="card-header">
                                     <h4>@Model.Title</h4>
                                 </div>
-                                <div class="card-body"><span>@Model.Content</span>
+                                <div class="card-body"><span>@Html.Raw(Model.Content)</span>
                                 </div>
                                 <div class="card-body"><span>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span>
                                 </div>
