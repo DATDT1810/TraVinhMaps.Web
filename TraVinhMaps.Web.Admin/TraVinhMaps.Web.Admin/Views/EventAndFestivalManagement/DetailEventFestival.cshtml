@@ -188,7 +188,9 @@
                             <div class="product-page-details">
                                 <h3>@Model.NameEvent</h3>
                             </div>
-                            <div class="product-price">Tag @Model.TagId
+                            <div style="margin-top: 10px;">
+                                <img class="activity-log-img rounded-circle img-fluid me-2" src="@ViewBag.EventAndFestivalTag.Image" alt="user" style="width: 24px; height: 24px;" />
+                                    @ViewBag.EventAndFestivalTag.Name
                             </div>
 
                             <hr>
@@ -216,6 +218,13 @@
                                         <tr>
                                             <td> <b>longitude/latitude &nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</b></td>
                                             <td>@Model.Location.location.Coordinates[0] ,&nbsp @Model.Location.location.Coordinates[1]
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td> <b>Destination Type :</b></td>
+                                            <td>
+                                                <img class="activity-log-img rounded-circle img-fluid me-2" src="@ViewBag.marker.Image" alt="user" style="width: 24px; height: 24px;" />
+                                                @ViewBag.marker.Name
                                             </td>
                                         </tr>
                                     </tbody>

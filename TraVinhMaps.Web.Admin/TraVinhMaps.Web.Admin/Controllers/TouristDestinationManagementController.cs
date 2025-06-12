@@ -123,17 +123,6 @@ namespace TraVinhMaps.Web.Admin.Controllers
             touristDestinationData.longitude = destinationDetail.Location.Coordinates[0];
             touristDestinationData.latitude = destinationDetail.Location.Coordinates[1];
             touristDestinationData.Type = destinationDetail.Location.Type;
-
-            // ViewBag.DestinationTypes = new List<SelectListItem>
-            // {
-            //     new SelectListItem { Value = "68244abd2b06dbe39f973e8c", Text = "Religious Buildings" },
-            //     new SelectListItem { Value = "d7e5c3e8f2fa4c149b9e3cdd", Text = "Tree" }
-            // };
-            // ViewBag.TypeLocation = new List<SelectListItem>
-            // {
-            //     new SelectListItem { Value = "Point", Text = "Point" },
-            //     new SelectListItem { Value = "Unknow", Text = "Unknow" }
-            // };
             return View(touristDestinationData);
         }
 

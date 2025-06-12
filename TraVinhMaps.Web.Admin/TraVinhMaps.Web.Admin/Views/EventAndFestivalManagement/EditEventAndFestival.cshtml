@@ -89,7 +89,6 @@
                             <form asp-action="EditEventAndFestival" method="post">
                                 <div class="row">
                                     <div class="row">
-                                        <div class="col-md-8">
                                             <div class="mb-3">
                                                 <input readonly hidden asp-for="Id" type="text">
                                                 <label>Event And Festival Title</label>
@@ -97,23 +96,13 @@
                                                     placeholder="Event or festival title">
                                                 <span asp-validation-for="NameEvent" class="text-danger"></span>
                                             </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="mb-3">
-                                                <label>Tag</label>
-                                                <select asp-for="TagId" class="form-select">
-                                                    <option selected value="682449f7d14510b9c087c29b">Introduce</option>
-                                                    <option value="682449f7d14510b9c087c29c">Ocop</option>
-                                                </select>
-                                            </div>
-                                        </div>
                                     </div>
 
                                 </div>
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label>Address Destination</label>
+                                            <label>Address event and festival</label>
                                             <input asp-for="Address" class="form-control" type="text"
                                                 placeholder="Address">
                                             <span asp-validation-for="Address" class="text-danger"></span>
@@ -121,25 +110,15 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-6">
                                         <div class="mb-3">
                                             <label>Name of Location</label>
                                             <input asp-for="Name" class="form-control" type="text"
-                                                placeholder="100k/people">
+                                                placeholder="Location's name">
                                             <span asp-validation-for="Name" class="text-danger"></span>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <div class="mb-3">
-                                            <label>Type Location</label>
-                                            <select asp-for="MarkerId" class="form-select">
-                                                <option selected value="682449f7d14510b9c087c2a3">Buiding Destination
-                                                </option>
-                                                <option value="682449f7d14510b9c087c2a4">Natural Destination</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-6">
                                         <div class="mb-3">
                                             <label>Category</label>
                                             <select asp-for="Category" asp-items="ViewBag.Category"
@@ -151,10 +130,6 @@
                                     <div class="col-sm-4">
                                         <div class="mb-3">
                                             <label>Type Location</label>
-                                            @* <select asp-for="Type" class="form-select">
-                                                <option selected value="Point">Point</option>
-                                                <option value="Unknow">Unknow</option>
-                                            </select> *@
                                             <select asp-for="Type" asp-items="ViewBag.TypeLocation"
                                                 class="form-select"></select>
                                         </div>
@@ -177,17 +152,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-4">
-                                        <div class="mb-3">
-                                            <label>Marker</label>
-                                            <select asp-for="MarkerId" class="form-select">
-                                                <option selected value="682449f7d14510b9c087c2a3">Religious Buildings
-                                                </option>
-                                                <option value="682449f7d14510b9c087c2a4">Natural Destination</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-6">
                                         <div class="mb-3">
                                             <label>Starting date</label>
                                             <input asp-for="StartDate" class="datepicker-here form-control" type="text"
@@ -199,7 +164,7 @@
                                             <span asp-validation-for="StartDate" class="text-danger"></span>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-6">
                                         <div class="mb-3">
                                             <label>Ending date</label>
                                             <input asp-for="EndDate" class="datepicker-here form-control" type="text"
@@ -220,7 +185,7 @@
                                             <label>Description</label>
                                             <textarea asp-for="Description" class="form-control"
                                                 placeholder="Description of destination"
-                                                id="exampleFormControlTextarea4" rows="10"></textarea>
+                                                id="descriptionEditor" rows="10"></textarea>
                                             <span asp-validation-for="Description" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -228,9 +193,9 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="text-end">
-                                            <button type="submit" class="btn btn-success me-3">Create
+                                            <button type="submit" class="btn btn-success me-3">Update
                                                 Event And Festival</button>
-                                            <a asp-action="Index" class="btn btn-danger">Back</a>
+                                            <a asp-action="DetailEventFestival" asp-route-id="@Model.Id" class="btn btn-danger">Back</a>
                                         </div>
                                     </div>
                                 </div>
@@ -306,6 +271,14 @@
                 format: options.params.format
             };
             options.messages["dategreaterthan"] = options.message;
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+                ClassicEditor
+                .create(document.querySelector('#descriptionEditor'))
+                .catch(error => {
+                    console.error(error);
+                });
         });
     </script>
 
