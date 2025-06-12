@@ -30,7 +30,5 @@ namespace TraVinhMaps.Web.Admin.Models.EventAndFestivalFeature
         public double longitude { get; set; }
         [Required(ErrorMessage = "Latitude of destination is required")]
         public double latitude { get; set; }
-        public string MarkerId { get; set; }
-        public string TagId { get; set; }
     }
 }

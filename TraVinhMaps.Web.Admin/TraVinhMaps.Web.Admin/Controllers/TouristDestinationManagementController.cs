@@ -124,7 +124,9 @@ namespace TraVinhMaps.Web.Admin.Controllers
             touristDestinationData.longitude = destinationDetail.Location.Coordinates[0];
             touristDestinationData.latitude = destinationDetail.Location.Coordinates[1];
             touristDestinationData.Type = destinationDetail.Location.Type;
+
             ViewBag.DestinationTypes = await GetDestinationTypeList();
+
             return View(touristDestinationData);
         }
 

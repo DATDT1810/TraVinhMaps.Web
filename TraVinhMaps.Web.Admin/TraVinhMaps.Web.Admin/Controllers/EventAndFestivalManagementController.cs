@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Globalization;
 using TraVinhMaps.Web.Admin.Models.EventAndFestivalFeature;
 using TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature;
+using TraVinhMaps.Web.Admin.Services.Markers;
+using TraVinhMaps.Web.Admin.Services.Tags;
 
 namespace TraVinhMaps.Web.Admin.Controllers
 {
@@ -13,11 +15,15 @@ namespace TraVinhMaps.Web.Admin.Controllers
     {
         private readonly ILogger<EventAndFestivalManagementController> _logger;
         private readonly IEventAndFestivalService _eventAndFestivalService;
+        private readonly ITagService _tagService;
+        private readonly IMarkerService _markerService;
 
-        public EventAndFestivalManagementController(ILogger<EventAndFestivalManagementController> logger, IEventAndFestivalService eventAndFestivalService)
+        public EventAndFestivalManagementController(ILogger<EventAndFestivalManagementController> logger, IEventAndFestivalService eventAndFestivalService, ITagService tagService, IMarkerService markerService)
         {
             _logger = logger;
             _eventAndFestivalService = eventAndFestivalService;
+            _tagService = tagService;
+            _markerService = markerService;
         }
 
         [HttpGet]
@@ -69,6 +75,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
             string format = "MM/dd/yyyy";
             CultureInfo provider = CultureInfo.InvariantCulture;
+            var tags = await _tagService.ListAllAsync();
+            var markers = await _markerService.ListAllAsync();
             CreateEventAndFestivalRequest createEventAndFestivalRequest = new CreateEventAndFestivalRequest()
             {
                 NameEvent = createEventAndFestivalRequestViewModel.NameEvent,
@@ -81,14 +89,14 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 {
                     Name = createEventAndFestivalRequestViewModel.Name,
                     Address = createEventAndFestivalRequestViewModel.Address,
-                    MarkerId = createEventAndFestivalRequestViewModel.MarkerId,
+                    MarkerId = markers.FirstOrDefault(t => t.Name == "Event And Festival")?.Id,
                     location = new Location
                     {
                         Type = createEventAndFestivalRequestViewModel.Type,
                         Coordinates = new List<double> { createEventAndFestivalRequestViewModel.longitude, createEventAndFestivalRequestViewModel.latitude }
                     }
                 },
-                TagId = createEventAndFestivalRequestViewModel.TagId
+                TagId = tags.FirstOrDefault(t => t.Name == "Festivals")?.Id,
             };
             await _eventAndFestivalService.CreateEventAndFestival(createEventAndFestivalRequest);
             TempData["successMessage"] = "Add event/festival successfull";
@@ -103,6 +111,12 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return NotFound();
             }
             var eventAndFestivalDetail = await _eventAndFestivalService.GetEventAndFestivalById(id);
+            if (eventAndFestivalDetail == null)
+            {
+                return NotFound();
+            }
+            ViewBag.EventAndFestivalTag = await _tagService.GetByIdAsync(eventAndFestivalDetail.TagId);
+            ViewBag.marker = await _markerService.GetMarkerById(eventAndFestivalDetail.Location.MarkerId);
             return View(eventAndFestivalDetail);
         }
 
@@ -128,11 +142,9 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 Category = eventAndFestivalDetail.Category,
                 Name = eventAndFestivalDetail.Location.Name,
                 Address = eventAndFestivalDetail.Location.Address,
-                MarkerId = eventAndFestivalDetail.Location.MarkerId,
                 Type = eventAndFestivalDetail.Location.location.Type,
                 longitude = eventAndFestivalDetail.Location.location.Coordinates[0],
                 latitude = eventAndFestivalDetail.Location.location.Coordinates[1],
-                TagId = eventAndFestivalDetail.TagId
             };
 
             ViewBag.Category = new List<SelectListItem>
@@ -151,8 +163,15 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [HttpPost("EditEventAndFestival")]
         public async Task<IActionResult> EditEventAndFestival(UpdateEventAndFestivalRequestViewModel updateEventAndFestivalRequestViewModel)
         {
+            if (!ModelState.IsValid)
+            {
+                TempData["errorMessage"] = "Edit event/festival failure, please try again";
+                return View(updateEventAndFestivalRequestViewModel);
+            }
             string format = "MM/dd/yyyy";
             CultureInfo provider = CultureInfo.InvariantCulture;
+            var tags = await _tagService.ListAllAsync();
+            var markers = await _markerService.ListAllAsync();
             UpdateEventAndFestivalRequest updateEventAndFestivalRequest = new UpdateEventAndFestivalRequest()
             {
                 Id = updateEventAndFestivalRequestViewModel.Id,
@@ -165,14 +184,14 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 {
                     Name = updateEventAndFestivalRequestViewModel.Name,
                     Address = updateEventAndFestivalRequestViewModel.Address,
-                    MarkerId = updateEventAndFestivalRequestViewModel.MarkerId,
+                    MarkerId = markers.FirstOrDefault(t => t.Name == "Event And Festival")?.Id,
                     location = new Location
                     {
                         Type = updateEventAndFestivalRequestViewModel.Type,
                         Coordinates = new List<double> { updateEventAndFestivalRequestViewModel.longitude, updateEventAndFestivalRequestViewModel.latitude }
                     }
                 },
-                TagId = updateEventAndFestivalRequestViewModel.TagId
+                TagId = tags.FirstOrDefault(t => t.Name == "Festivals")?.Id,
             };
             var eventAndFestivalUpdate = await _eventAndFestivalService.UpdateEventAndFestival(updateEventAndFestivalRequest);
             if (eventAndFestivalUpdate == null)
