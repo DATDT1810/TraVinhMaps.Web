@@ -66,7 +66,7 @@
                                     <tr>
                                         <td>@count</td>
                                         <td>@Html.Raw(item.Title)</td>
-                                        <td>@Html.TruncateWords(item.Content, 16)</td>
+                                        <td>@Html.TruncateWords(item.Content, 12)</td>
                                         <td>@item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</td>
                                     <td>
                                         <ul class="action">

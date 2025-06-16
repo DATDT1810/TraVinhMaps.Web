@@ -95,3 +95,22 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("https://localhost:7162/dashboardHub")
+        .withAutomaticReconnect()
+        .build();
+
+    connection.on("ReceiveFeedback", function(feedbackId) {
+        alert("Có feedback mới với ID: " + feedbackId);
+        // location.reload();
+    });
+
+    connection.start().then(function() {
+        connection.invoke("JoinAdminGroup", "admin");
+        connection.invoke("JoinAdminGroup", "super-admin");
+    });
+</script>
+}

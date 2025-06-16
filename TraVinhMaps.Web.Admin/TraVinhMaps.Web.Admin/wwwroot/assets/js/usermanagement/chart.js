@@ -5,13 +5,23 @@ function initializeCharts(initialData) {
     console.error(
       "Chart.js failed to load. Check the script source or network."
     );
-     showTimedAlert("Error!", "Failed to load charting library. Please refresh the page.", "error", 2000);
+    showTimedAlert(
+      "Error!",
+      "Failed to load charting library. Please refresh the page.",
+      "error",
+      2000
+    );
   }
   if (typeof ChartDataLabels === "undefined") {
     console.error(
       "ChartDataLabels plugin failed to load. Check the script source or network."
     );
-    showTimedAlert("Error!", "Failed to load chart plugins. Please refresh the page.", "error", 2000);
+    showTimedAlert(
+      "Error!",
+      "Failed to load chart plugins. Please refresh the page.",
+      "error",
+      2000
+    );
   }
 
   // Register the datalabels plugin
@@ -72,12 +82,24 @@ function initializeCharts(initialData) {
           }
         } else {
           console.error(`Invalid response for ${chartId}:`, result);
-          showTimedAlert("Error!", `Failed to update ${chartId} chart: ${result.message || "Invalid response format"}`, "error", 2000);
+          showTimedAlert(
+            "Error!",
+            `Failed to update ${chartId} chart: ${
+              result.message || "Invalid response format"
+            }`,
+            "error",
+            2000
+          );
         }
       })
       .catch((error) => {
         console.error(`Failed to fetch statistics for ${chartId}:`, error);
-        showTimedAlert("Error", `Failed to update ${chartId} chart: ${error.message}`, "error", 3000);
+        showTimedAlert(
+          "Error",
+          `Failed to update ${chartId} chart: ${error.message}`,
+          "error",
+          3000
+        );
       })
       .finally(() => {
         if (loadingElement) loadingElement.style.display = "none";
@@ -123,27 +145,27 @@ function initializeCharts(initialData) {
         aspectRatio: 1,
         layout: {
           padding: {
-            top: 30,    
-            bottom: 10, 
-          }
+            top: 30,
+            bottom: 10,
+          },
         },
         scales: {
           // y: {
           //   beginAtZero: true,
-          //   title: { 
-          //     display: true, 
+          //   title: {
+          //     display: true,
           //     text: "Number of Users",
           //     padding: { top: 20, bottom: 0 }
           //   },
           //   ticks: {
-          //     padding: 10 
+          //     padding: 10
           //   }
           // },
-          x: { title: { display: true, text: "Age Groups"} },
+          x: { title: { display: true, text: "Age Groups" } },
         },
         plugins: {
           datalabels: {
-            color: "#000",
+            color: "#51BB25",
             font: { weight: "bold", size: 12 },
             formatter: (value, context) => {
               const total = context.dataset.data.reduce(
@@ -154,11 +176,11 @@ function initializeCharts(initialData) {
             },
             anchor: "end",
             align: "top",
-            clip: false
+            clip: false,
           },
           legend: {
-            display: false 
-          }
+            display: false,
+          },
         },
       }
     );
@@ -282,12 +304,17 @@ function initializeCharts(initialData) {
   // Hometown Chart (Doughnut)
   function updateHometownChart(data) {
     const hometownColors = [
-      "#DC3545",
-      "#173878",
-      "#51BB25",
-      "#006666",
-      "#17a2b8",
-      "#F8D62B",
+      "#DC3545", // Red
+      "#173878", // Dark Blue
+      "#51BB25", // Green
+      "#006666", // Teal
+      "#17a2b8", // Cyan
+      "#F8D62B", // Yellow
+      "#FF6F61", // Coral
+      "#2E86AB", // Light Blue
+      "#6A0572", // Purple
+      "#FFD166", // Gold
+      "#06D6A0", // Mint
     ];
     hometownChart = initializeChart(
       "hometownChart",
@@ -300,12 +327,17 @@ function initializeCharts(initialData) {
             data: Object.values(data),
             backgroundColor: hometownColors.slice(),
             borderColor: [
-              "#A71D2A", // đậm hơn #DC3545
-              "#0F244F", // đậm hơn #173878
-              "#3A8F1D", // đậm hơn #51BB25
-              "#004C4C", // đậm hơn #006666
-              "#107A91", // đậm hơn #17a2b8
-              "#D4B800", // đậm hơn #F8D62B
+              "#A71D2A", // Darker Red
+              "#0F244F", // Darker Blue
+              "#3A8F1D", // Darker Green
+              "#004C4C", // Darker Teal
+              "#107A91", // Darker Cyan
+              "#D4B800", // Darker Yellow
+              "#D35400", // Darker Coral
+              "#1B4F72", // Darker Light Blue
+              "#3C0735", // Darker Purple
+              "#B79500", // Darker Gold
+              "#028760", // Darker Mint
             ],
             borderWidth: new Array(Object.values(data).length).fill(1),
           },
@@ -384,7 +416,7 @@ function initializeCharts(initialData) {
       } else if (initialTimeRange === "day") {
         return label.split(" ")[1]; // Show only hour, e.g., "14:00"
       }
-      return label; // Default: use raw date (e.g., "2025-06-07")
+      return label;
     });
 
     timeChart = initializeChart(
@@ -402,6 +434,7 @@ function initializeCharts(initialData) {
             fill: false,
             pointRadius: 4,
             pointHoverRadius: 6,
+            tension: 0.4,
           },
         ],
       },

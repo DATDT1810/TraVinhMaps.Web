@@ -18,7 +18,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             _adminService = adminService;
         }
 
-        public async Task<IActionResult> Index(string timeRange = "day")
+        public async Task<IActionResult> Index(string timeRange = "month")
         {
             ViewData["Title"] = "Dashboard";
             ViewData["Breadcrumb"] = new List<string> { "Dashboard", "Default" };
@@ -30,7 +30,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 "week" => "week",
                 "month" => "month",
                 "year" => "year",
-                _ => "day" // Default
+                _ => "month" // Default
             };
 
             var model = new DashboardVM
