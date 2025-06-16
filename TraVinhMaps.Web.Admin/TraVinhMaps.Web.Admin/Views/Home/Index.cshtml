@@ -4,6 +4,28 @@
     ViewData["Title"] = "Home Page";
 }
 
+<style>
+    .chart-hometown-container {
+        max-height: 550px;
+        min-width: 800px;
+        width: 100%;
+        position: relative;
+        overflow: visible;
+    }
+
+    .chart-container {
+        max-height: 300px;
+        position: relative;
+    }
+
+    .chart-container canvas,
+    .chart-hometown-container canvas {
+        max-height: 100%;
+        width: 100%;
+    }
+    
+</style>
+
 <!-- Page Sidebar Ends-->
 <div class="page-body">
     <div class="container-fluid">
@@ -144,82 +166,117 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 box-col-12">
+
+            <!-- New Users Chart (Full-width) -->
+            <div class="col-12">
                 <div class="card">
-                    <div class="card-header sales-chart card-no-border pb-0">
-                        <h4>Sales Chart </h4>
-                        <div class="sales-chart-dropdown">
-                            <ul class="balance-data">
-                                <li> <span class="circle bg-warning"></span><span class="f-light ms-1">Revenue</span>
-                                </li>
-                                <li><span class="circle bg-primary"> </span><span class="f-light ms-1">Orders</span>
-                                </li>
-                            </ul>
-                            <div class="sales-chart-dropdown-select">
-                                <div class="card-header-right-icon online-store">
-                                    <div class="dropdown">
-                                        <button class="btn dropdown-toggle dropdown-toggle-store"
-                                            id="dropdownMenuButtonToggle" data-bs-toggle="dropdown"
-                                            aria-expanded="false">Online Store</button>
-                                        <div class="dropdown-menu dropdown-menu-end"
-                                            aria-labelledby="dropdownMenuButtonToggle" role="menu"><span
-                                                class="dropdown-item">All </span><span
-                                                class="dropdown-item">Employee</span><span class="dropdown-item">Client
-                                            </span></div>
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5>User Creation Over Time</h5>
+                        <select class="form-select w-auto" id="timeChartSelect">
+                            <option value="day">Today</option>
+                            <option value="week">Last Week</option>
+                            <option value="month">Last Month</option>
+                            <option value="year">Last Year</option>
+                        </select>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <div id="timeChart-loading" style="display: none; text-align: center;">Loading...</div>
+                            <canvas id="timeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other Charts Section -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>User Statistics Overview</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Age Chart -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h5>Age Distribution</h5>
+                                        <select class="form-select w-auto" id="ageChartSelect">
+                                            <option value="day">Today</option>
+                                            <option value="week">Last Week</option>
+                                            <option value="month">Last Month</option>
+                                            <option value="year">Last Year</option>
+                                        </select>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart-container">
+                                            <canvas id="ageChart"></canvas>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="card-header-right-icon">
-                                    <div class="dropdown">
-                                        <button class="btn dropdown-toggle" id="dropdownMenuButton1"
-                                            data-bs-toggle="dropdown" aria-expanded="false">Last Year
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-end"
-                                            aria-labelledby="dropdownMenuButton1" role="menu"><span
-                                                class="dropdown-item">Last Month</span><span class="dropdown-item">Last
-                                                Week </span><span class="dropdown-item">Today </span></div>
+                            </div>
+                            <!-- Gender Chart -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h5>Gender Distribution</h5>
+                                        <select class="form-select w-auto" id="genderChartSelect">
+                                            <option value="day">Today</option>
+                                            <option value="week">Last Week</option>
+                                            <option value="month">Last Month</option>
+                                            <option value="year">Last Year</option>
+                                        </select>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart-container">
+                                            <canvas id="genderChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Status Chart -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h5>Status Distribution</h5>
+                                        <select class="form-select w-auto" id="statusChartSelect">
+                                            <option value="day">Today</option>
+                                            <option value="week">Last Week</option>
+                                            <option value="month">Last Month</option>
+                                            <option value="year">Last Year</option>
+                                        </select>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart-container">
+                                            <canvas id="statusChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Hometown Chart -->
+                            <div class="col-md-12 col-lg-12">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h5>Hometown Distribution</h5>
+                                        <select class="form-select w-auto" id="hometownChartSelect">
+                                            <option value="day">Today</option>
+                                            <option value="week">Last Week</option>
+                                            <option value="month">Last Month</option>
+                                            <option value="year">Last Year</option>
+                                        </select>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart-hometown-container">
+                                            <canvas id="hometownChart"></canvas>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card-body p-2 pt-0">
-                        <div class="sales-wrapper">
-                            <div id="saleschart"> </div>
-                        </div>
-                    </div>
                 </div>
+            </div>
 
-                <div class="col-xl-12 col-md-12 col-sm-12 box-col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>Simple line chart</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="ct-1 flot-chart-container"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-12 col-xl-6 box-col-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>Donut Chart</h4>
-                    </div>
-                    <div class="card-body apex-chart">
-                        <div id="donutchart"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-12 col-xl-6 box-col-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h4>Pie Chart </h4>
-                    </div>
-                    <div class="card-body apex-chart">
-                        <div id="piechart"></div>
-                    </div>
-                </div>
-            </div>
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
@@ -228,17 +285,7 @@
                                 <h4>Top 5 Reviews</h4>
                                 <span><code>#Review new</code></span>
                             </div>
-                            <div class="col-md-6">
-                                <div class="sort-panel mb-3 float-end">
-                                    <label>
-                                        <select class="btn btn-primary dropdown-toggle btn-md pe-5 text-start"
-                                            id="sortingField">
-                                            <option>Destination</option>
-                                            <option>Stay</option>
-                                        </select>
-                                    </label>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                     <div class="table-responsive signal-table custom-scrollbar">
@@ -247,7 +294,7 @@
                                 <tr>
                                     <th scope="col">#</th>
                                     <th scope="col">Tag</th>
-                                    <th scope="col">Customer </th>
+                                    <th scope="col">Customer</th>
                                     <th scope="col">Destination Name</th>
                                     <th scope="col">Rate</th>
                                     <th scope="col">Review</th>
@@ -260,8 +307,7 @@
                                             src="../assets/images/tags/destination.png" alt="Destination"
                                             style="width: 33px;"><span class="font-success">Destination</span></td>
                                     <td><img class="img-fluid table-avtar" src="../assets/images/avtar/3.jpg"
-                                            alt="Destination">
-                                        Alizaban</td>
+                                            alt="Destination"> Alizaban</td>
                                     <td>Ba Om Pond</td>
                                     <td>
                                         <i class="fa fa-star text-warning"></i>
@@ -270,79 +316,7 @@
                                         <i class="fa fa-star text-warning"></i>
                                         <i class="fa fa-star text-warning"></i>
                                     </td>
-                                    <td>Chase Nguyen </td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">2</th>
-                                    <td class="d-flex align-items-center"><img class="me-2"
-                                            src="../assets/images/tags/destination.png" alt="Destination"
-                                            style="width: 33px;"><span class="font-success">Destination</span></td>
-                                    <td><img class="img-fluid table-avtar" src="../assets/images/avtar/3.jpg"
-                                            alt="Destination">
-                                        Alizaban</td>
-                                    <td>Ba Om Pond</td>
-                                    <td>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                    </td>
-                                    <td>Brie Furman</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">3</th>
-                                    <td class="d-flex align-items-center"> <img class="me-2"
-                                            src="../assets/images/tags/destination.png" alt="Destination"
-                                            style="width: 32px;"><span class="font-success">Destination</span></td>
-                                    <td><img class="img-fluid table-avtar" src="../assets/images/avtar/3.jpg"
-                                            alt="Destination">
-                                        Alizaban</td>
-                                    <td>Pond Ba Om</td>
-                                    <td>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                    </td>
-                                    <td>Jeremy Lake</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">4</th>
-                                    <td class="d-flex align-items-center"> <img class="me-2"
-                                            src="../assets/images/tags/destination.png" alt="Destination"
-                                            style="width: 32px;"><span class="font-success">Destination</span></td>
-                                    <td><img class="img-fluid table-avtar" src="../assets/images/avtar/3.jpg"
-                                            alt="Destination">
-                                        Alizaban</td>
-                                    <td>Pond Ba Om</td>
-                                    <td>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                    </td>
-                                    <td>Angelica Howards</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">5</th>
-                                    <td class="d-flex align-items-center"> <img class="me-2"
-                                            src="../assets/images/tags/destination.png" alt="Destination"
-                                            style="width: 32px;"><span class="font-success">Destination</span></td>
-                                    <td><img class="img-fluid table-avtar" src="../assets/images/avtar/3.jpg"
-                                            alt="Destination">
-                                        Alizaban</td>
-                                    <td>Pond Ba Om</td>
-                                    <td>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                    </td>
-                                    <td>Diane Okuma</td>
+                                    <td>Chase Nguyen</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -353,3 +327,114 @@
     </div>
     <!-- Container-fluid Ends-->
 </div>
+
+@section Scripts {
+    <script>
+        // Define initial data and time range
+        const initialTimeRange = 'month';
+        const initialData = {
+            age: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Age ?? new Dictionary<string, int>())),
+            gender: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Gender ?? new Dictionary<string, int>())),
+            status: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Status ?? new Dictionary<string, int>())),
+            hometown: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Hometown ?? new Dictionary<string, int>())),
+            time: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Time ?? new Dictionary<string, int>()))
+                };
+
+        // Handle error from ViewData
+        const error = @Html.Raw(Json.Serialize(ViewData["Error"]));
+        if (error) {
+            alert('Error: ' + error);
+        }
+
+        // Initialize charts when the window loads
+        window.addEventListener('load', () => {
+            initializeCharts(initialData);
+            // Force resize for hometown chart after initialization
+            const hometownChartCanvas = document.getElementById('hometownChart');
+            if (hometownChartCanvas && window.hometownChart) {
+                window.hometownChart.resize();
+            }
+        });
+
+        // Optional: Listen for window resize to adjust chart
+        window.addEventListener('resize', () => {
+            if (window.hometownChart) {
+                window.hometownChart.resize();
+            }
+        });
+    </script>
+    <script src="~/assets/js/usermanagement/chart.js"></script>
+
+    <script>
+        // 1. Kết nối tới SignalR Hub
+        const dashboardConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/dashboardHub")
+            .withAutomaticReconnect()
+            .build();
+
+        // 2. Lắng nghe sự kiện từ backend
+        dashboardConnection.on("UpdateUserStats", function () {
+            reloadAllUserCharts();
+        });
+
+        // 3. Kết nối và join group (nếu có role thực tế thì lấy từ Razor)
+        dashboardConnection.start().then(function () {
+            dashboardConnection.invoke("JoinAdminGroup", "admin"); 
+            dashboardConnection.invoke("JoinAdminGroup", "super-admin"); 
+        });
+
+        // 4. Hàm reload lại dữ liệu chart
+        function reloadAllUserCharts() {
+            const timeRange = document.getElementById('timeChartSelect')?.value || 'month';
+            fetch(`/api/users/stats?groupBy=all&timeRange=${timeRange}`)
+                .then(res => res.json())
+                .then(res => {
+                    updateCharts(res.data);
+                    reloadSummaryWidgets();
+                });
+        }
+
+        // 5. Hàm cập nhật lại dữ liệu cho các chart
+        function updateCharts(data) {
+            if (window.ageChart && data.age) {
+                window.ageChart.data.labels = Object.keys(data.age);
+                window.ageChart.data.datasets[0].data = Object.values(data.age);
+                window.ageChart.update();
+            }
+            if (window.genderChart && data.gender) {
+                window.genderChart.data.labels = Object.keys(data.gender);
+                window.genderChart.data.datasets[0].data = Object.values(data.gender);
+                window.genderChart.update();
+            }
+            if (window.statusChart && data.status) {
+                window.statusChart.data.labels = Object.keys(data.status);
+                window.statusChart.data.datasets[0].data = Object.values(data.status);
+                window.statusChart.update();
+            }
+            if (window.hometownChart && data.hometown) {
+                window.hometownChart.data.labels = Object.keys(data.hometown);
+                window.hometownChart.data.datasets[0].data = Object.values(data.hometown);
+                window.hometownChart.update();
+            }
+            if (window.timeChart && data.time) {
+                window.timeChart.data.labels = Object.keys(data.time);
+                window.timeChart.data.datasets[0].data = Object.values(data.time);
+                window.timeChart.update();
+            }
+        }
+
+        // 6. (Tuỳ chọn) Hàm cập nhật số liệu tổng quan widgets
+        function reloadSummaryWidgets() {
+            fetch(`/api/users/summary`)
+                .then(res => res.json())
+                .then(res => {
+                        if (document.querySelector('.total-project .f-w-600')) {
+                        document.querySelector('.total-project .f-w-600').textContent = res.totalUsers;
+                    }
+                    if (document.querySelector('.total-Progress .f-w-600')) {
+                        document.querySelector('.total-Progress .f-w-600').textContent = res.totalUserActive;
+                    }
+                });
+        }
+    </script>
+}

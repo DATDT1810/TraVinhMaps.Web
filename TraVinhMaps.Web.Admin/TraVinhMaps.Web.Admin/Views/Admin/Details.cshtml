@@ -65,7 +65,7 @@
                                     <input class="form-control" type="password" value="@Model.Password" readonly>
                                 </div>
                                 <label class="form-label">Create At</label>
-                                <input class="form-control" value="@Model.CreatedAt.ToLocalTime()" readonly>
+                                <input class="form-control" value="@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")" readonly>
                             </div>
                             <div class="row">
                                 <div class="col">

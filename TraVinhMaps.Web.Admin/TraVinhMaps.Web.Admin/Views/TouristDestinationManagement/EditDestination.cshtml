@@ -11,18 +11,15 @@
             <div class="row">
                 <div class="col-6">
                     <h4>Destination Edit</h4>
-                    @if(ViewBag.error != null) {
+                    @if (ViewBag.error != null)
+                    {
                         <span class="text-danger">@ViewBag.error</span>
                     }
                 </div>
                 <div class="col-6">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index-2.html">
-                                <svg class="stroke-icon">
-                                    <use
-                                        href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#stroke-home">
-                                    </use>
-                                </svg></a></li>
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
+                                    style="font-size: 20px;"></i></a></li>
                         <li class="breadcrumb-item"><a asp-action="Index">Destination Management</a></li>
                         <li class="breadcrumb-item active">Create Destination </li>
                     </ol>
@@ -47,7 +44,7 @@
                                             <span asp-validation-for="Name" class="text-danger"></span>
                                         </div>
                                         <input readonly hidden asp-for="Id" class="form-control" type="text"
-                                                placeholder="Project name *">
+                                            placeholder="Project name *">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -90,15 +87,15 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="mb-3">
-                                            <label>longitude</label>
+                                            <label>Longitude</label>
                                             <input asp-for="longitude" class="form-control" type="number" step="any"
-                                                placeholder="Longitude of destination"  data-language="en">
+                                                placeholder="Longitude of destination" data-language="en">
                                             <span asp-validation-for="longitude" class="text-danger"></span>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="mb-3">
-                                            <label>latitude</label>
+                                            <label>Latitude</label>
                                             <input asp-for="latitude" class="form-control" type="number" step="any"
                                                 placeholder="Latitude of destination" data-language="en">
                                             <span asp-validation-for="latitude" class="text-danger"></span>
@@ -109,11 +106,9 @@
                                     <div class="col-sm-4">
                                         <div class="mb-3">
                                             <label>Destination Type</label>
-                                            <select asp-for="DestinationTypeId" class="form-select">
-                                                <option  value="68244abd2b06dbe39f973e8c">Religious Buildings</option>
-                                                <option value="68244abd2b06dbe39f973e8c">Tree</option>
+                                            <select asp-for="DestinationTypeId" class="form-select"
+                                                asp-items="ViewBag.DestinationTypes">
                                             </select>
-                                            @* <select asp-for="DestinationTypeId" asp-items="ViewBag.DestinationTypes" class="form-select"></select> *@
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
@@ -188,7 +183,7 @@
                                     <div class="col">
                                         <div class="text-end">
                                             <button type="submit" class="btn btn-success me-3">Edit Destination</button>
-                                            <a asp-action="DetailDestination" asp-route-id = "@Model.Id"
+                                            <a asp-action="DetailDestination" asp-route-id="@Model.Id"
                                                 class="btn btn-danger">Back</a>
                                         </div>
                                     </div>

@@ -140,5 +140,6 @@ namespace TraVinhMaps.Web.Admin.Controllers
             ViewBag.TotolActiveUsers = countAllActiveUser;
             return View();
         }
+
     }
 }

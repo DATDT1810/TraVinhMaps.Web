@@ -1,0 +1,116 @@
+@using TraVinhMaps.Web.Admin.Models.Feedback
+@model IEnumerable<FeedbackResponse>
+@{
+    ViewData["Title"] = "Feedback List";
+}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>@ViewData["Title"]</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home" style="font-size: 20px;"></i>
+                            </a>
+                        </li>
+                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
+                        {
+                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
+                            {
+                                <li class="breadcrumb-item">@item</li>
+                            }
+                    }
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3">
+                            <div class="d-flex gap-2 mb-3">
+                                <button class="btn btn-primary" id="exportBtn">
+                                    <i class="fa fa-file-excel-o me-1"></i>Export
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive custom-scrollbar">
+                            <table class="display" id="basic-9">
+                                <thead class="bg-primary">
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Username</th>
+                                        <th>Content</th>
+                                        <th>Create At</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int count = 1;
+                                    }
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr data-admin-id="@item.Id">
+                                            <td>@count</td>
+                                            <td>
+                                                <div class="user-names">
+                                                    <p>@item.Username</p>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @item.Content
+                                            </td>
+                                            <td>
+                                                @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
+                                            </td>
+                                            <td>
+                                                <ul class="action">
+                                                    <li>
+                                                        <a class="details" asp-controller="Feedback" asp-action="Details"
+                                                            asp-route-id="@item.Id" title="Details">
+                                                            <i class="fa fa-eye"></i>
+                                                        </a>
+                                                    </li>
+                                                    
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        count++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("https://localhost:7162/dashboardHub")
+        .withAutomaticReconnect()
+        .build();
+
+    connection.on("ReceiveFeedback", function(feedbackId) {
+        alert("Có feedback mới với ID: " + feedbackId);
+        // location.reload();
+    });
+
+    connection.start().then(function() {
+        connection.invoke("JoinAdminGroup", "admin");
+        connection.invoke("JoinAdminGroup", "super-admin");
+    });
+</script>
+}

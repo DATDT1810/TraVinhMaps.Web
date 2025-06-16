@@ -18,15 +18,48 @@ namespace TraVinhMaps.Web.Admin.Controllers
             _adminService = adminService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string timeRange = "month")
         {
             ViewData["Title"] = "Dashboard";
             ViewData["Breadcrumb"] = new List<string> { "Dashboard", "Default" };
+
+            // Validate timeRange to prevent invalid values
+            timeRange = timeRange.ToLower() switch
+            {
+                "day" => "day",
+                "week" => "week",
+                "month" => "month",
+                "year" => "year",
+                _ => "month" // Default
+            };
+
             var model = new DashboardVM
             {
                 TotalUsers = await _userService.CountAllUsersAsync(),
                 TotalUserActive = await _userService.CountActiveUsersAsync(),
+                UserStatistics = new List<UserStatisticVM>()
             };
+
+            try
+            {
+                var statistics = await _userService.GetUserStatisticsAsync("all", timeRange);
+                model.UserStatistics.Add(new UserStatisticVM
+                {
+                    Age = statistics.ContainsKey("age") ? (Dictionary<string, int>)statistics["age"] : new Dictionary<string, int>(),
+                    Hometown = statistics.ContainsKey("hometown") ? (Dictionary<string, int>)statistics["hometown"] : new Dictionary<string, int>(),
+                    Gender = statistics.ContainsKey("gender") ? (Dictionary<string, int>)statistics["gender"] : new Dictionary<string, int>(),
+                    Status = statistics.ContainsKey("status") ? (Dictionary<string, int>)statistics["status"] : new Dictionary<string, int>(),
+                    Time = statistics.ContainsKey("time") ? (Dictionary<string, int>)statistics["time"] : new Dictionary<string, int>()
+                });
+            }
+            catch (Exception ex)
+            {
+                ViewData["Error"] = "Unable to load user statistics: " + ex.Message;
+            }
+
+            // Pass the selected timeRange to the view for pre-selecting the dropdowns
+            ViewData["TimeRange"] = timeRange;
+
             return View(model);
         }
 
@@ -38,8 +71,6 @@ namespace TraVinhMaps.Web.Admin.Controllers
             ViewData["Breadcrumb"] = new List<string> { "Settings", "Security" };
             var settingProfile = await _adminService.GetSettingProfileAsync();
             return View(settingProfile);
-
         }
-
     }
 }

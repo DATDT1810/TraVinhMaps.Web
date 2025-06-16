@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TraVinhMaps.Web.Admin.Models.LocalSpecialties;
+using TraVinhMaps.Web.Admin.Models.Tags;
 using TraVinhMaps.Web.Admin.Services.LocalSpecialties;
+using TraVinhMaps.Web.Admin.Services.Markers;
 using TraVinhMaps.Web.Admin.Services.Tags;
 
 namespace TraVinhMaps.Web.Admin.Controllers
@@ -11,12 +13,14 @@ namespace TraVinhMaps.Web.Admin.Controllers
     {
         private readonly ILocalSpecialtiesService _localSpecialtiesService;
         private readonly ITagService _tagService;
+        private readonly IMarkerService _markerService;
 
         // Constructor: Injects dependencies for local specialties and tag services
-        public LocalSpecialtiesController(ILocalSpecialtiesService localSpecialtiesService, ITagService tagService)
+        public LocalSpecialtiesController(ILocalSpecialtiesService localSpecialtiesService, ITagService tagService, IMarkerService markerService)
         {
             _localSpecialtiesService = localSpecialtiesService;
             _tagService = tagService;
+            _markerService = markerService;
         }
 
         // GET: /LocalSpecialties/Index
@@ -37,10 +41,39 @@ namespace TraVinhMaps.Web.Admin.Controllers
         {
             ViewData["Title"] = "Local Specialties";
             ViewData["Breadcrumb"] = new List<string> { "Local Specialties", "Local Specialties Details" };
-            var localSpecialties = await _localSpecialtiesService.GetByIdAsync(id);
-            var tag = await _tagService.GetByIdAsync(localSpecialties.TagId);
-            ViewBag.TagName = tag?.Name ?? "";
-            return View(localSpecialties);
+            try
+            {
+                var localSpecialty = await _localSpecialtiesService.GetByIdAsync(id);
+                if (localSpecialty == null)
+                {
+                    return NotFound();
+                }
+
+                // Lấy tag "Local Specialty"
+                var tagId = await _tagService.GetTagIdByNameAsync("Local specialty");
+                var localSpecialTag = new Tag
+                {
+                    Id = tagId,
+                    Name = "Local specialty"
+                };
+                ViewBag.LocalSpecialTag = localSpecialTag;
+
+                // Lấy marker "Sell Location"
+                var markers = await _markerService.ListAllAsync();
+                var sellLocationMarker = markers.FirstOrDefault(m => m.Name == "Sell Location");
+                if (sellLocationMarker == null)
+                {
+                    throw new HttpRequestException("Marker 'Sell Location' not found.");
+                }
+                ViewBag.SellLocationMarker = sellLocationMarker;
+
+                return View(localSpecialty);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Error: {ex.Message}";
+                return RedirectToAction("Index");
+            }
         }
 
         // GET: /LocalSpecialties/Restore/{id}
@@ -107,8 +140,31 @@ namespace TraVinhMaps.Web.Admin.Controllers
         {
             ViewData["Title"] = "Local Specialties";
             ViewData["Breadcrumb"] = new List<string> { "Local Specialties Management", "Local Specialties List" };
-            var tags = await _tagService.ListAllAsync();
-            ViewBag.Tags = new SelectList(tags, "Id", "Name");
+            try
+            {
+                // fetch tag "Local Specialty"
+                var tagId = await _tagService.GetTagIdByNameAsync("Local specialty");
+                var localSpecialTag = new Tag
+                {
+                    Id = tagId,
+                    Name = "Local specialty"
+                };
+                ViewBag.LocalSpecialTag = localSpecialTag;
+
+                // fetch marker "Sell Location"
+                var markers = await _markerService.ListAllAsync();
+                var sellLocationMarker = markers.FirstOrDefault(m => m.Name == "Sell Location");
+                if (sellLocationMarker == null)
+                {
+                    throw new HttpRequestException("Marker 'Sell Location' not found.");
+                }
+                ViewBag.SellLocationMarker = sellLocationMarker;
+            }
+            catch (HttpRequestException ex)
+            {
+                TempData["CreateLocalSpecialtiesError"] = $"Error: {ex.Message}";
+                return RedirectToAction("Index");
+            }
             return View(new CreateSpecialtyViewModel());
         }
 
@@ -119,19 +175,27 @@ namespace TraVinhMaps.Web.Admin.Controllers
         public async Task<IActionResult> Create(CreateSpecialtyViewModel request, CancellationToken cancellationToken)
         {
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
-            if (request.Images != null && request.Images.Any())
+
+            if (request.Images == null || !request.Images.Any())
+            {
+                TempData["CreateLocalSpecialtiesError"] = "You must upload at least one image.";
+                return View(request);
+            }
+            else
             {
                 if (request.Images.Count > 5)
                 {
-                    ModelState.AddModelError("Images", "You can upload a maximum of 5 images.");
+                    TempData["CreateLocalSpecialtiesError"] = "You can upload a maximum of 5 images.";
+                    return View(request);
                 }
+
                 foreach (var file in request.Images)
                 {
                     if (file.Length == 0) continue;
                     var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
                     if (!allowedExtensions.Contains(ext))
                     {
-                        ModelState.AddModelError("Images", $"Unsupported file format. Allowed formats are: {string.Join(", ", allowedExtensions)}.");
+                        TempData["CreateLocalSpecialtiesError"] = $"Unsupported file format. Allowed formats are: {string.Join(", ", allowedExtensions)}.";
                         break;
                     }
                 }
@@ -149,13 +213,13 @@ namespace TraVinhMaps.Web.Admin.Controllers
             catch (HttpRequestException ex)
             {
                 ModelState.AddModelError("", $"Error creating local specialty: {ex.Message}");
-                TempData["CreateTipsError"] = "Failed to add the local specialties!";
+                TempData["CreateLocalSpecialtiesError"] = "Failed to add the local specialties!";
                 return View(request);
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", $"Unexpected error: {ex.Message}");
-                TempData["CreateTipsError"] = "Failed to add the local specialties!";
+                TempData["CreateLocalSpecialtiesError"] = "Failed to add the local specialties!";
                 return View(request);
             }
         }
@@ -174,9 +238,6 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreatePointOfSell(AddLocationRequest request, CancellationToken cancellationToken)
         {
-            // Log dữ liệu nhận được
-            Console.WriteLine($"Received AddLocationRequest: {Newtonsoft.Json.JsonConvert.SerializeObject(request)}");
-
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
@@ -290,7 +351,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 LocationId = location.LocationId,
                 Name = location.Name,
                 Address = location.Address,
-                MarkerId = location.MarkerId,
+                // MarkerId = location.MarkerId,
                 Type = location.Location?.Type ?? "Point",
                 Longitude = location.Location?.Coordinates?.FirstOrDefault() ?? 0,
                 Latitude = location.Location?.Coordinates?.Skip(1).FirstOrDefault() ?? 0
@@ -304,31 +365,53 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateSellLocation(string id, LocalSpecialtyLocationViewModel viewModel, CancellationToken cancellationToken = default)
         {
-            if (!ModelState.IsValid)
-            {
-                return Json(new { success = false, message = string.Join("; ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)) });
-            }
+            // Check ID
             if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(viewModel.Id) || id != viewModel.Id)
             {
                 return Json(new { success = false, message = "Invalid local specialty ID." });
             }
-            var location = new UpdateLocationRequest
+
+            // From LocalSpecialtyLocationViewModel to LocalSpecialtyLocation
+            var location = new LocalSpecialtyLocation
             {
                 LocationId = viewModel.LocationId,
                 Name = viewModel.Name,
                 Address = viewModel.Address,
-                MarkerId = viewModel.MarkerId,
-                Location = new LocationsRequest
+                Location = new Location
                 {
                     Type = viewModel.Type ?? "Point",
-                    Coordinates = (viewModel.Longitude == 0 && viewModel.Latitude == 0)
-                        ? new List<double> { 0, 0 }
-                        : new List<double> { viewModel.Longitude, viewModel.Latitude }
+                    Coordinates = new List<double> { viewModel.Longitude, viewModel.Latitude }
                 }
             };
+
+            // Lấy marker "Sell Location" và gán MarkerId trước khi gọi service
+            var markers = await _markerService.ListAllAsync();
+            var sellLocationMarker = markers.FirstOrDefault(m => m.Name == "Sell Location");
+            if (sellLocationMarker == null)
+            {
+                return Json(new { success = false, message = "Marker 'Sell Location' not found." });
+            }
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                return Json(new { success = false, message = string.Join("; ", errors) });
+            }
+
             try
             {
-                await _localSpecialtiesService.UpdateSellLocationAsync(id, location, cancellationToken);
+                var updateRequest = new UpdateLocationRequest
+                {
+                    LocationId = location.LocationId,
+                    Name = location.Name,
+                    Address = location.Address,
+                    Location = new LocationsRequest
+                    {
+                        Type = location.Location.Type,
+                        Coordinates = location.Location.Coordinates
+                    }
+                };
+
+                await _localSpecialtiesService.UpdateSellLocationAsync(id, updateRequest, cancellationToken);
                 return Json(new { success = true, message = "Sell location updated successfully!" });
             }
             catch (Exception ex)

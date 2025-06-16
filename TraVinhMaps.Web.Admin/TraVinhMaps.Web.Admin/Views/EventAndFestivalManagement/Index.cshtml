@@ -49,7 +49,7 @@
                             </div>
                             <div class="status-filter">
                                 <select id="statusFilter" class="form-select">
-                                    <option value="active">All</option>
+                                    <option value="active">Active</option>
                                     <option value="inactive">Inactive</option>
                                 </select>
                             </div>
@@ -84,15 +84,14 @@
                                                 </div>
                                             </td>
                                             <td>@item.Category</td>
-                                            <td>@item.StartDate.ToString("MMM dd yyyy",System.Globalization.CultureInfo.InvariantCulture) to 
-                                                @item.EndDate.ToString("MMM dd yyyy",System.Globalization.CultureInfo.InvariantCulture)
+                                            <td>@item.StartDate.ToLocalTime().ToString("dd/MM/yy, HH:mm") to 
+                                                @item.EndDate.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                             </td>
                                             <td><span
                                                     class="badge @(item.Status ? "badge-light-primary" : "badge-light-danger")">@(item.Status
                                                                                                     ? "Active" : "Inactive")</span></td>
                                         <td>
-                                            @item.CreatedAt.ToString("MMM dd yyyy, hh:mm tt",
-                                                                                        System.Globalization.CultureInfo.InvariantCulture)
+                                            @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                         </td>
                                         <td>
                                             <ul class="action">

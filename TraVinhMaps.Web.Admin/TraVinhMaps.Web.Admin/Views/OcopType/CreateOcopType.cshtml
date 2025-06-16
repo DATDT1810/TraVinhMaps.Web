@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "CreateOcopType";
     Layout = "~/Views/Shared/_Layout.cshtml";
-} 
+}
 <div class="page-body">
     <div class="container-fluid">
         <div class="page-title">
@@ -21,12 +21,11 @@
                 </div>
                 <div class="col-6">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index-2.html">
-                                <svg class="stroke-icon">
-                                    <use
-                                        href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#stroke-home">
-                                    </use>
-                                </svg></a></li>
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home" style="font-size: 20px;"></i>
+                            </a>
+                        </li>
                         <li class="breadcrumb-item"><a asp-action="Index">Management Ocop Type</a></li>
                         <li class="breadcrumb-item active">Ocop Type Create form</li>
                     </ol>
