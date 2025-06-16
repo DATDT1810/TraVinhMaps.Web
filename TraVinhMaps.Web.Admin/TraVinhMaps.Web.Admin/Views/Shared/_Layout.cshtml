@@ -112,28 +112,6 @@
                 </div>
                 <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
                     <ul class="nav-menus">
-                        <li class="d-md-block d-none">
-                            <div class="form search-form mb-0">
-                                <div class="input-group">
-                                    <span class="input-icon">
-                                        <i class="fa fa-search"
-                                            style="position: absolute; margin-left: 18px; margin-top: 15px;"></i>
-                                        <input class="w-100" type="search" placeholder="Search">
-                                    </span>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="d-md-none d-block">
-                            <div class="form search-form mb-0">
-                                <div class="input-group">
-                                    <span class="input-show">
-                                        <div id="searchInput">
-                                            <input type="search" placeholder="Search">
-                                        </div>
-                                    </span>
-                                </div>
-                            </div>
-                        </li>
                         <li>
                             <div class="mode"><i class="moon" data-feather="moon"> </i></div>
                         </li>
@@ -299,7 +277,8 @@
                             </li>
                             <!-- Maker Management -->
                             <li class="sidebar-list">
-                                <a class="sidebar-link sidebar-title link-nav" asp-controller="MarkerManagement" asp-action="Index">
+                                <a class="sidebar-link sidebar-title link-nav" asp-controller="MarkerManagement"
+                                    asp-action="Index">
                                     <i class="fa fa-map-marker"></i>
                                     <span>Maker Managment</span>
                                 </a>
@@ -320,19 +299,6 @@
                                     <span>Feedback</span>
                                 </a>
                             </li>
-                            <!-- Content Management -->
-                            <li class="sidebar-list">
-                                <a class="sidebar-link sidebar-title" href="#">
-                                    <i class="fa fa-globe"></i>
-                                    <span>Map Data</span>
-                                </a>
-                                <ul class="sidebar-submenu">
-                                    <li><a href="">Ocop</a></li>
-                                    <li><a href="">Destination</a></li>
-                                    <li><a href="">Local specialty</a></li>
-                                    <li><a href="">Utilities</a></li>
-                                </ul>
-                            </li>
                             <!-- Analytics -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title" href="#">
@@ -343,8 +309,6 @@
                                     <li><a href="">Ocop</a></li>
                                     <li><a href="">Destination</a></li>
                                     <li><a href="">Local specialty</a></li>
-                                    <li><a href="">Stay</a></li>
-                                    <li><a href="">Utilities</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -425,6 +389,7 @@
     <script src="~/assets/js/error-handler.js"></script>
     <script src="~/assets/js/session-handler.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@7.0.5/dist/browser/signalr.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 
