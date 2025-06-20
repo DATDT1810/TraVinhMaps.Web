@@ -1,0 +1,109 @@
+@model IEnumerable<TraVinhMaps.Web.Admin.Models.OcopProduct.OcopProductAnalytics>
+@{
+    ViewData["Title"] = "Ocop Product Analytics";
+    var error = ViewData["Error"] as string;
+}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>@ViewData["Title"]</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home" style="font-size: 20px;"></i>
+                            </a>
+                        </li>
+                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
+                        {
+                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
+                            {
+                                <li class="breadcrumb-item">@item</li>
+                            }
+                        }
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        @if (!string.IsNullOrEmpty(error))
+                        {
+                            <div class="alert alert-danger">@error</div>
+                        }
+                        else if (Model == null || !Model.Any())
+                        {
+                            <div class="alert alert-warning">No analytics data available.</div>
+                        }
+                        else
+                        {
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5>Ocop Product Analytics</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <label for="timeRange" class="form-label">Quick Filter</label>
+                                        <select class="form-select" id="timeRange">
+                                            <option value="day">Today</option>
+                                            <option value="week">This Week</option>
+                                            <option value="month" selected>This Month</option>
+                                            <option value="year">This Year</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="startDate" class="form-label">Start Date</label>
+                                        <input type="date" id="startDate" class="form-control" />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="endDate" class="form-label">End Date</label>
+                                        <input type="date" id="endDate" class="form-control" />
+                                    </div>
+                                    <div class="col-md-3 align-self-end d-flex gap-2">
+                                        <button id="refreshChart" class="btn btn-success w-100">Filter</button>
+                                        <button id="resetFilter" class="btn btn-secondary w-100">Reset</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="analyticsChart"></canvas>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Script -->
+@section Scripts {
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script src="~/assets/js/ocopproduct/chart.js"></script>
+    <script>
+        // Khởi tạo chart
+        let myChart = null;
+        const ctx = document.getElementById('analyticsChart').getContext('2d');
+
+        // Vẽ chart khi trang tải
+        window.onload = function () {
+            const initialData = @Html.Raw(Json.Serialize(ViewData["Analytics"] ?? new List<object>()));
+            console.log("Initial analytics from Razor:", initialData);
+
+            const analyticsWrapped = {
+                analytics: Array.isArray(initialData) ? initialData : []
+            };
+
+            drawChart(analyticsWrapped);
+        };
+
+    </script>
+}

@@ -104,8 +104,9 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 TempData["Error"] = "An error occurred while updating your profile: " + ex.Message;
                 return RedirectToAction(nameof(Profile));
             }
-        }
+        } 
 
+        // [Authorize(Roles = "super-admin")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -128,6 +129,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(admin);
         }
 
+        // [Authorize(Roles = "super-admin")]  
         // GET: Admin/Create
         [HttpGet("Create")]
         public IActionResult Create()
@@ -137,6 +139,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View();
         }
 
+        // [Authorize(Roles = "super-admin")]
         // POST: Admin/Create
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]

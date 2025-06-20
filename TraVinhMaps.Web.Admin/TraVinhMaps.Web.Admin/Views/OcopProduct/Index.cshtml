@@ -3,7 +3,7 @@
 @model IEnumerable<OcopProductResponse>;
 @{
     ViewData["Title"] = "Index";
-    var sessionId =  User.Claims.FirstOrDefault(c => c.Type == "sessionId")?.Value;
+    var sessionId = User.Claims.FirstOrDefault(c => c.Type == "sessionId")?.Value;
 }
 <div class="page-body">
     <div class="container-fluid">
@@ -16,8 +16,7 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a asp-controller="Home" asp-action="Index">
-                                <i class="fa fa-home"
-                                   style="font-size: 20px;"></i>
+                                <i class="fa fa-home" style="font-size: 20px;"></i>
                             </a>
                         </li>
                         @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
@@ -62,12 +61,18 @@
                         <div class="d-flex justify-content-between mb-3">
                             <div>
                                 <div class="dropdown d-inline-block">
-                                    <button class="btn btn-success" type="button" id="createOcopDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 200px;">
+                                    <button class="btn btn-success" type="button" id="createOcopDropdown"
+                                        data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 200px;">
                                         <i class="fa fa-plus me-1"></i>Create Ocop Product
                                     </button>
-                                    <ul class="dropdown-menu" aria-labelledby="createOcopDropdown" style="min-width: 200px;">
-                                        <li><a class="dropdown-item py-3 ocop-dropdown-item" asp-controller="OcopProduct" asp-action="CreateOcopProduct"><i class="fa fa-file me-2"></i>Create Single Product</a></li>
-                                        <li><a class="dropdown-item py-3 ocop-dropdown-item" asp-controller="OcopProduct" asp-action="ImportProducts"><i class="fa fa-upload me-2"></i>Import Products</a></li>
+                                    <ul class="dropdown-menu" aria-labelledby="createOcopDropdown"
+                                        style="min-width: 200px;">
+                                        <li><a class="dropdown-item py-3 ocop-dropdown-item"
+                                                asp-controller="OcopProduct" asp-action="CreateOcopProduct"><i
+                                                    class="fa fa-file me-2"></i>Create Single Product</a></li>
+                                        <li><a class="dropdown-item py-3 ocop-dropdown-item"
+                                                asp-controller="OcopProduct" asp-action="ImportProducts"><i
+                                                    class="fa fa-upload me-2"></i>Import Products</a></li>
                                     </ul>
                                 </div>
                                 <button class="btn btn-primary" id="exportBtn">
@@ -85,7 +90,7 @@
                             <table class="display" id="basic-9">
                                 <thead class="bg-primary">
                                     <tr>
-                                        <th>No. &nbsp</th>
+                                        <th>No.</th>
                                         <th>Product Image</th>
                                         <th>Product Name</th>
                                         <th>Product Price</th>
@@ -109,13 +114,14 @@
                                                     <div class="light-product-box">
                                                         @if (item.ProductImage != null && item.ProductImage.Any())
                                                         {
-                                                            <img class="img-fluid" src="@item.ProductImage[0]" alt="image ocop product" />
+                                                            <img class="img-fluid" src="@item.ProductImage[0]"
+                                                                alt="image ocop product" />
                                                         }
                                                         else
                                                         {
-                                                            <img class="img-fluid" src="/assets/images/no-image.png" alt="no image available" />
+                                                            <img class="img-fluid" src="/assets/images/no-image.png"
+                                                                alt="no image available" />
                                                         }
-                                                    </div>
                                                 </div>
                                             </td>
                                             <td>
@@ -141,20 +147,24 @@
                                             <td>
                                                 <ul class="action">
                                                     <li>
-                                                        <a class="detail" asp-controller="OcopProduct" asp-action="DetailOcopProduct" asp-route-id="@item.Id" title="Details">
+                                                        <a class="details" asp-controller="OcopProduct"
+                                                            asp-action="DetailOcopProduct" asp-route-id="@item.Id"
+                                                            title="Details">
                                                             <i class="fa fa-eye"></i>
                                                         </a>
                                                     </li>
                                                     <li>
-                                                        @if (item.Status == false)
+                                                    @if (item.Status == false)
                                                         {
                                                             <a class="restore undelete-ocop-product" href="javascript:void(0)"
-                                                               data-id="@item.Id" title="Restore"><i class="fa fa-undo"></i></a>
+                                                                data-id="@item.Id" title="Restore"><i
+                                                                    class="fa fa-undo"></i></a>
                                                         }
                                                         else
                                                         {
                                                             <a class="delete delete-ocop-product" href="javascript:void(0)"
-                                                               data-id="@item.Id" title="Delete"><i class="fa fa-trash"></i></a>
+                                                                data-id="@item.Id" title="Delete"><i
+                                                                    class="fa fa-trash"></i></a>
                                                         }
                                                     </li>
 
@@ -186,27 +196,27 @@
             const error = @Html.Raw(Json.Serialize(TempData["Error"]));
             if (success) showSuccessAlert("Success!", success);
             if (error) showErrorAlert("Error!", error);
-            
+
             // Get session ID
             const sessionId = "@sessionId";
-            
+
             // Handle Excel export button click
-            $("#exportBtn").on("click", function() {
+            $("#exportBtn").on("click", function () {
                 exportOcopProductsToExcel();
             });
-            
+
             // Function to export OCOP products to Excel
             function exportOcopProductsToExcel() {
                 // Show loading message
                 showInfoAlert("Exporting Data", "Retrieving OCOP product data for export...");
-                
+
                 // Debug: Check if sessionId exists
                 if (!sessionId) {
                     console.error("Error: sessionId is missing or undefined");
                     showErrorAlert("Export Error", "Session ID is missing. Please log in again.");
                     return;
                 }
-                
+
                 // Fetch all OCOP product data from API
                 $.ajax({
                     url: 'https://localhost:7162/api/OcopProduct/GetAllOcopProduct',
@@ -214,17 +224,17 @@
                     headers: {
                         'sessionId': sessionId
                     },
-                    success: function(response) {
+                    success: function (response) {
                         console.log("API response received:", response);
-                        
+
                         // Extract products from the data field in the response
                         const products = response.data || [];
-                        
+
                         if (products.length > 0) {
                             try {
                                 // Create a workbook
                                 const wb = XLSX.utils.book_new();
-                                
+
                                 // Create header row with all fields
                                 const headerRow = [
                                     '#',
@@ -244,9 +254,9 @@
                                     'Sell Locations',
                                     'Coordinates'
                                 ];
-                                
+
                                 const data = [headerRow];
-                                
+
                                 // Process the product data from the API
                                 products.forEach((product, index) => {
                                     // Format images array
@@ -254,45 +264,45 @@
                                     if (product.productImage && product.productImage.length > 0) {
                                         imagesStr = product.productImage.join('\n');
                                     }
-                                    
+
                                     // Format sell locations
                                     let sellLocationsStr = "—";
                                     let coordinatesStr = "—";
-                                    
+
                                     if (product.sellocations && product.sellocations.length > 0) {
                                         const locationNames = [];
                                         const locationAddresses = [];
                                         const coordinates = [];
-                                        
+
                                         product.sellocations.forEach(loc => {
                                             if (loc.locationName) {
                                                 locationNames.push(loc.locationName);
                                             }
-                                            
+
                                             if (loc.locationAddress) {
                                                 locationAddresses.push(loc.locationAddress);
                                             }
-                                            
+
                                             if (loc.location && loc.location.coordinates && loc.location.coordinates.length >= 2) {
                                                 coordinates.push(`[${loc.location.coordinates[0]}, ${loc.location.coordinates[1]}]`);
                                             }
                                         });
-                                        
+
                                         if (locationNames.length > 0) {
                                             const combinedLocations = [];
-                                            
+
                                             for (let i = 0; i < locationNames.length; i++) {
                                                 combinedLocations.push(`${locationNames[i]}: ${locationAddresses[i] || 'No address'}`);
                                             }
-                                            
+
                                             sellLocationsStr = combinedLocations.join('\n');
                                         }
-                                        
+
                                         if (coordinates.length > 0) {
                                             coordinatesStr = coordinates.join('\n');
                                         }
                                     }
-                                    
+
                                     const rowData = [
                                         (index + 1).toString(),
                                         product.id || "—",
@@ -311,13 +321,13 @@
                                         sellLocationsStr,
                                         coordinatesStr
                                     ];
-                                    
+
                                     data.push(rowData);
                                 });
-                                
+
                                 // Create worksheet from data
                                 const ws = XLSX.utils.aoa_to_sheet(data);
-                                
+
                                 // Set column widths for better readability
                                 ws['!cols'] = [
                                     { wch: 5 },    // #
@@ -337,22 +347,22 @@
                                     { wch: 100 },  // Sell Locations
                                     { wch: 40 }    // Coordinates
                                 ];
-                                
+
                                 // Configure row heights to accommodate multiline text
                                 const rowCount = data.length;
                                 ws['!rows'] = [];
                                 for (let i = 0; i < rowCount; i++) {
                                     ws['!rows'][i] = { hpt: 25 }; // Default row height
                                 }
-                                
+
                                 // Add the worksheet to the workbook
                                 XLSX.utils.book_append_sheet(wb, ws, "OCOP Products");
-                                
+
                                 // Generate Excel file and trigger download
                                 const today = new Date().toISOString().slice(0, 10);
                                 const fileName = `ocop_products_${today}.xlsx`;
                                 XLSX.writeFile(wb, fileName);
-                                
+
                                 showSuccessAlert("Export Successful", `${products.length} Items have been exported to Excel.`);
                             } catch (ex) {
                                 console.error("Error during Excel creation:", ex);
@@ -362,7 +372,7 @@
                             showErrorAlert("Export Error", "No OCOP product data available for export.");
                         }
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         console.error("API Error Details:", status, error);
                         showErrorAlert("Export Error", "Could not retrieve product data. Please check your connection or permissions.");
                     }
@@ -385,7 +395,7 @@
         .dropdown-toggle::after {
             display: none;
         }
-        
+
         .ocop-dropdown-item {
             background-color: #0a3b26;
             color: white !important;
@@ -393,33 +403,33 @@
             margin-bottom: 2px;
             font-weight: 500;
         }
-        
+
         .ocop-dropdown-item:hover {
             background-color: #072c1b !important;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
             transform: translateY(-2px);
             color: #ffffff !important;
         }
-        
+
         .dropdown-menu {
             background-color: #d4e9dd;
             border-radius: 8px;
             border: 1px solid #a3c9b3;
             padding: 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
-        
+
         .dropdown-item {
             color: #032213 !important;
         }
-        
+
         #createOcopDropdown {
             color: #ffffff;
             font-weight: 500;
             background-color: #0a3b26;
             border-color: #062318;
         }
-        
+
         #createOcopDropdown:hover {
             background-color: #072c1b;
             border-color: #021d10;

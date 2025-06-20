@@ -16,8 +16,8 @@ namespace TraVinhMaps.Web.Admin.Models.LocalSpecialties
         [Required(ErrorMessage = "Address is required.")]
         public string Address { get; set; } = default!;
 
-        [Required(ErrorMessage = "MarkerId is required.")]
-        public string MarkerId { get; set; } = default!;
+        // [Required(ErrorMessage = "MarkerId is required.")]
+        // public string MarkerId { get; set; } = default!;
 
         [Required(ErrorMessage = "Location is required.")]
         public LocationRequest Location { get; set; } = default!;
@@ -26,7 +26,6 @@ namespace TraVinhMaps.Web.Admin.Models.LocalSpecialties
         {
             Name = this.Name,
             Address = this.Address,
-            MarkerId = this.MarkerId,
             Location = new Location
             {
                 Type = this.Location.Type,

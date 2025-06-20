@@ -98,7 +98,7 @@
                         window.location.href = `/Admin/OcopProduct/Detail/${productId}`;
                     }, 2000);
                 } else {
-                    showTimedAlert("Error!", response.message, "error", 3000);
+                    showTimedAlert("Error!", response.message, "error", 1000);
                 }
             },
             error: function (xhr) {
@@ -149,7 +149,7 @@
                         window.location.href = `/Admin/OcopProduct/Detail/${productId}`;
                     }, 2000);
                 } else {
-                    showTimedAlert("Error!", response.message, "error", 3000);
+                    showTimedAlert("Error!", response.message, "error", 1000);
                 }
             },
             error: function (xhr) {
@@ -198,9 +198,9 @@
                   </a>`
                             );
                             table.row(row).invalidate().draw(false);
-                            showTimedAlert("Success!", response.message, "success", 3000);
+                            showTimedAlert("Success!", response.message, "success", 1000);
                         } else {
-                            showTimedAlert("Error!", response.message, "error", 3000);
+                            showTimedAlert("Error!", response.message, "error", 1000);
                         }
                     },
                     error: function (xhr) {
@@ -253,9 +253,9 @@
                             );
 
                             table.row(row).invalidate().draw(false);
-                            showTimedAlert("Success!", response.message, "success", 3000);
+                            showTimedAlert("Success!", response.message, "success", 1000);
                         } else {
-                            showTimedAlert("Error!", response.message, "error", 3000);
+                            showTimedAlert("Error!", response.message, "error", 1000);
                         }
                     },
                     error: function (xhr) {

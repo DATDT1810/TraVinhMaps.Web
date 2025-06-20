@@ -197,7 +197,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                         if (isRememberMe)
                         {
                             claims.Add(new Claim("refreshToken", result.RefreshToken));
-                        }
+                        }   
 
                         var claimsIdentity = new ClaimsIdentity(
                             claims, CookieAuthenticationDefaults.AuthenticationScheme);

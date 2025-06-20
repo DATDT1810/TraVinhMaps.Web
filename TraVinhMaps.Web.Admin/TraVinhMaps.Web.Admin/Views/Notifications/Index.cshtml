@@ -66,7 +66,7 @@
                                     <tr>
                                         <td>@count</td>
                                         <td>@Html.Raw(item.Title)</td>
-                                        <td>@Html.TruncateWords(item.Content, 16)</td>
+                                        <td>@Html.TruncateWords(item.Content, 12)</td>
                                         <td>@item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</td>
                                     <td>
                                         <ul class="action">
@@ -92,17 +92,16 @@
 @section Scripts {
     @Html.AntiForgeryToken()
     <script src="~/assets/js/sweetalert-custom.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const successMessage = @Html.Raw(Json.Serialize(TempData["NotificationSuccess"]));
             const errorMessage = @Html.Raw(Json.Serialize(TempData["NotificationError"]));
 
             if (successMessage) {
-               showTimedAlert("Success!", successMessage, "success", 3000);
-
+                showTimedAlert("Success!", successMessage, "success", 2000);
             } else if (errorMessage) {
-               showTimedAlert("Error!", successMessage, "error", 3000);
-
+                showTimedAlert("Error!", errorMessage, "error", 2000);
             }
         });
     </script>

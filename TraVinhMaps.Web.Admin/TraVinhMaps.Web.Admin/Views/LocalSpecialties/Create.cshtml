@@ -39,24 +39,23 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="form theme-form">
-                            <form asp-action="Create" method="post" enctype="multipart/form-data" id="createLocalSpecialtyForm">
+                            <form asp-action="Create" method="post" enctype="multipart/form-data"
+                                id="createLocalSpecialtyForm">
                                 <div class="row">
                                     <div class="col-md-8">
                                         <div class="mb-3">
                                             <label>Food Name</label>
-                                            <input asp-for="FoodName" class="form-control" type="text" placeholder="Enter food name (e.g., Bánh Tét Trà Vinh)" />
+                                            <input asp-for="FoodName" class="form-control" type="text"
+                                                placeholder="Enter food name (e.g., Bánh Tét Trà Vinh)" />
                                             <span asp-validation-for="FoodName" class="text-danger"></span>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="mb-3">
-                                            <div class="mb-3">
-                                                <label asp-for="TagId" class="control-label">Tag</label>
-                                                <select asp-for="TagId" class="form-control" asp-items="ViewBag.Tags" required>
-                                                    <option value="">-- Select a tag --</option>
-                                                </select>
-                                                <span asp-validation-for="TagId" class="text-danger"></span>
-                                            </div>
+                                            <label>Tag</label>
+                                            <input type="text" class="form-control"
+                                                value="@(ViewBag.LocalSpecialTag?.Name ?? "Local Specialty")"
+                                                readonly />
                                         </div>
                                     </div>
                                 </div>
@@ -65,7 +64,8 @@
                                     <div class="col">
                                         <div class="mb-3">
                                             <label>Description</label>
-                                            <textarea asp-for="Description" class="form-control" placeholder="Description of the local specialty" rows="5"></textarea>
+                                            <textarea asp-for="Description" id="Description" class="form-control"
+                                                placeholder="Description of the local specialty" rows="5"></textarea>
                                             <span asp-validation-for="Description" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -75,16 +75,20 @@
                                 <div class="row">
                                     <div class="col">
                                         <label>Upload Local Specialty Images</label>
-                                        <div class="item add-image-box" id="addImageBox" style="cursor: pointer; border: 2px dashed #ccc; padding: 20px; text-align: center;">
-                                            <div class="upload-placeholder" style="font-size: 24px; color: #666;">+</div>
-                                            <p style="color: #666;">Click to upload images (Max 5, JPG/JPEG/PNG/GIF/BMP/WEBP)</p>
-                                            <input asp-for="Images" type="file" accept="image/*" multiple id="uploadImageInput" style="display: none;" />
+                                        <div class="item add-image-box" id="addImageBox"
+                                            style="cursor: pointer; border: 2px dashed #ccc; padding: 20px; text-align: center;">
+                                            <div class="upload-placeholder" style="font-size: 24px; color: #666;">+
+                                            </div>
+                                            <p style="color: #666;">Click to upload images (Max 5,
+                                                JPG/JPEG/PNG/GIF/BMP/WEBP)</p>
+                                            <input asp-for="Images" type="file" accept="image/*" multiple
+                                                id="uploadImageInput" style="display: none;" />
                                         </div>
                                         <div id="imagePreview" class="row mt-3 g-3"></div>
                                         <span id="imageValidationMessage" class="text-danger"></span>
                                     </div>
                                 </div>
-
+                                <hr>
                                 <!-- Locations -->
                                 <div class="row">
                                     <div class="col">
@@ -99,37 +103,45 @@
                                                             <div class="row">
                                                                 <div class="col-sm-4">
                                                                     <label>Name of Location</label>
-                                                                    <input asp-for="Locations[i].Name" class="form-control" placeholder="Location name" />
-                                                                    <span asp-validation-for="Locations[i].Name" class="text-danger"></span>
+                                                                    <input asp-for="Locations[i].Name" class="form-control"
+                                                                        placeholder="Location name" />
+                                                                    <span asp-validation-for="Locations[i].Name"
+                                                                        class="text-danger"></span>
                                                                 </div>
                                                                 <div class="col-sm-4">
                                                                     <label>Address</label>
-                                                                    <input asp-for="Locations[i].Address" class="form-control" placeholder="Address" />
-                                                                    <span asp-validation-for="Locations[i].Address" class="text-danger"></span>
+                                                                    <input asp-for="Locations[i].Address" class="form-control"
+                                                                        placeholder="Address" />
+                                                                    <span asp-validation-for="Locations[i].Address"
+                                                                        class="text-danger"></span>
                                                                 </div>
                                                                 <div class="col-sm-4">
                                                                     <label>Marker Type</label>
-                                                                    <select asp-for="Locations[i].MarkerId" class="form-select">
-                                                                        <option value="">Select marker type</option>
-                                                                        <option value="682449f7d14510b9c087c2a3">Religious Buildings</option>
-                                                                        <option value="682449f7d14510b9c087c2a4">Natural Destination</option>
-                                                                    </select>
-                                                                    <span asp-validation-for="Locations[i].MarkerId" class="text-danger"></span>
+                                                                    <input type="text" class="form-control"
+                                                                        value="@(ViewBag.SellLocationMarker?.Name ?? "Sell Location")"
+                                                                        readonly />
                                                                 </div>
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-sm-6">
                                                                     <label>Longitude</label>
-                                                                    <input asp-for="Locations[i].Longitude" class="form-control" type="number" step="any" placeholder="Longitude" min="-180" max="180" />
-                                                                    <span asp-validation-for="Locations[i].Longitude" class="text-danger"></span>
+                                                                    <input asp-for="Locations[i].Longitude" class="form-control"
+                                                                        type="number" step="any" placeholder="Longitude"
+                                                                        min="-180" max="180" />
+                                                                    <span asp-validation-for="Locations[i].Longitude"
+                                                                        class="text-danger"></span>
                                                                 </div>
                                                                 <div class="col-sm-6">
                                                                     <label>Latitude</label>
-                                                                    <input asp-for="Locations[i].Latitude" class="form-control" type="number" step="any" placeholder="Latitude" min="-90" max="90" />
-                                                                    <span asp-validation-for="Locations[i].Latitude" class="text-danger"></span>
+                                                                    <input asp-for="Locations[i].Latitude" class="form-control"
+                                                                        type="number" step="any" placeholder="Latitude"
+                                                                        min="-90" max="90" />
+                                                                    <span asp-validation-for="Locations[i].Latitude"
+                                                                        class="text-danger"></span>
                                                                 </div>
                                                             </div>
-                                                            <button type="button" class="btn btn-danger btn-sm mt-2 remove-location">Remove</button>
+                                                            <button type="button"
+                                                                class="btn btn-danger btn-sm mt-2 remove-location">Remove</button>
                                                         </div>
                                                     }
                                                 }
@@ -139,41 +151,54 @@
                                                         <div class="row">
                                                             <div class="col-sm-4">
                                                                 <label>Name of Location</label>
-                                                                <input name="Locations[0].Name" class="form-control" placeholder="Location name" />
-                                                                <span class="text-danger field-validation-valid" data-valmsg-for="Locations[0].Name" data-valmsg-replace="true"></span>
+                                                                <input name="Locations[0].Name" class="form-control"
+                                                                    placeholder="Location name" />
+                                                                <span class="text-danger field-validation-valid"
+                                                                    data-valmsg-for="Locations[0].Name"
+                                                                    data-valmsg-replace="true"></span>
                                                             </div>
                                                             <div class="col-sm-4">
                                                                 <label>Address</label>
-                                                                <input name="Locations[0].Address" class="form-control" placeholder="Address" />
-                                                                <span class="text-danger field-validation-valid" data-valmsg-for="Locations[0].Address" data-valmsg-replace="true"></span>
+                                                                <input name="Locations[0].Address" class="form-control"
+                                                                    placeholder="Address" />
+                                                                <span class="text-danger field-validation-valid"
+                                                                    data-valmsg-for="Locations[0].Address"
+                                                                    data-valmsg-replace="true"></span>
                                                             </div>
                                                             <div class="col-sm-4">
-                                                                <label>Marker Type</label>
-                                                                <select name="Locations[0].MarkerId" class="form-select">
-                                                                    <option value="">Select marker type</option>
-                                                                    <option value="682449f7d14510b9c087c2a3">Religious Buildings</option>
-                                                                    <option value="682449f7d14510b9c087c2a4">Natural Destination</option>
-                                                                </select>
-                                                                <span class="text-danger field-validation-valid" data-valmsg-for="Locations[0].MarkerId" data-valmsg-replace="true"></span>
+                                                                <label class="form-label">Marker Type</label>
+                                                                <input type="text" class="form-control"
+                                                                    value="@(ViewBag.SellLocationMarker?.Name ?? "Sell Location")"
+                                                                    readonly />
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-sm-6">
                                                                 <label>Longitude</label>
-                                                                <input name="Locations[0].Longitude" class="form-control" type="number" step="any" placeholder="Longitude" min="-180" max="180" />
-                                                                <span class="text-danger field-validation-valid" data-valmsg-for="Locations[0].Longitude" data-valmsg-replace="true"></span>
+                                                                <input name="Locations[0].Longitude" class="form-control"
+                                                                    type="number" step="any" placeholder="Longitude"
+                                                                    min="-180" max="180" />
+                                                                <span class="text-danger field-validation-valid"
+                                                                    data-valmsg-for="Locations[0].Longitude"
+                                                                    data-valmsg-replace="true"></span>
                                                             </div>
                                                             <div class="col-sm-6">
                                                                 <label>Latitude</label>
-                                                                <input name="Locations[0].Latitude" class="form-control" type="number" step="any" placeholder="Latitude" min="-90" max="90" />
-                                                                <span class="text-danger field-validation-valid" data-valmsg-for="Locations[0].Latitude" data-valmsg-replace="true"></span>
+                                                                <input name="Locations[0].Latitude" class="form-control"
+                                                                    type="number" step="any" placeholder="Latitude"
+                                                                    min="-90" max="90" />
+                                                                <span class="text-danger field-validation-valid"
+                                                                    data-valmsg-for="Locations[0].Latitude"
+                                                                    data-valmsg-replace="true"></span>
                                                             </div>
                                                         </div>
-                                                        <button type="button" class="btn btn-danger btn-sm mt-2 remove-location">Remove</button>
+                                                        <button type="button"
+                                                            class="btn btn-danger btn-sm mt-2 remove-location">Remove</button>
                                                     </div>
                                                 }
                                             </div>
-                                            <button type="button" class="btn btn-primary mb-3" onclick="addLocation()">Add Location</button>
+                                            <button type="button" class="btn btn-primary mb-3"
+                                                onclick="addLocation()">Add Location</button>
                                         </div>
                                     </div>
                                 </div>
@@ -181,7 +206,8 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="text-end">
-                                            <button type="submit" class="btn btn-success me-3">Create Local Specialty</button>
+                                            <button type="submit" class="btn btn-success me-3">Create Local
+                                                Specialty</button>
                                             <a asp-action="Index" class="btn btn-danger">Back</a>
                                         </div>
                                     </div>
@@ -201,23 +227,30 @@
     <link rel="stylesheet" href="~/assets/css/LocalSpecialties/details.css">
     <script src="~/assets/js/sweetalert-custom.js"></script>
     <script src="~/assets/js/local-specialties/create.js"></script>
+    <script src="~/assets/js/ckeditor5.js"></script>
     <script>
-        // Cập nhật locationIndex từ View
-        let locationIndex = @(Model != null && Model.Locations != null ? Model.Locations.Count : 1);
+        window.sellLocationMarkerName = "@(ViewBag.SellLocationMarker?.Name ?? "Sell Location")";
+        window.locationIndex = @(Model != null && Model.Locations != null ? Model.Locations.Count : 1);
 
         $(document).ready(function () {
-            @if (TempData["CreateTipsError"] != null)
-            {
-                <text>
-                    showErrorAlert("Error!", "@TempData["CreateTipsError"]");
-                </text>
+            @if (TempData["CreateLocalSpecialtiesError"] != null)
+                {
+                    <text>
+                        showErrorAlert("Error!", "@TempData["CreateLocalSpecialtiesError"]", "error", 2000);
+                    </text>
             }
-            else if (TempData["CreateLocalSpecialtiesSuccess"] != null)
-            {
-                <text>
-                    showSuccessAlert("Success!", "@TempData["CreateLocalSpecialtiesSuccess"]");
-                </text>
+                                    else if (TempData["CreateLocalSpecialtiesError"] != null)
+                {
+                    <text>
+                        showErrorAlert("Error!", "@TempData["CreateLocalSpecialtiesError"]", "error", 2000);
+                    </text>
             }
-        });
+                                    else if (TempData["CreateLocalSpecialtiesSuccess"] != null)
+                {
+                    <text>
+                        showTimedAlert("Success!", "@TempData["CreateLocalSpecialtiesSuccess"]", "success", 2000);
+                    </text>
+            }
+                                });
     </script>
 }

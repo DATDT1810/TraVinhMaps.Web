@@ -248,7 +248,7 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
             {
                 var content = await response.Content.ReadAsStringAsync();
                 var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return JsonSerializer.Deserialize<OcopProductMessage>(content, option) ?? throw new HttpRequestException("Fail to restore ocop product.");;
+                return JsonSerializer.Deserialize<OcopProductMessage>(content, option) ?? throw new HttpRequestException("Fail to restore ocop product."); ;
             }
             else
             {
@@ -309,31 +309,37 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();
-                var option = new JsonSerializerOptions { 
+                var option = new JsonSerializerOptions
+                {
                     PropertyNameCaseInsensitive = true,
                     AllowTrailingCommas = true
                 };
-                
-                try {
+
+                try
+                {
                     var responseWrapper = JsonSerializer.Deserialize<ProductLookUpResponseWrapper>(content, option);
-                    
-                    if (responseWrapper?.Data != null) {
+
+                    if (responseWrapper?.Data != null)
+                    {
                         // Convert single Tags object to a List for view compatibility
                         var tagsList = new List<TagResponse>();
-                        if (responseWrapper.Data.Tags != null) {
+                        if (responseWrapper.Data.Tags != null)
+                        {
                             tagsList.Add(responseWrapper.Data.Tags);
                         }
-                        
-                        return new ProductLookUpResponse {
+
+                        return new ProductLookUpResponse
+                        {
                             OcopTypes = responseWrapper.Data.OcopTypes ?? new List<OcopTypeResponse>(),
                             Companies = responseWrapper.Data.Companies ?? new List<CompanyResponse>(),
                             Tags = tagsList
                         };
                     }
-                    
+
                     throw new HttpRequestException("Fail to get lookup data for ocop product: No data returned");
                 }
-                catch (JsonException ex) {
+                catch (JsonException ex)
+                {
                     throw new HttpRequestException($"Failed to parse lookup data: {ex.Message}\nJSON: {content.Substring(0, Math.Min(content.Length, 500))}");
                 }
             }
@@ -341,6 +347,31 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
             {
                 var errorResult = await response.Content.ReadAsStringAsync();
                 throw new HttpRequestException($"Unable to fetch lookup data for ocop product. Status: {response.StatusCode}, Error: {errorResult}");
+            }
+        }
+
+        public async Task<IEnumerable<OcopProductAnalytics>> GetProductAnalyticsAsync(string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default)
+        {
+            var url = $"{ocopProductApi}analytics?timeRange={timeRange}";
+            if (startDate.HasValue)
+            {
+                url += $"&startDate={Uri.EscapeDataString(startDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+            }
+            if (endDate.HasValue)
+            {
+                url += $"&endDate={Uri.EscapeDataString(endDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+            }
+            var response = await _httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                return JsonSerializer.Deserialize<OcopProductBase<List<OcopProductAnalytics>>>(content, option)?.Data ?? throw new HttpRequestException("Fail to find list ocop product.");
+            }
+            else
+            {
+                var errorResult = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException($"Unable to fetch list ocop product. Status: {response.StatusCode}, Error: {errorResult}");
             }
         }
     }

@@ -83,7 +83,7 @@
                                                     <p>@item.FoodName</p>
                                                 </div>
                                             </td>
-                                            <td>@Html.TruncateWords(item.Description, 15)</td>
+                                            <td>@Html.TruncateWords(item.Description, 12)</td>
                                             <td>
                                                 <span
                                                     class="badge @(item.Status ? "badge-light-primary" : "badge-light-danger")">@(item.Status
@@ -139,8 +139,8 @@
         (function () {
             const success = @Html.Raw(Json.Serialize(TempData["CreateLocalSpecialtiesSuccess"]));
             const error   = @Html.Raw(Json.Serialize(TempData["CreateLocalSpecialtiesError"]));
-            if (success) showTimedAlert("Success!", "@TempData["EditLocalSpecialtySuccess"]", "success", 3000);
-            if (error)    showTimedAlert("Error!", "@TempData["EditLocalSpecialtyError"]", "error", 3000);
+            if (success) showTimedAlert("Success!", "@TempData["EditLocalSpecialtySuccess"]", "success", 2000);
+            if (error)    showTimedAlert("Error!", "@TempData["EditLocalSpecialtyError"]", "error", 2000);
         })();
     </script>
     <script>
@@ -148,13 +148,13 @@
            @if (TempData["EditLocalSpecialtySuccess"] != null)
             {
                 <text>
-                    showTimedAlert("Success!", "@TempData["EditLocalSpecialtySuccess"]", "success", 3000);
+                    showTimedAlert("Success!", "@TempData["EditLocalSpecialtySuccess"]", "success", 2000);
                 </text>
             }
             @if (TempData["EditLocalSpecialtyError"] != null)
             {
                 <text>
-                    showTimedAlert("Error!", "@TempData["EditLocalSpecialtyError"]", "error", 3000);
+                    showTimedAlert("Error!", "@TempData["EditLocalSpecialtyError"]", "error", 2000);
                 </text>
             }
         });

@@ -5,15 +5,25 @@
 }
 
 <style>
+    .chart-hometown-container {
+        max-height: 550px;
+        min-width: 800px;
+        width: 100%;
+        position: relative;
+        overflow: visible;
+    }
+
     .chart-container {
         max-height: 300px;
         position: relative;
     }
 
-    .chart-container canvas {
+    .chart-container canvas,
+    .chart-hometown-container canvas {
         max-height: 100%;
         width: 100%;
     }
+    
 </style>
 
 <!-- Page Sidebar Ends-->
@@ -34,7 +44,7 @@
                             {
                                 <li class="breadcrumb-item">@item</li>
                             }
-                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
+                            <li class="breadcrumb-item active">@breadcrumbs.)</li>
                         }
                     </ol>
                 </div>
@@ -256,7 +266,7 @@
                                         </select>
                                     </div>
                                     <div class="card-body">
-                                        <div class="chart-container">
+                                        <div class="chart-hometown-container">
                                             <canvas id="hometownChart"></canvas>
                                         </div>
                                     </div>
@@ -275,17 +285,7 @@
                                 <h4>Top 5 Reviews</h4>
                                 <span><code>#Review new</code></span>
                             </div>
-                            <div class="col-md-6">
-                                <div class="sort-panel mb-3 float-end">
-                                    <label>
-                                        <select class="btn btn-primary dropdown-toggle btn-md pe-5 text-start"
-                                            id="sortingField">
-                                            <option>Destination</option>
-                                            <option>Stay</option>
-                                        </select>
-                                    </label>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                     <div class="table-responsive signal-table custom-scrollbar">
@@ -318,74 +318,6 @@
                                     </td>
                                     <td>Chase Nguyen</td>
                                 </tr>
-                                <tr>
-                                    <th scope="row">2</th>
-                                    <td class="d-flex align-items-center"><img class="me-2"
-                                            src="../assets/images/tags/destination.png" alt="Destination"
-                                            style="width: 33px;"><span class="font-success">Destination</span></td>
-                                    <td><img class="img-fluid table-avtar" src="../assets/images/avtar/3.jpg"
-                                            alt="Destination"> Alizaban</td>
-                                    <td>Ba Om Pond</td>
-                                    <td>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                    </td>
-                                    <td>Brie Furman</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">3</th>
-                                    <td class="d-flex align-items-center"><img class="me-2"
-                                            src="../assets/images/tags/destination.png" alt="Destination"
-                                            style="width: 32px;"><span class="font-success">Destination</span></td>
-                                    <td><img class="img-fluid table-avtar" src="../assets/images/avtar/3.jpg"
-                                            alt="Destination"> Alizaban</td>
-                                    <td>Pond Ba Om</td>
-                                    <td>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                    </td>
-                                    <td>Jeremy Lake</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">4</th>
-                                    <td class="d-flex align-items-center"><img class="me-2"
-                                            src="../assets/images/tags/destination.png" alt="Destination"
-                                            style="width: 32px;"><span class="font-success">Destination</span></td>
-                                    <td><img class="img-fluid table-avtar" src="../assets/images/avtar/3.jpg"
-                                            alt="Destination"> Alizaban</td>
-                                    <td>Pond Ba Om</td>
-                                    <td>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                    </td>
-                                    <td>Angelica Howards</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">5</th>
-                                    <td class="d-flex align-items-center"><img class="me-2"
-                                            src="../assets/images/tags/destination.png" alt="Destination"
-                                            style="width: 32px;"><span class="font-success">Destination</span></td>
-                                    <td><img class="img-fluid table-avtar" src="../assets/images/avtar/3.jpg"
-                                            alt="Destination"> Alizaban</td>
-                                    <td>Pond Ba Om</td>
-                                    <td>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                    </td>
-                                    <td>Diane Okuma</td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -399,14 +331,14 @@
 @section Scripts {
     <script>
         // Define initial data and time range
-        const initialTimeRange = 'month'; 
+        const initialTimeRange = 'month';
         const initialData = {
             age: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Age ?? new Dictionary<string, int>())),
             gender: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Gender ?? new Dictionary<string, int>())),
             status: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Status ?? new Dictionary<string, int>())),
             hometown: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Hometown ?? new Dictionary<string, int>())),
             time: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Time ?? new Dictionary<string, int>()))
-            };
+                };
 
         // Handle error from ViewData
         const error = @Html.Raw(Json.Serialize(ViewData["Error"]));
@@ -417,7 +349,92 @@
         // Initialize charts when the window loads
         window.addEventListener('load', () => {
             initializeCharts(initialData);
+            // Force resize for hometown chart after initialization
+            const hometownChartCanvas = document.getElementById('hometownChart');
+            if (hometownChartCanvas && window.hometownChart) {
+                window.hometownChart.resize();
+            }
+        });
+
+        // Optional: Listen for window resize to adjust chart
+        window.addEventListener('resize', () => {
+            if (window.hometownChart) {
+                window.hometownChart.resize();
+            }
         });
     </script>
     <script src="~/assets/js/usermanagement/chart.js"></script>
+
+    <script>
+        // Kết nối tới SignalR Hub
+        const dashboardConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/dashboardHub")
+            .withAutomaticReconnect()
+            .build();
+
+        // Lắng nghe sự kiện từ backend
+        dashboardConnection.on("UpdateUserStats", function () {
+            reloadAllUserCharts();
+        });
+
+        // Kết nối và join group (nếu có role thực tế thì lấy từ Razor)
+        dashboardConnection.start().then(function () {
+            dashboardConnection.invoke("JoinAdminGroup", "admin"); 
+            dashboardConnection.invoke("JoinAdminGroup", "super-admin"); 
+        });
+
+        // Hàm reload lại dữ liệu chart
+        function reloadAllUserCharts() {
+            const timeRange = document.getElementById('timeChartSelect')?.value || 'month';
+            fetch(`/api/users/stats?groupBy=all&timeRange=${timeRange}`)
+                .then(res => res.json())
+                .then(res => {
+                    updateCharts(res.data);
+                    reloadSummaryWidgets();
+                });
+        }
+
+        // Hàm cập nhật lại dữ liệu cho các chart
+        function updateCharts(data) {
+            if (window.ageChart && data.age) {
+                window.ageChart.data.labels = Object.keys(data.age);
+                window.ageChart.data.datasets[0].data = Object.values(data.age);
+                window.ageChart.update();
+            }
+            if (window.genderChart && data.gender) {
+                window.genderChart.data.labels = Object.keys(data.gender);
+                window.genderChart.data.datasets[0].data = Object.values(data.gender);
+                window.genderChart.update();
+            }
+            if (window.statusChart && data.status) {
+                window.statusChart.data.labels = Object.keys(data.status);
+                window.statusChart.data.datasets[0].data = Object.values(data.status);
+                window.statusChart.update();
+            }
+            if (window.hometownChart && data.hometown) {
+                window.hometownChart.data.labels = Object.keys(data.hometown);
+                window.hometownChart.data.datasets[0].data = Object.values(data.hometown);
+                window.hometownChart.update();
+            }
+            if (window.timeChart && data.time) {
+                window.timeChart.data.labels = Object.keys(data.time);
+                window.timeChart.data.datasets[0].data = Object.values(data.time);
+                window.timeChart.update();
+            }
+        }
+
+        // 6. (Tuỳ chọn) Hàm cập nhật số liệu tổng quan widgets
+        function reloadSummaryWidgets() {
+            fetch(`/api/users/summary`)
+                .then(res => res.json())
+                .then(res => {
+                        if (document.querySelector('.total-project .f-w-600')) {
+                        document.querySelector('.total-project .f-w-600').textContent = res.totalUsers;
+                    }
+                    if (document.querySelector('.total-Progress .f-w-600')) {
+                        document.querySelector('.total-Progress .f-w-600').textContent = res.totalUserActive;
+                    }
+                });
+        }
+    </script>
 }

@@ -133,15 +133,15 @@
             @if (TempData["CreateAdminSuccess"] != null)
                 {
                     <text>
-                        showSuccessAlert("Success!", "@TempData["CreateAdminSuccess"]");
+                        showTimedAlert("Success!", "@TempData["CreateAdminSuccess"]", "success", 2000);
                     </text>
             }
                 @if (TempData["CreateAdminError"] != null)
                 {
                     <text>
-                        showErrorAlert("Error!", "@TempData["CreateAdminError"]");
+                        showTimedAlert("Error!", "@TempData["CreateAdminError"]", "error", 2000);
                     </text>
             }
-                                        });
+                                            });
     </script>
 }

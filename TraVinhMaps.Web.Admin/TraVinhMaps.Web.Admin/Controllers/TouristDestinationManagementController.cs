@@ -59,6 +59,18 @@ namespace TraVinhMaps.Web.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
+                string errorMessage = "";
+                foreach (var modelStateEntry in ModelState)
+                {
+                    var key = modelStateEntry.Key;
+                    foreach (var error in modelStateEntry.Value.Errors)
+                    {
+                        Console.WriteLine($"Key: {key}, Error: {error.ErrorMessage}");
+                        errorMessage += $"{error.ErrorMessage} ";
+                    }
+                }
+                ViewBag.error = errorMessage;
+                ViewBag.DestinationTypes = await GetDestinationTypeList();
                 return View(touristDestinationViewRequest);
             }
             var touristDestinationRequest = DestinationMapper.Mapper.Map<TouristDestinationRequest>(touristDestinationViewRequest);
@@ -85,6 +97,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 ViewBag.error = "Something went wrong, please try again";
                 return View(touristDestinationViewRequest);
             }
+            ViewBag.DestinationTypes = await GetDestinationTypeList();
             return RedirectToAction("Index");
         }
 
@@ -124,16 +137,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
             touristDestinationData.latitude = destinationDetail.Location.Coordinates[1];
             touristDestinationData.Type = destinationDetail.Location.Type;
 
-            // ViewBag.DestinationTypes = new List<SelectListItem>
-            // {
-            //     new SelectListItem { Value = "68244abd2b06dbe39f973e8c", Text = "Religious Buildings" },
-            //     new SelectListItem { Value = "d7e5c3e8f2fa4c149b9e3cdd", Text = "Tree" }
-            // };
-            // ViewBag.TypeLocation = new List<SelectListItem>
-            // {
-            //     new SelectListItem { Value = "Point", Text = "Point" },
-            //     new SelectListItem { Value = "Unknow", Text = "Unknow" }
-            // };
+            ViewBag.DestinationTypes = await GetDestinationTypeList();
+
             return View(touristDestinationData);
         }
 
@@ -164,6 +169,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             var updateDestination = await _destinationService.UpdateDestination(updateDestinationData);
             if (updateDestination == null)
             {
+                ViewBag.DestinationTypes = await GetDestinationTypeList();
                 ViewBag.error = "something went wrong, please try again";
                 return View(updateDestinationViewRequest);
             }
@@ -207,7 +213,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             try
             {
                 await _destinationService.RestoreDestination(id);
-                return Json(new { success = true, message = "destination restore successfully" });
+                return Json(new { success = true, message = "Destination restore successfully" });
             }
             catch (Exception ex)
             {

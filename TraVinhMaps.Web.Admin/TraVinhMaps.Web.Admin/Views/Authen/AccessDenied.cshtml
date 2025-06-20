@@ -2,22 +2,29 @@
     ViewData["Title"] = "Access Denied";
 }
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6 mt-5">
-            <div class="card border-danger">
-                <div class="card-header bg-danger text-white">
-                    <h4 class="mb-0">Access Denied</h4>
-                </div>
-                <div class="card-body text-center p-5">
-                    <i class="fa fa-exclamation-triangle text-danger" style="font-size: 4rem;"></i>
-                    <h2 class="mt-4">Access Denied</h2>
-                    <p class="mb-4">
-                        You do not have permission to access this resource.
-                    </p>
-                    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Return to Home</a>
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="row justify-content-center">
+                    <div class="col-md-8 col-lg-6 mt-5">
+                        <div class="card border-danger">
+                            <div class="card-header bg-danger text-white">
+                                <h4 class="mb-0">Access Denied</h4>
+                            </div>
+                            <div class="card-body text-center p-5">
+                                <i class="fa fa-exclamation-triangle text-danger" style="font-size: 4rem;"></i>
+                                <h2 class="mt-4">Access Denied</h2>
+                                <p class="mb-4">
+                                    You do not have permission to access this resource.
+                                </p>
+                                <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Return to
+                                    Home</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div> 
+</div>
