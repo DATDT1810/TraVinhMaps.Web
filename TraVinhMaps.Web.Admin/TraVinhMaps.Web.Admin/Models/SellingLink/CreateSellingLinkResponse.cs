@@ -7,19 +7,10 @@ namespace TraVinhMaps.Web.Admin.Models.SellingLink
 {
     public class CreateSellingLinkResponse<T>
     {
-        public Value value { get; set; }
-        public List<object> formatters { get; set; } 
-        public List<object> contentTypes { get; set; } 
-        public object declaredType { get; set; } 
-        public int statusCode { get; set; }
-
-        public class Value
-        {
-            public T data { get; set; }
-            public string message { get; set; }
-            public string status { get; set; }
-            public int statusCode { get; set; }
-            public object errors { get; set; } 
-        }
+        public T Data { get; set; } // Đổi từ "value" thành "Data" để khớp với JSON
+        public string Message { get; set; }
+        public string Status { get; set; }
+        public int StatusCode { get; set; }
+        public object Errors { get; set; }
     }
 }

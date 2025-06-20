@@ -5,7 +5,6 @@
     ViewData["Title"] = "Index";
     var sessionId = User.Claims.FirstOrDefault(c => c.Type == "sessionId")?.Value;
 }
-
 <div class="page-body">
     <div class="container-fluid">
         <div class="page-title">
@@ -46,6 +45,13 @@
             @TempData["SuccessMessage"]
         </div>
     }
+    @if (TempData["SellLocationLogs"] != null)
+{
+    <div class="alert alert-info">
+        <h4>Logged Sell Locations:</h4>
+        @Html.Raw(TempData["SellLocationLogs"])
+    </div>
+}
     <!-- Container-fluid starts-->
     <div class="container-fluid">
         <div class="row">
@@ -80,8 +86,8 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="list-users">
-                            <table class="display" id="project-status">
+                        <div class="table-responsive custom-scrollbar">
+                            <table class="display" id="basic-9">
                                 <thead class="bg-primary">
                                     <tr>
                                         <th>No.</th>
@@ -89,7 +95,8 @@
                                         <th>Product Name</th>
                                         <th>Product Price</th>
                                         <th>Status</th>
-                                        <th>Ocop Year Release</th>
+                                        <th class="text-center">Star <span style="color: #ffc107;">&#9733;</span></th>
+                                        <th>Year Release</th>
                                         <th>Created At</th>
                                         <th>Action</th>
                                     </tr>
@@ -100,7 +107,7 @@
                                     }
                                     @foreach (var item in Model)
                                     {
-                                        <tr class="user-removes">
+                                        <tr>
                                             <td>@count</td>
                                             <td>
                                                 <div class="product-names">
@@ -116,26 +123,24 @@
                                                                 alt="no image available" />
                                                         }
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            @item.ProductName
-                                        </td>
-
-                                        <td class="text-end">
-                                            @decimal.Parse(item.ProductPrice).ToString("#,##0")
-                                        </td>
-                                        <td>
-                                            <span
-                                                class="badge @(item.Status ? "badge-light-primary" : "badge-light-danger")">
-                                                @(item.Status
-                                                                                                ? "Active" : "Inactive")
-                                            </span>
-                                        </td>
-                                        <td class="text-end">
-                                            @item.OcopYearRelease
-                                        </td>
-
+                                            </td>
+                                            <td>
+                                                @item.ProductName
+                                            </td>
+                                            <td>
+                                                 @item.ProductPrice
+                                            </td>
+                                            <td>
+                                                <span
+                                                    class="badge @(item.Status ? "badge-light-primary" : "badge-light-danger")">@(item.Status
+                                                                                                    ? "Active" : "Inactive")</span>
+                                            </td>
+                                            <td class="text-center">
+                                                @item.OcopPoint
+                                            </td>
+                                            <td>
+                                                @item.OcopYearRelease
+                                            </td>
                                             <td>
                                                 @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                             </td>

@@ -7,6 +7,7 @@ namespace TraVinhMaps.Web.Admin.Models.SellLocation
         public string Id { get; set; }
         public string? LocationName { get; set; }
         public string? LocationAddress { get; set; }
+        public string? MarkerId { get; set; }
         public LocationResponse? Location { get; set; }
     }
 }

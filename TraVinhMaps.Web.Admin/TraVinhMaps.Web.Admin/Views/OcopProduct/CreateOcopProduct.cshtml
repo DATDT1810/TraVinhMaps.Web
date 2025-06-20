@@ -1,6 +1,6 @@
 @using TraVinhMaps.Web.Admin.Models.OcopProduct
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
-@model CreateOcopProductRequest;
+@model OcopProductViewModel;
 @{
     ViewData["Title"] = "CreateOcopProduct";
 }
@@ -42,128 +42,173 @@
                                 enctype="multipart/form-data">
                                 @Html.AntiForgeryToken()
 
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="mb-3">
-                                            <label asp-for="ProductName">Product Name</label>
-                                            <input asp-for="ProductName" class="form-control" type="text"
-                                                placeholder="Name of product" required />
-                                            <span asp-validation-for="ProductName" class="text-danger"></span>
-                                        </div>
-                                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label asp-for="ProductName">Product Name</label>
+                                <input asp-for="ProductName" class="form-control" type="text" placeholder="Name of product" required />
+                                <span asp-validation-for="ProductName" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label asp-for="ProductDescription">Product Description</label>
+                                <textarea asp-for="ProductDescription" class="form-control" placeholder="Description of product" rows="10"></textarea>
+                                <span asp-validation-for="ProductDescription" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label asp-for="ProductImageFile">Product Images</label>
+                                <input asp-for="ProductImageFile" type="file" class="form-control" multiple required />
+                                <span asp-validation-for="ProductImageFile" class="text-danger"></span>
+                                <small class="text-muted">Please upload at least one photo.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label asp-for="ProductPrice">Product Price</label>
+                                <input asp-for="ProductPrice" class="form-control" type="text" placeholder="Price of product" />
+                                <span asp-validation-for="ProductPrice" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label asp-for="OcopTypeId">Ocop Type</label>
+                                <select asp-for="OcopTypeId" class="form-select" required>
+                                    <option disabled selected value="">-- Select Ocop Type --</option>
+                                    @foreach (var type in ViewBag.OcopTypes)
+                                    {
+                                        <option value="@type.Id">@type.OcopTypeName</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="OcopTypeId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="mb-3">
+                                <label asp-for="CompanyId">Company</label>
+                                <select asp-for="CompanyId" class="form-select" required>
+                                    <option disabled selected value="">-- Select Company --</option>
+                                    <option value="684674249729c974aea560f0">Công ty TNHH ABC</option>
+                                    <option value="684674249729c974aea560f1">Công ty TNHH XYZ</option>
+                                    <option value="684674249729c974aea560f2">Công ty TNHH DEF</option>
+                                </select>
+                                <span asp-validation-for="CompanyId" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="mb-3">
+                                <label asp-for="OcopPoint">Ocop Point</label>
+                                <select asp-for="OcopPoint" class="form-select" required>
+                                    <option selected value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                                <span asp-validation-for="OcopPoint" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="mb-3">
+                                <label asp-for="OcopYearRelease">Ocop Year Release</label>
+                                <select asp-for="OcopYearRelease" class="form-select" required>
+                                    @for (int year = DateTime.Now.Year; year >= 1900; year--)
+                                    {
+                                        <option value="@year">@year</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="OcopYearRelease" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="mb-3">
+                                <label asp-for="TagId">Ocop Product Tag</label>
+                                <select asp-for="TagId" class="form-select" required>
+                                    <option selected value="6826c8a67b645c6f8e188156">Ocop</option>
+                                </select>
+                                <span asp-validation-for="TagId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="mb-3">
+                                    <label asp-for="SellingLinkId">Ocop Product Selling Link</label>
+                                    <input asp-for="SellingLinkId" class="form-control" type="text" placeholder="Selling link of product" required />
+                                    <span asp-validation-for="SellingLinkId" class="text-danger"></span>
                                 </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="mb-3">
-                                            <label asp-for="ProductDescription">Product Description</label>
-                                            <textarea asp-for="ProductDescription" id="Description" class="form-control"
-                                                placeholder="Description of product" rows="7"></textarea>
-                                            <span asp-validation-for="ProductDescription" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="mb-3">
-                                            <label asp-for="ProductImageFile">Product Images</label>
-                                            <input asp-for="ProductImageFile" type="file" class="form-control" multiple
-                                                required />
-                                            <span asp-validation-for="ProductImageFile" class="text-danger"></span>
-                                            <small class="text-muted">Please upload at least one photo.</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <div class="mb-3">
-                                            <label asp-for="ProductPrice">Product Price</label>
-                                            <input asp-for="ProductPrice" class="form-control" type="text"
-                                                placeholder="Price of product" />
-                                            <span asp-validation-for="ProductPrice" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <div class="mb-3">
-                                            <label asp-for="OcopTypeId">Ocop Type</label>
-                                            <select asp-for="OcopTypeId" class="form-select" required>
-                                                <option selected value="681c791ecf4b6508ed09e831">Ocop</option>
-                                            </select>
-                                            <span asp-validation-for="OcopTypeId" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="mb-3">
-                                            <label asp-for="CompanyId">Company</label>
-                                            <select asp-for="CompanyId" class="form-select" required>
-                                                <option selected value="681c791ecf4b6508ed09e832">An Nam Company
-                                                </option>
-                                                <option value="681c791ecf4b6508ed09e833">Company 2</option>
-                                                <option value="681c791ecf4b6508ed09e834">Company 3</option>
-                                                <option value="681c791ecf4b6508ed09e835">Company 4</option>
-                                            </select>
-                                            <span asp-validation-for="CompanyId" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-3">
-                                        <div class="mb-3">
-                                            <label asp-for="OcopPoint">Ocop Point</label>
-                                            <select asp-for="OcopPoint" class="form-select" required>
-                                                <option selected value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
-                                                <option value="4">4</option>
-                                                <option value="5">5</option>
-                                            </select>
-                                            <span asp-validation-for="OcopPoint" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="mb-3">
-                                            <label asp-for="OcopYearRelease">Ocop Year Release</label>
-                                            <select asp-for="OcopYearRelease" class="form-select" required>
-                                                @for (int year = DateTime.Now.Year; year >= 1900; year--)
-                                                {
-                                                    <option value="@year">@year</option>
-                                                }
-                                            </select>
-                                            <span asp-validation-for="OcopYearRelease" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="mb-3">
-                                            <label asp-for="TagId">Ocop Product Tag</label>
-                                            <select asp-for="TagId" class="form-select" required>
-                                                <option selected value="6826c8a67b645c6f8e188156">Ocop</option>
-                                            </select>
-                                            <span asp-validation-for="TagId" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="mb-3">
-                                                <label asp-for="SellingLinkId">Ocop Product Selling Link</label>
-                                                <input asp-for="SellingLinkId" class="form-control" type="text"
-                                                    placeholder="Selling link of product" required />
-                                                <span asp-validation-for="SellingLinkId" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <h3>Sell Locations</h3>
+                                <div id="locations-container">
+                                    @if (Model != null && Model.SellLocations != null)
+                                    {
+                                        @for (int i = 0; i < Model.SellLocations.Count; i++)
+                                        {
+                                            <div class="location-group mb-3">
+                                                <div class="row">
+                                                    <div class="col-sm-4">
+                                                        <label>Name of Location</label>
+                                                        <input asp-for="SellLocations[i].LocationName" class="form-control" placeholder="Location name" />
+                                                        <span asp-validation-for="SellLocations[i].LocationName" class="text-danger"></span>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <label>Address</label>
+                                                        <input asp-for="SellLocations[i].LocationAddress" class="form-control" placeholder="Address" />
+                                                        <span asp-validation-for="SellLocations[i].LocationAddress" class="text-danger"></span>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <label>Type</label>
+                                                        <select asp-for="SellLocations[i].Type" class="form-select" required>
+                                                            <option value="point">Point</option>
+                                                        </select>
+                                                        <span asp-validation-for="SellLocations[i].Type" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <label>Longitude</label>
+                                                        <input asp-for="SellLocations[i].Longitude" class="form-control" type="number" step="any" placeholder="Longitude" min="-180" max="180" />
+                                                        <span asp-validation-for="SellLocations[i].Longitude" class="text-danger"></span>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <label>Latitude</label>
+                                                        <input asp-for="SellLocations[i].Latitude" class="form-control" type="number" step="any" placeholder="Latitude" min="-90" max="90" />
+                                                        <span asp-validation-for="SellLocations[i].Latitude" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="btn btn-danger btn-sm mt-2 remove-location">Remove</button>
                                             </div>
-                                        </div>
-                                    </div>
+                                        }
+                                    }
                                 </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="text-end">
-                                            <button type="submit" class="btn btn-success me-3">Create Ocop
-                                                Product</button>
-                                            <a asp-action="Index" asp-controller="OcopProduct"
-                                                class="btn btn-danger">Back</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
+                                <button type="button" class="btn btn-primary mb-3" onclick="addLocation()">Add Location</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="text-end">
+                                <button type="submit" class="btn btn-success me-3">Create Ocop Product</button>
+                                <a asp-action="Index" asp-controller="OcopProduct" class="btn btn-danger">Back</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
                         </div>
                     </div>
                 </div>
@@ -177,14 +222,46 @@
     @Html.AntiForgeryToken()
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/assets/js/ckeditor5.js"></script>
-
-    <script>
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script src="~/assets/js/ocopproduct/create.js"></script>
+    @* <script>
         setTimeout(function () {
             var alert = document.getElementById("alert-message");
             if (alert) {
                 alert.style.display = "none";
             }
         }, 2000); 
-    </script>
+        function addSellLocation() {
+        var index = document.querySelectorAll('.sell-location-entry').length;
+        var html = `
+            <div class="sell-location-entry">
+                <div class="form-group">
+                    <label>Location Name</label>
+                    <input name="SellLocations[${index}].LocationName" class="form-control" />
+                    <span class="text-danger" data-valmsg-for="SellLocations[${index}].LocationName" data-valmsg-replace="true"></span>
+                </div>
+                <div class="form-group">
+                    <label>Location Address</label>
+                    <input name="SellLocations[${index}].LocationAddress" class="form-control" />
+                    <span class="text-danger" data-valmsg-for="SellLocations[${index}].LocationAddress" data-valmsg-replace="true"></span>
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <input name="SellLocations[${index}].Type" class="form-control" />
+                    <span class="text-danger" data-valmsg-for="SellLocations[${index}].Type" data-valmsg-replace="true"></span>
+                </div>
+                <div class="form-group">
+                    <label>Longitude</label>
+                    <input name="SellLocations[${index}].Longitude" class="form-control" type="number" step="any" />
+                    <span class="text-danger" data-valmsg-for="SellLocations[${index}].Longitude" data-valmsg-replace="true"></span>
+                </div>
+                <div class="form-group">
+                    <label>Latitude</label>
+                    <input name="SellLocations[${index}].Latitude" class="form-control" type="number" step="any" />
+                    <span class="text-danger" data-valmsg-for="SellLocations[${index}].Latitude" data-valmsg-replace="true"></span>
+                </div>
+            </div>`;
+        document.getElementById('sell-locations').insertAdjacentHTML('beforeend', html);
+    }
+    </script> *@
 }

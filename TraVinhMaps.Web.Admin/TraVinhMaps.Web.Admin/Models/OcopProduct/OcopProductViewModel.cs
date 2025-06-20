@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using TraVinhMaps.Web.Admin.Models.SellLocation;
 
 namespace TraVinhMaps.Web.Admin.Models.OcopProduct
 {
-    public class CreateOcopProductRequest
+    public class OcopProductViewModel
     {
         [Required(ErrorMessage = "Product name is required.")]
         [StringLength(100, ErrorMessage = "Product name must not exceed 100 characters.")]
@@ -25,5 +26,7 @@ namespace TraVinhMaps.Web.Admin.Models.OcopProduct
         [Required(ErrorMessage = "Selling link is required.")]
         [Url(ErrorMessage = "SellingLinkId must be a valid URL.")]
         public required string SellingLinkId { get; set; } 
+        [Required(ErrorMessage = "At least one sell location is required.")]
+        public List<SellLocationViewModel> SellLocations { get; set; } = new List<SellLocationViewModel>();
     }
 }

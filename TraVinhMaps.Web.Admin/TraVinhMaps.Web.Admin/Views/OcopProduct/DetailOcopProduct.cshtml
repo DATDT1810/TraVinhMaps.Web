@@ -1,9 +1,13 @@
-﻿﻿@using TraVinhMaps.Web.Admin.Models.OcopProduct;
+﻿﻿@using TraVinhMaps.Web.Admin.Models.OcopProduct
+@using TraVinhMaps.Web.Admin.Models.SellingLink
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model OcopProductResponse;
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    var sellingLinks = ViewBag.SellingLinks as List<SellingLinkResponse>;
 }
 <style>
     .Delete-button-image {
@@ -53,6 +57,10 @@
     .upload-placeholder:hover {
         background-color: #e0e0e0;
     }
+    #locations-container .location-group:nth-child(n+2) {
+    display: none;
+}
+
 </style>
 <div class="page-body">
     <div class="container-fluid">
@@ -162,7 +170,16 @@
                                 @Model.ProductPrice
                             </div>
                             <hr>
-                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div class="d-flex justify-content-between" style="margin-bottom: 5px;">
+                                <h5 style="font-weight: bold;">Point of sell</h5>
+                                <a class="btn btn-success btn-sm px-2 py-1" title="Create Point of Sell" data-bs-toggle="modal" data-bs-target="#addLocationModal"><i class="fa fa-plus"></i></a>
+                                </a>
+                            </div><hr>
+                            @{
+                                var maxHeight = (Model.Sellocations != null && Model.Sellocations.Count > 1) ? "160px" : "80px";
+                            }
+                            <div id="sellocation-list" style="max-height: @maxHeight; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+
                                 @if (Model.Sellocations == null || !Model.Sellocations.Any())
                                 {
                                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -170,129 +187,96 @@
                                             <b>No Location Name.</b><br />
                                             <span>No Location Address.</span>
                                         </div>
-                                        <a asp-action="CreateSellLocation" asp-route-id="@Model.Id"
-                                        class="btn btn-success btn-sm px-2 py-1"
-                                        title="Create Location"
-                                        style="font-size: 14px; line-height: 1;">+</a>
                                     </div>
                                 }
                                 else
                                 {
-                                    @for (int i = 0; i < Model.Sellocations.Count; i++)
+                                    <div id="sellocation-list" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+                                        @{
+                                            bool showOnlyFirst = true;
+                                        }
+                                        @for (int i = 0; i < Model.Sellocations.Count; i++)
+                                        {
+                                            var item = Model.Sellocations[i];
+                                            var isLast = i == Model.Sellocations.Count - 1;
+
+                                            <div class="sellocation-item @(i > 0 ? "d-none" : "")" style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; @(isLast ? "" : "border-bottom: 1px solid #ddd;")">
+                                                <div>
+                                                    <b>Location Name : @(item?.LocationName ?? "No Location Name.")</b><br />
+                                                    <b style="display: inline-block; margin-right: 8px;">Location Address :</b>
+                                                    <span>@(item?.LocationAddress ?? "No Location Address.")</span>
+                                                </div>
+                                                <div style="display: flex; gap: 6px;">
+                                                    <button type="button" class="btn btn-success btn-sm px-2 py-1 edit-location-btn"
+                                                            title="Edit" style="font-size: 14px; line-height: 1;"
+                                                            data-bs-toggle="modal" data-bs-target="#editLocationModal"
+                                                            data-id="@Model.Id"
+                                                            data-name="@item.LocationName"
+                                                            data-address="@item.LocationAddress"
+                                                            data-marker="@item.MarkerId"
+                                                            data-type="@(item.Location?.Type ?? "Point")"
+                                                            data-longitude="@(item.Location?.Coordinates?.FirstOrDefault() ?? 0)"
+                                                            data-latitude="@(item.Location?.Coordinates?.Skip(1).FirstOrDefault() ?? 0)">
+                                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                    </button>
+                                                    @* <a asp-action="UpdateSellLocation"
+                                                    asp-route-id="@Model.Id"
+                                                    asp-route-locationName="@item.LocationName"
+                                                    class="btn btn-warning d-flex align-items-center justify-content-center"
+                                                    style="width: 30px; height: 30px; padding: 0; border-radius: 6px; font-size: 14px;"
+                                                    title="Edit Location">
+                                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                    </a> *@
+
+                                                    <button type="button"
+                                                            class="delete-sell-location btn btn-danger btn-sm px-2 py-1"
+                                                            title="Delete Location"
+                                                            style="font-size: 14px; line-height: 1;"
+                                                            data-product-id="@Model.Id"
+                                                            data-location-name="@item.LocationName">
+                                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    @if (Model.Sellocations.Count > 1)
                                     {
-                                        var item = Model.Sellocations[i];
-                                        var isLast = i == Model.Sellocations.Count - 1;
-                                        <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; @(isLast ? "" : "border-bottom: 1px solid #ddd;")">
-                                            <div>
-                                                <b>Location Name: @(item?.LocationName ?? "No Location Name.")</b><br />
-                                                <b style="display: inline-block; margin-right: 8px;">Location Adress:</b>
-                                                <span>@(item?.LocationAddress ?? "No Location Address.")</span>
-                                            </div>
-                                            <div style="display: flex; gap: 6px;">
-                                                <a asp-action="CreateSellLocation"
-                                                asp-route-id="@Model.Id"
-                                                class="btn btn-success btn-sm px-2 py-1"
-                                                title="Create Location"
-                                                style="font-size: 14px; line-height: 1;">
-                                                <span style="font-size: 20px;">&#43;</span>
-                                                </a>
-                                               <a asp-action="UpdateSellLocation"
-                                                asp-route-id="@Model.Id"
-                                                asp-route-locationName="@item.LocationName"
-                                                class="btn btn-warning d-flex align-items-center justify-content-center"
-                                                style="width: 30px; height: 30px; padding: 0; border-radius: 6px; font-size: 14px;"
-                                                title="Edit Location">
-                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                </a>
-
-                                                <button type="button" 
-                                                        class="delete-sell-location btn btn-danger btn-sm px-2 py-1" 
-                                                        title="Delete Location"
-                                                        style="font-size: 14px; line-height: 1;"
-                                                        data-product-id="@Model.Id"
-                                                        data-location-name="@item.LocationName">
-                                                    <i class="fa fa-trash" aria-hidden="true"></i>
-                                                </button>
-
-                                            </div>
-                                        </div>
+                                        <button id="toggle-sellocation" type="button" class="btn btn-link" style="padding: 0; font-size: 14px;" data-expanded="false">
+                                            Xem thêm
+                                        </button>
                                     }
                                 }
                             </div>
+                            
                             <hr>
-                            @* <div style="display: flex; flex-direction: column; gap: 12px;">
-                                @if (Model.SellingLinkId == null || !Model.SellingLinkId.Any())
-                                {
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <div>
-                                            <b>No Selling Link.</b><br />
-                                        </div>
-                                        <a asp-action="CreateSellingLink" asp-route-id="@Model.Id"
-                                        class="btn btn-success btn-sm px-2 py-1"
-                                        title="Create Location"
-                                        style="font-size: 14px; line-height: 1;">+</a>
-                                    </div>
-                                }
-                                else
-                                {
-                                    @for (int i = 0; i < Model.SellingLinkId.Count; i++)
-                                    {
-                                        var item = Model.SellingLinkId[i];
-                                        var isLast = i == Model.Sellocations.Count - 1;
-                                        <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; @(isLast ? "" : "border-bottom: 1px solid #ddd;")">
-                                            <div>
-                                                <b>Selling Link: @(item ?? "No Selling Link.")</b><br />
-                                            </div>
-                                            <div style="display: flex; gap: 6px;">
-                                                <a asp-action="CreateSellLocation"
-                                                asp-route-id="@Model.Id"
-                                                class="btn btn-success btn-sm px-2 py-1"
-                                                title="Create Location"
-                                                style="font-size: 14px; line-height: 1;">
-                                                <span style="font-size: 20px;">&#43;</span>
-                                                </a>
-
-                                                <button type="button" 
-                                                        class="delete-selling-link btn btn-danger btn-sm px-2 py-1" 
-                                                        title="Delete Selling Link"
-                                                        style="font-size: 14px; line-height: 1;"
-                                                        data-product-id="@Model.Id">
-                                                    <i class="fa fa-trash" aria-hidden="true"></i>
-                                                </button>
-
-                                            </div>
-                                        </div>
-                                    }
-                                }
-                            </div> *@
-                            <hr>
-                            <div>
-                                <table class="product-page-width">
+                            <div style="max-height: 160px; overflow-y: auto; margin-bottom: 5px;">
+                                <table style="border-collapse: collapse; width: 100%;">
                                     <tbody>
-                                        <tr>
-                                            <td style="white-space: nowrap;"> <b style="display: inline-block; width: 160px;">Created At</b><b>: &nbsp;&nbsp;&nbsp;</b></td>
-                                            <td>
+                                        <tr style="display: flex; align-items: center;">
+                                            <td style="width: 100px; white-space: nowrap;"><b>Created At :</b></td>
+                                            <td >
                                                 @Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td style="white-space: nowrap;"> <b style="display: inline-block; width: 160px;">Update At</b><b>: &nbsp;&nbsp;&nbsp;</b></td>
+                                        <tr style="display: flex; align-items: center;">
+                                            <td style="width: 100px; white-space: nowrap;"><b>Update At :</b></td>
                                             <td class="txt-success">
                                                 @(
                                                     Model.UpdateAt.HasValue
                                                     ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                                     : "No update"
-                                                    )
+                                                )
                                             </td>
                                         </tr>
+                            
                                         @if (Model.Sellocations != null && Model.Sellocations.Any())
                                         {
                                             foreach (var item in Model.Sellocations)
                                             {
-                                                <tr>
-                                                    <td style="white-space: nowrap;">
-                                                        <b>Location Type Of @item.LocationName</b><b>: &nbsp;&nbsp;</b>
-                                                    </td>
+                                                <tr style="display: flex; align-items: center;">
+                                                    <td style="white-space: nowrap;"><b>Location Type Of @item.LocationName :</b></td>
                                                     <td>
                                                         @if (item.Location != null && !string.IsNullOrEmpty(item.Location.Type))
                                                         {
@@ -304,10 +288,8 @@
                                                         }
                                                     </td>
                                                 </tr>
-                                                <tr>
-                                                    <td style="white-space: nowrap;">
-                                                        <b style="display: inline-block; width: 160px;">Longitude/Latitude</b><b>: &nbsp;&nbsp;</b>
-                                                    </td>
+                                                <tr style="display: flex; align-items: center;">
+                                                    <td style="white-space: nowrap;"><b>Longitude/Latitude :</b></td>
                                                     <td>
                                                         @if (item.Location != null && item.Location.Coordinates != null && item.Location.Coordinates.Any())
                                                         {
@@ -327,7 +309,6 @@
                                                 <td colspan="2"><span>No address information.</span></td>
                                             </tr>
                                         }
-
                                     </tbody>
                                 </table>
                             </div>
@@ -373,7 +354,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xxl-3 col-md-6 box-col-6">
+                <div class="col-xxl-3 col-md-8 box-col-12" >
                     <div class="card">
                         <div class="card-body">
                             <!-- side-bar colleps block stat-->
@@ -382,18 +363,24 @@
                                 <ul>
                                     <li>
                                         <td style="white-space: nowrap;">
-                                            <b>Ocop Type Id</b><b>: &nbsp;&nbsp;</b>
+                                            <b>Ocop Type</b><b>: &nbsp;&nbsp;</b>
                                         </td>
-                                        @if(Model.OcopTypeId == "681c791ecf4b6508ed09e831"){
-                                            <p>Ocop Product</p>
-                                        }
+                                        <p>@ViewBag.OcopTypeName</p>
                                     </li>
                                     <li>
                                         <td style="white-space: nowrap;">
-                                            <b>Company Id</b><b>: &nbsp;&nbsp;</b>
+                                            <b>Company</b><b>: &nbsp;&nbsp;</b>
                                         </td>
-                                        @if(Model.CompanyId == "681c791ecf4b6508ed09e832"){
-                                            <p>An Nam Company</p>
+                                        @if(Model.CompanyId == "684674249729c974aea560f0"){
+                                            <p>Công ty TNHH ABC</p>
+                                        }
+                                        else if (Model.CompanyId == "684674249729c974aea560f1")
+                                        {
+                                            <p>Công ty TNHH XYZ</p>
+                                        }
+                                        else if(Model.CompanyId == "684674249729c974aea560f2")
+                                        {
+                                            <p>Công ty TNHH DEF</p>
                                         }
                                     </li>
                                     <li>
@@ -404,7 +391,7 @@
                                     </li>
                                     <li>
                                         <td style="white-space: nowrap;">
-                                            <b>Tag Id</b><b>: &nbsp;&nbsp;</b>
+                                            <b>Tag</b><b>: &nbsp;&nbsp;</b>
                                         </td>
                                         @if(Model.TagId == "6826c8a67b645c6f8e188155"){
                                             <p>Introduce</p>
@@ -435,6 +422,62 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card" style="height: 315px;">
+                        <div class="card-body" style="padding-right: 15px;">
+                            <div class="filter-block">
+                                <div class="d-flex justify-content-between">
+                                    <h5 style="font-weight: bold;">Point of selling link</h5>
+                                    <a class="btn btn-success btn-sm px-2 py-1" title="Create Point of Selling Link" data-bs-toggle="modal" data-bs-target="#addSellingLinkModal"><i class="fa fa-plus"></i></a>
+                                </div>
+                                <hr>
+                                <div id="sellinglink-list" style="max-height: 230px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 10px;">
+                                    @if (sellingLinks == null || !sellingLinks.Any())
+                                    {
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <b>No Selling Link.</b><br />
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        @for (int i = 0; i < sellingLinks.Count; i++)
+                                        {
+                                            var item = sellingLinks[i];
+                                            var isLast = i == Model.Sellocations.Count - 1;
+                                            <div class="sellinglink-item" style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; @(isLast ? "" : "border-bottom: 1px solid #ddd;")">
+                                                <div style="min-width: 0; flex: 1;">
+                                                    <b>Title Of Selling Link:</b>
+                                                    <span>@(item.Title ?? "No Selling Link.")</span> <br>
+                                                    <b>Selling Name: </b>
+                                                    <span>@(item.Link ?? "No Selling Link.")</span> 
+                                                </div>
+                                                <div style="display: flex; flex-direction: column; gap: 6px; margin-left: 10px; align-self: flex-start;">
+                                                    <button type="button" class="btn btn-success btn-sm px-2 py-1 edit-selling-link-btn"
+                                                            title="Edit" style="font-size: 14px; line-height: 1;"
+                                                            data-bs-toggle="modal" data-bs-target="#editSellingLinkModal"
+                                                            data-product-id="@Model.Id"
+                                                            data-id="@item.Id"
+                                                            data-title="@item.Title"
+                                                            data-link="@item.Link">
+                                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                    </button>
+                                                    <button type="button"
+                                                            class="delete-selling-link btn btn-danger btn-sm px-2 py-1"
+                                                            title="Delete Selling Link"
+                                                            style="font-size: 14px; line-height: 1;"
+                                                            data-product-id="@Model.Id"
+                                                            data-id="@item.Id">
+                                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -458,15 +501,193 @@
                 </div>
             </div>
         </div>
-        
     </div>
     <!-- Container-fluid Ends-->
 </div>
 
+@* create of sell location *@
+
+<div class="modal fade" id="addLocationModal" tabindex="-1" aria-labelledby="addLocationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addLocationModalLabel">Add New Location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="addLocationForm" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="Id" value="@Model.Id" />
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Name of Location</label>
+                        <input type="text" name="LocationName" id="locationNameAdd" class="form-control" placeholder="Enter location name" required />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="LocationName" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <input type="text" name="LocationAddress" id="locationAddressAdd" class="form-control" placeholder="Enter address" required />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="LocationAddress" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Location Type</label>
+                        <input type="text" name="Type" id="typeAdd" class="form-control" value="Point" readonly />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Type" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Longitude</label>
+                        <input type="number" name="Longitude" id="longitudeAdd" class="form-control" step="any" placeholder="Enter longitude" required min="-180" max="180" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Longitude" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Latitude</label>
+                        <input type="number" name="Latitude" id="latitudeAdd" class="form-control" step="any" placeholder="Enter latitude" required min="-90" max="90" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Latitude" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Location</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* edit of sell location*@
+
+<div class="modal fade" id="editLocationModal" tabindex="-1" aria-labelledby="editLocationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editLocationModalLabel">Edit Location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editLocationForm" method="post">
+                @Html.AntiForgeryToken()
+                <input hidden name="Id" id="id" value="@Model.Id"/>
+                <input hidden name="MarkerId" id="markerId" value="@ViewBag.MarkerId"/> 
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Name of Location</label>
+                        <input type="text" name="LocationName" id="locationName" class="form-control" placeholder="Enter location name" required />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="LocationName" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <input type="text" name="LocationAddress" id="locationAddress" class="form-control" placeholder="Enter address" required />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="LocationAddress" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Location Type</label>
+                        <input type="text" name="Type" id="type" class="form-control" value="Point" readonly />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Type" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Longitude</label>
+                        <input type="number" name="Longitude" id="longitude" class="form-control" step="any" placeholder="Enter longitude" required min="-180" max="180" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Longitude" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Latitude</label>
+                        <input type="number" name="Latitude" id="latitude" class="form-control" step="any" placeholder="Enter latitude" required min="-90" max="90" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Latitude" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* create of selling link *@
+
+<div class="modal fade" id="addSellingLinkModal" tabindex="-1" aria-labelledby="addSellingLinkModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addSellingLinkLabel">Add New Location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="addSellingLinkForm" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="ProductId" value="@Model.Id" />
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Title Of Selling Link</label>
+                        <select name="Title" id="titleAdd" class="form-select" required>
+                            <option value="">-- Select a title --</option>
+                            <option value="Facebook">Facebook</option>
+                            <option value="Shopee">Shopee</option>
+                            <option value="Lazada">Lazada</option>
+                            <option value="Tiki">Tiki</option>
+                            <option value="Website">Website</option>
+                        </select>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Title" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Name Of Selling Link</label>
+                        <input type="text" name="Link" id="linkAdd" class="form-control" placeholder="Enter" required />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Link" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Location</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@* edit of selling link*@
+
+<div class="modal fade" id="editSellingLinkModal" tabindex="-1" aria-labelledby="editSellingLinkModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editSellingLinkModalLabel">Edit Selling Link</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editSellingLinkForm" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="ProductId" id="productIdEdit" value="@Model.Id" />
+                <input type="hidden" name="Id" id="idEdit"/>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Title Of Selling Link</label>
+                        <select name="Title" id="titleEdit" class="form-select" required>
+                            <option value="">-- Select a title --</option>
+                            <option value="Facebook">Facebook</option>
+                            <option value="Shopee">Shopee</option>
+                            <option value="Lazada">Lazada</option>
+                            <option value="Tiki">Tiki</option>
+                            <option value="Website">Website</option>
+                        </select>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Title" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Name Of Selling Link</label>
+                        <input type="text" name="Link" id="linkEdit" class="form-control" placeholder="Enter" required />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Link" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Location</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     @Html.AntiForgeryToken()
+    <script src="~/assets/js/ocopproduct/formModal.js"></script>
+    <script src="~/assets/js/ocopproduct/create.js"></script>
     <script src="~/assets/js/sweetalert-custom.js"></script>
-    <script src="~/assets/js/ocopproduct/index.js"></script>
+    
     <script>
         (function () {
             const success = @Html.Raw(Json.Serialize(TempData["Success"]));
@@ -483,5 +704,7 @@
                 alert.style.display = "none";
             }
         }, 2000);
+        
+    
     </script>
 }
