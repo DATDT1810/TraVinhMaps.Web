@@ -94,13 +94,14 @@ $(document).ready(function () {
                     success: function (response) {
                         if (response.success) {
                             updateRowUI($row, false, id);
-                            showSuccessAlert("Success", response.message);
+                            showTimedAlert("Success!", response.message, "success", 1000);
                         } else {
-                            showErrorAlert("Failed", response.message);
+                            showTimedAlert("Failed!", response.message, "error", 1000);
+
                         }
                     },
                     error: function (xhr) {
-                        showErrorAlert("Error", xhr.responseJSON?.message || "Unknown error");
+                        showTimedAlert("Error!", xhr.responseJSON?.message || "Unknown error", "error", 1000);
                     }
                 });
             });
@@ -125,13 +126,13 @@ $(document).ready(function () {
                     success: function (response) {
                         if (response.success) {
                             updateRowUI($row, true, id);
-                            showSuccessAlert("Success", response.message);
+                            showTimedAlert("Success!", response.message, "success", 1000);
                         } else {
                             showErrorAlert("Failed", response.message);
                         }
                     },
                     error: function (xhr) {
-                        showErrorAlert("Error", xhr.responseJSON?.message || "Unknown error");
+                        showTimedAlert("Error!", xhr.responseJSON?.message || "Unknown error", "error", 1000);
                     }
                 });
             });

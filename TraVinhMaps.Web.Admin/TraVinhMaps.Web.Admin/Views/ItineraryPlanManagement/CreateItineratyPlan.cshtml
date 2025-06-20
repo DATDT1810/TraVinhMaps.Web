@@ -19,8 +19,8 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
                                     style="font-size: 20px;"></i></a></li>
-                        <li class="breadcrumb-item"><a asp-action="Index">Management Event And Festival</a></li>
-                        <li class="breadcrumb-item active">Event And Festival Create Form</li>
+                        <li class="breadcrumb-item"><a asp-action="Index">Itinerary Plan Management</a></li>
+                        <li class="breadcrumb-item active">Itinerary Plan Create Form</li>
                     </ol>
                 </div>
             </div>
@@ -36,9 +36,9 @@
                             <form asp-action="CreateItineratyPlan" method="post">
                                 <div class="row">
                                     <div class="mb-3">
-                                        <label>EditItinerary Plan Title</label>
+                                        <label>Itinerary Plan Title</label>
                                         <input asp-for="Name" class="form-control" type="text"
-                                            placeholder="Event or festival title">
+                                            placeholder="Itinerary Plan title">
                                         <span asp-validation-for="Name" class="text-danger"></span>
                                     </div>
                                 </div>
@@ -47,7 +47,7 @@
                                         <div class="mb-3">
                                             <label>Duration</label>
                                             <select asp-for="Duration" class="form-select">
-                                                <option selected value="One day<">One day</option>
+                                                <option selected value="One day">One day</option>
                                                 <option value="2 days 1 night">2 days 1 night</option>
                                                 <option value="3 days 2 night">3 days 2 night</option>
                                                 <option value="4 days 3 night">4 days 3 night</option>
@@ -199,8 +199,8 @@
         (function () {
             const success = @Html.Raw(Json.Serialize(TempData["Success"]));
             const error = @Html.Raw(Json.Serialize(TempData["Error"]));
-            if (success) showSuccessAlert("Success!", success);
-            if (error) showErrorAlert("Error!", error);
+            if (success) showTimedAlert("Success!", success, "success", 2000);
+            if (error) showTimedAlert("Error!", error, "error", 2000);
         })();
         @if (TempData["EditEventAndFestivalSuccess"] != null)
             {

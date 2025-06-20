@@ -21,19 +21,19 @@ $(document).ready(function () {
       },
       success: function (response) {
         if (response.success) {
-          showTimedAlert("Success!", response.message, "success", 3000);
+          showTimedAlert("Success!", response.message, "success", 1000);
           setTimeout(() => {
             window.location.href = "/Admin";
-          }, 3000);
+          }, 1000);
         } else {
           if (/email.*(exist|đã tồn tại)/i.test(response.message)) {
             emailInput.addClass("is-invalid");
           }
-          showTimedAlert("Error!", response.message, "error", 3000);
+          showTimedAlert("Error!", response.message, "error", 1000);
         }
       },
       error: function () {
-        showTimedAlert("Error!", response.message, "error", 3000);
+        showTimedAlert("Error!", response.message, "error", 1000);
       },
       complete: function () {
         submitButton.prop("disabled", false).text(originalText);

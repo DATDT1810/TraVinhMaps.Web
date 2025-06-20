@@ -44,7 +44,7 @@
                             {
                                 <li class="breadcrumb-item">@item</li>
                             }
-                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
+                            <li class="breadcrumb-item active">@breadcrumbs.)</li>
                         }
                     </ol>
                 </div>
@@ -366,24 +366,24 @@
     <script src="~/assets/js/usermanagement/chart.js"></script>
 
     <script>
-        // 1. Kết nối tới SignalR Hub
+        // Kết nối tới SignalR Hub
         const dashboardConnection = new signalR.HubConnectionBuilder()
             .withUrl("/dashboardHub")
             .withAutomaticReconnect()
             .build();
 
-        // 2. Lắng nghe sự kiện từ backend
+        // Lắng nghe sự kiện từ backend
         dashboardConnection.on("UpdateUserStats", function () {
             reloadAllUserCharts();
         });
 
-        // 3. Kết nối và join group (nếu có role thực tế thì lấy từ Razor)
+        // Kết nối và join group (nếu có role thực tế thì lấy từ Razor)
         dashboardConnection.start().then(function () {
             dashboardConnection.invoke("JoinAdminGroup", "admin"); 
             dashboardConnection.invoke("JoinAdminGroup", "super-admin"); 
         });
 
-        // 4. Hàm reload lại dữ liệu chart
+        // Hàm reload lại dữ liệu chart
         function reloadAllUserCharts() {
             const timeRange = document.getElementById('timeChartSelect')?.value || 'month';
             fetch(`/api/users/stats?groupBy=all&timeRange=${timeRange}`)
@@ -394,7 +394,7 @@
                 });
         }
 
-        // 5. Hàm cập nhật lại dữ liệu cho các chart
+        // Hàm cập nhật lại dữ liệu cho các chart
         function updateCharts(data) {
             if (window.ageChart && data.age) {
                 window.ageChart.data.labels = Object.keys(data.age);

@@ -16,8 +16,6 @@ namespace TraVinhMaps.Web.Admin.Models.Notifications
         [StringLength(1000, MinimumLength = 10, ErrorMessage = "Content must be between 10 and 1000 characters.")]
         public string Content { get; set; }
 
-        public bool IsRead { get; set; }
-
         [Required(ErrorMessage = "Please select an icon.")]
         public string IconCode { get; set; }
 

@@ -10,14 +10,14 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
-                    <h4>EditItinerary Plan Create</h4>
+                    <h4>Edit Itinerary Plan</h4>
                 </div>
                 <div class="col-6">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
                                     style="font-size: 20px;"></i></a></li>
-                        <li class="breadcrumb-item"><a asp-action="Index">Management Event And Festival</a></li>
-                        <li class="breadcrumb-item active">Event And Festival Create Form</li>
+                        <li class="breadcrumb-item"><a asp-action="Index">Itinerary Plan Management</a></li>
+                        <li class="breadcrumb-item active">Edit Itinerary Plan</li>
                     </ol>
                 </div>
             </div>
@@ -59,8 +59,8 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="text-end">
-                                            <button type="submit" class="btn btn-success me-3">Create
-                                                EditItinerary Plan</button>
+                                            <button type="submit" class="btn btn-success me-3">Save changes
+                                                </button>
                                             <a asp-action="Index" class="btn btn-danger">Back</a>
                                         </div>
                                     </div>
@@ -85,14 +85,14 @@
         $(document).ready(function () {
             @if (TempData["successMessage"] != null)
                 {
-                    <text>s
-                        showTimedAlert("Success!", "@TempData["successMessage"]", "success", 2000);
+                    <text>
+                        showTimedAlert("Success!", @TempData["successMessage"], "success", 2000);
                     </text>
             }
                 @if (TempData["errorMessage"] != null)
                 {
                     <text>
-                        showTimedAlert("Error!", "@TempData["errorMessage"]", "error", 2000);
+                        showTimedAlert("Error!", @TempData["errorMessage"], "error", 2000);
                     </text>
             }
                     });

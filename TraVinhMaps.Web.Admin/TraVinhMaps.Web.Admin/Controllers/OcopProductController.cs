@@ -496,5 +496,27 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        // Analytics
+        [HttpGet("analytics")]
+        public async Task<IActionResult> OcopProductAnalytics(string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null)
+        {
+            ViewData["Title"] = "Dashboard";
+            ViewData["Breadcrumb"] = new List<string> { "Dashboard", "Default" };
+
+            try
+            {
+                var analytics = await _ocopProductService.GetProductAnalyticsAsync(timeRange, startDate, endDate);
+                ViewData["Analytics"] = analytics;
+                return View(analytics);
+            }
+            catch (Exception ex)
+            {
+                ViewData["Error"] = $"An error occurred: {ex.Message}";
+                return View();
+            }
+
+        }
+
     }
 }

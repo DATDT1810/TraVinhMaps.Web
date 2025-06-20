@@ -88,11 +88,11 @@
             success: function(response) {
                 if (response.success) {
                     table.row(row).invalidate().draw(false);
-                    showTimedAlert("Success!", response.message, "success", 3000);
+                    showTimedAlert("Success!", response.message, "success", 1000);
                     // Reload lại trang chi tiết sản phẩm
                     window.location.href = `/Admin/OcopProduct/Detail/${productId}`;
                 } else {
-                    showTimedAlert("Error!", response.message, "error", 3000);
+                    showTimedAlert("Error!", response.message, "error", 1000);
                 }
             },
             error: function(xhr) {
@@ -127,11 +127,11 @@ $(document).on("click", ".delete-selling-link", function(e) {
             success: function(response) {
                 if (response.success) {
                     table.row(row).invalidate().draw(false);
-                    showTimedAlert("Success!", response.message, "success", 3000);
+                    showTimedAlert("Success!", response.message, "success", 1000);
                     // Reload lại trang chi tiết sản phẩm
                     window.location.href = `/Admin/OcopProduct/Detail/${productId}`;
                 } else {
-                    showTimedAlert("Error!", response.message, "error", 3000);
+                    showTimedAlert("Error!", response.message, "error", 1000);
                 }
             },
             error: function(xhr) {
@@ -177,9 +177,9 @@ $(document).on("click", ".delete-selling-link", function(e) {
                   </a>`
                             );
                             table.row(row).invalidate().draw(false);
-                            showTimedAlert("Success!", response.message, "success", 3000);
+                            showTimedAlert("Success!", response.message, "success", 1000);
                         } else {
-                            showTimedAlert("Error!", response.message, "error", 3000);
+                            showTimedAlert("Error!", response.message, "error", 1000);
                         }
                     },
                     error: function (xhr) {
@@ -232,9 +232,9 @@ $(document).on("click", ".delete-selling-link", function(e) {
                             );
 
                             table.row(row).invalidate().draw(false);
-                            showTimedAlert("Success!", response.message, "success", 3000);
+                            showTimedAlert("Success!", response.message, "success", 1000);
                         } else {
-                            showTimedAlert("Error!", response.message, "error", 3000);
+                            showTimedAlert("Error!", response.message, "error", 1000);
                         }
                     },
                     error: function (xhr) {
