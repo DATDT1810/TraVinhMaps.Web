@@ -63,16 +63,19 @@
     }
 
 
-    //Delete Sell Location
-    $(document).on("click", ".delete-sell-location", function(e) {
+//Delete Sell Location
+    $(document).on("click", ".delete-sell-location", function (e) {
     e.preventDefault();
-    const productId = $(this).data("product-id");
-    const locationName = $(this).data("location-name");
+
+    const button = $(this);
+    const row = button.closest(".sellocation-item");
+    const productId = button.data("product-id");
+    const locationName = button.data("location-name");
     const token = $('input[name="__RequestVerificationToken"]').val();
 
     showConfirmAlert(
         "Confirmation",
-        `Are you sure you want to delete this "${locationName}"?`,
+        `Are you sure you want to delete "${locationName}"?`,
         "Delete",
         "Cancel"
     ).then((confirmed) => {
@@ -85,28 +88,40 @@
                 "RequestVerificationToken": token,
                 "Content-Type": "application/json"
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.success) {
-                    table.row(row).invalidate().draw(false);
-                    showTimedAlert("Success!", response.message, "success", 3000);
-                    // Reload lại trang chi tiết sản phẩm
-                    window.location.href = `/Admin/OcopProduct/Detail/${productId}`;
+                    row.remove();
+
+                    showTimedAlert("Success!", "success", 3000);
+
+                    setTimeout(() => {
+                        window.location.href = `/Admin/OcopProduct/Detail/${productId}`;
+                    }, 2000);
                 } else {
                     showTimedAlert("Error!", response.message, "error", 3000);
                 }
             },
-            error: function(xhr) {
-                "Error",
-                "An error occurred while delete the sell location: " +
-                (xhr.responseJSON?.message || "Unknown error")
+            error: function (xhr) {
+                showTimedAlert(
+                    "Error",
+                    "An error occurred while deleting the sell location: " +
+                        (xhr.responseJSON?.message || "Unknown error"),
+                    "error",
+                    3000
+                );
             }
         });
     });
 });
+    
 //Delete Selling Link
-$(document).on("click", ".delete-selling-link", function(e) {
+    $(document).on("click", ".delete-selling-link", function (e) {
     e.preventDefault();
-    const productId = $(this).data("product-id");
+
+    const button = $(this);
+    const row = button.closest(".sellinglink-item");
+    const sellingLinkId = button.data("id");
+    const productId = button.data("product-id");
     const token = $('input[name="__RequestVerificationToken"]').val();
 
     showConfirmAlert(
@@ -118,32 +133,38 @@ $(document).on("click", ".delete-selling-link", function(e) {
         if (!confirmed) return;
 
         $.ajax({
-            url: `/Admin/OcopProduct/DeleteSellingLink/${productId}`,
+            url: `/Admin/OcopProduct/DeleteSellingLink/${sellingLinkId}`,
             method: "DELETE",
             headers: {
                 "RequestVerificationToken": token,
                 "Content-Type": "application/json"
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.success) {
-                    table.row(row).invalidate().draw(false);
+                    row.remove();
+
                     showTimedAlert("Success!", response.message, "success", 3000);
-                    // Reload lại trang chi tiết sản phẩm
-                    window.location.href = `/Admin/OcopProduct/Detail/${productId}`;
+
+                    setTimeout(() => {
+                        window.location.href = `/Admin/OcopProduct/Detail/${productId}`;
+                    }, 2000);
                 } else {
                     showTimedAlert("Error!", response.message, "error", 3000);
                 }
             },
-            error: function(xhr) {
-                "Error",
-                "An error occurred while delete the selling link: " +
-                (xhr.responseJSON?.message || "Unknown error")
+            error: function (xhr) {
+                showTimedAlert(
+                    "Error",
+                    "An error occurred while deleting the selling link: " +
+                        (xhr.responseJSON?.message || "Unknown error"),
+                    "error",
+                    3000
+                );
             }
         });
     });
-});
-
-    // AJAX Ban user with SweetAlert2
+});   
+// AJAX Ban user with SweetAlert2
     $(document).on("click", ".delete-ocop-product", function (e) {
         e.preventDefault();
         const ocopProductId = $(this).data("id");
@@ -248,4 +269,20 @@ $(document).on("click", ".delete-selling-link", function(e) {
             }
         });
     });
+    // Toggle sellocation items
+    const toggleButton = document.getElementById('toggle-sellocation');
+    const locationItems = document.querySelectorAll('.sellocation-item');
+    if (toggleButton) {
+        toggleButton.addEventListener('click', function () {
+            const isExpanded = toggleButton.getAttribute('data-expanded') === 'true';
+            locationItems.forEach((item, index) => {
+                if (index > 0) {
+                    item.classList.toggle('d-none', isExpanded);
+                }
+            });
+            toggleButton.textContent = isExpanded ? 'Xem thêm' : 'Thu gọn';
+            toggleButton.setAttribute('data-expanded', (!isExpanded).toString());
+        });
+    }
+
 });

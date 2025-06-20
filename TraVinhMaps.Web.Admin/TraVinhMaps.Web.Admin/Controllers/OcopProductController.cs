@@ -6,6 +6,7 @@ using TraVinhMaps.Web.Admin.Models.OcopProduct;
 using TraVinhMaps.Web.Admin.Models.SellingLink;
 using TraVinhMaps.Web.Admin.Models.SellLocation;
 using TraVinhMaps.Web.Admin.Services.OcopProduct;
+using TraVinhMaps.Web.Admin.Services.OcopType;
 using TraVinhMaps.Web.Admin.Services.SellingLink;
 
 namespace TraVinhMaps.Web.Admin.Controllers
@@ -15,10 +16,12 @@ namespace TraVinhMaps.Web.Admin.Controllers
     {
         private readonly IOcopProductService _ocopProductService;
         private readonly ISellingLinkService _sellingLinkService;
-        public OcopProductController(IOcopProductService ocopProductService, ISellingLinkService sellingLinkService)
+        private readonly IOcopTypeService _ocopTypeService;
+        public OcopProductController(IOcopProductService ocopProductService, ISellingLinkService sellingLinkService, IOcopTypeService ocopTypeService)
         {
             _ocopProductService = ocopProductService;
             _sellingLinkService = sellingLinkService;
+            _ocopTypeService = ocopTypeService;
         }
         public async Task<IActionResult> Index()
         {
@@ -30,13 +33,113 @@ namespace TraVinhMaps.Web.Admin.Controllers
         public async Task<IActionResult> DetailOcopProduct(string id, CancellationToken cancellationToken = default)
         {
             var ocopProduct = await _ocopProductService.GetByIdAsync(id);
+            var sellingLinks = await _sellingLinkService.GetSellingLinkByOcopProductId(id);
+
+            ViewBag.SellingLinks = sellingLinks;
             ViewBag.OcopProductId = id;
+            ViewBag.MarkerId = "68486609935049741c54a644";
+
             if (ocopProduct != null)
             {
-                // Chuyển ObjectId thành chuỗi nếu cần
                 ocopProduct.TagId = ocopProduct.TagId?.ToString().Replace("ObjectId(\"", "").Replace("\")", "");
+
+                try
+                {
+                    var ocopType = await _ocopTypeService.GetByIdAsync(ocopProduct.OcopTypeId, cancellationToken);
+                    ViewBag.OcopTypeName = ocopType?.OcopTypeName ?? "Unknown";
+                }
+                catch (HttpRequestException ex)
+                {
+                    Console.WriteLine($"[ERROR] Failed to get OcopType: {ex.Message}");
+                    ViewBag.OcopTypeName = "Unknown";
+                }
             }
+
             return View(ocopProduct);
+        }
+
+        [HttpGet("CreateOcopProduct")]
+        public async Task<IActionResult> CreateOcopProduct()
+        {
+            var ocopTypes = await _ocopTypeService.ListAllAsync();
+            ViewBag.OcopTypes = ocopTypes;
+            return View();
+        }
+        [HttpPost("CreateOcopProductPost")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateOcopProductPost(OcopProductViewModel ocopProductViewModel, CancellationToken cancellationToken = default)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errorMessages = ModelState.Where(ms => ms.Value.Errors.Count > 0)
+                                            .Select(ms => $"Key: {ms.Key}, Errors: {string.Join(", ", ms.Value.Errors.Select(e => e.ErrorMessage))}")
+                                            .ToList();
+                TempData["ErrorMessage"] = string.Join("<br/>", errorMessages);
+                return View("CreateOcopProduct", ocopProductViewModel);
+            }
+
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
+            if (ocopProductViewModel.ProductImageFile != null && ocopProductViewModel.ProductImageFile.Any())
+            {
+                foreach (var file in ocopProductViewModel.ProductImageFile)
+                {
+                    var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        ModelState.AddModelError("ProductImageFile",
+                            $"File \"{file.FileName}\" is not a supported image format. Allowed formats: {string.Join(", ", allowedExtensions)}.");
+                        TempData["ErrorMessage"] = ModelState["ProductImageFile"]?.Errors.FirstOrDefault()?.ErrorMessage;
+                        return View("CreateOcopProduct", ocopProductViewModel);
+                    }
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("ProductImageFile", "At least one product image is required.");
+                TempData["ErrorMessage"] = ModelState["ProductImageFile"]?.Errors.FirstOrDefault()?.ErrorMessage;
+                return View("CreateOcopProduct", ocopProductViewModel);
+            }
+
+            try
+            {
+                var result = await _ocopProductService.AddAsync(ocopProductViewModel, cancellationToken);
+                if (result?.value?.data == null)
+                {
+                    TempData["ErrorMessage"] = "Failed to create ocop product: No data returned.";
+                    return View("CreateOcopProduct", ocopProductViewModel);
+                }
+
+                var createdProduct = new OcopProductResponse
+                {
+                    Id = result.value.data.Id,
+                    ProductName = result.value.data.ProductName,
+                    ProductDescription = result.value.data.ProductDescription,
+                    ProductImage = result.value.data.ProductImage,
+                    ProductPrice = result.value.data.ProductPrice,
+                    OcopTypeId = result.value.data.OcopTypeId,
+                    Status = result.value.data.Status,
+                    Sellocations = result.value.data.Sellocations,
+                    CompanyId = result.value.data.CompanyId,
+                    OcopPoint = result.value.data.OcopPoint,
+                    OcopYearRelease = result.value.data.OcopYearRelease,
+                    TagId = result.value.data.TagId,
+                    CreatedAt = result.value.data.CreatedAt,
+                    UpdateAt = result.value.data.UpdateAt
+                };
+                
+                TempData["SuccessMessage"] = "Ocop product and sell locations created successfully!";
+                return RedirectToAction("Index");
+            }
+            catch (HttpRequestException ex)
+            {
+                TempData["ErrorMessage"] = $"Failed to create ocop product or sell locations: {ex.Message}";
+                return View("CreateOcopProduct", ocopProductViewModel);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Something went wrong, please try again: {ex.Message}";
+                return View("CreateOcopProduct", ocopProductViewModel);
+            }
         }
 
         [HttpGet("UpdateOcopProduct")]
@@ -47,6 +150,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
             {
                 return View("Ocop product not found.");
             }
+            var ocopTypes = await _ocopTypeService.ListAllAsync();
+            ViewBag.OcopTypes = ocopTypes;
             UpdateOcopProductRequest updateOcopProductRequest = new UpdateOcopProductRequest
             {
                 Id = findOcopProduct.Id,
@@ -92,7 +197,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "Something went wrong, please try again: " + ex.Message + "\n" + ex.StackTrace;
-                return View("UpdateOcopProduct", request);
+                return View("UpdateOcopProduct", updateOcopProductRequest);
             }
             TempData["SuccessMessage"] = "Ocop product updated successfully!";
             return RedirectToAction("Index");
@@ -131,24 +236,27 @@ namespace TraVinhMaps.Web.Admin.Controllers
         public IActionResult CreateSellLocation(string id)
         {
             ViewBag.OcopProductId = id;
-            return View(new SellLocationViewModel());
+            var sellLocationViewModel = new SellLocationViewModel
+            {
+                Id = id,
+                MarkerId = "68486609935049741c54a644" 
+            };
+            return View(sellLocationViewModel);
         }
         [HttpPost("CreateSellLocation")]
         public async Task<IActionResult> CreateSellLocation(string id, SellLocationViewModel sellLocationViewModel, CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid)
             {
-                var errorMessages = ModelState.Where(ms => ms.Value.Errors.Count > 0)
-                                              .Select(ms => $"Key: {ms.Key}, Errors: {string.Join(", ", ms.Value.Errors.Select(e => e.ErrorMessage))}")
-                                              .ToList();
-                ViewBag.ErrorMessage = string.Join("<br/>", errorMessages);
-                return View(sellLocationViewModel);
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                return Json(new { success = false, message = string.Join("; ", errors) });
             }
             var sellLocation = new SellLocationResponse
             {
                 Id = id,
                 LocationName = sellLocationViewModel.LocationName,
                 LocationAddress = sellLocationViewModel.LocationAddress,
+                MarkerId = sellLocationViewModel.MarkerId ?? "68486609935049741c54a644",
                 Location = new LocationResponse
                 {
                     Type = sellLocationViewModel.Type,
@@ -163,13 +271,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
             {
                 var result = await _ocopProductService.AddSellLocation(id, sellLocation, cancellationToken);
                 ViewBag.OcopProductId = id;
-                TempData["SuccessMessage"] = "Sell location add successfully!";
-                return RedirectToAction("DetailOcopProduct", new { id });
+                return Json(new { success = true, message = "The point of sell was created successfully!" });
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Something went wrong, please try again: " + ex.Message + "\n" + ex.StackTrace;
-                return View("CreateSellLocation", sellLocationViewModel);
+                return Json(new { success = false, message = $"Failed to create point of sell: {ex.Message}" });
             }
         }
         [HttpGet("UpdateSellLocation")]
@@ -188,6 +294,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 Id = sellLocation.Id,
                 LocationName = sellLocation.LocationName,
                 LocationAddress = sellLocation.LocationAddress,
+                MarkerId = sellLocation.MarkerId ?? "68486609935049741c54a644",
                 Type = sellLocation.Location?.Type,
                 Longitude = sellLocation.Location?.Coordinates?.FirstOrDefault() ?? 0,
                 Latitude = sellLocation.Location?.Coordinates?.Skip(1).FirstOrDefault() ?? 0,
@@ -196,21 +303,24 @@ namespace TraVinhMaps.Web.Admin.Controllers
         }
 
         [HttpPost("UpdateSellLocationPost")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateSellLocationPost(string id, SellLocationViewModel sellLocationViewModel, CancellationToken cancellationToken = default)
         {
+            Console.WriteLine($"Received id: {id}, SellLocationViewModel: {Newtonsoft.Json.JsonConvert.SerializeObject(sellLocationViewModel)}");
             if (!ModelState.IsValid)
             {
-                var errorMessages = ModelState.Where(ms => ms.Value.Errors.Count > 0)
-                                              .Select(ms => $"Key: {ms.Key}, Errors: {string.Join(", ", ms.Value.Errors.Select(e => e.ErrorMessage))}")
-                                              .ToList();
-                TempData["ErrorMessage"] = string.Join("<br/>", errorMessages);
-                return View("UpdateSellLocation", sellLocationViewModel);
+                return Json(new { success = false, message = string.Join("; ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)) });
+            }
+            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(sellLocationViewModel.Id) || id != sellLocationViewModel.Id)
+            {
+                return Json(new { success = false, message = "Invalid local specialty ID." });
             }
             var sellLocation = new SellLocationResponse
             {
                 Id = id,
                 LocationName = sellLocationViewModel.LocationName,
                 LocationAddress = sellLocationViewModel.LocationAddress,
+                MarkerId = sellLocationViewModel.MarkerId ?? "68486609935049741c54a644",
                 Location = new LocationResponse
                 {
                     Type = sellLocationViewModel.Type,
@@ -219,18 +329,17 @@ namespace TraVinhMaps.Web.Admin.Controllers
             };
             if (sellLocationViewModel.Longitude != 0 && sellLocationViewModel.Latitude != 0)
             {
-                sellLocation.Location.Coordinates = new List<double> { sellLocationViewModel.Latitude, sellLocationViewModel.Longitude };
+                sellLocation.Location.Coordinates = new List<double> { sellLocationViewModel.Longitude, sellLocationViewModel.Latitude };
             }
             try
             {
                 var result = await _ocopProductService.UpdateSellLocation(id, sellLocation, cancellationToken);
-                TempData["SuccessMessage"] = "Sell location update successfully!";
-                return RedirectToAction("DetailOcopProduct", new { id });
+                return Json(new { success = true, message = "Sell location updated successfully!" });
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Something went wrong, please try again: " + ex.Message + "\n" + ex.StackTrace;
-                return View("UpdateSellLocation", sellLocationViewModel);
+                Console.WriteLine($"Error updating sell location: {ex.Message}\n{ex.StackTrace}");
+                return Json(new { success = false, message = $"Failed to update sell location: {ex.Message}" });
             }
         }
         [HttpDelete("DeleteSellLocation/{id}/{name}")]
@@ -245,6 +354,87 @@ namespace TraVinhMaps.Web.Admin.Controllers
             catch (Exception ex)
             {
                 return Json(new { success = false, message = $"Error delete sell location: {ex.Message}" });
+            }
+        }
+
+        [HttpPost("CreateSellingLink")]
+        public async Task<IActionResult> CreateSellingLink(SellingLinkViewModel sellingLinkViewModel, CancellationToken cancellationToken = default)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                return Json(new { success = false, message = string.Join("; ", errors) });
+            }
+            try
+            {
+                var result = await _sellingLinkService.AddAsync(sellingLinkViewModel, cancellationToken);
+                
+                var sellLocation = new SellingLinkResponse
+                {
+                    Id = result.Data.Id,
+                    ProductId = result.Data.ProductId,
+                    Title = result.Data.Title,
+                    Link = result.Data.Link,
+                    UpdateAt = result.Data.UpdateAt,
+                    CreatedAt = result.Data.CreatedAt
+                };
+                return Json(new { success = true, message = "The point of selling link was created successfully!" });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Failed to create point of selling link: {ex.Message}" });
+            }
+        }
+
+        [HttpPost("UpdateSellingLinkPost")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateSellingLinkPost(SellingLinkResponse sellingLinkResponse, CancellationToken cancellationToken = default)
+        {
+            Console.WriteLine($"SellLocationViewModel: {Newtonsoft.Json.JsonConvert.SerializeObject(sellingLinkResponse)}");
+            if (!ModelState.IsValid)
+            {
+                return Json(new { success = false, message = string.Join("; ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)) });
+            }
+            try
+            {
+                var sellingLinkRequest = new UpdateSellingLinkRequest
+                {
+                    Id = sellingLinkResponse.Id,
+                    ProductId = sellingLinkResponse.ProductId,
+                    Title = sellingLinkResponse.Title,
+                    Link = sellingLinkResponse.Link
+                };
+                try
+                {
+                    ViewBag.SellingLinkId = sellingLinkResponse.Id;
+                    var result = await _sellingLinkService.UpdateAsync(sellingLinkRequest, cancellationToken);
+                    return Json(new { success = true, message = "Selling link updated successfully!" });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error updating seing link: {ex.Message}\n{ex.StackTrace}");
+                    return Json(new { success = false, message = $"Failed to update seing link: {ex.Message}" });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating sell location: {ex.Message}\n{ex.StackTrace}");
+                return Json(new { success = false, message = $"Failed to update sell location: {ex.Message}" });
+            }
+        }
+        [HttpDelete("DeleteSellingLink/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteSellingLink(string id, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                await _sellingLinkService.DeleteAsync(id, cancellationToken);
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error delete selling link: {ex.Message}" });
             }
         }
         [HttpPost("AddOcopProductImage")]
@@ -302,151 +492,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return RedirectToAction("DetailOcopProduct", new { id });
             }
         }
-        [HttpGet("CreateOcopProduct")]
-        public async Task<IActionResult> CreateOcopProduct()
-        {
-            return View();
-        }
-        [HttpPost("CreateOcopProductPost")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateOcopProductPost(CreateOcopProductRequest createOcopProductRequest, CancellationToken cancellationToken = default)
-        {
-            if (!ModelState.IsValid)
-            {
-                var errorMessages = ModelState.Where(ms => ms.Value.Errors.Count > 0)
-                                            .Select(ms => $"Key: {ms.Key}, Errors: {string.Join(", ", ms.Value.Errors.Select(e => e.ErrorMessage))}")
-                                            .ToList();
-                TempData["ErrorMessage"] = string.Join("<br/>", errorMessages);
-                return View("CreateOcopProduct", createOcopProductRequest);
-            }
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
-            if (createOcopProductRequest.ProductImageFile != null && createOcopProductRequest.ProductImageFile.Any())
-            {
-                foreach (var file in createOcopProductRequest.ProductImageFile)
-                {
-                    var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
-                    if (!allowedExtensions.Contains(extension))
-                    {
-                        ModelState.AddModelError("ProductImageFile",
-                            $"File \"{file.FileName}\" is not a supported image format. Allowed formats: {string.Join(", ", allowedExtensions)}.");
-                        TempData["ErrorMessage"] = ModelState["ProductImageFile"]?.Errors.FirstOrDefault()?.ErrorMessage;
-                        return View("CreateOcopProduct", createOcopProductRequest);
-                    }
-                }
-            }
-            else
-            {
-                ModelState.AddModelError("ProductImageFile", "At least one product image is required.");
-                TempData["ErrorMessage"] = ModelState["ProductImageFile"]?.Errors.FirstOrDefault()?.ErrorMessage;
-                return View("CreateOcopProduct", createOcopProductRequest);
-            }
-            try
-            {
-                var result = await _ocopProductService.AddAsync(createOcopProductRequest, cancellationToken);
-                if (result?.value?.data == null)
-                {
-                    TempData["ErrorMessage"] = "Failed to create ocop product: No data returned.";
-                    return View("CreateOcopProduct", createOcopProductRequest);
-                }
-
-                var createdProduct = new OcopProductResponse
-                {
-                    Id = result.value.data.Id,
-                    ProductName = result.value.data.ProductName,
-                    ProductDescription = result.value.data.ProductDescription,
-                    ProductImage = result.value.data.ProductImage,
-                    ProductPrice = result.value.data.ProductPrice,
-                    OcopTypeId = result.value.data.OcopTypeId,
-                    Status = result.value.data.Status,
-                    Sellocations = result.value.data.Sellocations,
-                    CompanyId = result.value.data.CompanyId,
-                    OcopPoint = result.value.data.OcopPoint,
-                    OcopYearRelease = result.value.data.OcopYearRelease,
-                    TagId = result.value.data.TagId,
-                    CreatedAt = result.value.data.CreatedAt,
-                    UpdateAt = result.value.data.UpdateAt
-                };
-
-                TempData["SuccessMessage"] = "Ocop product created successfully!";
-                return RedirectToAction("Index");
-            }
-            catch (HttpRequestException ex)
-            {
-                TempData["ErrorMessage"] = $"Failed to create ocop product: {ex.Message}";
-                return View("CreateOcopProduct", createOcopProductRequest);
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = $"Something went wrong, please try again: {ex.Message}";
-                return View("CreateOcopProduct", createOcopProductRequest);
-            }
-        }
-        [HttpGet("CreateSellingLink")]
-        public async Task<IActionResult> CreateSellingLink()
-        {
-            return View();
-        }
-        [HttpPost("CreateSellingLinkPost")]
-
-        public async Task<IActionResult> CreateSellingLinkPost(CreateSellingLinkRequest sellingLinkRequest, CancellationToken cancellationToken = default)
-        {
-            if (!ModelState.IsValid)
-            {
-                var errorMessages = ModelState.Where(ms => ms.Value.Errors.Count > 0)
-                                            .Select(ms => $"Key: {ms.Key}, Errors: {string.Join(", ", ms.Value.Errors.Select(e => e.ErrorMessage))}")
-                                            .ToList();
-                TempData["ErrorMessage"] = string.Join("<br/>", errorMessages);
-                return View("CreateSellingLink", sellingLinkRequest);
-            }
-            try
-            {
-                var result = await _sellingLinkService.AddAsync(sellingLinkRequest, cancellationToken);
-                if (result?.value?.data == null)
-                {
-                    TempData["ErrorMessage"] = "Failed to create selling link: No data returned.";
-                    return View("CreateSellingLink", sellingLinkRequest);
-                }
-                var createSellingLink = new SellingLinkResponse
-                {
-                    Id = result.value.data.Id,
-                    Tittle = result.value.data.Tittle,
-                    Link = result.value.data.Link,
-                    CreatedAt = result.value.data.CreatedAt,
-                    UpdateAt = result.value.data.UpdateAt
-                };
-                TempData["SuccessMessage"] = "Selling link created successfully!";
-                return RedirectToAction("Index");
-            }
-            catch (HttpRequestException ex)
-            {
-                TempData["ErrorMessage"] = $"Failed to create selling link: {ex.Message}";
-                return View("CreateSellingLink", sellingLinkRequest);
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = $"Something went wrong, please try again: {ex.Message}";
-                return View("CreateSellingLink", sellingLinkRequest);
-            }
-        }
-        [HttpDelete("DeleteSellingLink")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteSellingLink(SellingLinkResponse sellingLinkResponse, CancellationToken cancellationToken = default)
-        {
-            var findSellingLink = await _sellingLinkService.GetByIdAsync(sellingLinkResponse.Id);
-            if (findSellingLink == null)
-            {
-                return View("Selling link not found.");
-            }
-            try
-            {
-                await _sellingLinkService.DeleteAsync(findSellingLink, cancellationToken);
-                return Json(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = $"Error delete selling link: {ex.Message}" });
-            }
-        }
+        
 
         [HttpGet("ImportProducts")]
         public async Task<IActionResult> ImportProducts()

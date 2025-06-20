@@ -314,47 +314,4 @@ $(document).ready(function () {
     });
 });
 
-// Delete Sell Location
-$(document).ready(function () {
-  $(".delete-sell-location").on("click", function () {
-    var button = $(this);
-    var productId = button.data("product-id");
-    var locationId = button.data("location-id");
-    var locationName = button.data("location-name");
 
-    Swal.fire({
-      title: "Are you sure?",
-      text: `Do you want to delete the location "${locationName}"?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
-      cancelButtonText: "No, cancel!",
-      reverseButtons: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        $.ajax({
-          url: `/LocalSpecialties/DeleteSellLocation/${productId}/${locationId}`,
-          type: "DELETE",
-          headers: {
-            RequestVerificationToken: $(
-              'input[name="__RequestVerificationToken"]'
-            ).val(),
-          },
-          success: function (response) {
-            if (response.success) {
-              showTimedAlert("Deleted!", "The location has been deleted.", "success", 2000).then(() => {
-                button.closest('div[style*="flex"]').remove();
-              });
-            } else {
-              showTimedAlert("Error!", response.message || "Failed to delete the location.", "error", 2000);
-            }
-          },
-          error: function (xhr, status, error) {
-            showTimedAlert("Error!", "An error occurred while deleting the location: " +
-                (xhr.responseJSON?.message || error), "error", 2000);
-          },
-        });
-      }
-    });
-  });
-});

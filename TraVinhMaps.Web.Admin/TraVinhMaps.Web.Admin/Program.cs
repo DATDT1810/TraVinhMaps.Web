@@ -28,7 +28,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IOcopProductService, OcopProductService>();
 // Register IOcopTypeService
 builder.Services.AddScoped<IOcopTypeService, OcopTypeService>();
-// Register IOSellingLinkService
+// Register ISellingLinkService
 builder.Services.AddScoped<ISellingLinkService, SellingLinkService>();
 // Register ILocalSpecialtiesService
 builder.Services.AddScoped<ILocalSpecialtiesService, LocalSpecialtiesService>();
