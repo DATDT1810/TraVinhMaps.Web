@@ -3,59 +3,51 @@ $(document).ready(function () {
   $("#statusFilter").on("change", function () {
     const filter = $(this).val();
     let hasVisibleRows = false;
+    let stt = 1;
+
     $("table tbody tr:not(#no-items-row)").each(function () {
       const row = $(this);
       const tagId = String(row.data("tag-id") || "");
       const isActive = row.find('[id="delete-localSpecialties"]').length > 0;
 
+      let show = false;
+
       if (filter === "all") {
-        if (isActive) {
-          row.show();
-          hasVisibleRows = true;
-        } else {
-          row.hide();
-        }
+        show = isActive;
       } else if (filter === "inactive") {
-        if (!isActive) {
-          row.show();
-          hasVisibleRows = true;
-        } else {
-          row.hide();
-        }
+        show = !isActive;
       } else {
         const tagIds = tagId.split(",");
-        if (tagIds.includes(filter) && isActive) {
-          row.show();
-          hasVisibleRows = true;
-        } else {
-          row.hide();
-        }
+        show = tagIds.includes(filter) && isActive;
+      }
+
+      if (show) {
+        row.show();
+        row.find("td:first").text(stt++);
+        hasVisibleRows = true;
+      } else {
+        row.hide();
       }
     });
+
     if (hasVisibleRows) {
       $("#no-items-row").hide();
     } else {
       $("#no-items-row").show();
     }
-    checkEmptyTable();
-  });
 
-  // Hàm kiểm tra và hiển thị thông báo nếu bảng trống
-  function checkEmptyTable() {
     const visibleRows = $("#basic-9 tbody tr:visible");
     const tbody = $("#basic-9 tbody");
-
-    // Xóa dòng thông báo cũ nếu có
     tbody.find(".empty-message-row").remove();
 
     if (visibleRows.length === 0) {
       tbody.append(`
-        <tr class="empty-message-row">
-          <td colspan="6" class="text-center">No matching records found</td>
-        </tr>
-      `);
+      <tr class="empty-message-row">
+        <td colspan="6" class="text-center">No matching records found</td>
+      </tr>
+    `);
     }
-  }
+  });
 
   // Xóa local Specialties
   $(document).on("click", "#delete-localSpecialties", function (e) {
