@@ -94,21 +94,18 @@
                             // Update action dropdown from Ban -> Unban
                             const actionCell = row.find("td:last-child ul.action");
                             actionCell.find(".delete-eventandfestival").replaceWith(
-                                `<a title="Restore" class="undelete-eventandfestival" href="javascript:void(0)"
+                                `<a title="Restore" class="restore undelete-eventandfestival" href="javascript:void(0)"
                                                                     data-id="@item.Id"><i class="fa fa-undo"></i></a>`
                             );
                             table.row(row).invalidate().draw(false);
-                            showSuccessAlert("Success", response.message);
+                            showTimedAlert("Success!", response.message, "success", 1000);
                         } else {
-                            showErrorAlert("Failed", response.message);
+                            showTimedAlert("Failed!", response.message, "error", 1000);
                         }
                     },
                     error: function (xhr) {
-                        showErrorAlert(
-                            "Error",
-                            "An error occurred while banning the destination: " +
-                            (xhr.responseJSON?.message || "Unknown error")
-                        );
+                        showTimedAlert("Error!", "An error occurred while banning the destination: " +
+                            (xhr.responseJSON?.message || "Unknown error"), "error", 1000);
                     },
                 });
             }
@@ -124,7 +121,7 @@
         showConfirmAlert(
             "Confirmation",
             "Are you sure you want to restore this event and festival?",
-            "restore",
+            "Restore",
             "Cancel"
         ).then((confirmed) => {
             if (confirmed) {
@@ -149,22 +146,20 @@
                             // Update action dropdown from Unban -> Ban
                             const actionCell = row.find("td:last-child ul.action");
                             actionCell.find(".undelete-eventandfestival").replaceWith(
-                                `<a title="Delete" class="delete-eventandfestival" href="javascript:void(0)"
+                                `<a title="Delete" class="delete delete-eventandfestival" href="javascript:void(0)"
                                                                     data-id="@item.Id"><i class="fa fa-trash"></i></a>`
                             );
 
                             table.row(row).invalidate().draw(false);
-                            showSuccessAlert("Success", response.message);
+                            showTimedAlert("Success!", response.message, "success", 1000);
+
                         } else {
-                            showErrorAlert("Failed", response.message);
+                            showTimedAlert("Failed!", response.message, "error", 1000);
                         }
                     },
                     error: function (xhr) {
-                        showErrorAlert(
-                            "Error",
-                            "An error occurred while unbanning the user: " +
-                            (xhr.responseJSON?.message || "Unknown error")
-                        );
+                        showTimedAlert("Error!", "An error occurred while banning the destination: " +
+                            (xhr.responseJSON?.message || "Unknown error"), "error", 1000);
                     },
                 });
             }

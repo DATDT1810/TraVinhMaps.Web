@@ -1,0 +1,168 @@
+@model TraVinhMaps.Web.Admin.Models.OcopProduct.OcopDashboardViewModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "";
+    var error = ViewData["Error"] as string;
+}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>@ViewData["Title"]</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index"><i class="fa fa-home" style="font-size: 20px;"></i></a>
+                        </li>
+                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
+                        {
+                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
+                            {
+                                <li class="breadcrumb-item">@item</li>
+                            }
+                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
+                        }
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        @if (!string.IsNullOrEmpty(error))
+                        {
+                            <div class="alert alert-danger">@error</div>
+                        }
+                        else if (Model == null || (!Model.Analytics.Any() && !Model.UserDemographics.Any()))
+                        {
+                            <div class="alert alert-warning">No analytics data available.</div>
+                        }
+                        else
+                        {
+                            <h6 class="text-primary mb-3">OCOP Products – Views, Interactions, Favorites</h6>
+                            <div class="row mb-3">
+                                <div class="col-md-2">
+                                    <label>Quick Filter</label>
+                                    <select class="form-select" id="analyticsTimeRange">
+                                        <option value="day">Today</option>
+                                        <option value="week">This Week</option>
+                                        <option value="month" selected>This Month</option>
+                                        <option value="year">This Year</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label>Start Date</label>
+                                    <input type="date" class="form-control" id="analyticsStartDate" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label>End Date</label>
+                                    <input type="date" class="form-control" id="analyticsEndDate" />
+                                </div>
+                                <div class="col-md-3 d-flex gap-2 mt-md-auto">
+                                    <button id="analyticsRefreshChart" class="btn btn-success w-100">Filter</button>
+                                    <button id="analyticsResetFilter" class="btn btn-secondary w-100">Reset</button>
+                                </div>
+                                <div class="col-md-3 mt-md-auto mt-1">
+                                    <button id="analyticsDownloadChartBtn" class="btn btn-primary w-100">Download</button>
+                                </div>
+                            </div>
+                            <div style="height: 400px;"><canvas id="analyticsChart"></canvas></div>
+
+                            <hr class="my-4" />
+                            <h6 class="text-primary mb-3">Demographic Analysis</h6>
+                            <div class="row mb-3">
+                                <div class="col-md-2">
+                                    <label>Quick Filter</label>
+                                    <select class="form-select" id="demographicsTimeRange">
+                                        <option value="day">Today</option>
+                                        <option value="week">This Week</option>
+                                        <option value="month" selected>This Month</option>
+                                        <option value="year">This Year</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label>Start Date</label>
+                                    <input type="date" class="form-control" id="demographicsStartDate" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label>End Date</label>
+                                    <input type="date" class="form-control" id="demographicsEndDate" />
+                                </div>
+                                <div class="col-md-3 d-flex gap-2 mt-md-auto">
+                                    <button id="demographicsRefreshChart" class="btn btn-success w-100">Filter</button>
+                                    <button id="demographicsResetFilter" class="btn btn-secondary w-100">Reset</button>
+                                </div>
+                                <div class="col-md-3 mt-md-auto mt-1">
+                                    <button id="demographicsDownloadChartBtn" class="btn btn-primary w-100">Download</button>
+                                </div>
+                            </div>
+                            <div style="height: 400px;overflow-x:auto"><canvas id="demographicsChart"></canvas></div>
+
+                            <hr class="my-4" />
+                            <h6 class="text-primary mb-3">Top Interacted OCOP Products</h6>
+                            <div class="row mb-3">
+                                <div class="col-md-2 mt-md-auto mt-1">
+                                    <button id="topInteractionDownloadChartBtn" class="btn btn-primary w-100">Download</button>
+                                </div>
+                            </div>
+                            <div style="height: 400px;overflow-x:auto"><canvas id="topInteractionChart"></canvas></div>
+
+                            <hr class="my-4" />
+                            <h6 class="text-primary mb-3">Top Wishlisted OCOP Products</h6>
+                            <div class="row mb-3">
+                                <div class="col-md-2 mt-md-auto mt-1">
+                                    <button id="topWishlistDownloadChartBtn" class="btn btn-primary w-100">Download</button>
+                                </div>
+                            </div>
+                            <div style="height: 400px;overflow-x:auto"><canvas id="topWishlistChart"></canvas></div>
+
+                            <hr class="my-4" />
+                            <h6 class="text-primary mb-3">OCOP Product Comparison</h6>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label>Product Name</label>
+                                    <select id="compareProductsSelect" class="form-select" multiple>
+                                        @foreach (var p in Model.Analytics)
+                                        {
+                                            <option value="@p.Id">@p.ProductName</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-3 align-self-end">
+                                    <button id="compareProductsBtn" class="btn btn-success mt-2">Compare</button>
+                                </div>
+                                <div class="col-md-2 align-self-end">
+                                    <button id="compareProductsDownloadChartBtn" class="btn btn-primary mt-2">Download</button>
+                                </div>
+                            </div>
+                            <div style="height: 400px;overflow-x:auto"><canvas id="compareProductsChart"></canvas></div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script src="~/assets/js/ocopproduct/chart.js"></script>
+    <script>
+        // Data from Razor view
+       window.onload = function () {
+            const analyticsData = @Html.Raw(Json.Serialize(Model?.Analytics));
+            const demographicsData = @Html.Raw(Json.Serialize(Model?.UserDemographics));
+            const topInteractionData = @Html.Raw(Json.Serialize(Model?.TopProductsByInteractions));
+            const topWishlistData = @Html.Raw(Json.Serialize(Model?.TopProductsByFavorites));
+            const compareProductsData = @Html.Raw(Json.Serialize(Model?.ComparedProducts));
+            initializeOcopDashboard(analyticsData, demographicsData, topInteractionData, topWishlistData, compareProductsData);
+        };
+    </script>
+}

@@ -131,19 +131,19 @@
         (function () {
             const success = @Html.Raw(Json.Serialize(TempData["Success"]));
             const error   = @Html.Raw(Json.Serialize(TempData["Error"]));
-            if (success) showSuccessAlert("Success!", success);
-            if (error)   showErrorAlert("Error!",   error);
+            if (success) showTimedAlert("Success!", success, "success", 1000);
+            if (error)   showTimedAlert("Error!", error, "error", 1000);
         })();
             @if (TempData["successMessage"] != null)
             {
                 <text>
-                    showSuccessAlert("Success!", "@TempData["successMessage"]");
+                    showTimedAlert("Success!",  "@TempData["successMessage"]", "success", 1000);
                 </text>
             }
             @if (TempData["errorMessage"] != null)
             {
                 <text>
-                    showErrorAlert("Success!", "@TempData["errorMessage"]");
+                    showTimedAlert("Error!",  "@TempData["errorMessage"]", "error", 1000);
                 </text>
             }
     </script>

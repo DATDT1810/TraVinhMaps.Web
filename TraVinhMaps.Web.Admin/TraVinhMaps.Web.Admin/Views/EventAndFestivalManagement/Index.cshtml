@@ -1,3 +1,4 @@
+@using TraVinhMaps.Web.Admin.Helper
 @using TraVinhMaps.Web.Admin.Models.EventAndFestivalFeature;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
 @model IEnumerable<EventAndFestivalResponse>
@@ -80,7 +81,7 @@
                                                     <div class="light-product-box"><img class="img-fluid"
                                                             src="@item.Images.First()" alt="avatar">
                                                     </div>
-                                                    <p>@item.NameEvent</p>
+                                                    <p>@Html.TruncateWords(item.NameEvent, 8)</p>
                                                 </div>
                                             </td>
                                             <td>@item.Category</td>
@@ -104,12 +105,12 @@
                                                 <li>
                                                     @if (@item.Status == false)
                                                         {
-                                                                    <a title="Restore" class="undelete-eventandfestival" href="javascript:void(0)"
+                                                                    <a title="Restore" class="restore undelete-eventandfestival" href="javascript:void(0)"
                                                                     data-id="@item.Id"><i class="fa fa-undo"></i></a>
                                                         }
                                                         else
                                                         {
-                                                            <a title="Delete" class="delete-eventandfestival" href="javascript:void(0)"
+                                                            <a title="Delete" class="delete delete-eventandfestival" href="javascript:void(0)"
                                                                     data-id="@item.Id"><i class="fa fa-trash"></i></a>
                                                         }
                                                     </li>
@@ -143,19 +144,19 @@
           @if (TempData["EditEventAndFestivalSuccess"] != null)
             {
                 <text>
-                    showSuccessAlert("Success!", "@TempData["EditEventAndFestivalSuccess"]");
+                    showTimedAlert("Success!", "@TempData["EditEventAndFestivalSuccess"]", "success", 1000);
                 </text>
             }
             @if (TempData["successMessage"] != null)
             {
                 <text>
-                    showSuccessAlert("Success!", "@TempData["successMessage"]");
+                    showTimedAlert("Success!", "@TempData["successMessage"]", "success", 1000);
                 </text>
             }
             @if (TempData["errorMessage"] != null)
             {
                 <text>
-                    showErrorAlert("Success!", "@TempData["errorMessage"]");
+                    showTimedAlert("Error!",  "@TempData["errorMessage"]", "error", 1000);
                 </text>
             }
     </script>

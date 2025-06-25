@@ -142,14 +142,14 @@
                             <div class="product-slider owl-carousel owl-theme" id="sync1">
                                 @foreach (var item in @Model.Images)
                                 {
-                                    <div class="item"><img src="@item" alt=""></div>
+                                    <div class="item" style="height: 400px;"><img src="@item" alt="image" style="width: 100%; height: 400px;"></div>
                                 }
                             </div>
                             <div class="owl-carousel owl-theme" id="sync2">
                                 @foreach (var item in @Model.Images)
                                 {
-                                    <div class="item position-relative">
-                                        <img src="@item" alt="" class="w-100">
+                                    <div class="item position-relative" style="height: 90px; width: 70px;">
+                                        <img src="@item" alt="" class="w-100" style="width: 100%; height: 100%; object-fit: cover; display: block;">
                                         <form asp-controller="EventAndFestivalManagement"
                                             asp-action="DeleteEventAndFestivalImage" method="post">
                                             @Html.AntiForgeryToken()
@@ -200,23 +200,23 @@
                                 <table class="product-page-width">
                                     <tbody>
                                         <tr>
-                                            <td> <b>Category &nbsp;&nbsp;&nbsp;:</b></td>
+                                            <td> <b>Category:</b></td>
                                             <td>@Model.Category</td>
                                         </tr>
                                         <tr>
-                                            <td> <b>Create At &nbsp;&nbsp;&nbsp;:</b></td>
+                                            <td> <b>Create At:</b></td>
                                             <td>@Model.CreatedAt</td>
                                         </tr>
                                         <tr>
-                                            <td> <b>Location Type &nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</b></td>
+                                            <td> <b>Location Type:</b></td>
                                             <td>@(Model.Location.location.Type ?? "No type")</td>
                                         </tr>
                                         <tr>
-                                            <td> <b>Location name &nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</b></td>
+                                            <td> <b>Location name:</b></td>
                                             <td>@(Model.Location.Name ?? "No type")</td>
                                         </tr>
                                         <tr>
-                                            <td> <b>longitude/latitude &nbsp;&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</b></td>
+                                            <td> <b>Longitude/latitude:&nbsp;</b></td>
                                             <td>@Model.Location.location.Coordinates[0] ,&nbsp @Model.Location.location.Coordinates[1]
                                             </td>
                                         </tr>
@@ -294,12 +294,6 @@
                                 aria-selected="false">Description</a>
                             <div class="material-border"></div>
                         </li>
-                        <li class="nav-item"><a class="nav-link" id="contact-top-tab" data-bs-toggle="tab"
-                                href="#top-contact" role="tab" aria-controls="top-contact" aria-selected="true">More @if(TempData["errorHistory"] != null) {
-                                    <span class="text-danger">@TempData["errorHistory"]</span>
-                                } </a>
-                            <div class="material-border"></div>
-                        </li>
                     </ul>
                     <div class="tab-content" id="top-tabContent">
                         <div class="tab-pane fade active show" id="top-home" role="tabpanel"
@@ -316,7 +310,6 @@
 
 @section Scripts { 
     <script src="~/assets/js/sweetalert-custom.js"></script>
-
     <script>
         function copyWebsiteToClipboard(element) {
             const text = element.innerText.trim();
@@ -350,20 +343,19 @@
             @if (TempData["EditEventAndFestivalSuccess"] != null)
             {
                 <text>
-                    showTimedAlert("Success!", "@TempData["EditEventAndFestivalSuccess"]", "success", 2000);
+                    showTimedAlert("Success!", @TempData["EditEventAndFestivalSuccess"], "success", 1000);
                 </text>
             }
             @if (TempData["successMessage"] != null)
             {
                 <text>
-                    showTimedAlert("Success!", "@TempData["successMessage"]", "success", 2000);
-
+                    showTimedAlert("Success!", @TempData["successMessage"], "success", 1000);
                 </text>
             }
             @if (TempData["errorMessage"] != null)
             {
                 <text>
-                    showTimedAlert("Error!", "@TempData["errorMessage"]", "error", 2000);
+                    showTimedAlert("Error!", @TempData["errorMessage"], "error", 1000);
                 </text>
             }
         });

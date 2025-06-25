@@ -15,10 +15,8 @@
                 <div class="col-6">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                            <a href="#">
-                                <svg class="stroke-icon">
-                                    <use href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#stroke-home"></use>
-                                </svg>
+                            <a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home" style="font-size: 20px;"></i>
                             </a>
                         </li>
                         <li class="breadcrumb-item">Admin</li>
@@ -55,11 +53,13 @@
                                         <div class="d-flex justify-content-center">
                                             <div class="text-center">
                                                 <img class="rounded-circle profile-avatar mb-4" alt="Profile Image"
-                                                     src="@(string.IsNullOrEmpty(Model.Avatar) ? Url.Content("~/assets/images/user/user.png") : Model.Avatar)"
-                                                     style="width: 150px; height: 150px; object-fit: cover;">
+                                                    src="@(string.IsNullOrEmpty(Model.Avatar) ? Url.Content("~/assets/images/user/user.png") : Model.Avatar)"
+                                                    style="width: 150px; height: 150px; object-fit: cover;">
                                                 <div class="mb-3">
-                                                    <label for="Avatar" class="btn btn-outline-primary">Change Avatar</label>
-                                                    <input id="Avatar" name="Avatar" type="file" accept="image/*" class="d-none">
+                                                    <label for="Avatar" class="btn btn-outline-primary">Change
+                                                        Avatar</label>
+                                                    <input id="Avatar" name="Avatar" type="file" accept="image/*"
+                                                        class="d-none">
                                                 </div>
                                                 <div id="image-error" class="text-danger" style="display: none;">
                                                     Please select a valid image file (JPEG, PNG, GIF, etc.)
@@ -79,11 +79,12 @@
                                     <label class="form-label">User ID</label>
                                     <input class="form-control" value="@Model.Id" readonly />
                                 </div>
-                                
-                                    <input type="hidden" class="form-control" name="Email" value="@Model.Email" />
-                              
+
+                                <input type="hidden" class="form-control" name="Email" value="@Model.Email" />
+
                                 <div class="mb-4">
-                                    <a asp-action="Settings" asp-controller="Admin" class="btn btn-outline-primary w-100">
+                                    <a asp-action="Settings" asp-controller="Admin"
+                                        class="btn btn-outline-primary w-100">
                                         <i class="fa fa-lock me-2"></i>Security Settings
                                     </a>
                                 </div>
@@ -110,37 +111,44 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Username</label>
-                                            <input class="form-control" type="text" name="UserName" value="@Model.UserName" />
+                                            <input class="form-control" type="text" name="UserName"
+                                                value="@Model.UserName" />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Role</label>
-                                            <input class="form-control" type="text" value="@Model.RoleName.ToUpper()" readonly />
+                                            <input class="form-control" type="text" value="@Model.RoleName.ToUpper()"
+                                                readonly />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Created At</label>
-                                            <input class="form-control" type="text" value="@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")" readonly />
+                                            <input class="form-control" type="text"
+                                                value="@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")" readonly />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Last Updated</label>
-                                            <input class="form-control" type="text" value="@(Model.UpdatedAt.HasValue? Model.UpdatedAt.Value.ToString("yyyy-MM-dd HH:mm") : "Not updated yet")" readonly />
+                                            <input class="form-control" type="text"
+                                                value="@(Model.UpdatedAt.HasValue? Model.UpdatedAt.Value.ToString("yyyy-MM-dd HH:mm") : "Not updated yet")"
+                                                readonly />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Status</label>
-                                            <input class="form-control" type="text" value="@(Model.Status ? "Active" : "Inactive")" readonly />
+                                            <input class="form-control" type="text"
+                                                value="@(Model.Status ? "Active" : "Inactive")" readonly />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Forbidden Status</label>
-                                            <input class="form-control" type="text" value="@(Model.IsForbidden ? "Forbidden" : "Not Forbidden")" readonly />
+                                            <input class="form-control" type="text"
+                                                value="@(Model.IsForbidden ? "Forbidden" : "Not Forbidden")" readonly />
                                         </div>
                                     </div>
                                 </div>
@@ -160,9 +168,9 @@
     <script>
         (function () {
             const success = @Html.Raw(Json.Serialize(TempData["Success"]));
-            const error   = @Html.Raw(Json.Serialize(TempData["Error"]));
-            if (success) showSuccessAlert("Success!", success);
-            if (error)   showErrorAlert("Error!",   error);
+            const error = @Html.Raw(Json.Serialize(TempData["Error"]));
+            if (success) showTimedAlert("Success!", success, "success", 1000);
+            if (error) showTimedAlert("Error!", error, "error", 1000);
         })();
         // Preview image before upload
         document.getElementById('Avatar').addEventListener('change', function (e) {

@@ -342,19 +342,19 @@
             @if (TempData["EditEventAndFestivalSuccess"] != null)
                 {
                     <text>
-                        showTimedAlert("Success!", "@TempData["EditEventAndFestivalSuccess"]", "success", 2000);
+                        showTimedAlert("Success!", "@TempData["EditEventAndFestivalSuccess"]", "success", 1000);
                     </text>
             }
                 @if (TempData["successMessage"] != null)
                 {
                     <text>
-                        showTimedAlert("Success!", "@TempData["successMessage"]", "success", 2000);
+                        showTimedAlert("Success!", "@TempData["successMessage"]", "success", 1000);
                     </text>
             }
                 @if (TempData["errorMessage"] != null)
                 {
                     <text>s
-                        showTimedAlert("Error!", "@TempData["errorMessage"]", "error", 2000);
+                        showTimedAlert("Error!", "@TempData["errorMessage"]", "error", 1000);
                     </text>
             }
                                             });

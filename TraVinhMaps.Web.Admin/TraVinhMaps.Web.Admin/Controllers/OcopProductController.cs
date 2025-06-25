@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TraVinhMaps.Web.Admin.Models.Location;
@@ -498,24 +499,41 @@ namespace TraVinhMaps.Web.Admin.Controllers
         }
 
         // Analytics
-        [HttpGet("analytics")]
-        public async Task<IActionResult> OcopProductAnalytics(string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null)
+        [HttpGet("dashboard")]
+        public async Task<IActionResult> OcopDashboard([FromQuery] List<string> productIds = null, string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null)
         {
-            ViewData["Title"] = "Dashboard";
-            ViewData["Breadcrumb"] = new List<string> { "Dashboard", "Default" };
+            ViewData["Title"] = "OCOP Dashboard";
+            ViewData["Breadcrumb"] = new List<string> { "Analytics", "Ocop" };
 
             try
             {
-                var analytics = await _ocopProductService.GetProductAnalyticsAsync(timeRange, startDate, endDate);
-                ViewData["Analytics"] = analytics;
-                return View(analytics);
+                var analyticsTask = _ocopProductService.GetProductAnalyticsAsync(timeRange, startDate, endDate);
+                var demographicTask = _ocopProductService.GetUserDemographicsAsync(timeRange, startDate, endDate);
+                var topProductsByInteractionsTask = _ocopProductService.GetTopProductsByInteractionsAsync(5, timeRange, startDate, endDate);
+                var topProductsByFavoriteTask = _ocopProductService.GetTopProductsByFavoritesAsync(5, timeRange, startDate, endDate);
+
+                // Call CompareProducts only if productIds has a value. 
+                Task<IEnumerable<OcopProductAnalytics>> compareProductsTask = Task.FromResult(Enumerable.Empty<OcopProductAnalytics>());
+                if (productIds != null && productIds.Any())
+                    compareProductsTask = _ocopProductService.CompareProductsAsync(productIds, timeRange, startDate, endDate);
+
+                await Task.WhenAll(analyticsTask, demographicTask, topProductsByInteractionsTask, topProductsByFavoriteTask, compareProductsTask);
+
+                var vm = new OcopDashboardViewModel
+                {
+                    Analytics = analyticsTask.Result.ToList() ?? new List<OcopProductAnalytics>(),
+                    UserDemographics = demographicTask.Result.ToList() ?? new List<OcopProductUserDemographics>(),
+                    TopProductsByInteractions = topProductsByInteractionsTask.Result?.ToList() ?? new List<OcopProductAnalytics>(),
+                    TopProductsByFavorites = topProductsByFavoriteTask.Result?.ToList() ?? new List<OcopProductAnalytics>(),
+                    ComparedProducts = compareProductsTask.Result?.ToList() ?? new List<OcopProductAnalytics>(),
+                };
+                return View("OcopDashboard", vm);
             }
             catch (Exception ex)
             {
                 ViewData["Error"] = $"An error occurred: {ex.Message}";
-                return View();
+                return View("OcopDashboard", new OcopDashboardViewModel());
             }
-
         }
 
     }

@@ -4,6 +4,15 @@
     var error = ViewData["Error"] as string;
 }
 
+<style>
+    .chart-container {
+        position: relative;
+        width: 100%;
+        height: auto;
+        min-height: 300px;
+    }
+</style>
+
 <div class="page-body">
     <div class="container-fluid">
         <div class="page-title">
@@ -24,6 +33,7 @@
                             {
                                 <li class="breadcrumb-item">@item</li>
                             }
+                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
                         }
                     </ol>
                 </div>
@@ -46,9 +56,9 @@
                         else
                         {
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <h5>Ocop Product Analytics</h5>
-                                <div class="row mb-3">
-                                    <div class="col-md-3">
+                                <h5>Ocop Analytics </h5>
+                                <div class="row mb-2 px-3 pt-2">
+                                    <div class="col-md-2">
                                         <label for="timeRange" class="form-label">Quick Filter</label>
                                         <select class="form-select" id="timeRange">
                                             <option value="day">Today</option>
@@ -57,17 +67,21 @@
                                             <option value="year">This Year</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <label for="startDate" class="form-label">Start Date</label>
                                         <input type="date" id="startDate" class="form-control" />
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <label for="endDate" class="form-label">End Date</label>
                                         <input type="date" id="endDate" class="form-control" />
                                     </div>
-                                    <div class="col-md-3 align-self-end d-flex gap-2">
+                                    <div class="col-md-3 align-self-end d-flex gap-2 mt-1">
                                         <button id="refreshChart" class="btn btn-success w-100">Filter</button>
                                         <button id="resetFilter" class="btn btn-secondary w-100">Reset</button>
+                                    </div>
+                                    <div class="col-md-3 align-self-end mt-1">
+                                        <button title="(PNG & CSV)" id="downloadChartBtn"
+                                            class="btn btn-primary w-55">Download Chart</button>
                                     </div>
                                 </div>
                             </div>

@@ -339,26 +339,168 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
 
         public async Task<IEnumerable<OcopProductAnalytics>> GetProductAnalyticsAsync(string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default)
         {
-            var url = $"{ocopProductApi}analytics?timeRange={timeRange}";
-            if (startDate.HasValue)
+            try
             {
-                url += $"&startDate={Uri.EscapeDataString(startDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+                var url = $"{ocopProductApi}analytics?timeRange={Uri.EscapeDataString(timeRange)}";
+                if (startDate.HasValue)
+                {
+                    url += $"&startDate={Uri.EscapeDataString(startDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+                }
+                if (endDate.HasValue)
+                {
+                    url += $"&endDate={Uri.EscapeDataString(endDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+                }
+
+                var response = await _httpClient.GetAsync(url, cancellationToken);
+                response.EnsureSuccessStatusCode();
+
+                var content = await response.Content.ReadAsStringAsync(cancellationToken);
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var result = JsonSerializer.Deserialize<OcopProductBase<List<OcopProductAnalytics>>>(content, options);
+
+                return result?.Data ?? Enumerable.Empty<OcopProductAnalytics>();
             }
-            if (endDate.HasValue)
+            catch (HttpRequestException ex)
             {
-                url += $"&endDate={Uri.EscapeDataString(endDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+                throw new HttpRequestException($"Failed to fetch OCOP product analytics. Status: {ex.StatusCode}, Message: {ex.Message}", ex);
             }
-            var response = await _httpClient.GetAsync(url);
-            if (response.IsSuccessStatusCode)
+            catch (Exception ex)
             {
-                var content = await response.Content.ReadAsStringAsync();
-                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return JsonSerializer.Deserialize<OcopProductBase<List<OcopProductAnalytics>>>(content, option)?.Data ?? throw new HttpRequestException("Fail to find list ocop product.");
+                throw new InvalidOperationException("An error occurred while fetching product analytics.", ex);
             }
-            else
+        }
+
+        public async Task<IEnumerable<OcopProductUserDemographics>> GetUserDemographicsAsync(string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default)
+        {
+            try
             {
-                var errorResult = await response.Content.ReadAsStringAsync();
-                throw new HttpRequestException($"Unable to fetch list ocop product. Status: {response.StatusCode}, Error: {errorResult}");
+                var url = $"{ocopProductApi}analytics-userdemographics?timeRange={Uri.EscapeDataString(timeRange)}";
+                if (startDate.HasValue)
+                {
+                    url += $"&startDate={Uri.EscapeDataString(startDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+                }
+                if (endDate.HasValue)
+                {
+                    url += $"&endDate={Uri.EscapeDataString(endDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+                }
+
+                var response = await _httpClient.GetAsync(url, cancellationToken);
+                response.EnsureSuccessStatusCode();
+
+                var content = await response.Content.ReadAsStringAsync(cancellationToken);
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var result = JsonSerializer.Deserialize<OcopProductBase<List<OcopProductUserDemographics>>>(content, options);
+
+                return result?.Data ?? Enumerable.Empty<OcopProductUserDemographics>();
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new HttpRequestException($"Failed to fetch OCOP user demographics. Status: {ex.StatusCode}, Message: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("An error occurred while fetching user demographics.", ex);
+            }
+        }
+
+        public async Task<IEnumerable<OcopProductAnalytics>> GetTopProductsByInteractionsAsync(int top = 5, string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var url = $"{ocopProductApi}analytics-getTopProductsByInteractions?top={top}&timeRange={Uri.EscapeDataString(timeRange)}";
+                if (startDate.HasValue)
+                {
+                    url += $"&startDate={Uri.EscapeDataString(startDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+                }
+                if (endDate.HasValue)
+                {
+                    url += $"&endDate={Uri.EscapeDataString(endDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+                }
+
+                var response = await _httpClient.GetAsync(url, cancellationToken);
+                var content = await response.Content.ReadAsStringAsync(cancellationToken);
+                if (!response.IsSuccessStatusCode)
+                    throw new HttpRequestException($"[GetTopProductsByFavorites] API call failed. Status: {(int)response.StatusCode} {response.ReasonPhrase}. Content: {content}");
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var result = JsonSerializer.Deserialize<OcopProductBase<List<OcopProductAnalytics>>>(content, options);
+
+                return result?.Data ?? Enumerable.Empty<OcopProductAnalytics>();
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new HttpRequestException($"[GetTopProductsByInteractions] Failed to fetch data. {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("[GetTopProductsByInteractions] Unknown error.", ex);
+            }
+        }
+
+        public async Task<IEnumerable<OcopProductAnalytics>> GetTopProductsByFavoritesAsync(int top = 5, string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var url = $"{ocopProductApi}analytics-getTopProductsByFavorites?top={top}&timeRange={Uri.EscapeDataString(timeRange)}";
+                if (startDate.HasValue)
+                {
+                    url += $"&startDate={Uri.EscapeDataString(startDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+                }
+                if (endDate.HasValue)
+                {
+                    url += $"&endDate={Uri.EscapeDataString(endDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+                }
+
+                var response = await _httpClient.GetAsync(url, cancellationToken);
+                var content = await response.Content.ReadAsStringAsync(cancellationToken);
+                if (!response.IsSuccessStatusCode)
+                    throw new HttpRequestException($"[GetTopProductsByFavorites] API call failed. Status: {(int)response.StatusCode} {response.ReasonPhrase}. Content: {content}");
+
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var result = JsonSerializer.Deserialize<OcopProductBase<List<OcopProductAnalytics>>>(content, options);
+
+                return result?.Data ?? Enumerable.Empty<OcopProductAnalytics>();
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new HttpRequestException($"[GetTopProductsByFavorites] Failed to fetch data. {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("[GetTopProductsByFavorites] Unknown error.", ex);
+            }
+        }
+
+        public async Task<IEnumerable<OcopProductAnalytics>> CompareProductsAsync(IEnumerable<string> productIds, string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var url = $"{ocopProductApi}analytics-compareproducts?timeRange={Uri.EscapeDataString(timeRange)}";
+                if (startDate.HasValue)
+                {
+                    url += $"&startDate={Uri.EscapeDataString(startDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+                }
+                if (endDate.HasValue)
+                {
+                    url += $"&endDate={Uri.EscapeDataString(endDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+                }
+
+                var response = await _httpClient.GetAsync(url, cancellationToken);
+                var content = await response.Content.ReadAsStringAsync(cancellationToken);
+                if (!response.IsSuccessStatusCode)
+                    throw new HttpRequestException($"[CompareProducts] API call failed. Status: {(int)response.StatusCode} {response.ReasonPhrase}. Content: {content}");
+
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var result = JsonSerializer.Deserialize<OcopProductBase<List<OcopProductAnalytics>>>(content, options);
+
+                return result?.Data ?? Enumerable.Empty<OcopProductAnalytics>();
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new HttpRequestException($"[CompareProducts] Failed to fetch data. {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("[CompareProducts] Unknown error.", ex);
             }
         }
     }

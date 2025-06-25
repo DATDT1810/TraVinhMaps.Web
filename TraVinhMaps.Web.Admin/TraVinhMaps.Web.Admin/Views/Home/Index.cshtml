@@ -1,7 +1,7 @@
 ﻿@using TraVinhMaps.Web.Admin.Models.Dashboard
 @model DashboardVM
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "";
 }
 
 <style>
@@ -11,6 +11,8 @@
         width: 100%;
         position: relative;
         overflow: visible;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     .chart-container {
@@ -23,7 +25,6 @@
         max-height: 100%;
         width: 100%;
     }
-    
 </style>
 
 <!-- Page Sidebar Ends-->
@@ -44,7 +45,7 @@
                             {
                                 <li class="breadcrumb-item">@item</li>
                             }
-                            <li class="breadcrumb-item active">@breadcrumbs.)</li>
+                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
                         }
                     </ol>
                 </div>
@@ -264,11 +265,14 @@
                                             <option value="month">Last Month</option>
                                             <option value="year">Last Year</option>
                                         </select>
+                                        <button title="(PNG & CSV)" class="btn btn-primary ms-2" id="downloadHometownChart">Download
+                                            Chart</button>
                                     </div>
                                     <div class="card-body">
-                                        <div class="chart-hometown-container">
+                                        <div class="chart-hometown-container" style="height: 600px; overflow-y: auto;">
                                             <canvas id="hometownChart"></canvas>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -338,7 +342,7 @@
             status: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Status ?? new Dictionary<string, int>())),
             hometown: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Hometown ?? new Dictionary<string, int>())),
             time: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Time ?? new Dictionary<string, int>()))
-                };
+                        };
 
         // Handle error from ViewData
         const error = @Html.Raw(Json.Serialize(ViewData["Error"]));
@@ -379,8 +383,8 @@
 
         // Kết nối và join group (nếu có role thực tế thì lấy từ Razor)
         dashboardConnection.start().then(function () {
-            dashboardConnection.invoke("JoinAdminGroup", "admin"); 
-            dashboardConnection.invoke("JoinAdminGroup", "super-admin"); 
+            dashboardConnection.invoke("JoinAdminGroup", "admin");
+            dashboardConnection.invoke("JoinAdminGroup", "super-admin");
         });
 
         // Hàm reload lại dữ liệu chart
@@ -428,7 +432,7 @@
             fetch(`/api/users/summary`)
                 .then(res => res.json())
                 .then(res => {
-                        if (document.querySelector('.total-project .f-w-600')) {
+                    if (document.querySelector('.total-project .f-w-600')) {
                         document.querySelector('.total-project .f-w-600').textContent = res.totalUsers;
                     }
                     if (document.querySelector('.total-Progress .f-w-600')) {

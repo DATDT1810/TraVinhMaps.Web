@@ -86,13 +86,13 @@
             @if (TempData["successMessage"] != null)
                 {
                     <text>
-                        showTimedAlert("Success!", @TempData["successMessage"], "success", 2000);
+                        showTimedAlert("Success!", @TempData["successMessage"], "success", 1000);
                     </text>
             }
                 @if (TempData["errorMessage"] != null)
                 {
                     <text>
-                        showTimedAlert("Error!", @TempData["errorMessage"], "error", 2000);
+                        showTimedAlert("Error!", @TempData["errorMessage"], "error", 1000);
                     </text>
             }
                     });
