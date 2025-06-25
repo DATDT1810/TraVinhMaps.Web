@@ -44,5 +44,4 @@ msbuild.err
 msbuild.wrn
 
 # Environment files
-.env
-.env.*
+TraVinhMaps.Web.Admin/TraVinhMaps.Web.Admin/.env

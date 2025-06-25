@@ -8,7 +8,7 @@ namespace TraVinhMaps.Web.Admin.Models.SellLocation
 {
     public class SellLocationViewModel
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
         [Required(ErrorMessage = "Location name is required.")]
         [StringLength(100, ErrorMessage = "Location name must not exceed 100 characters.")]
         public string? LocationName { get; set; }
@@ -16,6 +16,7 @@ namespace TraVinhMaps.Web.Admin.Models.SellLocation
         [StringLength(200, ErrorMessage = "Location address must not exceed 200 characters.")]
         public string? LocationAddress { get; set; }
         public string? Type { get; set; }
+        public string? MarkerId { get; set; }
         [Required(ErrorMessage = "Longitude is required.")]
         [Range(-180, 180, ErrorMessage = "Longitude must be between -180 and 180.")]
         public double Longitude { get; set; }

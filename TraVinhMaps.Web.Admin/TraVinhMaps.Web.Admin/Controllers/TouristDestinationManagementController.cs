@@ -59,6 +59,18 @@ namespace TraVinhMaps.Web.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
+                string errorMessage = "";
+                foreach (var modelStateEntry in ModelState)
+                {
+                    var key = modelStateEntry.Key;
+                    foreach (var error in modelStateEntry.Value.Errors)
+                    {
+                        Console.WriteLine($"Key: {key}, Error: {error.ErrorMessage}");
+                        errorMessage += $"{error.ErrorMessage} ";
+                    }
+                }
+                ViewBag.error = errorMessage;
+                ViewBag.DestinationTypes = await GetDestinationTypeList();
                 return View(touristDestinationViewRequest);
             }
             var touristDestinationRequest = DestinationMapper.Mapper.Map<TouristDestinationRequest>(touristDestinationViewRequest);
@@ -157,6 +169,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             var updateDestination = await _destinationService.UpdateDestination(updateDestinationData);
             if (updateDestination == null)
             {
+                ViewBag.DestinationTypes = await GetDestinationTypeList();
                 ViewBag.error = "something went wrong, please try again";
                 return View(updateDestinationViewRequest);
             }

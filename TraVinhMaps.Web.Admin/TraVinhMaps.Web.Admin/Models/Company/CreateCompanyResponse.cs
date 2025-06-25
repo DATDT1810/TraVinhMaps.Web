@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TraVinhMaps.Web.Admin.Models.SellingLink
+namespace TraVinhMaps.Web.Admin.Models.Company
 {
-    public class CreateSellingLinkResponse<T>
+    public class CreateCompanyResponse<T>
     {
         public Value value { get; set; }
         public List<object> formatters { get; set; } 

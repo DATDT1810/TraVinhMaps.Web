@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using System.Text.Json;
+using TraVinhMaps.Web.Admin.Models.Location;
 using TraVinhMaps.Web.Admin.Models.OcopProduct;
 using TraVinhMaps.Web.Admin.Models.SellLocation;
 namespace TraVinhMaps.Web.Admin.Services.OcopProduct
@@ -79,12 +80,8 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
             }
         }
 
-        public async Task<CreateOcopProductResponse<OcopProductResponse>> AddAsync(CreateOcopProductRequest entity, CancellationToken cancellationToken = default)
+        public async Task<CreateOcopProductResponse<OcopProductResponse>> AddAsync(OcopProductViewModel entity, CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrEmpty(entity.ProductName) || entity.ProductImageFile == null || !entity.ProductImageFile.Any())
-            {
-                throw new ArgumentException("ProductName and at least one image are required.");
-            }
             using var content = new MultipartFormDataContent();
             content.Add(new StringContent(entity.ProductName ?? string.Empty), "ProductName");
             content.Add(new StringContent(entity.ProductDescription ?? string.Empty), "ProductDescription");
@@ -94,27 +91,43 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
             content.Add(new StringContent(entity.OcopPoint.ToString()), "OcopPoint");
             content.Add(new StringContent(entity.OcopYearRelease.ToString()), "OcopYearRelease");
             content.Add(new StringContent(entity.TagId ?? string.Empty), "TagId");
-            content.Add(new StringContent(entity.SellingLinkId != null ? string.Join(",", entity.SellingLinkId) : string.Empty), "SellingLinkId");
+
             foreach (var file in entity.ProductImageFile)
             {
                 var streamContent = new StreamContent(file.OpenReadStream());
                 streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
                 content.Add(streamContent, "ProductImageFile", file.FileName);
             }
-            HttpResponseMessage responseMessage = await _httpClient.PostAsync(ocopProductApi + "AddOcopProduct", content);
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var contentResult = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
-                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return JsonSerializer.Deserialize<CreateOcopProductResponse<OcopProductResponse>>(contentResult, option) ?? throw new HttpRequestException("Unable to create ocop product.");
-            }
-            else
+
+            HttpResponseMessage responseMessage = await _httpClient.PostAsync(ocopProductApi + "AddOcopProduct", content, cancellationToken);
+            if (!responseMessage.IsSuccessStatusCode)
             {
                 var errorResult = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
-                throw new HttpRequestException($"Unable to fetch create ocop product. Status: {responseMessage.StatusCode}, Error: {errorResult}");
+                throw new HttpRequestException($"Unable to create ocop product. Status: {responseMessage.StatusCode}, Error: {errorResult}");
             }
-        }
 
+            var contentResult = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
+            var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var productResponse = JsonSerializer.Deserialize<CreateOcopProductResponse<OcopProductResponse>>(contentResult, option) ?? throw new HttpRequestException("Unable to create ocop product.");
+            foreach (var sellLocationVM in entity.SellLocations)
+            {
+                var sellLocation = new SellLocationResponse
+                {
+                    Id = productResponse.value.data.Id,
+                    LocationName = sellLocationVM.LocationName,
+                    LocationAddress = sellLocationVM.LocationAddress,
+                    MarkerId = "68486609935049741c54a644",
+                    Location = new LocationResponse
+                    {
+                        Type = sellLocationVM.Type,
+                        Coordinates = new List<double> { sellLocationVM.Longitude, sellLocationVM.Latitude }
+                    }
+                };
+                await AddSellLocation(productResponse.value.data.Id, sellLocation, cancellationToken);
+            }
+
+            return productResponse;
+        }
         public async Task<List<string>> AddImageOcopProduct(string id, List<IFormFile> imageFiles, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(id))
