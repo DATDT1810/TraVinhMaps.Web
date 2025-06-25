@@ -89,13 +89,13 @@
                             <form asp-action="EditEventAndFestival" method="post">
                                 <div class="row">
                                     <div class="row">
-                                            <div class="mb-3">
-                                                <input readonly hidden asp-for="Id" type="text">
-                                                <label>Event And Festival Title</label>
-                                                <input asp-for="NameEvent" class="form-control" type="text"
-                                                    placeholder="Event or festival title">
-                                                <span asp-validation-for="NameEvent" class="text-danger"></span>
-                                            </div>
+                                        <div class="mb-3">
+                                            <input readonly hidden asp-for="Id" type="text">
+                                            <label>Event And Festival Title</label>
+                                            <input asp-for="NameEvent" class="form-control" type="text"
+                                                placeholder="Event or festival title">
+                                            <span asp-validation-for="NameEvent" class="text-danger"></span>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -184,8 +184,8 @@
                                         <div class="mb-3">
                                             <label>Description</label>
                                             <textarea asp-for="Description" class="form-control"
-                                                placeholder="Description of destination"
-                                                id="descriptionEditor" rows="10"></textarea>
+                                                placeholder="Description of destination" id="descriptionEditor"
+                                                rows="10"></textarea>
                                             <span asp-validation-for="Description" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -195,7 +195,8 @@
                                         <div class="text-end">
                                             <button type="submit" class="btn btn-success me-3">Update
                                                 Event And Festival</button>
-                                            <a asp-action="DetailEventFestival" asp-route-id="@Model.Id" class="btn btn-danger">Back</a>
+                                            <a asp-action="DetailEventFestival" asp-route-id="@Model.Id"
+                                                class="btn btn-danger">Back</a>
                                         </div>
                                     </div>
                                 </div>
@@ -276,7 +277,7 @@
         });
 
         document.addEventListener("DOMContentLoaded", function () {
-                ClassicEditor
+            ClassicEditor
                 .create(document.querySelector('#descriptionEditor'))
                 .catch(error => {
                     console.error(error);
@@ -286,23 +287,24 @@
 
     <script>
         $(document).ready(function () {
-            if (TempData["EditEventAndFestivalSuccess"] != null) {
-                <text>
-                    showSuccessAlert("Success!","@TempData["EditEventAndFestivalSuccess"]");
-                </text>
-            }
             @if (TempData["EditEventAndFestivalSuccess"] != null)
                 {
-                    <text>showSuccessAlert("Success!", "@TempData["EditEventAndFestivalSuccess"]");</text>
+                    <text>
+                        showTimedAlert("Success!", "@TempData["EditEventAndFestivalSuccess"]", "success", 1000);
+                    </text>
             }
                 @if (TempData["successMessage"] != null)
                 {
-                    <text>showSuccessAlert("Success!", "@TempData["successMessage"]");</text>
+                    <text>
+                        showTimedAlert("Success!", "@TempData["successMessage"]", "success", 1000);
+                    </text>
             }
                 @if (TempData["errorMessage"] != null)
                 {
-                    <text>showErrorAlert("Error!", "@TempData["errorMessage"]");</text>
+                    <text>
+                        showTimedAlert("Error!", "@TempData["errorMessage"]", "error", 1000);
+                    </text>
             }
-                            });
+                                });
     </script>
 }

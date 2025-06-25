@@ -96,9 +96,9 @@ $(document).ready(function () {
 
             // Cập nhật trạng thái sang Inactive
             updateRow(row, false);
-            showTimedAlert("Success!", message, "success", 2000);
+            showTimedAlert("Success!", message, "success", 1000);
           } else {
-            showTimedAlert("Failed!", message, "error", 2000);
+            showTimedAlert("Failed!", message, "error", 1000);
           }
         },
         error: (xhr) => {
@@ -150,9 +150,9 @@ $(document).ready(function () {
 
             // Cập nhật trạng thái sang Active
             updateRow(row, true);
-            showTimedAlert("Success!", message, "success", 2000);
+            showTimedAlert("Success!", message, "success", 1000);
           } else {
-            showTimedAlert("Failed!", message, "error", 2000);
+            showTimedAlert("Failed!", message, "error", 1000);
           }
         },
         error: (xhr) => {
@@ -294,14 +294,14 @@ function exportTableToExcel() {
           "Export Successful!",
           `${response.length} items have been exported to Excel.`,
           "success",
-          2000
+          1000
         );
       } else {
         showTimedAlert(
           "Export Error!",
           "No user data available for export.",
           "error",
-          2000
+          1000
         );
       }
     },
@@ -311,7 +311,7 @@ function exportTableToExcel() {
         "Export Error!",
         "Could not retrieve user data. Please check your connection or permissions.",
         "error",
-        2000
+        1000
       );
     },
   });

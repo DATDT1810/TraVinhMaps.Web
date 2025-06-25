@@ -85,11 +85,7 @@
                 <div class="col-6">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                            <a href="index-2.html">
-                                <svg class="stroke-icon">
-                                    <use href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#stroke-home"></use>
-                                </svg>
-                            </a>
+                            <a asp-controller="Home" asp-action="Index"><i class="fa fa-home" style="font-size: 20px;"></i></a>
                         </li>
                         <li class="breadcrumb-item">ECommerce</li>
                         <li class="breadcrumb-item active">Product Page</li>
@@ -219,15 +215,6 @@
                                                             data-latitude="@(item.Location?.Coordinates?.Skip(1).FirstOrDefault() ?? 0)">
                                                         <i class="fa fa-pencil" aria-hidden="true"></i>
                                                     </button>
-                                                    @* <a asp-action="UpdateSellLocation"
-                                                    asp-route-id="@Model.Id"
-                                                    asp-route-locationName="@item.LocationName"
-                                                    class="btn btn-warning d-flex align-items-center justify-content-center"
-                                                    style="width: 30px; height: 30px; padding: 0; border-radius: 6px; font-size: 14px;"
-                                                    title="Edit Location">
-                                                        <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                    </a> *@
-
                                                     <button type="button"
                                                             class="delete-sell-location btn btn-danger btn-sm px-2 py-1"
                                                             title="Delete Location"
@@ -693,8 +680,6 @@
             if (alert) {
                 alert.style.display = "none";
             }
-        }, 2000);
-        
-    
+        }, 1000);
     </script>
 }

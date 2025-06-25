@@ -150,17 +150,6 @@ function initializeCharts(initialData) {
           },
         },
         scales: {
-          // y: {
-          //   beginAtZero: true,
-          //   title: {
-          //     display: true,
-          //     text: "Number of Users",
-          //     padding: { top: 20, bottom: 0 }
-          //   },
-          //   ticks: {
-          //     padding: 10
-          //   }
-          // },
           x: { title: { display: true, text: "Age Groups" } },
         },
         plugins: {
@@ -301,107 +290,136 @@ function initializeCharts(initialData) {
     );
   }
 
-  // Hometown Chart (Doughnut)
+  // Hometown Chart (Horizontal Bar)
   function updateHometownChart(data) {
-    const hometownColors = [
-      "#DC3545", // Red
-      "#173878", // Dark Blue
-      "#51BB25", // Green
-      "#006666", // Teal
-      "#17a2b8", // Cyan
-      "#F8D62B", // Yellow
-      "#FF6F61", // Coral
-      "#2E86AB", // Light Blue
-      "#6A0572", // Purple
-      "#FFD166", // Gold
-      "#06D6A0", // Mint
-    ];
+    // Prepare data: sort by value in descending order
+    let labels = Object.keys(data);
+    let values = Object.values(data);
+    const total = values.reduce((acc, val) => acc + val, 0);
+
+    // Sort data by value in descending order
+    let dataArray = labels.map((label, i) => ({ label, value: values[i] }));
+    dataArray.sort((a, b) => b.value - a.value);
+    labels = dataArray.map((item) => item.label);
+    values = dataArray.map((item) => item.value);
+
+    // Define a monochromatic color palette (shades of blue)
+    const baseColor = "#173878"; // Dark Blue
+    const colors = values.map((_, i) =>
+      Chart.helpers
+        .color(baseColor)
+        .alpha(1 - i * 0.02)
+        .rgbString()
+    );
+
     hometownChart = initializeChart(
       "hometownChart",
-      "doughnut",
+      "bar",
       {
-        labels: Object.keys(data),
+        labels: labels,
         datasets: [
           {
             label: "Number of Users",
-            data: Object.values(data),
-            backgroundColor: hometownColors.slice(),
-            borderColor: [
-              "#A71D2A", // Darker Red
-              "#0F244F", // Darker Blue
-              "#3A8F1D", // Darker Green
-              "#004C4C", // Darker Teal
-              "#107A91", // Darker Cyan
-              "#D4B800", // Darker Yellow
-              "#D35400", // Darker Coral
-              "#1B4F72", // Darker Light Blue
-              "#3C0735", // Darker Purple
-              "#B79500", // Darker Gold
-              "#028760", // Darker Mint
-            ],
-            borderWidth: new Array(Object.values(data).length).fill(1),
+            data: values,
+            backgroundColor: colors,
+            borderColor: baseColor,
+            borderWidth: 1,
           },
         ],
       },
       {
+        indexAxis: "y", // Horizontal bar
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { position: "right" },
-          tooltip: { enabled: true },
-          datalabels: {
-            color: "#fff",
-            font: { weight: "bold", size: 12 },
-            formatter: (value, context) => {
-              const total = context.dataset.data.reduce(
-                (acc, val) => acc + val,
-                0
-              );
-              return total > 0 ? ((value / total) * 100).toFixed(1) + "%" : "";
+          legend: { display: false },
+          tooltip: {
+            enabled: true,
+            callbacks: {
+              label: function (context) {
+                const value = context.raw;
+                const percentage = ((value / total) * 100).toFixed(2) + "%";
+                return `${context.label}: ${value} users (${percentage})`;
+              },
             },
           },
+          datalabels: {
+            anchor: "end",
+            align: "start",
+            color: "#fff",
+            font: { weight: "bold", size: 10 },
+            formatter: (value) =>
+              `${value} (${((value / total) * 100).toFixed(2)}%)`,
+            clamp: true,
+            clip: true,
+          },
         },
-        onClick: (event, elements) => {
-          if (elements.length > 0) {
-            const index = elements[0].index;
-            const dataset = hometownChart.data.datasets[0];
-            dataset.backgroundColor = hometownColors.map((color, i) =>
-              i === index
-                ? color
-                : Chart.helpers.color(color).alpha(0.3).rgbString()
-            );
-            dataset.borderWidth = hometownColors.map((_, i) =>
-              i === index ? 2 : 1
-            );
-            hometownChart.update();
-          }
+        elements: {
+          bar: {
+            barThickness: 26, // Increase bar height
+          },
+        },
+        scales: {
+          x: {
+            title: { display: true, text: "Number of Users" },
+            beginAtZero: true,
+            grid: { display: true },
+          },
         },
         onHover: (event, elements) => {
-          const chartArea = hometownChart.chartArea;
-          if (
-            event.x >= chartArea.left &&
-            event.x <= chartArea.right &&
-            event.y >= chartArea.top &&
-            event.y <= chartArea.bottom
-          ) {
-            if (elements.length > 0) {
-              const index = elements[0].index;
-              hometownChart.data.datasets[0].backgroundColor =
-                hometownColors.map((color, i) =>
-                  i === index
-                    ? color
-                    : Chart.helpers.color(color).alpha(0.3).rgbString()
-                );
-              hometownChart.update();
-            } else {
-              hometownChart.data.datasets[0].backgroundColor =
-                hometownColors.slice();
-              hometownChart.update();
-            }
+          if (elements.length > 0) {
+            const dataset = hometownChart.data.datasets[0];
+            dataset.backgroundColor = values.map((_, i) =>
+              i === elements[0].index
+                ? baseColor
+                : Chart.helpers.color(baseColor).alpha(0.7).rgbString()
+            );
+            hometownChart.update();
+          } else {
+            hometownChart.data.datasets[0].backgroundColor = colors;
+            hometownChart.update();
           }
         },
       }
     );
+
+    // Add download functionality
+    const downloadButton = document.getElementById("downloadHometownChart");
+    if (downloadButton) {
+      downloadButton.addEventListener("click", () => {
+        // ====== PNG WITH WHITE BACKGROUND ======
+        const canvas = hometownChart.canvas;
+        const whiteCanvas = document.createElement("canvas");
+        whiteCanvas.width = canvas.width;
+        whiteCanvas.height = canvas.height;
+        const ctx = whiteCanvas.getContext("2d");
+
+        // Draw white background
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, whiteCanvas.width, whiteCanvas.height);
+        ctx.drawImage(canvas, 0, 0);
+
+        // Save image
+        const link = document.createElement("a");
+        link.href = whiteCanvas.toDataURL("image/png");
+        link.download = "hometown_chart.png";
+        link.click();
+
+        // ====== CSV EXPORT ======
+        const csvContent = "\uFEFF" +  [
+          "Hometown,Number of Users,Percentage",
+          ...labels.map((label, i) => {
+            const percentage = ((values[i] / total) * 100).toFixed(2);
+            return `"${label}",${values[i]},${percentage}%`;
+          }),
+        ].join("\n");
+        const csvBlob = new Blob([csvContent], { type: "text/csv" });
+        const csvLink = document.createElement("a");
+        csvLink.href = URL.createObjectURL(csvBlob);
+        csvLink.download = "hometown_data.csv";
+        csvLink.click();
+      });
+    }
   }
 
   function updateTimeChart(data) {

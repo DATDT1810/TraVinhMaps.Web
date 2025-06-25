@@ -138,9 +138,7 @@
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
     <script src="~/assets/js/typeahead/handlebars.js"></script>
-    @* <script src="~/assets/js/dropzone/dropzone.js"></script> *@
     <script src="~/assets/js/sweetalert-custom.js"></script>
-    @* <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/dropzone.css"> *@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -206,13 +204,13 @@
             @if (TempData["successMessage"] != null)
                 {
                     <text>
-                        showSuccessAlert("Success!", "@TempData["successMessage"]");
+                        showTimedAlert("Success!", "@TempData["successMessage"]", "success", 1000);
                     </text>
             }
                 @if (TempData["errorMessage"] != null)
                 {
                     <text>
-                        showErrorAlert("Error!", "@TempData["errorMessage"]");
+                        showTimedAlert("Error!", "@TempData["errorMessage"]", "error", 1000);
                     </text>
             }
             });

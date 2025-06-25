@@ -20,6 +20,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
         }
         public async Task<IActionResult> Index()
         {
+            ViewData["Title"] = "Company List";
+            ViewData["Breadcrumb"] = new List<string> { "Company", "Company List" };
             var listCompany = await _companyService.ListAllAsync();
             return View(listCompany);
         }

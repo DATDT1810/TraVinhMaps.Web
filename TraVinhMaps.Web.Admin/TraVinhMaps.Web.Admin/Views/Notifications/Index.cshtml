@@ -99,9 +99,9 @@
             const errorMessage = @Html.Raw(Json.Serialize(TempData["NotificationError"]));
 
             if (successMessage) {
-                showTimedAlert("Success!", successMessage, "success", 2000);
+                showTimedAlert("Success!", successMessage, "success", 1000);
             } else if (errorMessage) {
-                showTimedAlert("Error!", errorMessage, "error", 2000);
+                showTimedAlert("Error!", errorMessage, "error", 1000);
             }
         });
     </script>
