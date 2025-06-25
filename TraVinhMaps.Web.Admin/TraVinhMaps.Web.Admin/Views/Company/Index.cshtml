@@ -1,6 +1,6 @@
-@using TraVinhMaps.Web.Admin.Models.OcopType;
+@using TraVinhMaps.Web.Admin.Models.Company;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@model IEnumerable<OcopTypeResponse>;
+@model IEnumerable<CompanyResponse>;
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -54,8 +54,8 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
                             <div>
-                                <a asp-controller="OcopType" asp-action="CreateOcopType" class="btn btn-success">
-                                    <i class="fa fa-plus me-1"></i>Create Ocop Type
+                                <a asp-controller="Company" asp-action="CreateCompany" class="btn btn-success">
+                                    <i class="fa fa-plus me-1"></i>Create Company
                                 </a>
                                 <button class="btn btn-primary" id="exportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
@@ -67,8 +67,12 @@
                                 <thead class="bg-primary">
                                     <tr>
                                         <th>No. &nbsp</th>
-                                        <th>Ocop Type Name</th>
+                                        <th>Name</th>
+                                        <th>Address</th>
+                                        <th>Locations</th>
+                                        <th>Contact</th>
                                         <th>Created At</th>
+                                        <th>Update At</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -81,23 +85,44 @@
                                         <tr class="user-removes">
                                             <td>@count</td>
                                             <td>
-                                                @item.OcopTypeName
+                                                @item.Name
                                             </td>
-                                        <td>
-                                            @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
-                                        </td>
+                                            <td>
+                                                @item.Address
+                                            </td>
+                                            <td>
+                                                @foreach (var loc in item.Locations)
+                                                {
+                                                    <div>
+                                                        Type: @loc.Type, Lat: @loc.Latitude, Long: @loc.Longitude
+                                                    </div>
+                                                }
+                                            </td>
+                                            <td style="max-width: 200px; word-wrap: break-word;">
+                                                <div class="text-wrap">
+                                                    Phone: @item.Contact?.Phone<br />
+                                                    Email: @item.Contact?.Email<br />
+                                                    Website: @item.Contact?.Website
+                                                </div>
+                                            </td>
 
+                                            <td>
+                                                @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
+                                            </td>
+                                            <td>
+                                                @item.UpdateAt?.ToLocalTime().ToString("dd/MM/yy, HH:mm")
+                                            </td>
                                             <td class="text-center align-middle">
                                                 <ul class="action d-flex justify-content-center align-items-center mb-0"
                                                     style="height: 100%;">
                                                     <li>
-                                                        <a asp-controller="OcopType" asp-action="UpdateOcopType"
+                                                        <a asp-controller="Company" asp-action="UpdateCompany"
                                                             asp-route-id="@item.Id"><i class="fa fa-pencil"></i> </a>
                                                     </li>
                                                 </ul>
                                             </td>
                                         </tr>
-                                       count++;
+                                        count++;
                                     }
                                 </tbody>
                             </table>

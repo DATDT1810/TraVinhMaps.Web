@@ -93,9 +93,13 @@
                                         <div class="mb-3">
                                             <label>Company Id</label>
                                             <select asp-for="CompanyId" class="form-select">
-                                                <option selected value="684674249729c974aea560f0">Công ty TNHH ABC</option>
-                                                <option value="684674249729c974aea560f1">Công ty TNHH XYZ</option>
-                                                <option value="684674249729c974aea560f2">Công ty TNHH DEF</option>
+                                                <option value="">-- Select Ocop Type --</option>
+                                                @foreach (var company in (IEnumerable<TraVinhMaps.Web.Admin.Models.Company.CompanyResponse>)ViewBag.Companies )
+                                                {
+                                                    <option value="@company.Id" selected="@(Model.CompanyId == company.Id ? "selected" : null)">
+                                                        @company.Name
+                                                    </option>
+                                                }
                                             </select>
                                         </div>
                                     </div>

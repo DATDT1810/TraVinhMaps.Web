@@ -1,0 +1,187 @@
+@using TraVinhMaps.Web.Admin.Models.Company
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
+@model CompanyViewModel;
+@{
+    ViewData["Title"] = "CreateCompany";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>
+                        Company Create</h4>
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div id="alert-message" class="alert alert-danger">
+                            @TempData["ErrorMessage"]
+                        </div>
+                    }
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home" style="font-size: 20px;"></i>
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item"><a asp-action="Index">Management Company</a></li>
+                        <li class="breadcrumb-item active">Company Create form</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form theme-form">
+                            <form asp-action="CreateCompanyPost" method="post" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label>Company Name</label>
+                                            <input asp-for="Name" class="form-control" type="text"
+                                                placeholder="Name of company">
+                                            <span asp-validation-for="Name" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label>Company Address</label>
+                                            <input asp-for="Address" class="form-control" type="text"
+                                                placeholder="Name of company">
+                                            <span asp-validation-for="Address" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <label>Company Locations</label>
+                                        <div id="locationsContainer">
+                                            @for (int i = 0; i < Model.Locations.Count; i++)
+                                            {
+                                                    var currentType = Model.Locations[i].Type;
+                                                <div class="location-item border p-3 mb-2 rounded" data-index="@i">
+                                                    <div class="mb-2">
+                                                        <label>Type</label>
+                                                        <select name="Locations[@i].Type" class="form-select" required>
+                                                            <option value="">-- Select Type --</option>
+                                                            <option value="Point" selected="@(currentType == "Point")">Point</option>
+                                                            <option value="Branch" selected="@(currentType == "Branch")">Branch</option>
+                                                            <option value="Office" selected="@(currentType == "Office")">Office</option>
+                                                        </select>
+                                                        <span class="text-danger" asp-validation-for="Locations[@i].Type"></span>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label>Latitude</label>
+                                                        <input name="Locations[@i].Latitude" class="form-control" value="@Model.Locations[i].Latitude" />
+                                                        <span class="text-danger" asp-validation-for="Locations[@i].Latitude"></span>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label>Longitude</label>
+                                                        <input name="Locations[@i].Longitude" class="form-control" value="@Model.Locations[i].Longitude" />
+                                                        <span class="text-danger" asp-validation-for="Locations[@i].Longitude"></span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                        <button type="button" id="addLocationBtn" class="btn btn-primary btn-sm mt-2">Add Location</button>
+                                    </div>
+                                </div>
+                                <div id="locationTemplate" class="d-none">
+                                    <div class="location-item border p-3 mb-2 rounded" data-index="__index__">
+                                        <div class="mb-2">
+                                            <label>Type</label>
+                                            <input name="Locations[__index__].Type" class="form-control" />
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Latitude</label>
+                                            <input name="Locations[__index__].Latitude" class="form-control" />
+                                        </div>
+                                        <div class="mb-2">
+                                            <label>Longitude</label>
+                                            <input name="Locations[__index__].Longitude" class="form-control" />
+                                        </div>
+                                        <button type="button" class="btn btn-danger btn-sm remove-location">Remove</button>
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="col">
+                                        <label>Contact Information</label>
+                                        <div class="mb-3">
+                                            <label>Phone</label>
+                                            <input asp-for="Contact.Phone" class="form-control" placeholder="Phone number" />
+                                            <span asp-validation-for="Contact.Phone" class="text-danger"></span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Email</label>
+                                            <input asp-for="Contact.Email" class="form-control" placeholder="Email address" />
+                                            <span asp-validation-for="Contact.Email" class="text-danger"></span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Website</label>
+                                            <input asp-for="Contact.Website" class="form-control" placeholder="Website URL" />
+                                            <span asp-validation-for="Contact.Website" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="text-end">
+                                            <button type="submit" class="btn btn-success me-3">Create Company</button>
+                                            <a asp-action="Index"
+                                                class="btn btn-danger">Back</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+</div>
+
+@section Scripts {
+    @Html.AntiForgeryToken()
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        setTimeout(function () {
+            var alert = document.getElementById("alert-message");
+            if (alert) {
+                alert.style.display = "none";
+            }
+        }, 2000); 
+        let locationIndex = @Model.Locations.Count;
+
+    document.getElementById('addLocationBtn').addEventListener('click', function () {
+        const template = document.getElementById('locationTemplate').innerHTML;
+        const html = template.replace(/__index__/g, locationIndex);
+        const container = document.getElementById('locationsContainer');
+
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = html;
+        container.appendChild(wrapper.firstElementChild);
+
+        locationIndex++;
+    });
+
+    document.getElementById('locationsContainer').addEventListener('click', function (e) {
+        if (e.target && e.target.classList.contains('remove-location')) {
+            e.target.closest('.location-item').remove();
+        }
+    });
+    </script>
+}
