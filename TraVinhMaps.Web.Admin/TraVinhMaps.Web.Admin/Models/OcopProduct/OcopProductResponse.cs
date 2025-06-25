@@ -16,7 +16,7 @@ namespace TraVinhMaps.Web.Admin.Models.OcopProduct
         public required int OcopPoint { get; set; }
         public required int OcopYearRelease { get; set; }
         public required string TagId { get; set; }
-        public required DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? UpdateAt { get; set; } = DateTime.UtcNow;
+        public required DateTime CreatedAt { get; set; }
+        public DateTime? UpdateAt { get; set; }
     }
 }

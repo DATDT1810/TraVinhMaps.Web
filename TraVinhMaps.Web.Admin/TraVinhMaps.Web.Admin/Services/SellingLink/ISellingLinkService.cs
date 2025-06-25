@@ -11,7 +11,7 @@ namespace TraVinhMaps.Web.Admin.Services.SellingLink
     {
         Task<SellingLinkResponse> GetByIdAsync(string id, CancellationToken cancellationToken = default);
         Task<IEnumerable<SellingLinkResponse>> GetSellingLinkByOcopProductId(string ocopProductId, CancellationToken cancellationToken = default);
-        Task<CreateSellingLinkResponse<SellingLinkResponse>> AddAsync(SellingLinkViewModel entity, CancellationToken cancellationToken = default);
+        Task<SellingLinkBase<SellingLinkResponse>> AddAsync(SellingLinkViewModel entity, CancellationToken cancellationToken = default);
         Task<SellingLinkMessage> UpdateAsync(UpdateSellingLinkRequest entity, CancellationToken cancellationToken = default);
         Task<SellingLinkMessage> DeleteAsync(string sellingLinkId, CancellationToken cancellationToken = default);
         Task<long> CountAsync(Expression<Func<SellingLinkResponse, bool>> predicate = null, CancellationToken cancellationToken = default);

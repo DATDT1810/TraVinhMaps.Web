@@ -371,17 +371,7 @@
                                         <td style="white-space: nowrap;">
                                             <b>Company</b><b>: &nbsp;&nbsp;</b>
                                         </td>
-                                        @if(Model.CompanyId == "684674249729c974aea560f0"){
-                                            <p>Công ty TNHH ABC</p>
-                                        }
-                                        else if (Model.CompanyId == "684674249729c974aea560f1")
-                                        {
-                                            <p>Công ty TNHH XYZ</p>
-                                        }
-                                        else if(Model.CompanyId == "684674249729c974aea560f2")
-                                        {
-                                            <p>Công ty TNHH DEF</p>
-                                        }
+                                        <p>@ViewBag.CompanyName</p>
                                     </li>
                                     <li>
                                         <td style="white-space: nowrap;">

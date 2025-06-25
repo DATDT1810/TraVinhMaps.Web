@@ -48,7 +48,7 @@ namespace TraVinhMaps.Web.Admin.Services.SellingLink
                 throw new HttpRequestException($"Unable to fetch list ocop product by company id. Status: {response.StatusCode}, Error: {errorResult}");
             }
         }
-        public async Task<CreateSellingLinkResponse<SellingLinkResponse>> AddAsync(SellingLinkViewModel entity, CancellationToken cancellationToken = default)
+        public async Task<SellingLinkBase<SellingLinkResponse>> AddAsync(SellingLinkViewModel entity, CancellationToken cancellationToken = default)
         {
             using var content = new MultipartFormDataContent();
             content.Add(new StringContent(entity.ProductId ?? string.Empty), "ProductId");
@@ -61,7 +61,7 @@ namespace TraVinhMaps.Web.Admin.Services.SellingLink
                 var contentResult = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
                 Console.WriteLine("API Response Content: " + contentResult);
                 var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return System.Text.Json.JsonSerializer.Deserialize<CreateSellingLinkResponse<SellingLinkResponse>>(contentResult, option) ?? throw new HttpRequestException("Unable to create ocop type.");
+                return System.Text.Json.JsonSerializer.Deserialize<SellingLinkBase<SellingLinkResponse>>(contentResult, option) ?? throw new HttpRequestException("Unable to create ocop type.");
             }
             else
             {

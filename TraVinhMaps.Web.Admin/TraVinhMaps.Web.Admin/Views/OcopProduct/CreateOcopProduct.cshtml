@@ -98,9 +98,10 @@
                                 <label asp-for="CompanyId">Company</label>
                                 <select asp-for="CompanyId" class="form-select" required>
                                     <option disabled selected value="">-- Select Company --</option>
-                                    <option value="684674249729c974aea560f0">Công ty TNHH ABC</option>
-                                    <option value="684674249729c974aea560f1">Công ty TNHH XYZ</option>
-                                    <option value="684674249729c974aea560f2">Công ty TNHH DEF</option>
+                                    @foreach (var company in ViewBag.Companies)
+                                    {
+                                        <option value="@company.Id">@company.Name</option>
+                                    }
                                 </select>
                                 <span asp-validation-for="CompanyId" class="text-danger"></span>
                             </div>

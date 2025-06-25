@@ -5,6 +5,7 @@ using TraVinhMaps.Web.Admin.Models.Location;
 using TraVinhMaps.Web.Admin.Models.OcopProduct;
 using TraVinhMaps.Web.Admin.Models.SellingLink;
 using TraVinhMaps.Web.Admin.Models.SellLocation;
+using TraVinhMaps.Web.Admin.Services.Company;
 using TraVinhMaps.Web.Admin.Services.OcopProduct;
 using TraVinhMaps.Web.Admin.Services.OcopType;
 using TraVinhMaps.Web.Admin.Services.SellingLink;
@@ -17,11 +18,13 @@ namespace TraVinhMaps.Web.Admin.Controllers
         private readonly IOcopProductService _ocopProductService;
         private readonly ISellingLinkService _sellingLinkService;
         private readonly IOcopTypeService _ocopTypeService;
-        public OcopProductController(IOcopProductService ocopProductService, ISellingLinkService sellingLinkService, IOcopTypeService ocopTypeService)
+        private readonly ICompanyService _companyService;
+        public OcopProductController(IOcopProductService ocopProductService, ISellingLinkService sellingLinkService, IOcopTypeService ocopTypeService, ICompanyService companyService)
         {
             _ocopProductService = ocopProductService;
             _sellingLinkService = sellingLinkService;
             _ocopTypeService = ocopTypeService;
+            _companyService = companyService;
         }
         public async Task<IActionResult> Index()
         {
@@ -46,12 +49,15 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 try
                 {
                     var ocopType = await _ocopTypeService.GetByIdAsync(ocopProduct.OcopTypeId, cancellationToken);
+                    var company = await _companyService.GetByIdAsync(ocopProduct.CompanyId, cancellationToken);
                     ViewBag.OcopTypeName = ocopType?.OcopTypeName ?? "Unknown";
+                    ViewBag.CompanyName = company?.Name ?? "Unknown";
                 }
                 catch (HttpRequestException ex)
                 {
                     Console.WriteLine($"[ERROR] Failed to get OcopType: {ex.Message}");
                     ViewBag.OcopTypeName = "Unknown";
+                    ViewBag.CompanyName = "Unknown";
                 }
             }
 
@@ -62,7 +68,9 @@ namespace TraVinhMaps.Web.Admin.Controllers
         public async Task<IActionResult> CreateOcopProduct()
         {
             var ocopTypes = await _ocopTypeService.ListAllAsync();
+            var company = await _companyService.ListAllAsync();
             ViewBag.OcopTypes = ocopTypes;
+            ViewBag.Companies = company;
             return View();
         }
         [HttpPost("CreateOcopProductPost")]
@@ -151,7 +159,9 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return View("Ocop product not found.");
             }
             var ocopTypes = await _ocopTypeService.ListAllAsync();
+            var company = await _companyService.ListAllAsync();
             ViewBag.OcopTypes = ocopTypes;
+            ViewBag.Companies = company;
             UpdateOcopProductRequest updateOcopProductRequest = new UpdateOcopProductRequest
             {
                 Id = findOcopProduct.Id,
