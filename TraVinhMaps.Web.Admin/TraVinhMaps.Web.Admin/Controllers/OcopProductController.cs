@@ -29,6 +29,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
         }
         public async Task<IActionResult> Index()
         {
+            ViewData["Title"] = "Ocop product list";
+            ViewData["Breadcrumb"] = new List<string> { "Ocop Product", "Ocop product list" };
             var listOcopProduct = await _ocopProductService.ListAllAsync();
             return View(listOcopProduct);
         }

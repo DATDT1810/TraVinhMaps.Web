@@ -2,7 +2,7 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model IEnumerable<OcopProductResponse>;
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Ocop Product List";
     var sessionId = User.Claims.FirstOrDefault(c => c.Type == "sessionId")?.Value;
 }
 <div class="page-body">
