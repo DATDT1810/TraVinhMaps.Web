@@ -1,7 +1,8 @@
-@model TraVinhMaps.Web.Admin.Models.OcopProduct.OcopDashboardViewModel
-@using System.Text.Json
+@using TraVinhMaps.Web.Admin.Models.TouristDestination
+@model DestinationStatisticsViewModel
+
 @{
-    ViewData["Title"] = "OCOP Dashboard";
+    ViewData["Title"] = "Destinations Statistics";
     var error = ViewData["Error"] as string;
 }
 
@@ -40,14 +41,29 @@
                         {
                             <div class="alert alert-danger">@error</div>
                         }
-                        else if (Model == null || (!Model.Analytics.Any() && !Model.UserDemographics.Any()))
+                        else if (Model == null || (Model.DestinationStatsOverview == null && !Model.UserDemographics.Any()))
                         {
                             <div class="alert alert-warning">No analytics data available.</div>
                         }
                         else
                         {
-                            <!-- OCOP Products – Views, Interactions, Favorites -->
-                            <h6 class="text-primary mb-3">OCOP Products – Views, Interactions, Favorites</h6>
+                            <h6 class="text-primary mb-3">Overview</h6>
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <p>Total Destinations: <span>@Model.DestinationStatsOverview.TotalDestinations</span></p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p>Total Views: <span>@Model.DestinationStatsOverview.TotalViews</span></p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p>Total Interactions: <span>@Model.DestinationStatsOverview.TotalInteractions</span></p>
+                                </div>
+                                <div class="col-md-3">
+                                    <p>Total Favorites: <span>@Model.DestinationStatsOverview.TotalFavorites</span></p>
+                                </div>
+                            </div>
+                            <hr>
+                            <h6 class="text-primary mb-3">Destinations – Views, Interactions, Favorites</h6>
                             <div class="row mb-3">
                                 <div class="col-md-2">
                                     <label>Quick Filter</label>
@@ -78,10 +94,11 @@
                                     <button id="analyticsDownloadChartBtn" class="btn btn-primary w-100 mt-2">Download</button>
                                 </div>
                             </div>
-                            <div style="height: 400px;"><canvas id="analyticsChart"></canvas></div>
+                            <div style="height: 400px; overflow-x: auto;">
+                                <canvas id="analyticsChart"></canvas>
+                            </div>
 
                             <hr class="my-4" />
-                            <!-- Demographic Analysis -->
                             <h6 class="text-primary mb-3">Demographic Analysis</h6>
                             <div class="row mb-3">
                                 <div class="col-md-2">
@@ -113,15 +130,16 @@
                                     <button id="demographicsDownloadChartBtn" class="btn btn-primary w-100 mt-2">Download</button>
                                 </div>
                             </div>
-                            <div style="height: 400px;overflow-x:auto"><canvas id="demographicsChart"></canvas></div>
+                            <div style="height: 400px; overflow-x: auto;">
+                                <canvas id="demographicsChart"></canvas>
+                            </div>
 
-                            <hr class="my-4" />
-                            <!-- Top Interacted OCOP Products -->
-                            <h6 class="text-primary mb-3">Top Interacted OCOP Products</h6>
+                            <!-- Top Interacted Destinations -->
+                            <h6 class="text-primary mb-3">Top Interacted Destinations</h6>
                             <div class="row mb-3">
                                 <div class="col-md-2">
                                     <label>Quick Filter</label>
-                                    <select class="form-select" id="topInteractionTimeRange">
+                                    <select class="form-select" id="topViewsTimeRange">
                                         <option value="day">Today</option>
                                         <option value="week">This Week</option>
                                         <option value="month" selected>This Month</option>
@@ -130,15 +148,15 @@
                                 </div>
                                 <div class="col-md-2">
                                     <label>Start Date</label>
-                                    <input type="date" class="form-control" id="topInteractionStartDate" />
+                                    <input type="date" class="form-control" id="topViewsStartDate" />
                                 </div>
                                 <div class="col-md-2">
                                     <label>End Date</label>
-                                    <input type="date" class="form-control" id="topInteractionEndDate" />
+                                    <input type="date" class="form-control" id="topViewsEndDate" />
                                 </div>
                                 <div class="col-md-3 d-flex gap-2 mt-md-auto">
-                                    <button id="topInteractionRefresh" class="btn btn-success w-100">Filter</button>
-                                    <button id="topInteractionReset" class="btn btn-secondary w-100">Reset</button>
+                                    <button id="topViewsRefresh" class="btn btn-success w-100">Filter</button>
+                                    <button id="topViewsReset" class="btn btn-secondary w-100">Reset</button>
                                 </div>
                                 <div class="col-md-3 mt-md-auto mt-1">
                                     <select class="form-select" id="topInteractionDownloadType">
@@ -148,15 +166,16 @@
                                     <button id="topInteractionDownloadChartBtn" class="btn btn-primary w-100 mt-2">Download</button>
                                 </div>
                             </div>
-                            <div style="height: 400px;overflow-x:auto"><canvas id="topInteractionChart"></canvas></div>
+                            <div style="height: 400px; overflow-x: auto;">
+                                <canvas id="topInteractionChart"></canvas>
+                            </div>
 
-                            <hr class="my-4" />
-                            <!-- Top Wishlisted OCOP Products -->
-                            <h6 class="text-primary mb-3">Top Wishlisted OCOP Products</h6>
+                            <!-- Top Favorited Destinations -->
+                            <h6 class="text-primary mb-3">Top Favorited Destinations</h6>
                             <div class="row mb-3">
                                 <div class="col-md-2">
                                     <label>Quick Filter</label>
-                                    <select class="form-select" id="topWishlistTimeRange">
+                                    <select class="form-select" id="topFavoritesTimeRange">
                                         <option value="day">Today</option>
                                         <option value="week">This Week</option>
                                         <option value="month" selected>This Month</option>
@@ -165,54 +184,56 @@
                                 </div>
                                 <div class="col-md-2">
                                     <label>Start Date</label>
-                                    <input type="date" class="form-control" id="topWishlistStartDate" />
+                                    <input type="date" class="form-control" id="topFavoritesStartDate" />
                                 </div>
                                 <div class="col-md-2">
                                     <label>End Date</label>
-                                    <input type="date" class="form-control" id="topWishlistEndDate" />
+                                    <input type="date" class="form-control" id="topFavoritesEndDate" />
                                 </div>
                                 <div class="col-md-3 d-flex gap-2 mt-md-auto">
-                                    <button id="topWishlistRefresh" class="btn btn-success w-100">Filter</button>
-                                    <button id="topWishlistReset" class="btn btn-secondary w-100">Reset</button>
+                                    <button id="topFavoritesRefresh" class="btn btn-success w-100">Filter</button>
+                                    <button id="topFavoritesReset" class="btn btn-secondary w-100">Reset</button>
                                 </div>
                                 <div class="col-md-3 mt-md-auto mt-1">
-                                    <select class="form-select" id="topWishlistDownloadType">
+                                    <select class="form-select" id="topFavoritesDownloadType">
                                         <option value="png">Download PNG</option>
                                         <option value="csv">Download CSV</option>
                                     </select>
-                                    <button id="topWishlistDownloadChartBtn" class="btn btn-primary w-100 mt-2">Download</button>
+                                    <button id="topFavoritesDownloadChartBtn" class="btn btn-primary w-100 mt-2">Download</button>
                                 </div>
                             </div>
-                            <div style="height: 400px;overflow-x:auto"><canvas id="topWishlistChart"></canvas></div>
+                            <div style="height: 400px; overflow-x: auto;">
+                                <canvas id="topFavoritesChart"></canvas>
+                            </div>
 
                             <hr class="my-4" />
-                            <!-- OCOP Product Comparison -->
-                            <h6 class="text-primary mb-3">OCOP Product Comparison</h6>
+                            <h6 class="text-primary mb-3">Destination Comparison</h6>
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label>Product Name</label>
-                                    <select id="compareProductsSelect" class="form-select" multiple>
-                                        @foreach (var p in Model.Analytics)
+                                    <label>Destination Name</label>
+                                    <select id="compareDestinationsSelect" class="form-select" multiple>
+                                        @foreach (var d in Model.DestinationStatsOverview.DestinationDetails)
                                         {
-                                            <option value="@p.Id">@p.ProductName</option>
+                                            <option value="@d.Id">@d.LocationName</option>
                                         }
                                     </select>
                                 </div>
                                 <div class="col-md-3 align-self-end">
-                                    <button id="compareProductsBtn" class="btn btn-success mt-2">Compare</button>
+                                    <button id="compareDestinationsBtn" class="btn btn-success mt-2">Compare</button>
                                 </div>
-                                <div class="col-md-3 align-self-end">
-                                    <select class="form-select" id="compareProductsDownloadType">
+                                <div class="col-md-2 align-self-end">
+                                    <select class="form-select" id="compareDownloadType">
                                         <option value="png">Download PNG</option>
                                         <option value="csv">Download CSV</option>
                                     </select>
-                                    <button id="compareProductsDownloadChartBtn" class="btn btn-primary mt-2">Download</button>
+                                    <button id="compareDestinationsDownloadChartBtn" class="btn btn-primary mt-2">Download</button>
                                 </div>
                             </div>
-                            <div style="height: 400px;overflow-x:auto"><canvas id="compareProductsChart"></canvas></div>
+                            <div style="height: 400px; overflow-x: auto;">
+                                <canvas id="compareDestinationsChart"></canvas>
+                            </div>
 
                             <hr class="my-4" />
-                            <!-- Details Table -->
                             <h6 class="text-primary mb-3">Details</h6>
                             <table class="table">
                                 <thead>
@@ -224,13 +245,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var destination in Model.Analytics)
+                                    @foreach (var destination in Model.DestinationStatsOverview.DestinationDetails)
                                     {
                                         <tr>
-                                            <td>@destination.ProductName</td>
+                                            <td>@destination.LocationName</td>
                                             <td>@destination.ViewCount</td>
                                             <td>@destination.InteractionCount</td>
-                                            <td>@destination.WishlistCount</td>
+                                            <td>@destination.FavoriteCount</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -245,16 +266,13 @@
 
 @section Scripts {
     <script src="~/assets/js/sweetalert-custom.js"></script>
-    <script src="~/assets/js/ocopproduct/chart.js"></script>
+    <script src="~/assets/js/touristdestinationmanagement/chart.js"></script>
     <script>
-        // Data from Razor view
-        window.onload = function () {
-            const analyticsData = @Html.Raw(Json.Serialize(Model?.Analytics));
-            const demographicsData = @Html.Raw(Json.Serialize(Model?.UserDemographics));
-            const topInteractionData = @Html.Raw(Json.Serialize(Model?.TopProductsByInteractions));
-            const topWishlistData = @Html.Raw(Json.Serialize(Model?.TopProductsByFavorites));
-            const compareProductsData = @Html.Raw(Json.Serialize(Model?.ComparedProducts));
-            initializeOcopDashboard(analyticsData, demographicsData, topInteractionData, topWishlistData, compareProductsData);
-        };
+        // Dữ liệu từ ViewModel (data đã unwrap, nếu API Controller trả về data là wrapper)
+        let stats = @Html.Raw(Json.Serialize(Model.DestinationStatsOverview ?? new DestinationStatsOverview()));
+        let demographics = @Html.Raw(Json.Serialize(Model.UserDemographics ?? new List<DestinationUserDemographics>()));
+        let topViews = @Html.Raw(Json.Serialize(Model.TopDestinationsByViews ?? new List<DestinationAnalytics>()));
+        let topFavorites = @Html.Raw(Json.Serialize(Model.TopDestinationByFavorites ?? new List<DestinationAnalytics>()));
+        let compareDestinations = @Html.Raw(Json.Serialize(Model.CompareDestination ?? new List<DestinationAnalytics>()));
     </script>
 }

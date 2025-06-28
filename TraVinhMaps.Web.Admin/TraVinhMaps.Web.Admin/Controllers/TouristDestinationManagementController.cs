@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Logging;
 using TraVinhMaps.Web.Admin.Models.TouristDestination;
 using TraVinhMaps.Web.Admin.Models.TouristDestination.Mappers;
 using TraVinhMaps.Web.Admin.Services.DestinationTypes;
@@ -402,5 +401,44 @@ namespace TraVinhMaps.Web.Admin.Controllers
 
             return selectList;
         }
+
+        // Analytics
+        [HttpGet("destinations-statistics")]
+        public async Task<IActionResult> DestinationsStatistics([FromQuery] List<string> destinationIds = null, string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null)
+        {
+            ViewData["Title"] = "Destinations statistics";
+            ViewData["Breadcrumb"] = new List<string> { "Analytics", "Destinations" };
+
+            try
+            {
+                var overviewTask = _destinationService.GetDestinationStatsOverviewAsync(timeRange, startDate, endDate);
+                var demographicTask = _destinationService.GetUserDemographicsAsync(timeRange, startDate, endDate);
+                var topDestinationByViewsTask = _destinationService.GetTopDestinationsByViewsAsync(5, timeRange, startDate, endDate);
+                var topDestinationsByFavoriteTask = _destinationService.GetTopDestinationsByFavoritesAsync(5, timeRange, startDate, endDate);
+
+                // Call CompareProducts only if productIds has a value. 
+                Task<IEnumerable<DestinationAnalytics>> compareDestinationsTask = Task.FromResult(Enumerable.Empty<DestinationAnalytics>());
+                if (destinationIds != null && destinationIds.Any())
+                    compareDestinationsTask = _destinationService.CompareDestinationsAsync(destinationIds, timeRange, startDate, endDate);
+
+                await Task.WhenAll(overviewTask, demographicTask, topDestinationByViewsTask, topDestinationsByFavoriteTask, compareDestinationsTask);
+
+                var vm = new DestinationStatisticsViewModel
+                {
+                    DestinationStatsOverview = overviewTask.Result,
+                    UserDemographics = demographicTask.Result.ToList() ?? new List<DestinationUserDemographics>(),
+                    TopDestinationsByViews = topDestinationByViewsTask.Result?.ToList() ?? new List<DestinationAnalytics>(),
+                    TopDestinationByFavorites = topDestinationsByFavoriteTask.Result?.ToList() ?? new List<DestinationAnalytics>(),
+                    CompareDestination = compareDestinationsTask.Result?.ToList() ?? new List<DestinationAnalytics>(),
+                };
+                return View("DestinationsStatistics", vm);
+            }
+            catch (Exception ex)
+            {
+                ViewData["Error"] = $"An error occurred: {ex.Message}";
+                return View("DestinationsStatistics", new DestinationStatisticsViewModel());
+            }
+        }
+        
     }
 }
