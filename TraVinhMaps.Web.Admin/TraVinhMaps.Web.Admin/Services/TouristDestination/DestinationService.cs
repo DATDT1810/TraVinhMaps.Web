@@ -153,7 +153,7 @@ namespace TraVinhMaps.Web.Admin.Services.TouristDestination
             if (response.StatusCode == System.Net.HttpStatusCode.Created)
             {
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var wrapper  = JsonSerializer.Deserialize<UpdateDestinationResponse<ResponseDestinationBase<TouristDestinationResponse>>>(content, options);
+                var wrapper = JsonSerializer.Deserialize<UpdateDestinationResponse<ResponseDestinationBase<TouristDestinationResponse>>>(content, options);
                 return wrapper.Value.Data;
             }
             return null;
@@ -242,6 +242,207 @@ namespace TraVinhMaps.Web.Admin.Services.TouristDestination
                 return true;
             }
             return false;
+        }
+
+        public async Task<DestinationStatsOverview> GetDestinationStatsOverviewAsync(
+        string timeRange = "month",
+        DateTime? startDate = null,
+        DateTime? endDate = null,
+        CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                // 1. Build query string
+                var url = $"{destinationApi}stats-overview?timeRange={Uri.EscapeDataString(timeRange)}";
+
+                if (startDate.HasValue)
+                    url += $"&startDate={Uri.EscapeDataString(startDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+                if (endDate.HasValue)
+                    url += $"&endDate={Uri.EscapeDataString(endDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+
+                // 2. Call API
+                var response = await _httpClient.GetAsync(url, cancellationToken);
+                response.EnsureSuccessStatusCode();
+
+                // 3. Read / deserialize
+                var json = await response.Content.ReadAsStringAsync(cancellationToken);
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                // Wrapper class should hold "data" (or similar) of type DestinationStatsOverview
+                var wrapper = JsonSerializer.Deserialize<ResponseDestinationBase<DestinationStatsOverview>>(json, options);
+
+                // 4. Return the DTO (null-conditional in case of unexpected payload)
+                return wrapper?.Data ?? new DestinationStatsOverview
+                {
+                    TotalDestinations = 0,
+                    TotalViews = 0,
+                    TotalInteractions = 0,
+                    TotalFavorites = 0,
+                    DestinationDetails = new List<DestinationAnalytics>()
+                };
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new HttpRequestException(
+                    $"Destination stats request failed. Status: {ex.StatusCode}, Message: {ex.Message}", ex);
+            }
+            catch (JsonException ex)
+            {
+                throw new InvalidOperationException($"JSON parse error: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Unexpected error while fetching destination analytics.", ex);
+            }
+        }
+
+
+        public async Task<IEnumerable<DestinationAnalytics>> GetTopDestinationsByFavoritesAsync(int top = 5, string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                // 1. Build query string
+                var url = $"{destinationApi}stats-getTopFavoritesDestinations?top={top}&timeRange={Uri.EscapeDataString(timeRange)}";
+
+                if (startDate.HasValue)
+                    url += $"&startDate={Uri.EscapeDataString(startDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+                if (endDate.HasValue)
+                    url += $"&endDate={Uri.EscapeDataString(endDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+
+                // 2. Call API
+                var response = await _httpClient.GetAsync(url, cancellationToken);
+                response.EnsureSuccessStatusCode();
+
+                // 3. Read / deserialize
+                var json = await response.Content.ReadAsStringAsync(cancellationToken);
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                // Wrapper class should hold "data" (or similar) of type DestinationStatsOverview
+                var wrapper = JsonSerializer.Deserialize<ResponseDestinationBase<IEnumerable<DestinationAnalytics>>>(json, options);
+
+                // 4. Return the DTO (null-conditional in case of unexpected payload)
+                return wrapper?.Data ?? Enumerable.Empty<DestinationAnalytics>();
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new HttpRequestException(
+                    $"Destination stats request failed. Status: {ex.StatusCode}, Message: {ex.Message}", ex);
+            }
+            catch (JsonException ex)
+            {
+                throw new InvalidOperationException($"JSON parse error: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Unexpected error while fetching destination analytics.", ex);
+            }
+        }
+
+        public async Task<IEnumerable<DestinationAnalytics>> GetTopDestinationsByViewsAsync(int top = 5, string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                // 1. Build query string
+                var url = $"{destinationApi}stats-getTopViewsDestinations?top={top}&timeRange={Uri.EscapeDataString(timeRange)}";
+
+                if (startDate.HasValue)
+                    url += $"&startDate={Uri.EscapeDataString(startDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+                if (endDate.HasValue)
+                    url += $"&endDate={Uri.EscapeDataString(endDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+
+                // 2. Call API
+                var response = await _httpClient.GetAsync(url, cancellationToken);
+                response.EnsureSuccessStatusCode();
+
+                // 3. Read / deserialize
+                var json = await response.Content.ReadAsStringAsync(cancellationToken);
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                // Wrapper class should hold "data" (or similar) of type DestinationStatsOverview
+                var wrapper = JsonSerializer.Deserialize<ResponseDestinationBase<IEnumerable<DestinationAnalytics>>>(json, options);
+
+                // 4. Return the DTO (null-conditional in case of unexpected payload)
+                return wrapper?.Data ?? Enumerable.Empty<DestinationAnalytics>();
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new HttpRequestException(
+                    $"Destination stats request failed. Status: {ex.StatusCode}, Message: {ex.Message}", ex);
+            }
+            catch (JsonException ex)
+            {
+                throw new InvalidOperationException($"JSON parse error: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Unexpected error while fetching destination analytics.", ex);
+            }
+        }
+
+        public async Task<IEnumerable<DestinationUserDemographics>> GetUserDemographicsAsync(string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                // 1. Build query string
+                var url = $"{destinationApi}stats-getUserDemographics?timeRange={Uri.EscapeDataString(timeRange)}";
+
+                if (startDate.HasValue)
+                    url += $"&startDate={Uri.EscapeDataString(startDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+                if (endDate.HasValue)
+                    url += $"&endDate={Uri.EscapeDataString(endDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+
+                // 2. Call API
+                var response = await _httpClient.GetAsync(url, cancellationToken);
+                response.EnsureSuccessStatusCode();
+
+                // 3. Read / deserialize
+                var json = await response.Content.ReadAsStringAsync(cancellationToken);
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                // Wrapper class should hold "data" (or similar) of type DestinationStatsOverview
+                var wrapper = JsonSerializer.Deserialize<ResponseDestinationBase<IEnumerable<DestinationUserDemographics>>>(json, options);
+
+                // 4. Return the DTO (null-conditional in case of unexpected payload)
+                return wrapper?.Data ?? Enumerable.Empty<DestinationUserDemographics>();
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new HttpRequestException(
+                    $"Destination stats request failed. Status: {ex.StatusCode}, Message: {ex.Message}", ex);
+            }
+            catch (JsonException ex)
+            {
+                throw new InvalidOperationException($"JSON parse error: {ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Unexpected error while fetching destination analytics.", ex);
+            }
+        }
+
+        public async Task<IEnumerable<DestinationAnalytics>> CompareDestinationsAsync(IEnumerable<string> destinationIds, string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var url = $"{destinationApi}stats-compare?timeRange={Uri.EscapeDataString(timeRange)}";
+                if (startDate.HasValue)
+                    url += $"&startDate={Uri.EscapeDataString(startDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+                if (endDate.HasValue)
+                    url += $"&endDate={Uri.EscapeDataString(endDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"))}";
+                if (destinationIds != null && destinationIds.Any())
+                    url += $"&destinationIds={string.Join(",", destinationIds)}";
+
+                var response = await _httpClient.GetAsync(url, cancellationToken);
+                response.EnsureSuccessStatusCode();
+                var json = await response.Content.ReadAsStringAsync(cancellationToken);
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var wrapper = JsonSerializer.Deserialize<ResponseDestinationBase<IEnumerable<DestinationAnalytics>>>(json, options);
+                return wrapper?.Data ?? Enumerable.Empty<DestinationAnalytics>();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Unexpected error while fetching destination analytics.", ex);
+            }
         }
     }
 }

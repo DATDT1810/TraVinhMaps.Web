@@ -18,5 +18,16 @@ namespace TraVinhMaps.Web.Admin.Services.TouristDestination
         Task<bool> DeleteDestination(string id);
         Task<bool> RestoreDestination(string id);
         Task<TouristDestinationResponse> GetDestinationById(string id);
+
+        // Overview Statistics for All Destinations
+        Task<DestinationStatsOverview> GetDestinationStatsOverviewAsync(string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default);
+        // Top Destinations by Number of Likes
+        Task<IEnumerable<DestinationAnalytics>> GetTopDestinationsByFavoritesAsync(int top = 5, string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default);
+        // Top Destinations by Number of Views
+        Task<IEnumerable<DestinationAnalytics>> GetTopDestinationsByViewsAsync(int topCount = 5, string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default);
+        // User Analysis by Age Group and Hometown
+        Task<IEnumerable<DestinationUserDemographics>> GetUserDemographicsAsync(string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default);
+        // Destination Comparison
+        Task<IEnumerable<DestinationAnalytics>> CompareDestinationsAsync(IEnumerable<string> destinationIds, string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default);
     }
 }
