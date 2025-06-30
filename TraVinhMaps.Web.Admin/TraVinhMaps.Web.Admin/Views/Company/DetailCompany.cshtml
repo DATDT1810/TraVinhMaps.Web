@@ -1,0 +1,116 @@
+@using TraVinhMaps.Web.Admin.Models.Company
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model CompanyResponse
+@{
+    ViewData["Title"] = "DetailCompany";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    ViewData["Title"] = "DetailCompany";
+}
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>Company Detail</h4>
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div id="alert-message" class="alert alert-danger">
+                            @TempData["ErrorMessage"]
+                        </div>
+                    }
+
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div id="alert-message" class="alert alert-success">
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index"><i class="fa fa-home" style="font-size: 20px;"></i></a>
+                        </li>
+                        <li class="breadcrumb-item">ECommerce</li>
+                        <li class="breadcrumb-item active">Product Page</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 col-xl-12">
+            <div class="card">
+                <div class="card-header">
+                <h4>@Model.Name</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="simple-wrapper nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item"><a class="nav-link txt-primary" id="home-tab" data-bs-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Address</a></li>
+                        <li class="nav-item"><a class="nav-link active txt-primary" id="location-tabs" data-bs-toggle="tab" href="#location" role="tab" aria-controls="location" aria-selected="false">Location</a></li>
+                        <li class="nav-item"><a class="nav-link txt-primary" id="contact-tab" data-bs-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a></li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <p class="pt-3">@Model.Address</p>
+                        </div>
+                        <div class="tab-pane fade show active" id="location" role="tabpanel" aria-labelledby="location-tabs">
+                            <div class="pt-3 mb-0">
+                                <div class="flex-space flex-wrap align-items-center">
+                                    <ul class="d-flex flex-column gap-1">
+                                        @foreach (var loc in Model.Locations)
+                                        {
+                                            <li> <strong>Type: </strong><td> @loc.Type</td></li>
+                                            <li>Longitude:<td> @loc.Longitude</td></li>
+                                            <li>Latitude:<td> @loc.Latitude</td></li>
+                                        }
+                                        <br>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                            <ul class="pt-3 d-flex flex-column gap-1">
+                                @if (Model.Contact != null)
+                                {
+                                <li> <strong>Website:</strong> @Model.Contact.Website</li>
+                                <li><strong>Mail Us: </strong> @Model.Contact.Email</li>
+                                <li><strong>Contact Number: </strong> @Model.Contact.Phone</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @Html.AntiForgeryToken()
+    <script src="~/assets/js/ocopproduct/formModal.js"></script>
+    <script src="~/assets/js/ocopproduct/create.js"></script>
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    
+    <script>
+        (function () {
+            const success = @Html.Raw(Json.Serialize(TempData["Success"]));
+            const error = @Html.Raw(Json.Serialize(TempData["Error"]));
+            if (success) showSuccessAlert("Success!", success);
+            if (error) showErrorAlert("Error!", error);
+        })();
+        document.querySelector('.upload-placeholder').addEventListener('click', function() {
+        document.querySelector('input[name="imageFile"]').click();
+    });
+        setTimeout(function () {
+            var alert = document.getElementById("alert-message");
+            if (alert) {
+                alert.style.display = "none";
+            }
+        }, 1000);
+    </script>
+}
