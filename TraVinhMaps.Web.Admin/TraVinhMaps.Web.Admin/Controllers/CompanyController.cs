@@ -25,6 +25,12 @@ namespace TraVinhMaps.Web.Admin.Controllers
             var listCompany = await _companyService.ListAllAsync();
             return View(listCompany);
         }
+        [HttpGet("DetailCompany")]
+        public async Task<IActionResult> DetailCompany(string id)
+        {
+            var company = await _companyService.GetByIdAsync(id);
+            return View(company);
+        }
 
         [HttpGet("CreateCompany")]
         public async Task<IActionResult> CreateCompany()

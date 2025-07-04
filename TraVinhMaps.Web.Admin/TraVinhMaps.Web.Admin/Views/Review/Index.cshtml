@@ -1,0 +1,205 @@
+@using TraVinhMaps.Web.Admin.Models.Review;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<ReviewResponse>;
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h4>@ViewData["Title"]</h4>
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home" style="font-size: 20px;"></i>
+                            </a>
+                        </li>
+                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
+                        {
+                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
+                            {
+                                <li class="breadcrumb-item">@item</li>
+                            }
+                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
+                        }
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div id="alert-message" class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div id="alert-message" class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div method="get" class="d-flex justify-content-between mb-3">
+                            <div>
+                                <button class="btn btn-primary" id="exportBtn">
+                                    <i class="fa fa-file-excel-o me-1"></i>Export
+                                </button>
+                            </div>
+                            <form method="get" asp-action="Index" asp-controller="Review" class="filter-group d-flex gap-3">
+                                <!-- Destination Filter -->
+                                <div>
+                                    <label for="destinationId" class="form-label">Destination</label>
+                                    <select name="destinationId" id="destinationId" class="form-select">
+                                        <option value="">All Destinations</option>
+                                        @{
+                                            var destinations = ViewBag.Destination as IEnumerable<TraVinhMaps.Web.Admin.Models.DestinationTypes.DestinationTypeResponse>;
+                                            if (destinations == null || !destinations.Any())
+                                            {
+                                                <option disabled>Không có dữ liệu destination</option>
+                                            }
+                                            else
+                                            {
+                                                @foreach (var destination in destinations)
+                                                {
+                                                    <option value="@destination.Id" selected="@(destination.Id == ViewContext.HttpContext.Request.Query["destinationId"])">
+                                                        @destination.Name
+                                                    </option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <!-- Rating Filter -->
+                                <div>
+                                    <label for="rating" class="form-label">Rating</label>
+                                    <select name="rating" id="rating" class="form-select">
+                                        <option value="">All Ratings</option>
+                                        <option value="1" selected="@(ViewContext.HttpContext.Request.Query["rating"] == "1")">1</option>
+                                        <option value="2" selected="@(ViewContext.HttpContext.Request.Query["rating"] == "2")">2</option>
+                                        <option value="3" selected="@(ViewContext.HttpContext.Request.Query["rating"] == "3")">3</option>
+                                        <option value="4" selected="@(ViewContext.HttpContext.Request.Query["rating"] == "4")">4</option>
+                                        <option value="5" selected="@(ViewContext.HttpContext.Request.Query["rating"] == "5")">5</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="startAt" class="form-label">Start Date</label>
+                                    @{
+                                        var startAtQuery = ViewContext.HttpContext.Request.Query["startAt"];
+                                        var startAtValue = !string.IsNullOrWhiteSpace(startAtQuery)
+                                            ? DateTime.Parse(startAtQuery).ToString("yyyy-MM-dd")
+                                            : "";
+                                    }
+                                    <input type="date" name="startAt" id="startAt" class="form-control" value="@startAtValue" />
+                                </div>
+                                <div>
+                                    <label for="endAt" class="form-label">End Date</label>
+                                    @{
+                                        var endAtQuery = ViewContext.HttpContext.Request.Query["endAt"];
+                                        var endAtValue = !string.IsNullOrWhiteSpace(endAtQuery)
+                                            ? DateTime.Parse(endAtQuery).ToString("yyyy-MM-dd")
+                                            : "";
+                                        var maxDate = DateTime.Now.ToString("yyyy-MM-dd");
+                                    }
+                                    <input type="date" name="endAt" id="endAt" class="form-control" value="@endAtValue" max="@maxDate" />
+                                </div>
+                                <div>
+                                    <button type="submit" class="btn btn-primary mt-3">Find</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="table-responsive signal-table custom-scrollbar">
+                            <table class="display" id="project-status">
+                                <thead class="bg-primary">
+                                    <tr>
+                                        <th>No. &nbsp</th>
+                                        <th>User Name</th>
+                                        <th>Destination</th>
+                                        <th>Rating</th>
+                                        <th>Comment</th>
+                                        <th>Created At</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int count = 1;
+                                    }
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr class="user-removes">
+                                            <td>@count</td>
+                                            <td>
+                                                @item.UserName
+                                            </td>
+                                            <td>
+                                                @item.DestinationName
+                                            </td>
+                                            <td>
+                                                @item.Rating
+                                            </td>
+                                            <td>
+                                                @item.Comment
+                                            </td>
+                                            <td>
+                                                @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
+                                            </td>
+
+                                            <td class="text-center align-middle">
+                                                <ul class="action d-flex justify-content-center align-items-center mb-0"
+                                                    style="height: 100%;">
+                                                    <li>
+                                                        <a class="details" asp-controller="Review"
+                                                            asp-action="DetailReview" asp-route-id="@item.Id"
+                                                            title="Details">
+                                                            <i class="fa fa-eye"></i>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                       count++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+</div>
+
+@section Scripts {
+    @Html.AntiForgeryToken()
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script src="~/assets/js/ocoptype/index.js"></script>
+    <script>
+        (function () {
+            const success = @Html.Raw(Json.Serialize(TempData["Success"]));
+            const error = @Html.Raw(Json.Serialize(TempData["Error"]));
+            if (success) showSuccessAlert("Success!", success);
+            if (error) showErrorAlert("Error!", error);
+        })();
+
+        setTimeout(function () {
+            var alert = document.getElementById("alert-message");
+            if (alert) {
+                alert.style.display = "none";
+            }
+        }, 1000);
+    </script>
+}
