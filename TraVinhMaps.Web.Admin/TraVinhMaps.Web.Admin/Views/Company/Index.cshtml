@@ -69,8 +69,8 @@
                                         <th>No. &nbsp</th>
                                         <th>Name</th>
                                         <th>Address</th>
-                                        <th>Locations</th>
-                                        <th>Contact</th>
+                                        @* <th>Locations</th>
+                                        <th>Contact</th> *@
                                         <th>Created At</th>
                                         <th>Update At</th>
                                         <th>Action</th>
@@ -90,7 +90,7 @@
                                             <td>
                                                 @item.Address
                                             </td>
-                                            <td>
+                                            @* <td>
                                                 @foreach (var loc in item.Locations)
                                                 {
                                                     <div>
@@ -104,7 +104,7 @@
                                                     Email: @item.Contact?.Email<br />
                                                     Website: @item.Contact?.Website
                                                 </div>
-                                            </td>
+                                            </td> *@
 
                                             <td>
                                                 @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
@@ -120,6 +120,13 @@
                                                             title="Details">
                                                             <i class="fa fa-eye"></i>
                                                         </a></li>
+                                                    <li>
+                                                        <a class="details" asp-controller="Company"
+                                                            asp-action="DetailCompany" asp-route-id="@item.Id"
+                                                            title="Details">
+                                                            <i class="fa fa-eye"></i>
+                                                        </a>
+                                                    </li>
                                                     <li>
                                                         <a asp-controller="Company" asp-action="UpdateCompany"
                                                             asp-route-id="@item.Id"><i class="fa fa-pencil"></i> </a>
