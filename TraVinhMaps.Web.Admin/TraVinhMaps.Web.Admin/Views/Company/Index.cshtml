@@ -57,7 +57,7 @@
                                 <a asp-controller="Company" asp-action="CreateCompany" class="btn btn-success">
                                     <i class="fa fa-plus me-1"></i>Create Company
                                 </a>
-                                <button class="btn btn-primary" id="exportBtn">
+                                <button class="btn btn-primary" title="Export Company List" id="companyExportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
                             </div>
@@ -157,6 +157,6 @@
             if (alert) {
                 alert.style.display = "none";
             }
-        }, 2000);
+        }, 1000);
     </script>
 }

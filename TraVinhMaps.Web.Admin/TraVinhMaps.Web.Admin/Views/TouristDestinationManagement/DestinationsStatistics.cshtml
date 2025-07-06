@@ -8,6 +8,7 @@
 
 <div class="page-body">
     <div class="container-fluid">
+        <!-- Page header and breadcrumb navigation -->
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
@@ -37,6 +38,7 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-body">
+                        <!-- Error or empty data messages -->
                         @if (!string.IsNullOrEmpty(error))
                         {
                             <div class="alert alert-danger">@error</div>
@@ -47,6 +49,7 @@
                         }
                         else
                         {
+                            <!-- General statistics overview -->
                             <h6 class="text-primary mb-3">Overview</h6>
                             <div class="row mb-3">
                                 <div class="col-md-3">
@@ -62,9 +65,13 @@
                                     <p>Total Favorites: <span>@Model.DestinationStatsOverview.TotalFavorites</span></p>
                                 </div>
                             </div>
+
                             <hr>
+
+                            <!-- Chart for destination statistics -->
                             <h6 class="text-primary mb-3">Destinations – Views, Interactions, Favorites</h6>
                             <div class="row mb-3">
+                                <!-- Date filter and control buttons -->
                                 <div class="col-md-2">
                                     <label>Quick Filter</label>
                                     <select class="form-select" id="analyticsTimeRange">
@@ -94,11 +101,15 @@
                                     <button id="analyticsDownloadChartBtn" class="btn btn-primary w-100 mt-2">Download</button>
                                 </div>
                             </div>
+
+                            <!-- Chart canvas -->
                             <div style="height: 400px; overflow-x: auto;">
                                 <canvas id="analyticsChart"></canvas>
                             </div>
 
                             <hr class="my-4" />
+
+                            <!-- Demographics chart -->
                             <h6 class="text-primary mb-3">Demographic Analysis</h6>
                             <div class="row mb-3">
                                 <div class="col-md-2">
@@ -130,11 +141,12 @@
                                     <button id="demographicsDownloadChartBtn" class="btn btn-primary w-100 mt-2">Download</button>
                                 </div>
                             </div>
+
                             <div style="height: 400px; overflow-x: auto;">
                                 <canvas id="demographicsChart"></canvas>
                             </div>
 
-                            <!-- Top Interacted Destinations -->
+                            <!-- Top destinations by interactions -->
                             <h6 class="text-primary mb-3">Top Interacted Destinations</h6>
                             <div class="row mb-3">
                                 <div class="col-md-2">
@@ -166,11 +178,12 @@
                                     <button id="topInteractionDownloadChartBtn" class="btn btn-primary w-100 mt-2">Download</button>
                                 </div>
                             </div>
+
                             <div style="height: 400px; overflow-x: auto;">
                                 <canvas id="topInteractionChart"></canvas>
                             </div>
 
-                            <!-- Top Favorited Destinations -->
+                            <!-- Top destinations by favorites -->
                             <h6 class="text-primary mb-3">Top Favorited Destinations</h6>
                             <div class="row mb-3">
                                 <div class="col-md-2">
@@ -202,14 +215,44 @@
                                     <button id="topFavoritesDownloadChartBtn" class="btn btn-primary w-100 mt-2">Download</button>
                                 </div>
                             </div>
+
                             <div style="height: 400px; overflow-x: auto;">
                                 <canvas id="topFavoritesChart"></canvas>
                             </div>
 
                             <hr class="my-4" />
+
+                            <!-- Destination comparison chart -->
                             <h6 class="text-primary mb-3">Destination Comparison</h6>
+
+                            <!-- Date filter + Compare/Reset buttons -->
                             <div class="row mb-3">
-                                <div class="col-md-6">
+                                <div class="col-md-2">
+                                    <label>Quick Filter</label>
+                                    <select class="form-select" id="compareTimeRange">
+                                        <option value="day">Today</option>
+                                        <option value="week">This Week</option>
+                                        <option value="month" selected>This Month</option>
+                                        <option value="year">This Year</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label>Start Date</label>
+                                    <input type="date" class="form-control" id="compareStartDate" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label>End Date</label>
+                                    <input type="date" class="form-control" id="compareEndDate" />
+                                </div>
+                                <div class="col-md-6 d-flex gap-2 mt-md-auto">
+                                    <button id="compareDestinationsBtn" class="btn btn-success  w-100">Compare</button>
+                                    <button id="compareDestinationsReset" class="btn btn-secondary w-100">Reset</button>
+                                </div>
+                            </div>
+
+                            <!-- Select destinations + download -->
+                            <div class="row mb-3">
+                                <div class="col-md-9">
                                     <label>Destination Name</label>
                                     <select id="compareDestinationsSelect" class="form-select" multiple>
                                         @foreach (var d in Model.DestinationStatsOverview.DestinationDetails)
@@ -219,9 +262,6 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3 align-self-end">
-                                    <button id="compareDestinationsBtn" class="btn btn-success mt-2">Compare</button>
-                                </div>
-                                <div class="col-md-2 align-self-end">
                                     <select class="form-select" id="compareDownloadType">
                                         <option value="png">Download PNG</option>
                                         <option value="csv">Download CSV</option>
@@ -229,11 +269,15 @@
                                     <button id="compareDestinationsDownloadChartBtn" class="btn btn-primary mt-2">Download</button>
                                 </div>
                             </div>
-                            <div style="height: 400px; overflow-x: auto;">
+
+                            <!-- Comparison chart canvas -->
+                            <div style="height: 400px; overflow-x:auto">
                                 <canvas id="compareDestinationsChart"></canvas>
                             </div>
 
                             <hr class="my-4" />
+
+                            <!-- Raw data table -->
                             <h6 class="text-primary mb-3">Details</h6>
                             <table class="table">
                                 <thead>
@@ -264,11 +308,12 @@
     </div>
 </div>
 
+<!-- Scripts section -->
 @section Scripts {
     <script src="~/assets/js/sweetalert-custom.js"></script>
     <script src="~/assets/js/touristdestinationmanagement/chart.js"></script>
     <script>
-        // Dữ liệu từ ViewModel (data đã unwrap, nếu API Controller trả về data là wrapper)
+        // Extract and deserialize data from the view model into JavaScript variables
         let stats = @Html.Raw(Json.Serialize(Model.DestinationStatsOverview ?? new DestinationStatsOverview()));
         let demographics = @Html.Raw(Json.Serialize(Model.UserDemographics ?? new List<DestinationUserDemographics>()));
         let topViews = @Html.Raw(Json.Serialize(Model.TopDestinationsByViews ?? new List<DestinationAnalytics>()));

@@ -1,4 +1,6 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.WebUtilities;
+using TraVinhMaps.Web.Admin.Models;
 using TraVinhMaps.Web.Admin.Models.Users;
 
 namespace TraVinhMaps.Web.Admin.Services.Users
@@ -203,6 +205,53 @@ namespace TraVinhMaps.Web.Admin.Services.Users
                 return new Dictionary<string, object>();
             }
             throw new HttpRequestException("Unable to fetch user statistics.");
+        }
+
+        public async Task<Dictionary<string, Dictionary<string, int>>> GetPerformanceByTagAsync(
+    IEnumerable<string>? tagNames,
+    bool includeOcop,
+    bool includeDestination,
+    bool includeLocalSpecialty,
+    bool includeTips,
+    bool includeFestivals,
+    DateTime? startDate,
+    DateTime? endDate,
+    CancellationToken cancellationToken = default)
+        {
+            // 1. Chuẩn hóa thời gian
+            startDate ??= DateTime.UtcNow.AddHours(7).AddDays(-30).Date;
+            endDate ??= DateTime.UtcNow.AddHours(7).Date.AddDays(1);
+
+            // 2. Dùng QueryHelpers (Microsoft.AspNetCore.WebUtilities)
+            var query = new Dictionary<string, string?>
+            {
+                ["includeOcop"] = includeOcop.ToString().ToLower(),
+                ["includeDestination"] = includeDestination.ToString().ToLower(),
+                ["includeLocalSpecialty"] = includeLocalSpecialty.ToString().ToLower(),
+                ["includeTips"] = includeTips.ToString().ToLower(),
+                ["includeFestivals"] = includeFestivals.ToString().ToLower(),
+                ["startDate"] = startDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                ["endDate"] = endDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ")
+            };
+
+            // thêm từng tag dưới khóa "tags"
+            if (tagNames != null)
+            {
+                foreach (var tag in tagNames.Where(t => !string.IsNullOrWhiteSpace(t)))
+                    query.Add("tags", tag);
+            }
+
+            var url = QueryHelpers.AddQueryString($"{userApi}performance-tags", query);
+
+            // 3. Gọi API đúng kiểu async
+            using var response = await _httpClient.GetAsync(url, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+            var parsed = await response.Content.ReadFromJsonAsync<BaseResponseModel<Dictionary<string, Dictionary<string, int>>>>(options, cancellationToken);
+
+            return parsed?.Data ?? new Dictionary<string, Dictionary<string, int>>();
         }
 
     }

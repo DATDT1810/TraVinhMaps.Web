@@ -18,7 +18,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             _adminService = adminService;
         }
 
-        public async Task<IActionResult> Index(string timeRange = "month")
+        public async Task<IActionResult> Index(string timeRange = "month", string[]? tagNames = null)
         {
             ViewData["Title"] = "Dashboard";
             ViewData["Breadcrumb"] = new List<string> { "Dashboard", "Default" };
@@ -32,6 +32,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 "year" => "year",
                 _ => "month" // Default
             };
+
+            if (tagNames == null || tagNames.Length == 0)
+            {
+                tagNames = new[] { "Destination" }; // Default tag name
+            }
 
             var model = new DashboardVM
             {
@@ -51,6 +56,29 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     Status = statistics.ContainsKey("status") ? (Dictionary<string, int>)statistics["status"] : new Dictionary<string, int>(),
                     Time = statistics.ContainsKey("time") ? (Dictionary<string, int>)statistics["time"] : new Dictionary<string, int>()
                 });
+
+                var startDate = timeRange switch
+                {
+                    "day" => DateTime.UtcNow.AddHours(7).Date, // Hôm nay
+                    "week" => DateTime.UtcNow.AddHours(7).Date.AddDays(-7), // 7 ngày trước
+                    "month" => DateTime.UtcNow.AddHours(7).Date.AddMonths(-1), // 1 tháng trước
+                    "year" => DateTime.UtcNow.AddHours(7).Date.AddYears(-1), // 1 năm trước
+                    _ => DateTime.UtcNow.AddHours(7).Date.AddDays(-30) // Default 30 ngày
+                };
+                var endDate = DateTime.UtcNow.AddHours(7).Date.AddDays(1); // Ngày mai
+
+                var performance = await _userService.GetPerformanceByTagAsync(
+                tagNames: tagNames,
+                includeOcop: true,
+                includeDestination: true,
+                includeLocalSpecialty: true,
+                includeTips: true,
+                includeFestivals: true,
+                startDate: startDate,
+                endDate: endDate,
+                cancellationToken: CancellationToken.None
+            );
+                model.PerformanceByTag = performance ?? new Dictionary<string, Dictionary<string, int>>();
             }
             catch (Exception ex)
             {
@@ -59,10 +87,10 @@ namespace TraVinhMaps.Web.Admin.Controllers
 
             // Pass the selected timeRange to the view for pre-selecting the dropdowns
             ViewData["TimeRange"] = timeRange;
+            ViewData["TagName"] = tagNames;
 
             return View(model);
         }
-
 
         [HttpGet("setting")]
         public async Task<IActionResult> Settings()

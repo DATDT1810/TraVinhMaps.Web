@@ -44,7 +44,7 @@
                                     <i class="fa fa-plus me-1"></i>Add Tips
                                 </a>
 
-                                <button class="btn btn-primary" id="exportBtn">
+                                <button class="btn btn-primary" title="Export Tips List" id="tipsExportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
                             </div>
@@ -63,9 +63,10 @@
                             <table class="display" id="basic-9">
                                 <thead class="bg-primary">
                                     <tr>
-                                        <th>#</th>
+                                        <th>No.</th>
                                         <th>Title</th>
                                         <th>Content</th>
+                                        <th>Status</th>
                                         <th>Create At</th>
                                         <th>Action</th>
                                     </tr>
@@ -78,8 +79,14 @@
                                     {
                                         <tr data-tag-id="@item.TagId">
                                             <td>@count</td>
-                                            <td>@item.Title</td>
-                                            <td>@Html.TruncateWords(item.Content, 9)</td>
+                                            <td>@Html.TruncateWords(item.Title, 8)</td>
+                                            <td>@Html.TruncateWords(item.Content, 8)</td>
+                                              <td>
+                                                <span
+                                                    class="badge @(item.Status ? "badge-light-primary" : "badge-light-danger")">
+                                                    @(item.Status ? "Active" : "Inactive")
+                                                </span>
+                                            </td>
                                             <td>
                                                 @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                         </td>

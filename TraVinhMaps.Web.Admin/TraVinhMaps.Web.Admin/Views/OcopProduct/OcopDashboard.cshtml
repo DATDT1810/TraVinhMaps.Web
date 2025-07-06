@@ -15,7 +15,8 @@
                 <div class="col-6">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                            <a asp-controller="Home" asp-action="Index"><i class="fa fa-home" style="font-size: 20px;"></i></a>
+                            <a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
+                                    style="font-size: 20px;"></i></a>
                         </li>
                         @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
                         {
@@ -75,7 +76,8 @@
                                         <option value="png">Download PNG</option>
                                         <option value="csv">Download CSV</option>
                                     </select>
-                                    <button id="analyticsDownloadChartBtn" class="btn btn-primary w-100 mt-2">Download</button>
+                                    <button id="analyticsDownloadChartBtn"
+                                        class="btn btn-primary w-100 mt-2">Download</button>
                                 </div>
                             </div>
                             <div style="height: 400px;"><canvas id="analyticsChart"></canvas></div>
@@ -110,7 +112,8 @@
                                         <option value="png">Download PNG</option>
                                         <option value="csv">Download CSV</option>
                                     </select>
-                                    <button id="demographicsDownloadChartBtn" class="btn btn-primary w-100 mt-2">Download</button>
+                                    <button id="demographicsDownloadChartBtn"
+                                        class="btn btn-primary w-100 mt-2">Download</button>
                                 </div>
                             </div>
                             <div style="height: 400px;overflow-x:auto"><canvas id="demographicsChart"></canvas></div>
@@ -145,18 +148,19 @@
                                         <option value="png">Download PNG</option>
                                         <option value="csv">Download CSV</option>
                                     </select>
-                                    <button id="topInteractionDownloadChartBtn" class="btn btn-primary w-100 mt-2">Download</button>
+                                    <button id="topInteractionDownloadChartBtn"
+                                        class="btn btn-primary w-100 mt-2">Download</button>
                                 </div>
                             </div>
                             <div style="height: 400px;overflow-x:auto"><canvas id="topInteractionChart"></canvas></div>
 
                             <hr class="my-4" />
-                            <!-- Top Wishlisted OCOP Products -->
-                            <h6 class="text-primary mb-3">Top Wishlisted OCOP Products</h6>
+                            <!-- Top Favorited OCOP Products -->
+                            <h6 class="text-primary mb-3">Top Favorited OCOP Products</h6>
                             <div class="row mb-3">
                                 <div class="col-md-2">
                                     <label>Quick Filter</label>
-                                    <select class="form-select" id="topWishlistTimeRange">
+                                    <select class="form-select" id="topFavoriteTimeRange">
                                         <option value="day">Today</option>
                                         <option value="week">This Week</option>
                                         <option value="month" selected>This Month</option>
@@ -165,31 +169,57 @@
                                 </div>
                                 <div class="col-md-2">
                                     <label>Start Date</label>
-                                    <input type="date" class="form-control" id="topWishlistStartDate" />
+                                    <input type="date" class="form-control" id="topFavoriteStartDate" />
                                 </div>
                                 <div class="col-md-2">
                                     <label>End Date</label>
-                                    <input type="date" class="form-control" id="topWishlistEndDate" />
+                                    <input type="date" class="form-control" id="topFavoriteEndDate" />
                                 </div>
                                 <div class="col-md-3 d-flex gap-2 mt-md-auto">
-                                    <button id="topWishlistRefresh" class="btn btn-success w-100">Filter</button>
-                                    <button id="topWishlistReset" class="btn btn-secondary w-100">Reset</button>
+                                    <button id="topFavoriteRefresh" class="btn btn-success w-100">Filter</button>
+                                    <button id="topFavoriteReset" class="btn btn-secondary w-100">Reset</button>
                                 </div>
                                 <div class="col-md-3 mt-md-auto mt-1">
-                                    <select class="form-select" id="topWishlistDownloadType">
+                                    <select class="form-select" id="topFavoriteDownloadType">
                                         <option value="png">Download PNG</option>
                                         <option value="csv">Download CSV</option>
                                     </select>
-                                    <button id="topWishlistDownloadChartBtn" class="btn btn-primary w-100 mt-2">Download</button>
+                                    <button id="topFavoriteDownloadChartBtn"
+                                        class="btn btn-primary w-100 mt-2">Download</button>
                                 </div>
                             </div>
-                            <div style="height: 400px;overflow-x:auto"><canvas id="topWishlistChart"></canvas></div>
+                            <div style="height: 400px;overflow-x:auto"><canvas id="topFavoriteChart"></canvas></div>
 
                             <hr class="my-4" />
                             <!-- OCOP Product Comparison -->
                             <h6 class="text-primary mb-3">OCOP Product Comparison</h6>
+
                             <div class="row mb-3">
-                                <div class="col-md-6">
+                                <div class="col-md-2">
+                                    <label>Quick Filter</label>
+                                    <select class="form-select" id="compareTimeRange">
+                                        <option value="day">Today</option>
+                                        <option value="week">This Week</option>
+                                        <option value="month" selected>This Month</option>
+                                        <option value="year">This Year</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label>Start Date</label>
+                                    <input type="date" class="form-control" id="compareStartDate" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label>End Date</label>
+                                    <input type="date" class="form-control" id="compareEndDate" />
+                                </div>
+                                <div class="col-md-6 d-flex gap-2 mt-md-auto">
+                                    <button id="compareProductsBtn" class="btn btn-success w-100">Compare</button>
+                                    <button id="compareProductsReset" class="btn btn-secondary w-100">Reset</button>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-9">
                                     <label>Product Name</label>
                                     <select id="compareProductsSelect" class="form-select" multiple>
                                         @foreach (var p in Model.Analytics)
@@ -199,17 +229,18 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3 align-self-end">
-                                    <button id="compareProductsBtn" class="btn btn-success mt-2">Compare</button>
-                                </div>
-                                <div class="col-md-3 align-self-end">
                                     <select class="form-select" id="compareProductsDownloadType">
                                         <option value="png">Download PNG</option>
                                         <option value="csv">Download CSV</option>
                                     </select>
-                                    <button id="compareProductsDownloadChartBtn" class="btn btn-primary mt-2">Download</button>
+                                    <button id="compareProductsDownloadChartBtn"
+                                        class="btn btn-primary mt-2">Download</button>
                                 </div>
                             </div>
-                            <div style="height: 400px;overflow-x:auto"><canvas id="compareProductsChart"></canvas></div>
+
+                            <div style="height: 400px;overflow-x:auto">
+                                <canvas id="compareProductsChart"></canvas>
+                            </div>
 
                             <hr class="my-4" />
                             <!-- Details Table -->
@@ -230,7 +261,7 @@
                                             <td>@destination.ProductName</td>
                                             <td>@destination.ViewCount</td>
                                             <td>@destination.InteractionCount</td>
-                                            <td>@destination.WishlistCount</td>
+                                            <td>@destination.FavoriteCount</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -252,9 +283,9 @@
             const analyticsData = @Html.Raw(Json.Serialize(Model?.Analytics));
             const demographicsData = @Html.Raw(Json.Serialize(Model?.UserDemographics));
             const topInteractionData = @Html.Raw(Json.Serialize(Model?.TopProductsByInteractions));
-            const topWishlistData = @Html.Raw(Json.Serialize(Model?.TopProductsByFavorites));
+            const topFavoriteData = @Html.Raw(Json.Serialize(Model?.TopProductsByFavorites));
             const compareProductsData = @Html.Raw(Json.Serialize(Model?.ComparedProducts));
-            initializeOcopDashboard(analyticsData, demographicsData, topInteractionData, topWishlistData, compareProductsData);
+            initializeOcopDashboard(analyticsData, demographicsData, topInteractionData, topFavoriteData, compareProductsData);
         };
     </script>
 }

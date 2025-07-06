@@ -20,6 +20,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
         }
         public async Task<IActionResult> Index()
         {
+            ViewData["Title"] = "Ocop Type list";
+            ViewData["Breadcrumb"] = new List<string> { "Ocop Type", "List" };
             var listOcopType = await _ocopTypeService.ListAllAsync();
             return View(listOcopType);
         }

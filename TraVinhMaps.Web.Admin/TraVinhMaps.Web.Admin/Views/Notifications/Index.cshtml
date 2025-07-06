@@ -39,7 +39,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
-                            <button class="btn btn-primary">
+                            <button class="btn btn-primary" title="Export Notifications List" id="notificationExportBtn">
                                 <i class="fa fa-file-excel-o me-1"></i>Export
                             </button>
                             <a asp-controller="Notifications" asp-action="SendNotification" class="btn btn-success">
@@ -50,7 +50,7 @@
                         <table class="display" id="basic-9">
                             <thead class="bg-primary">
                                 <tr>
-                                    <th>#</th>
+                                    <th>No.</th>
                                     <th>Title</th>
                                     <th>Content</th>
                                     <th>Create At</th>
@@ -92,6 +92,7 @@
 @section Scripts {
     @Html.AntiForgeryToken()
     <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script src="~/assets/js/notifications/sendnotification.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {

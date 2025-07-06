@@ -127,7 +127,7 @@
                                             <td>
                                                 @item.ProductName
                                             </td>
-                                            <td>
+                                            <td class="text-end">
                                                  @item.ProductPrice
                                             </td>
                                             <td>
@@ -135,10 +135,10 @@
                                                     class="badge @(item.Status ? "badge-light-primary" : "badge-light-danger")">@(item.Status
                                                                                                     ? "Active" : "Inactive")</span>
                                             </td>
-                                            <td class="text-center">
+                                            <td class="text-end">
                                                 @item.OcopPoint
                                             </td>
-                                            <td>
+                                            <td class="text-end">
                                                 @item.OcopYearRelease
                                             </td>
                                             <td>

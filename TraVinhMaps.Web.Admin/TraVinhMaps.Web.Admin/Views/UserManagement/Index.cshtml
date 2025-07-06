@@ -40,7 +40,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
                             <div class="d-flex gap-2 mb-3">
-                                <button class="btn btn-primary" id="exportBtn">
+                                <button class="btn btn-primary" title="Export Account List" id="exportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
                             </div>
@@ -134,8 +134,6 @@
 </div>
 @section Scripts {
     @Html.AntiForgeryToken()
-    <!-- Add SheetJS libraries for Excel export -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="~/assets/js/sweetalert-custom.js"></script>
     <script src="~/assets/js/usermanagement/index.js"></script>
     <script>

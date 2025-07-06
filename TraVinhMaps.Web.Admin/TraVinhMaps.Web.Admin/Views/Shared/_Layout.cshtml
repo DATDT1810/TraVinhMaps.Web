@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@using TraVinhMaps.Web.Admin.Controllers
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -73,32 +76,6 @@
         <!-- Page Header Start-->
         <div class="page-header">
             <div class="header-wrapper row m-0">
-                <form class="form-inline search-full col" action="#" method="get">
-                    <div class="form-group w-100">
-                        <div class="Typeahead Typeahead--twitterUsers">
-                            <div class="u-posRelative">
-                                <input class="demo-input Typeahead-input form-control-plaintext w-100" type="text"
-                                    placeholder="Search .." name="q" title="" autofocus>
-                                <div class="spinner-border Typeahead-spinner" role="status">
-                                    <span class="sr-only">Loading... </span>
-                                </div><i class="close-search" data-feather="x"></i>
-                            </div>
-                            <div class="Typeahead-menu"> </div>
-                        </div>
-                    </div>
-                </form>
-                <div class="header-logo-wrapper col-auto p-0">
-                    <div class="logo-wrapper">
-                        <a href="index-2.html">
-                            <img class="img-fluid for-light" src="../assets/images/logo/logo_dark.png"
-                                alt="logo-light"><img class="img-fluid for-dark" src="../assets/images/logo/logo.png"
-                                alt="logo-dark">
-                        </a>
-                    </div>
-                    <div class="toggle-sidebar">
-                        <i class="status_toggle middle sidebar-toggle" data-feather="align-center"></i>
-                    </div>
-                </div>
                 <div class="left-header col-xxl-5 col-xl-6 col-lg-5 col-md-4 col-sm-3 p-0">
                     <div>
                         <a class="toggle-sidebar" href="#"> <i class="iconly-Category icli"> </i></a>
@@ -123,7 +100,7 @@
                                 <img class="b-r-10" src="../assets/images/dashboard/profile.png" alt="">
                                 <div class="media-body d-xxl-block d-none box-col-none">
                                     <div class="d-flex align-items-center gap-2">
-                                        <span>Alex Mora </span><i class="middle fa fa-angle-down"> </i>
+                                        <span>@User.Identity.Name </span><i class="middle fa fa-angle-down"> </i>
                                     </div>
                                     <p class="mb-0 font-roboto">Admin</p>
                                 </div>
@@ -150,16 +127,6 @@
                         </li>
                     </ul>
                 </div>
-                <script class="result-template" type="text/x-handlebars-template">
-            <div class="ProfileCard u-cf">                        
-            <div class="ProfileCard-avatar"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-airplay m-0"><path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"></path><polygon points="12 15 17 21 7 21 12 15"></polygon></svg></div>
-            <div class="ProfileCard-details">
-            <div class="ProfileCard-realName">{{name}}</div>
-            </div>
-            </div>
-            </script>
-                <script class="empty-template"
-                    type="text/x-handlebars-template"><div class="EmptyMessage">Your search turned up 0 results. This most likely means the backend is down, yikes!</div></script>
             </div>
         </div>
         <!-- Page Header Ends -->
@@ -323,7 +290,8 @@
                                 </a>
                                 <ul class="sidebar-submenu">
                                     <li><a asp-controller="OcopProduct" asp-action="OcopDashboard">Ocop</a></li>
-                                    <li><a asp-controller="TouristDestinationManagement" asp-action="DestinationsStatistics">Destination</a></li>
+                                    <li><a asp-controller="TouristDestinationManagement"
+                                            asp-action="DestinationsStatistics">Destination</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -386,6 +354,9 @@
 
     <!-- ckeditor5 js-->
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+
+    <!-- Add SheetJS libraries for Excel export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <!-- Theme js-->
     <script src="~/assets/js/script.js"></script>

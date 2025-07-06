@@ -1,4 +1,22 @@
-let ageChart, genderChart, statusChart, hometownChart, timeChart;
+/************************************************************
+ *  Dashboard Charts Scripts – full code (with new additions)
+ ************************************************************/
+let ageChart,
+  genderChart,
+  statusChart,
+  hometownChart,
+  timeChart,
+  performanceChart;
+
+/* === NEW: danh sách category cố định & màu sắc ============= */
+const CATEGORY_CONFIG = [
+  { key: "Destination", color: "#4E79A7" }, // Blue
+  { key: "Ocop", color: "#F28E2B" }, // Orange
+  { key: "Local specialty", color: "#59A14F" }, // Green
+  { key: "Tips", color: "#E15759" }, // Red
+  { key: "Festivals", color: "#76B7B2" }, // Teal
+];
+/* =========================================================== */
 
 function initializeCharts(initialData) {
   if (typeof Chart === "undefined") {
@@ -9,7 +27,7 @@ function initializeCharts(initialData) {
       "Error!",
       "Failed to load charting library. Please refresh the page.",
       "error",
-      2000
+      1000
     );
   }
   if (typeof ChartDataLabels === "undefined") {
@@ -20,13 +38,14 @@ function initializeCharts(initialData) {
       "Error!",
       "Failed to load chart plugins. Please refresh the page.",
       "error",
-      2000
+      1000
     );
   }
 
   // Register the datalabels plugin
   Chart.register(ChartDataLabels);
 
+  /* ---------- helper khởi tạo chart ---------- */
   function initializeChart(chartId, chartType, data, options) {
     const canvas = document.getElementById(chartId);
     if (!canvas) {
@@ -42,19 +61,48 @@ function initializeCharts(initialData) {
     });
   }
 
-  function fetchChartData(chartId, timeRange, callback) {
+  /* ---------- helper lấy tag đã chọn (fallback tất cả) ---------- */
+  function getSelectedTags() {
+    const select = document.getElementById("tagSelect");
+    if (!select) return CATEGORY_CONFIG.map((c) => c.key); // không có thẻ select
+    const selected = Array.from(select.selectedOptions).map((o) => o.value);
+    return selected.length ? selected : CATEGORY_CONFIG.map((c) => c.key);
+  }
+
+  /* ---------- helper lấy dữ liệu ---------- */
+  function fetchChartData(chartId, timeRange, tagName, callback) {
     const loadingElement = document.getElementById(`${chartId}-loading`);
     if (loadingElement) loadingElement.style.display = "block";
 
     // Use a relative URL to avoid hardcoding the host/port/protocol
-    const apiUrl = "https://localhost:7162/api/Users/stats";
-    const url = `${apiUrl}?groupBy=${chartId}&timeRange=${timeRange}`;
+    const apiUrl =
+      chartId === "performance"
+        ? "https://localhost:7162/api/Users/performance-tags"
+        : "https://localhost:7162/api/Users/stats";
+
+    let url = apiUrl;
+    if (chartId === "performance") {
+      const tagValues = getSelectedTags();
+
+      const params = new URLSearchParams();
+      tagValues.forEach((tag) => params.append("tags", tag));
+
+      params.append("includeOcop", "true");
+      params.append("includeDestination", "true");
+      params.append("includeLocalSpecialty", "true");
+      params.append("includeTips", "true");
+      params.append("includeFestivals", "true");
+      params.append("timeRange", timeRange);
+
+      url += `?${params.toString()}`;
+    } else {
+      url += `?groupBy=${chartId}&timeRange=${timeRange}`;
+    }
+
     console.log(`Fetching data from: ${url}`);
 
     fetch(url, {
-      headers: {
-        "X-Requested-With": "XMLHttpRequest",
-      },
+      headers: { "X-Requested-With": "XMLHttpRequest" },
     })
       .then((response) => {
         if (!response.ok) {
@@ -65,21 +113,16 @@ function initializeCharts(initialData) {
         return response.json();
       })
       .then((result) => {
-        if (
+        console.log(`Raw response for ${chartId}:`, result);
+        let data;
+        if (chartId === "performance") {
+          data = result.data || {};
+        } else if (
           result.status === "success" &&
           result.data &&
           result.data[chartId]
         ) {
-          const data = result.data[chartId];
-          if (Object.keys(data).length === 0) {
-            console.warn(
-              `No data returned for ${chartId} with time range ${timeRange}`
-            );
-            callback({}); // Handle empty data
-          } else {
-            callback(data);
-            console.log(`Successfully updated ${chartId} with new data:`, data);
-          }
+          data = result.data[chartId];
         } else {
           console.error(`Invalid response for ${chartId}:`, result);
           showTimedAlert(
@@ -88,8 +131,18 @@ function initializeCharts(initialData) {
               result.message || "Invalid response format"
             }`,
             "error",
-            2000
+            1000
           );
+          return;
+        }
+        if (Object.keys(data).length === 0) {
+          console.warn(
+            `No data returned for ${chartId} with time range ${timeRange}`
+          );
+          callback({});
+        } else {
+          callback(data);
+          console.log(`Successfully updated ${chartId} with new data:`, data);
         }
       })
       .catch((error) => {
@@ -98,7 +151,7 @@ function initializeCharts(initialData) {
           "Error",
           `Failed to update ${chartId} chart: ${error.message}`,
           "error",
-          3000
+          1000
         );
       })
       .finally(() => {
@@ -106,7 +159,7 @@ function initializeCharts(initialData) {
       });
   }
 
-  // Age Chart (Bar)
+  /* ---------- Age Chart (Bar) ---------- */
   function updateAgeChart(data) {
     ageChart = initializeChart(
       "ageChart",
@@ -143,15 +196,8 @@ function initializeCharts(initialData) {
         responsive: true,
         maintainAspectRatio: false,
         aspectRatio: 1,
-        layout: {
-          padding: {
-            top: 30,
-            bottom: 10,
-          },
-        },
-        scales: {
-          x: { title: { display: true, text: "Age Groups" } },
-        },
+        layout: { padding: { top: 30, bottom: 10 } },
+        scales: { x: { title: { display: true, text: "Age Groups" } } },
         plugins: {
           datalabels: {
             color: "#51BB25",
@@ -167,14 +213,13 @@ function initializeCharts(initialData) {
             align: "top",
             clip: false,
           },
-          legend: {
-            display: false,
-          },
+          legend: { display: false },
         },
       }
     );
   }
 
+  /* ---------- Gender Chart (Pie) ---------- */
   function updateGenderChart(data) {
     const genderColors = ["#173878", "#DC3545", "#51BB25"];
     const genderBorders = ["#0F244F", "#A71D2A", "#3A8F1D"];
@@ -254,6 +299,7 @@ function initializeCharts(initialData) {
     );
   }
 
+  /* ---------- Status Chart (Pie) ---------- */
   function updateStatusChart(data) {
     statusChart = initializeChart(
       "statusChart",
@@ -290,7 +336,7 @@ function initializeCharts(initialData) {
     );
   }
 
-  // Hometown Chart (Horizontal Bar)
+  /* ---------- Hometown Chart (Horizontal Bar) ---------- */
   function updateHometownChart(data) {
     // Prepare data: sort by value in descending order
     let labels = Object.keys(data);
@@ -304,7 +350,7 @@ function initializeCharts(initialData) {
     values = dataArray.map((item) => item.value);
 
     // Define a monochromatic color palette (shades of blue)
-    const baseColor = "#173878"; // Dark Blue
+    const baseColor = "#173878";
     const colors = values.map((_, i) =>
       Chart.helpers
         .color(baseColor)
@@ -328,7 +374,7 @@ function initializeCharts(initialData) {
         ],
       },
       {
-        indexAxis: "y", // Horizontal bar
+        indexAxis: "y",
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
@@ -347,7 +393,7 @@ function initializeCharts(initialData) {
             anchor: "end",
             align: "start",
             color: "#fff",
-            font: { weight: "bold", size: 10 },
+            font: { weight: "bold", size: 8 },
             formatter: (value) =>
               `${value} (${((value / total) * 100).toFixed(2)}%)`,
             clamp: true,
@@ -355,9 +401,7 @@ function initializeCharts(initialData) {
           },
         },
         elements: {
-          bar: {
-            barThickness: 26, // Increase bar height
-          },
+          bar: { barThickness: 48 },
         },
         scales: {
           x: {
@@ -394,25 +438,25 @@ function initializeCharts(initialData) {
         whiteCanvas.height = canvas.height;
         const ctx = whiteCanvas.getContext("2d");
 
-        // Draw white background
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, whiteCanvas.width, whiteCanvas.height);
         ctx.drawImage(canvas, 0, 0);
 
-        // Save image
         const link = document.createElement("a");
         link.href = whiteCanvas.toDataURL("image/png");
         link.download = "hometown_chart.png";
         link.click();
 
         // ====== CSV EXPORT ======
-        const csvContent = "\uFEFF" +  [
-          "Hometown,Number of Users,Percentage",
-          ...labels.map((label, i) => {
-            const percentage = ((values[i] / total) * 100).toFixed(2);
-            return `"${label}",${values[i]},${percentage}%`;
-          }),
-        ].join("\n");
+        const csvContent =
+          "\uFEFF" +
+          [
+            "Hometown,Number of Users,Percentage",
+            ...labels.map((label, i) => {
+              const percentage = ((values[i] / total) * 100).toFixed(2);
+              return `"${label}",${values[i]},${percentage}%`;
+            }),
+          ].join("\n");
         const csvBlob = new Blob([csvContent], { type: "text/csv" });
         const csvLink = document.createElement("a");
         csvLink.href = URL.createObjectURL(csvBlob);
@@ -422,17 +466,18 @@ function initializeCharts(initialData) {
     }
   }
 
+  /* ---------- User over time (Line) ---------- */
   function updateTimeChart(data) {
     const labels = Object.keys(data).map((label) => {
       if (initialTimeRange === "week") {
-        return `Week ${label.split("-W")[1]}`; // Format as "Week 23"
+        return `Week ${label.split("-W")[1]}`;
       } else if (initialTimeRange === "year") {
         return new Date(label + "-01").toLocaleString("default", {
           month: "short",
           year: "numeric",
-        }); // e.g., "Jan 2025"
+        });
       } else if (initialTimeRange === "day") {
-        return label.split(" ")[1]; // Show only hour, e.g., "14:00"
+        return label.split(" ")[1];
       }
       return label;
     });
@@ -450,7 +495,7 @@ function initializeCharts(initialData) {
             borderColor: "#0056b3",
             borderWidth: 2,
             fill: false,
-            pointRadius: 4,
+            pointRadius: 8,
             pointHoverRadius: 6,
             tension: 0.4,
           },
@@ -473,19 +518,126 @@ function initializeCharts(initialData) {
             },
           },
         },
+        plugins: {
+          datalabels: {
+            display: true,
+            color: "#ffffff",
+            font: { weight: "bold", size: 10 },
+            formatter: (value) => value,
+            align: "center",
+            anchor: "center",
+          },
+        },
       }
     );
   }
 
-  // Initialize charts with initial data
+  /* ---------- NEW: Performance Chart (Stacked Bar) ---------- */
+  function updatePerformanceChart(data) {
+    const allDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    const datasets = CATEGORY_CONFIG.map(({ key, color }) => ({
+      label: key,
+      data: allDays.map((day) => (data[key] && data[key][day]) || 0),
+      backgroundColor: Chart.helpers.color(color).alpha(0.85).rgbString(),
+      borderColor: color,
+      borderWidth: 1,
+    }));
+
+    performanceChart = initializeChart(
+      "performanceChart",
+      "bar",
+      { labels: allDays, datasets },
+      {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            stacked: false,
+            title: { display: true, text: "Day of Week" },
+            categoryPercentage: 1.0,
+            barPercentage: 1.0,
+          },
+          y: {
+            stacked: false,
+            beginAtZero: false,
+            suggestedMin: 0.1,
+            suggestedMax: 0.2,
+            title: { display: true, text: "Number of Interactions" },
+            ticks: { stepSize: 0.1 },
+          },
+        },
+        plugins: {
+          legend: { position: "top" },
+          title: { display: true, text: "Performance by Tag" },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}`,
+            },
+          },
+        },
+      }
+    );
+
+    const downloadButton = document.getElementById("downloadPerformanceChart");
+    if (downloadButton && !downloadButton.dataset.bound) {
+      downloadButton.dataset.bound = "true"; // Đánh dấu đã gắn
+
+      downloadButton.addEventListener("click", () => {
+        // ===== PNG with white background =====
+        const canvas = performanceChart.canvas;
+        const whiteCanvas = document.createElement("canvas");
+        whiteCanvas.width = canvas.width;
+        whiteCanvas.height = canvas.height;
+        const ctx = whiteCanvas.getContext("2d");
+
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, whiteCanvas.width, whiteCanvas.height);
+        ctx.drawImage(canvas, 0, 0);
+
+        const link = document.createElement("a");
+        link.href = whiteCanvas.toDataURL("image/png");
+        link.download = "Performance_chart.png";
+        link.click();
+
+        // ===== CSV Export =====
+        const chartData = performanceChart.data;
+        const csvRows = [
+          ["Day", ...chartData.datasets.map((ds) => ds.label)].join(","),
+        ];
+
+        chartData.labels.forEach((label, idx) => {
+          const row = [label, ...chartData.datasets.map((ds) => ds.data[idx])];
+          csvRows.push(row.join(","));
+        });
+
+        const csvBlob = new Blob(["\uFEFF" + csvRows.join("\n")], {
+          type: "text/csv",
+        });
+        const csvLink = document.createElement("a");
+        csvLink.href = URL.createObjectURL(csvBlob);
+        csvLink.download = "Performance_data.csv";
+        csvLink.click();
+      });
+    }
+  }
+
+  /* ---------- Khởi tạo ban đầu ---------- */
   console.log("Initial data loaded:", initialData);
   updateAgeChart(initialData.age);
   updateGenderChart(initialData.gender);
   updateStatusChart(initialData.status);
   updateHometownChart(initialData.hometown);
   updateTimeChart(initialData.time);
+  const initialTags = getSelectedTags(); 
+  const initialTime = initialTimeRange;
+  fetchChartData(
+    "performance",
+    initialTime,
+    initialTags,
+    updatePerformanceChart
+  );
 
-  // Pre-select dropdowns based on initial time range
   const charts = [
     { selectId: "ageChartSelect", updateFn: updateAgeChart, chartId: "age" },
     {
@@ -504,18 +656,51 @@ function initializeCharts(initialData) {
       chartId: "hometown",
     },
     { selectId: "timeChartSelect", updateFn: updateTimeChart, chartId: "time" },
+    {
+      selectId: "timeChartSelectPerformance",
+      updateFn: updatePerformanceChart,
+      chartId: "performance",
+    },
   ];
 
   charts.forEach(({ selectId, updateFn, chartId }) => {
     const select = document.getElementById(selectId);
     if (select) {
-      // Pre-select the dropdown based on initialTimeRange
       select.value = initialTimeRange;
       select.addEventListener("change", (e) => {
-        fetchChartData(chartId, e.target.value, updateFn);
+        const tagSelect =
+          chartId === "performance"
+            ? document.getElementById("tagSelect")
+            : null;
+        const tagName = tagSelect ? tagSelect.value : null;
+        fetchChartData(chartId, e.target.value, tagName, updateFn);
       });
     } else {
       console.error(`Element with ID "${selectId}" not found in DOM.`);
     }
   });
+
+  const tagSelect = document.getElementById("tagSelect");
+  if (tagSelect) {
+    tagSelect.value = initialTag;
+    tagSelect.addEventListener("change", () => {
+      const timeSelect = document.getElementById("timeChartSelectPerformance");
+      const timeRange = timeSelect ? timeSelect.value : initialTimeRange;
+      fetchChartData("performance", timeRange, null, updatePerformanceChart);
+    });
+  }
+
+  /* ---------- Helpers ---------- */
+  function getRandomColor() {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++)
+      color += letters[Math.floor(Math.random() * 16)];
+    return color + "80";
+  }
+
+  function showTimedAlert(title, message, type, duration) {
+    console.log(`${title}: ${message} (${type}, ${duration}ms)`);
+  }
 }
+/* ===================== END initializeCharts ===================== */

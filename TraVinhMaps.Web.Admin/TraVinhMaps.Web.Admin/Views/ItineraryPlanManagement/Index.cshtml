@@ -41,23 +41,23 @@
                                 <a asp-controller="ItineraryPlanManagement" asp-action="CreateItineratyPlan" class="btn btn-success">
                                     <i class="fa fa-plus me-1"></i>Create Itinerary Plan
                                 </a>
-                                <button class="btn btn-primary" id="exportBtn">
+                                <button class="btn btn-primary" title="Export Itinerary Plans" id="itineraryExportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
                             </div>
                             <div class="status-filter">
                                 <select id="statusFilter" class="form-select">
-                                    <option value="active">All</option>
+                                    <option value="active">Active</option>
                                     <option value="inactive">Inactive</option>
                                 </select>
                             </div>
                         </div>
                         <div class="table-responsive signal-table custom-scrollbar">
-                            <table class="display" id="project-status">
+                            <table class="display" id="basic-9">
                                 <thead>
                                     <tr>
-                                        <th>No. &nbsp</th>
-                                        <th>Name Of Etinerary</th>
+                                        <th>No.</th>
+                                        <th>Name Of Itinerary</th>
                                         <th>Duration &nbsp</th>
                                         <th>Estimate Cost</th>
                                         <th>Status</th>

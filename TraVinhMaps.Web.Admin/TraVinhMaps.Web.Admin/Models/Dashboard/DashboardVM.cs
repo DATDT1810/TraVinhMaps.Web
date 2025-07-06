@@ -11,8 +11,9 @@ namespace TraVinhMaps.Web.Admin.Models.Dashboard
         public long TotalUsers { get; set; }
         public long TotalUserActive { get; set; }
         public long TotalReviews { get; set; }
-        public List<UserResponse> RecentUsers { get; set; }
-        public List<UserStatisticVM> UserStatistics { get; set; }
+        public List<UserResponse> RecentUsers { get; set; } = new List<UserResponse>();
+        public List<UserStatisticVM> UserStatistics { get; set; } = new List<UserStatisticVM>();
+        public Dictionary<string, Dictionary<string, int>> PerformanceByTag { get; set; } = new Dictionary<string, Dictionary<string, int>>();
     }
 
     public class UserStatisticVM

@@ -44,7 +44,8 @@
                                     <i class="fa fa-plus me-1"></i>Add Local Specialties
                                 </a>
 
-                                <button class="btn btn-primary" id="exportBtn">
+                                <button class="btn btn-primary" title="Export Local Specialties List"
+                                    id="localSpecialtiesExportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
                             </div>
@@ -95,29 +96,29 @@
                                             <td>
                                                 <ul class="action">
                                                     <li>
-                                                        <a class="details" asp-controller="LocalSpecialties" asp-action="Details"
-                                                            asp-route-id="@item.Id" title="Details">
+                                                        <a class="details" asp-controller="LocalSpecialties"
+                                                            asp-action="Details" asp-route-id="@item.Id" title="Details">
                                                             <i class="fa fa-eye"></i>
                                                         </a>
                                                     </li>
                                                     <li>
                                                         @if (item.Status == true)
-                                                            {
-                                                                <a id="delete-localSpecialties" class="delete" href="javascript:void(0)"
-                                                                    data-id="@item.Id" title="Delete">
-                                                                    <i class="fa fa-trash" aria-hidden="true"></i>
-                                                                </a>
-                                                            }
-                                                            else
-                                                            {
-                                                                <a id="restore-localSpecialties" class="restore" href="javascript:void(0)"
-                                                                    data-id="@item.Id" title="Restore">
-                                                                    <i class="fa fa-undo"></i>
-                                                                </a>
-                                                            }
-                                                        </li>
-                                                    </ul>
-                                                </td>
+                                                        {
+                                                            <a id="delete-localSpecialties" class="delete"
+                                                                href="javascript:void(0)" data-id="@item.Id" title="Delete">
+                                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a id="restore-localSpecialties" class="restore"
+                                                                href="javascript:void(0)" data-id="@item.Id" title="Restore">
+                                                                <i class="fa fa-undo"></i>
+                                                            </a>
+                                                        }
+                                                    </li>
+                                                </ul>
+                                            </td>
                                         </tr>
                                         count++;
                                     }
@@ -135,28 +136,28 @@
     <link rel="stylesheet" href="~/assets/css/LocalSpecialties/details.css">
     <script src="~/assets/js/sweetalert-custom.js"></script>
     <script src="~/assets/js/local-specialties/index.js"></script>
-     <script>
+    <script>
         (function () {
             const success = @Html.Raw(Json.Serialize(TempData["CreateLocalSpecialtiesSuccess"]));
-            const error   = @Html.Raw(Json.Serialize(TempData["CreateLocalSpecialtiesError"]));
+            const error = @Html.Raw(Json.Serialize(TempData["CreateLocalSpecialtiesError"]));
             if (success) showTimedAlert("Success!", "@TempData["EditLocalSpecialtySuccess"]", "success", 1000);
-            if (error)    showTimedAlert("Error!", "@TempData["EditLocalSpecialtyError"]", "error", 1000);
+            if (error) showTimedAlert("Error!", "@TempData["EditLocalSpecialtyError"]", "error", 1000);
         })();
     </script>
     <script>
         $(document).ready(function () {
-           @if (TempData["EditLocalSpecialtySuccess"] != null)
-            {
-                <text>
-                    showTimedAlert("Success!", "@TempData["EditLocalSpecialtySuccess"]", "success", 1000);
-                </text>
+            @if (TempData["EditLocalSpecialtySuccess"] != null)
+                {
+                    <text>
+                        showTimedAlert("Success!", "@TempData["EditLocalSpecialtySuccess"]", "success", 1000);
+                    </text>
             }
-            @if (TempData["EditLocalSpecialtyError"] != null)
-            {
-                <text>
-                    showTimedAlert("Error!", "@TempData["EditLocalSpecialtyError"]", "error", 1000);
-                </text>
+                @if (TempData["EditLocalSpecialtyError"] != null)
+                {
+                    <text>
+                        showTimedAlert("Error!", "@TempData["EditLocalSpecialtyError"]", "error", 1000);
+                    </text>
             }
-        });
+            });
     </script>
 }
