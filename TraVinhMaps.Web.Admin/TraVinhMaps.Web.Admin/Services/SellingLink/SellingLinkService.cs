@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using TraVinhMaps.Web.Admin.Models.SellingLink;
@@ -50,18 +51,17 @@ namespace TraVinhMaps.Web.Admin.Services.SellingLink
         }
         public async Task<SellingLinkBase<SellingLinkResponse>> AddAsync(SellingLinkViewModel entity, CancellationToken cancellationToken = default)
         {
-            using var content = new MultipartFormDataContent();
-            content.Add(new StringContent(entity.ProductId ?? string.Empty), "ProductId");
-            content.Add(new StringContent(entity.Title ?? string.Empty), "Title");
-            content.Add(new StringContent(entity.Link ?? string.Empty), "Link");
-            HttpResponseMessage responseMessage = await _httpClient.PostAsync(sellingLinkApi + "AddSellingLink", content);
-            Console.WriteLine("Response: ", responseMessage);
+            var json = System.Text.Json.JsonSerializer.Serialize(entity);
+            using var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage responseMessage = await _httpClient.PostAsync(sellingLinkApi + "AddSellingLink", content, cancellationToken);
+
             if (responseMessage.IsSuccessStatusCode)
             {
                 var contentResult = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
-                Console.WriteLine("API Response Content: " + contentResult);
                 var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return System.Text.Json.JsonSerializer.Deserialize<SellingLinkBase<SellingLinkResponse>>(contentResult, option) ?? throw new HttpRequestException("Unable to create ocop type.");
+                return System.Text.Json.JsonSerializer.Deserialize<SellingLinkBase<SellingLinkResponse>>(contentResult, option)
+                    ?? throw new HttpRequestException("Unable to create selling link.");
             }
             else
             {
