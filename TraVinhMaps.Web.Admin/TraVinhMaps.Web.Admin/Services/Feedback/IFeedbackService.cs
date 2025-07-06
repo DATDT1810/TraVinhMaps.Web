@@ -11,7 +11,6 @@ namespace TraVinhMaps.Web.Admin.Services.Feedback
     {
         // Retrieve feedback by ID
         Task<FeedbackResponse> GetByIdAsync(string id, CancellationToken cancellationToken = default);
-
         // Retrieve all feedback
         Task<IEnumerable<FeedbackResponse>> ListAllAsync(CancellationToken cancellationToken = default);
 

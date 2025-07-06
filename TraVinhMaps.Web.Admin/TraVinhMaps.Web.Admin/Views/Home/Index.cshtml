@@ -167,6 +167,39 @@
                     </div>
                 </div>
             </div>
+            <!-- Performance by Tag Chart -->
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+                        <h5 class="me-3">Performance by Tag</h5>
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <select class="form-select w-auto" id="tagSelect" multiple>
+                                <option value="Destination">Destination</option>
+                                <option value="Ocop">Ocop</option>
+                                <option value="Local specialty">Local Specialty</option>
+                                <option value="Tips">Tips</option>
+                                <option value="Festivals">Festivals</option>
+                            </select>
+                            <select class="form-select w-auto" id="timeChartSelectPerformance">
+                                <option value="day">Today</option>
+                                <option value="week">Last Week</option>
+                                <option value="month">Last Month</option>
+                                <option value="year">Last Year</option>
+                            </select>
+                            <button title="(PNG & CSV)" class="btn btn-primary" id="downloadPerformanceChart">
+                                Download Chart
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <div id="performanceChart-loading" style="display: none; text-align: center;">Loading...
+                            </div>
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- New Users Chart (Full-width) -->
             <div class="col-12">
@@ -265,7 +298,8 @@
                                             <option value="month">Last Month</option>
                                             <option value="year">Last Year</option>
                                         </select>
-                                        <button title="(PNG & CSV)" class="btn btn-primary ms-2" id="downloadHometownChart">Download
+                                        <button title="(PNG & CSV)" class="btn btn-primary ms-2"
+                                            id="downloadHometownChart">Download
                                             Chart</button>
                                     </div>
                                     <div class="card-body">
@@ -289,7 +323,6 @@
                                 <h4>Top 5 Reviews</h4>
                                 <span><code>#Review new</code></span>
                             </div>
-
                         </div>
                     </div>
                     <div class="table-responsive signal-table custom-scrollbar">
@@ -333,26 +366,26 @@
 </div>
 
 @section Scripts {
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script src="~/assets/js/usermanagement/chart.js"></script>
     <script>
         // Define initial data and time range
-        const initialTimeRange = 'month';
+        const initialTimeRange = '@(ViewData["TimeRange"] ?? "month")';
+        const initialTag = '@(ViewData["TagName"] ?? "Destination")';
         const initialData = {
             age: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Age ?? new Dictionary<string, int>())),
             gender: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Gender ?? new Dictionary<string, int>())),
             status: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Status ?? new Dictionary<string, int>())),
             hometown: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Hometown ?? new Dictionary<string, int>())),
-            time: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Time ?? new Dictionary<string, int>()))
-                        };
-
-        // Handle error from ViewData
-        const error = @Html.Raw(Json.Serialize(ViewData["Error"]));
-        if (error) {
-            alert('Error: ' + error);
-        }
+            time: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Time ?? new Dictionary<string, int>())),
+            performance: @Html.Raw(Json.Serialize(Model.PerformanceByTag ?? new Dictionary<string, Dictionary<string, int>>()))
+                            };
+        console.log("Initial data:", initialData); // Debug log
 
         // Initialize charts when the window loads
         window.addEventListener('load', () => {
             initializeCharts(initialData);
+
             // Force resize for hometown chart after initialization
             const hometownChartCanvas = document.getElementById('hometownChart');
             if (hometownChartCanvas && window.hometownChart) {
@@ -360,16 +393,19 @@
             }
         });
 
+        // Handle error from ViewData
+        const error = @Html.Raw(Json.Serialize(ViewData["Error"]));
+        if (error) {
+            alert('Error: ' + error);
+        }
+
         // Optional: Listen for window resize to adjust chart
         window.addEventListener('resize', () => {
             if (window.hometownChart) {
                 window.hometownChart.resize();
             }
         });
-    </script>
-    <script src="~/assets/js/usermanagement/chart.js"></script>
 
-    <script>
         // Kết nối tới SignalR Hub
         const dashboardConnection = new signalR.HubConnectionBuilder()
             .withUrl("/dashboardHub")
@@ -381,10 +417,12 @@
             reloadAllUserCharts();
         });
 
-        // Kết nối và join group (nếu có role thực tế thì lấy từ Razor)
+        // Kết nối và join group
         dashboardConnection.start().then(function () {
             dashboardConnection.invoke("JoinAdminGroup", "admin");
             dashboardConnection.invoke("JoinAdminGroup", "super-admin");
+        }).catch(function (err) {
+            console.error("SignalR connection error:", err);
         });
 
         // Hàm reload lại dữ liệu chart
@@ -393,9 +431,11 @@
             fetch(`/api/users/stats?groupBy=all&timeRange=${timeRange}`)
                 .then(res => res.json())
                 .then(res => {
-                    updateCharts(res.data);
+                    const data = res.data || res; // Handle both structured and raw response
+                    updateCharts(data);
                     reloadSummaryWidgets();
-                });
+                })
+                .catch(err => console.error("Fetch error:", err));
         }
 
         // Hàm cập nhật lại dữ liệu cho các chart
@@ -425,20 +465,31 @@
                 window.timeChart.data.datasets[0].data = Object.values(data.time);
                 window.timeChart.update();
             }
+            if (window.performanceChart && data.performance) {
+                window.performanceChart.data.labels = Object.keys(data.performance);
+                window.performanceChart.data.datasets = Object.keys(data.performance[Object.keys(data.performance)[0]] || {}).map(type => ({
+                    label: type,
+                    data: Object.keys(data.performance).map(day => data.performance[day][type] || 0),
+                    backgroundColor: getRandomColor(),
+                    stack: 'Stack'
+                }));
+                window.performanceChart.update();
+            }
         }
 
-        // 6. (Tuỳ chọn) Hàm cập nhật số liệu tổng quan widgets
+        // Hàm cập nhật số liệu tổng quan widgets
         function reloadSummaryWidgets() {
             fetch(`/api/users/summary`)
                 .then(res => res.json())
                 .then(res => {
                     if (document.querySelector('.total-project .f-w-600')) {
-                        document.querySelector('.total-project .f-w-600').textContent = res.totalUsers;
+                        document.querySelector('.total-project .f-w-600').textContent = res.totalUsers || 0;
                     }
                     if (document.querySelector('.total-Progress .f-w-600')) {
-                        document.querySelector('.total-Progress .f-w-600').textContent = res.totalUserActive;
+                        document.querySelector('.total-Progress .f-w-600').textContent = res.totalUserActive || 0;
                     }
-                });
+                })
+                .catch(err => console.error("Summary fetch error:", err));
         }
     </script>
 }

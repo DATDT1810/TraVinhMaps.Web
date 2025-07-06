@@ -41,7 +41,7 @@
                                 <a asp-controller="EventAndFestivalManagement" asp-action="CreateEventFestival" class="btn btn-success">
                                     <i class="fa fa-plus me-1"></i>Create Event And Festival
                                 </a>
-                                <button class="btn btn-primary" id="exportBtn">
+                                <button class="btn btn-primary" title="Export Event And Festival" id="festivalExportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
                                 @if(ViewBag.error != null) {
@@ -59,9 +59,9 @@
                             <table class="display" id="project-status">
                                 <thead class="bg-primary">
                                     <tr>
-                                        <th>No. &nbsp</th>
+                                        <th>No.</th>
                                         <th>Name Of Event And Festival</th>
-                                        <th>Type &nbsp</th>
+                                        <th>Type</th>
                                         <th>Start date to end date</th>
                                         <th>Status</th>
                                         <th>Created At</th>
@@ -137,11 +137,11 @@
     <script>
         (function () {
             const success = @Html.Raw(Json.Serialize(TempData["Success"]));
-            const error   = @Html.Raw(Json.Serialize(TempData["Error"]));
-            if (success) showSuccessAlert("Success!", success);
-            if (error)   showErrorAlert("Error!",   error);
+            const error   = @Html.Raw(Json.Serialize(TempData["Error"])); 
+            if (success) showTimedAlert("Success!", success, "success", 1000);
+            if (error)   showTimedAlert("Error!", error, "error", 1000);
         })();
-          @if (TempData["EditEventAndFestivalSuccess"] != null)
+            @if (TempData["EditEventAndFestivalSuccess"] != null)
             {
                 <text>
                     showTimedAlert("Success!", "@TempData["EditEventAndFestivalSuccess"]", "success", 1000);

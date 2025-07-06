@@ -42,7 +42,7 @@
                                     <i class="fa fa-plus me-1"></i>Add Admin
                                 </a>
 
-                                <button class="btn btn-primary" id="exportBtn">
+                                <button class="btn btn-primary" title="Export Admin List" id="adminExportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
                             </div>
@@ -128,6 +128,7 @@
     @Html.AntiForgeryToken()
     <script src="~/assets/js/sweetalert-custom.js"></script>
     <script src="~/assets/js/admins/update.js"></script>
+    <script src="~/assets/js/admins/export-excel.js"></script>
     <script>
         $(document).ready(function () {
             @if (TempData["CreateAdminSuccess"] != null)

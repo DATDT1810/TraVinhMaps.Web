@@ -7,10 +7,10 @@ namespace TraVinhMaps.Web.Admin.Models.OcopProduct
 {
     public class OcopProductAnalytics
     {
-        public string Id { get; set; }
-        public string ProductName { get; set; }
+        public string Id { get; set; } = default!;
+        public string ProductName { get; set; } = default!;
         public long ViewCount { get; set; }
         public long InteractionCount { get; set; }
-        public long WishlistCount { get; set; }
+        public long FavoriteCount { get; set; }
     }
 }

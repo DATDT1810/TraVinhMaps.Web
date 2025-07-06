@@ -2,7 +2,7 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model IEnumerable<OcopTypeResponse>;
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Ocop Type List";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -66,7 +66,7 @@
                             <table class="display" id="project-status">
                                 <thead class="bg-primary">
                                     <tr>
-                                        <th>No. &nbsp</th>
+                                        <th>No.</th>
                                         <th>Ocop Type Name</th>
                                         <th>Created At</th>
                                         <th>Action</th>
@@ -88,10 +88,9 @@
                                         </td>
 
                                             <td class="text-center align-middle">
-                                                <ul class="action d-flex justify-content-center align-items-center mb-0"
-                                                    style="height: 100%;">
+                                                <ul>
                                                     <li>
-                                                        <a asp-controller="OcopType" asp-action="UpdateOcopType"
+                                                        <a class="edit" asp-controller="OcopType" asp-action="UpdateOcopType"
                                                             asp-route-id="@item.Id"><i class="fa fa-pencil"></i> </a>
                                                     </li>
                                                 </ul>
