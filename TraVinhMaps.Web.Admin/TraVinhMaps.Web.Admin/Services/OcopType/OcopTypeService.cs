@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -25,16 +26,20 @@ namespace TraVinhMaps.Web.Admin.Services.OcopType
         {
             if (string.IsNullOrEmpty(entity.OcopTypeName))
             {
-                throw new ArgumentException("OcopTypeName are required.");
+                throw new ArgumentException("OcopTypeName is required.");
             }
-            using var content = new MultipartFormDataContent();
-            content.Add(new StringContent(entity.OcopTypeName ?? string.Empty), "OcopTypeName");
-            HttpResponseMessage responseMessage = await _httpClient.PostAsync(ocopTypeApi + "AddOcopType", content);
+
+            var json = System.Text.Json.JsonSerializer.Serialize(entity);
+            using var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage responseMessage = await _httpClient.PostAsync(ocopTypeApi + "AddOcopType", content, cancellationToken);
+
             if (responseMessage.IsSuccessStatusCode)
             {
                 var contentResult = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
                 var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return System.Text.Json.JsonSerializer.Deserialize<CreateOcopTypeResponse<OcopTypeResponse>>(contentResult, option) ?? throw new HttpRequestException("Unable to create ocop type.");
+                return System.Text.Json.JsonSerializer.Deserialize<CreateOcopTypeResponse<OcopTypeResponse>>(contentResult, option)
+                    ?? throw new HttpRequestException("Unable to create ocop type.");
             }
             else
             {
@@ -42,7 +47,6 @@ namespace TraVinhMaps.Web.Admin.Services.OcopType
                 throw new HttpRequestException($"Unable to fetch create ocop type. Status: {responseMessage.StatusCode}, Error: {errorResult}");
             }
         }
-
         public async Task<long> CountAsync(Expression<Func<OcopTypeResponse, bool>> predicate = null, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient.GetAsync(ocopTypeApi + "CountOcopTypes");

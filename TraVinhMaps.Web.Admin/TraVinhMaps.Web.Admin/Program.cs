@@ -18,6 +18,7 @@ using TraVinhMaps.Web.Admin.Services.Markers;
 using TraVinhMaps.Web.Admin.Services.DestinationTypes;
 using TraVinhMaps.Web.Admin.Services.Feedback;
 using TraVinhMaps.Web.Admin.Services.Company;
+using TraVinhMaps.Web.Admin.Services.Review;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -33,6 +34,8 @@ builder.Services.AddScoped<IOcopTypeService, OcopTypeService>();
 builder.Services.AddScoped<ISellingLinkService, SellingLinkService>();
 // Register ICompanyService
 builder.Services.AddScoped<ICompanyService, CompanyService>();
+// Register IReviewService
+builder.Services.AddScoped<IReviewService, ReviewService>();
 // Register ILocalSpecialtiesService
 builder.Services.AddScoped<ILocalSpecialtiesService, LocalSpecialtiesService>();
 // Register IAdminService

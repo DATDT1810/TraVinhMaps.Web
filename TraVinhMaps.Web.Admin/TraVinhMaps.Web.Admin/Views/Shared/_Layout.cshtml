@@ -218,6 +218,14 @@
                                     <span>Company</span>
                                 </a>
                             </li>
+                            <!-- Review -->
+                            <li class="sidebar-list">
+                                <a class="sidebar-link sidebar-title link-nav" asp-controller="Review"
+                                    asp-action="Index">
+                                    <i class="fa fa-comments"></i>
+                                    <span>Review Management</span>
+                                </a>
+                            </li>
                             <!-- Local Specialties Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="LocalSpecialties"
@@ -294,17 +302,6 @@
             <!-- Page Sidebar Ends-->
             <main role="main" class="pb-3"></main>
             @RenderBody()
-
-            <!-- footer start-->
-            <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12 footer-copyright text-center">
-                            <p class="mb-0">Copyright 2025 © Khanh's Team From FPTU</p>
-                        </div>
-                    </div>
-                </div>
-            </footer>
         </div>
     </div>
 
