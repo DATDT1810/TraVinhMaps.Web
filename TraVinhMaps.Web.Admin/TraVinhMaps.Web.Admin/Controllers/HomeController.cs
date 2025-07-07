@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TraVinhMaps.Web.Admin.Models.Dashboard;
+using TraVinhMaps.Web.Admin.Models.Review;
 using TraVinhMaps.Web.Admin.Services.Admin;
+using TraVinhMaps.Web.Admin.Services.Review;
 using TraVinhMaps.Web.Admin.Services.Users;
 
 namespace TraVinhMaps.Web.Admin.Controllers
@@ -11,11 +13,13 @@ namespace TraVinhMaps.Web.Admin.Controllers
     {
         private readonly IUserService _userService;
         private readonly IAdminService _adminService;
+        private readonly IReviewService _reviewService;
 
-        public HomeController(IUserService userService, IAdminService adminService)
+        public HomeController(IUserService userService, IAdminService adminService, IReviewService reviewService)
         {
             _userService = userService;
             _adminService = adminService;
+            _reviewService = reviewService;
         }
 
         public async Task<IActionResult> Index(string timeRange = "month", string[]? tagNames = null)
@@ -42,7 +46,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
             {
                 TotalUsers = await _userService.CountAllUsersAsync(),
                 TotalUserActive = await _userService.CountActiveUsersAsync(),
-                UserStatistics = new List<UserStatisticVM>()
+                UserStatistics = new List<UserStatisticVM>(),
+                LatestReviews = new List<ReviewResponse>()
             };
 
             try
@@ -83,6 +88,15 @@ namespace TraVinhMaps.Web.Admin.Controllers
             catch (Exception ex)
             {
                 ViewData["Error"] = "Unable to load user statistics: " + ex.Message;
+            }
+            try
+            {
+                var latestReviews = await _reviewService.GetLatestReviewsAsync(5, cancellationToken: CancellationToken.None);
+                model.LatestReviews = latestReviews.ToList();
+            }
+            catch (Exception ex)
+            {
+                ViewData["ErrorReviews"] = "Unable to load latest reviews: " + ex.Message;
             }
 
             // Pass the selected timeRange to the view for pre-selecting the dropdowns
