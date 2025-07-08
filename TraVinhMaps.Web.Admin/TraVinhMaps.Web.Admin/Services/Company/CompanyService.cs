@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using TraVinhMaps.Web.Admin.Models.Company;
@@ -52,8 +53,8 @@ namespace TraVinhMaps.Web.Admin.Services.Company
         }
         public async Task<CreateCompanyResponse<CompanyResponse>> AddAsync(CompanyViewModel entity, CancellationToken cancellationToken = default)
         {
-            var json = JsonSerializer.Serialize(entity);
-            var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+            var json = System.Text.Json.JsonSerializer.Serialize(entity);
+            using var content = new StringContent(json, Encoding.UTF8, "application/json");
             HttpResponseMessage responseMessage = await _httpClient.PostAsync(companyApi + "AddCompany", content);
             Console.WriteLine("Response: ", responseMessage);
             if (responseMessage.IsSuccessStatusCode)

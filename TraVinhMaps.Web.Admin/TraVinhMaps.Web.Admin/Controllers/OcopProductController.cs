@@ -10,6 +10,7 @@ using TraVinhMaps.Web.Admin.Services.Company;
 using TraVinhMaps.Web.Admin.Services.OcopProduct;
 using TraVinhMaps.Web.Admin.Services.OcopType;
 using TraVinhMaps.Web.Admin.Services.SellingLink;
+using TraVinhMaps.Web.Admin.Services.Tags;
 
 namespace TraVinhMaps.Web.Admin.Controllers
 {
@@ -20,12 +21,14 @@ namespace TraVinhMaps.Web.Admin.Controllers
         private readonly ISellingLinkService _sellingLinkService;
         private readonly IOcopTypeService _ocopTypeService;
         private readonly ICompanyService _companyService;
-        public OcopProductController(IOcopProductService ocopProductService, ISellingLinkService sellingLinkService, IOcopTypeService ocopTypeService, ICompanyService companyService)
+        private readonly ITagService _tagService;
+        public OcopProductController(IOcopProductService ocopProductService, ISellingLinkService sellingLinkService, IOcopTypeService ocopTypeService, ICompanyService companyService, ITagService tagService)
         {
             _ocopProductService = ocopProductService;
             _sellingLinkService = sellingLinkService;
             _ocopTypeService = ocopTypeService;
             _companyService = companyService;
+            _tagService = tagService;
         }
         public async Task<IActionResult> Index()
         {
@@ -47,14 +50,16 @@ namespace TraVinhMaps.Web.Admin.Controllers
 
             if (ocopProduct != null)
             {
-                ocopProduct.TagId = ocopProduct.TagId?.ToString().Replace("ObjectId(\"", "").Replace("\")", "");
+                //ocopProduct.TagId = ocopProduct.TagId?.ToString().Replace("ObjectId(\"", "").Replace("\")", "");
 
                 try
                 {
                     var ocopType = await _ocopTypeService.GetByIdAsync(ocopProduct.OcopTypeId, cancellationToken);
                     var company = await _companyService.GetByIdAsync(ocopProduct.CompanyId, cancellationToken);
+                    var tag = await _tagService.GetByIdAsync(ocopProduct.TagId, cancellationToken);
                     ViewBag.OcopTypeName = ocopType?.OcopTypeName ?? "Unknown";
                     ViewBag.CompanyName = company?.Name ?? "Unknown";
+                    ViewBag.TagName = tag?.Name ?? "Unknown";
                 }
                 catch (HttpRequestException ex)
                 {

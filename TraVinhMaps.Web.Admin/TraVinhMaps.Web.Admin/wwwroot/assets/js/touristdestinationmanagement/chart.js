@@ -420,28 +420,48 @@ document.getElementById("topFavoritesReset")?.addEventListener("click", () => {
     refreshTopFavoritesChart();
 });
 
-// Compare, Download, and other logic (unchanged)
+// Compare, Download, and other logic
 async function refreshCompareDestinationsChart(showAlert = true) {
-    const selectedIds = Array.from(document.getElementById("compareDestinationsSelect")?.selectedOptions || []).map(opt => opt.value);
+    /* 1. Lấy input */
+    const selectedIds = Array.from(document.getElementById("compareDestinationsSelect")?.selectedOptions || [])
+                                .map(opt => opt.value);
+    const timeRange = document.getElementById("compareTimeRange")?.value || "all";   // "all" mới
+    const startDate = document.getElementById("compareStartDate")?.value || "";
+    const endDate   = document.getElementById("compareEndDate")?.value || "";
+
+    /* 2. Validate */
     if (!selectedIds.length) {
         drawCompareDestinationsChart([]);
+        showTimedAlert("Warning", "Please choose at least one destination", "warning", 1000);
         return;
     }
-    const url = `${destinationApi}stats-compare?${selectedIds.map(id => `destinationIds=${id}`).join("&")}&timeRange=month`;
+    if (!validateFilterInputs(startDate, endDate)) return;
+
+    /* 3. Build URL */
+    let url = `${destinationApi}stats-compare?` +
+              selectedIds.map(id => `destinationIds=${encodeURIComponent(id)}`).join("&") +
+              `&timeRange=${encodeURIComponent(timeRange)}`;
+
+    if (startDate) url += `&startDate=${encodeURIComponent(startDate)}`;
+    if (endDate)   url += `&endDate=${encodeURIComponent(endDate)}`;
+
+    /* 4. Call API */
     try {
         document.getElementById("compareDestinationsBtn")?.setAttribute("disabled", "true");
+
         const response = await fetch(url, { method: "GET", headers: { Accept: "application/json" } });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const raw = await response.json();
-        const cmp = raw.data || [];
-        if (!cmp.length) {
-            drawCompareDestinationsChart([]);
-            if (showAlert) showTimedAlert("Warning", "No data found", "warning", 1000);
-            return;
-        }
-        compareDestinations = cmp;
+
+        const { data = [] } = await response.json();
+        compareDestinations = Array.isArray(data) ? data : [];
+
         drawCompareDestinationsChart(compareDestinations);
-        if (showAlert) showTimedAlert("Success!", "Comparison chart refreshed", "success", 1000);
+
+        if (!compareDestinations.length && showAlert)
+            showTimedAlert("Warning", "No data found", "warning", 1000);
+        else if (showAlert)
+            showTimedAlert("Success!", "Comparison chart refreshed", "success", 1000);
+
     } catch (error) {
         logDebug("Compare Destinations refresh error", error);
         if (showAlert) showTimedAlert("Error", `Failed to refresh comparison data: ${error.message}`, "error", 1000);
@@ -449,6 +469,36 @@ async function refreshCompareDestinationsChart(showAlert = true) {
         document.getElementById("compareDestinationsBtn")?.removeAttribute("disabled");
     }
 }
+
+/* 5. Event listeners */
+document.getElementById("compareDestinationsBtn")
+        ?.addEventListener("click", () => refreshCompareDestinationsChart());
+
+document.getElementById("compareDestinationsReset")?.addEventListener("click", () => {
+    // Reset filters
+    document.getElementById("compareTimeRange").value = "month";
+    document.getElementById("compareStartDate").value = "";
+    document.getElementById("compareEndDate").value = "";
+
+    // Reset Quick Filter select (Select2)
+    const $select = $("#compareDestinationsSelect");
+
+    // Nếu không còn option nào → khôi phục
+    if ($select.find("option").length === 0 && originalCompareOptions.length > 0) {
+        $select.empty(); // xóa hết option
+        originalCompareOptions.forEach(opt => {
+            $select.append(new Option(opt.text, opt.value));
+        });
+    }
+
+    $select.val(null).trigger("change");
+
+    // Clear chart
+    drawCompareDestinationsChart([]);
+    showTimedAlert("Success!", "Filters have been reset", "success", 1000);
+});
+
+
 document.getElementById("compareDestinationsBtn")?.addEventListener("click", () => refreshCompareDestinationsChart());
 
 // Download chart (unchanged)

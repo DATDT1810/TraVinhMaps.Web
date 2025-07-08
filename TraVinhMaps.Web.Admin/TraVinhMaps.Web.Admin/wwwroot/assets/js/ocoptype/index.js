@@ -95,9 +95,9 @@
                     success: function (response) {
                         if (response.success) {
                             updateRow(row, false, id);
-                            showTimedAlert("Success!", response.message, "success", 3000);
+                            showTimedAlert("Success!", response.message, "success", 1000);
                         } else {
-                            showTimedAlert("Error!", response.message, "error", 3000);
+                            showTimedAlert("Error!", response.message, "error", 1000);
                         }
                     },
                     error: function (xhr) {
@@ -126,9 +126,9 @@
                     success: function (response) {
                         if (response.success) {
                             updateRow(row, true, id);
-                            showTimedAlert("Success!", response.message, "success", 3000);
+                            showTimedAlert("Success!", response.message, "success", 1000);
                         } else {
-                            showTimedAlert("Error!", response.message, "error", 3000);
+                            showTimedAlert("Error!", response.message, "error", 1000);
                         }
                     },
                     error: function (xhr) {

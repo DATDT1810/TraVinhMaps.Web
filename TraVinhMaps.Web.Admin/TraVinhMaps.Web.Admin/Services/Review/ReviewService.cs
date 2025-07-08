@@ -91,5 +91,21 @@ namespace TraVinhMaps.Web.Admin.Services.Review
                 throw new HttpRequestException($"Unable to fetch reviews. Status: {response.StatusCode}, Error: {errorResult}");
             }
         }
+
+        public async Task<IEnumerable<ReviewResponse>> GetLatestReviewsAsync(int count = 5, CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync(reviewApi + "GetLatestReviews");
+            if (response.IsSuccessStatusCode)
+            {
+                var contentResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                return System.Text.Json.JsonSerializer.Deserialize<ReviewBase<List<ReviewResponse>>>(contentResult, option)?.Data ?? throw new HttpRequestException("Fail to find list latest review.");
+            }
+            else
+            {
+                var errorResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new HttpRequestException($"Unable to fetch list latest review. Status: {response.StatusCode}, Error: {errorResult}");
+            }
+        }
     }
 }
