@@ -68,7 +68,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     ViewBag.CompanyName = "Unknown";
                 }
             }
-
+            ViewData["Title"] = "Ocop Product Detail";
+            ViewData["Breadcrumb"] = new List<string> { "Ocop Product", "Ocop Detail" };
             return View(ocopProduct);
         }
 
