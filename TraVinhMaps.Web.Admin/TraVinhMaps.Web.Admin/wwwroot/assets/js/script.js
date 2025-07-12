@@ -268,7 +268,7 @@
       es: "Paneloj, fenestraÄµoj kaj aranÄo.",
       fr: "Tableaux de bord, widgets et mise en page.",
       de: "Dashboards, widgets en lay-out.",
-      cn: "ä»ªè¡¨æ¿ï¼Œå°å·¥å…·å’Œå¸ƒå±€ã€‚",
+      cn: "ä»ªè¡¨æ¿ï¼Œå°å·¥å…·å'Œå¸ƒå±€ã€‚",
       ae: "Ù„ÙˆØ­Ø§Øª Ø§Ù„Ù…Ø¹Ù„ÙˆÙ…Ø§Øª ÙˆØ§Ù„Ø£Ø¯ÙˆØ§Øª ÙˆØ§Ù„ØªØ®Ø·ÙŠØ·.",
     },
     {
@@ -363,5 +363,30 @@
     }
   })*/
   // ================ show and hide input css end 
+
+  // Dark mode persistence
+  (function() {
+    // Check for saved dark mode preference on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const darkModeEnabled = localStorage.getItem('darkMode') === 'enabled';
+      if (darkModeEnabled) {
+        document.body.classList.add('dark-only');
+      }
+    });
+
+    // Listen for dark mode toggle clicks
+    document.addEventListener('click', function(e) {
+      const target = e.target.closest('.mode');
+      if (target) {
+        if (document.body.classList.contains('dark-only')) {
+          document.body.classList.remove('dark-only');
+          localStorage.setItem('darkMode', 'disabled');
+        } else {
+          document.body.classList.add('dark-only');
+          localStorage.setItem('darkMode', 'enabled');
+        }
+      }
+    });
+  })();
 
 })(jQuery);

@@ -1,24 +1,25 @@
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using TraVinhMaps.Web.Admin.Extensions;
+using TraVinhMaps.Web.Admin.Middlewares;
 using TraVinhMaps.Web.Admin.Services.Admin;
 using TraVinhMaps.Web.Admin.Services.Auth;
 using TraVinhMaps.Web.Admin.Services.CommunityTips;
+using TraVinhMaps.Web.Admin.Services.Company;
+using TraVinhMaps.Web.Admin.Services.DestinationTypes;
 using TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature;
+using TraVinhMaps.Web.Admin.Services.Feedback;
 using TraVinhMaps.Web.Admin.Services.ItineraryPlan;
+using TraVinhMaps.Web.Admin.Services.LocalSpecialties;
+using TraVinhMaps.Web.Admin.Services.Markers;
 using TraVinhMaps.Web.Admin.Services.Notifications;
 using TraVinhMaps.Web.Admin.Services.OcopProduct;
 using TraVinhMaps.Web.Admin.Services.OcopType;
+using TraVinhMaps.Web.Admin.Services.Review;
 using TraVinhMaps.Web.Admin.Services.SellingLink;
 using TraVinhMaps.Web.Admin.Services.Tags;
 using TraVinhMaps.Web.Admin.Services.TouristDestination;
 using TraVinhMaps.Web.Admin.Services.Users;
-using TraVinhMaps.Web.Admin.Services.LocalSpecialties;
-using TraVinhMaps.Web.Admin.Services.Markers;
-using TraVinhMaps.Web.Admin.Services.DestinationTypes;
-using TraVinhMaps.Web.Admin.Services.Feedback;
-using TraVinhMaps.Web.Admin.Services.Company;
-using TraVinhMaps.Web.Admin.Services.Review;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -95,8 +96,6 @@ builder.Services.AddAuthentication(options =>
         options.Cookie.HttpOnly = true;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure cookies are only sent over HTTPS
         options.Cookie.SameSite = SameSiteMode.Lax; // Changed from Strict to Lax to allow cross-site redirects for OAuth
-        //options.ExpireTimeSpan = TimeSpan.FromHours(24);
-        //options.SlidingExpiration = true;
         options.Cookie.Name = "TVMaps.Auth"; // Custom name for the cookie
     })
     .AddGoogle(googleOptions =>
@@ -106,6 +105,12 @@ builder.Services.AddAuthentication(options =>
         googleOptions.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
         // googleOptions.CallbackPath = "/Authen/signin-google"; // Use a simpler path that matches Google's expectations
     });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy => policy.RequireRole("admin"));
+    options.AddPolicy("SuperAdmin", policy => policy.RequireRole("super-admin"));
+});
 
 // Add Antiforgery services for CSRF protection
 builder.Services.AddAntiforgery(options =>
@@ -153,10 +158,9 @@ app.UseRouting();
 app.UseSession();
 
 app.UseAuthentication();
+app.UseMiddleware<SessionExpirationMiddleware>();
 app.UseAuthorization();
 
-// Add session expiration middleware after authentication but before handling routes
-app.UseSessionExpiration();
 
 app.MapControllerRoute(
     name: "default",

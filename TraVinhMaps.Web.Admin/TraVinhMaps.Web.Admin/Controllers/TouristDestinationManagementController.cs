@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TraVinhMaps.Web.Admin.Models.TouristDestination;
@@ -23,6 +18,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
         private readonly ITagService _tagService;
         private readonly IMarkerService _markerService;
 
+
         public TouristDestinationManagementController(ILogger<TouristDestinationManagementController> logger, IDestinationService destinationService, IDestinationTypeService destinationTypeService, ITagService tagService, IMarkerService markerService)
         {
             _logger = logger;
@@ -30,6 +26,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             _destinationTypeService = destinationTypeService;
             _tagService = tagService;
             _markerService = markerService;
+
         }
 
         [HttpGet]
@@ -122,23 +119,27 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [HttpGet("EditDestination")]
         public async Task<IActionResult> EditDestination(string id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
+                var destination = await _destinationService.GetDestinationById(id);
+                if (destination == null)
+                {
+                    return NotFound();
+                }
+                var touristDestinationData = DestinationMapper.Mapper.Map<UpdateDestinationViewRequest>(destination);
+                touristDestinationData.longitude = destination.Location.Coordinates[0];
+                touristDestinationData.latitude = destination.Location.Coordinates[1];
+                touristDestinationData.Type = destination.Location.Type;
+
+                ViewBag.DestinationTypes = await GetDestinationTypeList();
+
+                return View(touristDestinationData);
             }
-            var destinationDetail = await _destinationService.GetDestinationById(id);
-            if (destinationDetail == null)
+            catch (Exception ex)
             {
-                return NotFound();
+                ViewBag.error = $"An error occurred: {ex.Message}";
+                return View("Error");
             }
-            var touristDestinationData = DestinationMapper.Mapper.Map<UpdateDestinationViewRequest>(destinationDetail);
-            touristDestinationData.longitude = destinationDetail.Location.Coordinates[0];
-            touristDestinationData.latitude = destinationDetail.Location.Coordinates[1];
-            touristDestinationData.Type = destinationDetail.Location.Type;
-
-            ViewBag.DestinationTypes = await GetDestinationTypeList();
-
-            return View(touristDestinationData);
         }
 
         [HttpPost("EditDestination")]
@@ -439,6 +440,6 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return View("DestinationsStatistics", new DestinationStatisticsViewModel());
             }
         }
-        
+
     }
 }
