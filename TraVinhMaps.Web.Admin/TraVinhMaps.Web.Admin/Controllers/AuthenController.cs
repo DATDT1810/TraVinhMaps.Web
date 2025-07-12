@@ -193,11 +193,13 @@ namespace TraVinhMaps.Web.Admin.Controllers
                         {
                             new Claim(ClaimTypes.Name, TempData["Username"]?.ToString() ?? "User"),
                             new Claim("sessionId", result.SessionId),
+                            new Claim(ClaimTypes.Role, result.Role),
+                            new Claim("expiredAt", DateTime.UtcNow.AddDays(1).ToString("o"))
                         };
                         if (isRememberMe)
                         {
                             claims.Add(new Claim("refreshToken", result.RefreshToken));
-                        }   
+                        }
 
                         var claimsIdentity = new ClaimsIdentity(
                             claims, CookieAuthenticationDefaults.AuthenticationScheme);

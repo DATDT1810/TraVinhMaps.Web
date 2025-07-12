@@ -23,7 +23,6 @@ namespace TraVinhMaps.Web.Admin.Models.Auth
     {
         public string SessionId { get; set; }
         public string RefreshToken { get; set; }
-
         public string Role { get; set; }
     }
 

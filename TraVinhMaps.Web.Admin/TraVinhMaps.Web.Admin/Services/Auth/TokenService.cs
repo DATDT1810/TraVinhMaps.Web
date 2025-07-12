@@ -44,18 +44,17 @@ namespace TraVinhMaps.Web.Admin.Services.Auth
             await _refreshSemaphore.WaitAsync();
             try
             {
+                if (IsSessionValid(context))
+                {
+                    _logger.LogInformation("Session is still valid after waiting, skipping refresh");
+                    return true;
+                }
+
                 var refreshToken = GetRefreshToken(context);
                 if (string.IsNullOrEmpty(refreshToken))
                 {
                     _logger.LogWarning("No refresh token available for token refresh");
                     return false;
-                }
-
-                var currentSessionId = GetSessionId(context);
-                if (!string.IsNullOrEmpty(currentSessionId))
-                {
-                    _logger.LogInformation("Session ID is now available after waiting, skipping refresh");
-                    return true;
                 }
 
                 var httpClient = _httpClientFactory.CreateClient("ApiClientNoAuth");
@@ -114,7 +113,8 @@ namespace TraVinhMaps.Web.Admin.Services.Auth
 
                 var newClaims = new List<Claim>(existingClaims)
             {
-                new Claim("sessionId", sessionId)
+                new Claim("sessionId", sessionId),
+                new Claim("expiredAt", DateTime.UtcNow.AddHours(24).ToString("o")) // ISO 8601 format
             };
 
                 if (!string.IsNullOrEmpty(refreshToken))
@@ -156,6 +156,55 @@ namespace TraVinhMaps.Web.Admin.Services.Auth
             {
                 _logger.LogError(ex, "Failed to sign out user");
             }
+        }
+
+        public bool IsSessionValid(HttpContext context)
+        {
+            var expiredAtString = context.User.FindFirst("expiredAt")?.Value;
+            if (string.IsNullOrEmpty(expiredAtString))
+            {
+                _logger.LogWarning("No expiredAt claim found for session validation");
+                return false;
+            }
+
+            if (!DateTime.TryParse(expiredAtString, out var expiredAt))
+            {
+                _logger.LogWarning("Invalid expiredAt claim format: {ExpiredAt}", expiredAtString);
+                return false;
+            }
+
+            var isValid = expiredAt > DateTime.UtcNow;
+
+            if (!isValid)
+            {
+                var sessionId = GetSessionId(context);
+                _logger.LogInformation("Session expired for SessionId: {SessionId}, ExpiredAt: {ExpiredAt}",
+                    sessionId, expiredAt);
+            }
+
+            return isValid;
+        }
+
+        public string? GetRole(HttpContext? context)
+        {
+            return context?.User?.FindFirst(ClaimTypes.Role)?.Value;
+        }
+
+        public DateTime? GetSessionExpiryTime(HttpContext context)
+        {
+            var expiredAtString = context.User?.FindFirst("expiredAt")?.Value;
+            return DateTime.TryParse(expiredAtString, out var expiredAt) ? expiredAt : null;
+        }
+
+        public TimeSpan GetSessionTimeRemaining(HttpContext context)
+        {
+            var expiryTime = GetSessionExpiryTime(context);
+            if (expiryTime.HasValue)
+            {
+                var remaining = expiryTime.Value - DateTime.UtcNow;
+                return remaining > TimeSpan.Zero ? remaining : TimeSpan.Zero;
+            }
+            return TimeSpan.Zero;
         }
     }
 }
