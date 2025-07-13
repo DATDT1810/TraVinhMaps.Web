@@ -10,12 +10,8 @@ namespace TraVinhMaps.Web.Admin.Models.TouristDestination
     public class OpeningHoursDestination
     {
         [DisplayName("Opening Time")]
-        [MinLength(3, ErrorMessage = "Address must be at least 3 characters")]
-        [MaxLength(20, ErrorMessage = "Address must be less than or equal to 20 characters")]
         public string? OpenTime { get; set; }
         [DisplayName("Closing Time")]
-        [MinLength(3, ErrorMessage = "Address must be at least 3 characters")]
-        [MaxLength(20, ErrorMessage = "Address must be less than or equal to 20 characters")]
         public string? CloseTime { get; set; }
     }
 }

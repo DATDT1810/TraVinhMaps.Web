@@ -1,15 +1,11 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 using TraVinhMaps.Web.Admin.Models.EventAndFestivalFeature.DataAnnotationsCustoms;
 
 namespace TraVinhMaps.Web.Admin.Models.EventAndFestivalFeature
 {
     public class CreateEventAndFestivalRequestViewModel
     {
-        [Required(ErrorMessage = "Event name is required.")]
+        [Required]
         [StringLength(200, ErrorMessage = "Event name cannot exceed 200 characters.")]
         public required string NameEvent { get; set; }
         [StringLength(3000, ErrorMessage = "Description cannot exceed 3000 characters.")]
@@ -31,5 +27,7 @@ namespace TraVinhMaps.Web.Admin.Models.EventAndFestivalFeature
         public double longitude { get; set; }
         [Required(ErrorMessage = "latitude of destination is required")]
         public double latitude { get; set; }
+        public string? TagId { get; set; }
+        public string? MarkerId { get; set; }
     }
 }
