@@ -4037,6 +4037,45 @@ table tbody tr {
 /**=====================
     1.2 Typography CSS Ends
 ==========================**/
+.product-page-main {
+  padding: 30px;
+}
+.product-page-main .owl-item .item {
+  border: 1px solid #E6E9EB;
+  border-radius: 5px;
+  background-color: #f8f8f8;
+}
+.product-page-main .owl-item.current .item {
+  border: 1px solid var(--theme-deafult);
+}
+.product-page-main .product-slider {
+  margin-bottom: 20px;
+}
+@media (min-width: 1400px) {
+  .product-page-main .product-slider img {
+    height: 520px;
+    -o-object-fit: cover;
+       object-fit: cover;
+  }
+}
+@media (min-width: 1500px) {
+  .product-page-main .product-slider img {
+    height: 400px;
+    -o-object-fit: cover;
+       object-fit: cover;
+  }
+}
+.product-page-main .product-color {
+  margin-top: 10px;
+}
+.product-page-main p {
+  font-size: 15px;
+}
+.product-page-main .nav-link {
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
 /**=====================
      2.2 Alert CSS start
 ==========================**/
