@@ -31,7 +31,6 @@
         padding: 0;
     }
 
-
     .add-image-box {
         margin-top: 10px;
         width: 100%;
@@ -45,7 +44,6 @@
         border-radius: 9px;
         background-color: #f8f9fa;
     }
-
 
     .upload-placeholder {
         font-size: 48px;
@@ -61,14 +59,18 @@
         margin-bottom: 15px;
     }
 
-
+    .readonly-note {
+        color: red;
+        font-size: 0.875em; 
+        font-style: italic;
+        margin-top: 4px;
+    }
     .upload-placeholder:hover {
         background-color: #e0e0e0;
     }
     #locations-container .location-group:nth-child(n+2) {
     display: none;
 }
-
 
 </style>
 <div class="page-body">
@@ -82,8 +84,7 @@
                         <div id="alert-message" class="alert alert-danger">
                             @TempData["ErrorMessage"]
                         </div>
-                    }  
-
+                    }   
 
                     @if (TempData["SuccessMessage"] != null)
                     {
@@ -136,7 +137,7 @@
                                         <div class="item" style="height: 90px; width: 70px;">
                                             <img src="@item" alt="image ocop product" style="width: 100%; height: 100%; object-fit: cover; display: block;">
                                             <form asp-controller="OcopProduct"
-                                              asp-action="DeleteOcopProductImage" method="post">
+                                              asp-action="DeleteOcopProductImage" method="post"> 
                                                 @Html.AntiForgeryToken()
                                                 <input hidden name="id" value="@Model.Id" />
                                                 <input hidden name="imageUrl" value="@item" />
@@ -144,7 +145,7 @@
                                                 onclick="event.stopPropagation();">
                                                     &times;
                                                 </button>
-                                            </form>
+                                            </form> 
                                         </div>
                                     }
                                 }
@@ -159,7 +160,7 @@
                                 <form asp-controller="OcopProduct" asp-action="AddOcopProductImage" method="post" class="upload-placeholder" enctype="multipart/form-data">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@Model.Id" />
-                                    <div class="upload-placeholder">+</div>    
+                                    <div class="upload-placeholder">+</div>     
                                     <input hidden type="file" name="imageFile" multiple onchange="this.form.submit()" />
                                 </form>
                             </div>
@@ -248,11 +249,13 @@
                                     }
                                     <span>(@Model.OcopPoint)</span>
                                 </div>
-                               
+                                
                             </div>
                             <hr>
                             <div>
-                                <span><h6>Description </h6></span>
+                                <span>
+                                    <h6 style="padding-bottom: 10px">Description </h6>
+                                </span>
                                @Html.Raw(Model.ProductDescription)
                             </div>
                             <div class="m-t-15 btn-showcase">
@@ -272,13 +275,13 @@
                 </div>
                 <div class="col-xxl-12 box-col-12 order-xxl-0 order-1">
                     <div class="card">
-                        <div class="card-body" style="max-height: 700px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 10px;">
+                        <div class="card-body" style="max-height: 700px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
                             <div class="d-flex justify-content-between">
-                                <h5 style="font-weight: bold;">Point of sell</h5>
+                                <h5 style="font-weight: bold;">Store of sell</h5>
                                 <a class="btn btn-success btn-sm px-2 py-1" title="Create Point of Sell" data-bs-toggle="modal" data-bs-target="#addLocationModal"><i class="fa fa-plus"></i></a>
-                                </a>
-                            </div><hr>
-
+                                
+                            </div>
+                            <hr style="margin : 0px">
 
                             <div>
                             @if (Model.Sellocations == null || !Model.Sellocations.Any())
@@ -300,7 +303,6 @@
                                         {
                                             var item = Model.Sellocations[i];
                                             var isLast = i == Model.Sellocations.Count - 1;
-
 
                                             <div class="location-card" style="background: #f0f2f3; padding: 16px; border-radius: 8px; border: 1px solid #ddd;">
                                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
@@ -328,7 +330,6 @@
                                                             <i class="fa fa-pencil" aria-hidden="true"></i>
                                                         </button>
 
-
                                                         <button type="button"
                                                                 title="Delete"
                                                                 style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 18px;"
@@ -346,7 +347,6 @@
                                                         readonly
                                                         style="flex: 1; min-width: 150px; border-radius: 10px;"
                                                         value="@(item?.Location?.Longitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")" />
-
 
                                                     <label style="font-size: 0.8rem; min-width: 70px; margin: 0;">Latitude</label>
                                                     <input type="text"
@@ -379,7 +379,6 @@
                                                 </div>
                                             </div>
 
-
                                         }
                                     </div>
                                 }
@@ -389,53 +388,48 @@
             </div>
         </div>
         <div class="card">
-            <div class="row product-page-main">
-                <div class="col-sm-12">
-                    <ul class="nav nav-tabs border-tab nav-primary mb-0" id="top-tab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="top-home-tab" data-bs-toggle="tab"
-                               href="#top-home" role="tab" aria-controls="top-home"
-                               aria-selected="false">Selling link</a>
-                            <div class="material-border"></div>
-                        </li>
-                    </ul>
+            <div class="card-body">
+                <div class="col-sm-12" style="padding: 0px;">
                     <div class="tab-content" id="top-tabContent">
                         <div class="tab-pane fade active show" id="top-home" role="tabpanel"
                              aria-labelledby="top-home-tab">
                             <div style="height: 250px; margin-top: 10px;">
-                                <div class="card-body">
-                                    <div class="filter-block">
-                                        <div class="d-flex justify-content-between">
-                                            <h5 style="font-weight: bold;">Point of selling link</h5>
-                                            <a class="btn btn-success btn-sm px-2 py-1" title="Create Point of Selling Link" data-bs-toggle="modal" data-bs-target="#addSellingLinkModal"><i class="fa fa-plus"></i></a>
-                                        </div>
-                                        <hr>
-                                        <div id="sellinglink-list" style="max-height: 230px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 10px;">
-                                            @if (sellingLinks == null || !sellingLinks.Any())
+                                <div class="filter-block">
+                                    <div class="d-flex justify-content-between">
+                                        <h5 style="font-weight: bold;">📌 Store of selling link</h5>
+                                        <a class="btn btn-success btn-sm px-2 py-1" title="Create Point of Selling Link" data-bs-toggle="modal" data-bs-target="#addSellingLinkModal"><i class="fa fa-plus"></i></a>
+                                    </div>
+                                    <hr>
+                                    <div id="sellinglink-list" style="max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 10px;">
+                                        @if (sellingLinks != null && sellingLinks.Any())
+                                        {
+                                            @for (int i = 0; i < sellingLinks.Count; i++)
                                             {
-                                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                                    <div>
-                                                        <b>No Selling Link.</b><br />
+                                                var item = sellingLinks[i];
+                                                var isLast = i == sellingLinks.Count - 1;
+
+                                                <div class="sellinglink-item" style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; @(isLast ? "" : "border-bottom: 1px solid #ddd;")">
+                                                    <div style="min-width: 0; flex: 1;">
+                                                        <ul style="list-style-type: disc; padding-left: 20px;">
+                                                            <li style="padding: 0px;">
+                                                                <div style="padding-bottom: 10px;">
+                                                                    <b>Title Name: </b>
+                                                                    <span>@(item?.Title ?? "No Title")</span><br>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                        <span style="padding-left: 5px;">
+                                                            <i class="fa fa-link"></i>
+                                                            Link:
+                                                            <a href="@(item?.Link ?? "#")" target="_blank" style="color: #007bff;">
+@(item?.Link ?? "")
+                                                            </a>
+                                                        </span>
                                                     </div>
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                @for (int i = 0; i < sellingLinks.Count; i++)
-                                                {
-                                                    var item = sellingLinks[i];
-                                                    var isLast = i == Model.Sellocations.Count - 1;
-                                                    <div class="sellinglink-item" style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; @(isLast ? "" : "border-bottom: 1px solid #ddd;")">
-                                                        <div style="min-width: 0; flex: 1;">
-                                                            <b>Title Of Selling Link:</b>
-                                                            <span>@(item.Title ?? "No Selling Link.")</span> <br>
-                                                            <b>Selling Name: </b>
-                                                            <span>@(item.Link ?? "No Selling Link.")</span>
-                                                        </div>
-                                                        <div style="display: flex; gap: 6px; margin-left: 10px; align-self: flex-start;">
-                                                            <button type="button"
+                                                    <div style="display: flex; gap: 6px; margin-left: 10px; align-self: flex-start;">
+                                                        <button type="button"
                                                                 title="Edit"
-                                                                style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 18px; line-height: 1;"
+                                                                style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 14px; line-height: 1;"
                                                                 class="edit-selling-link-btn"
                                                                 data-bs-toggle="modal" data-bs-target="#editSellingLinkModal"
                                                                 data-product-id="@Model.Id"
@@ -445,20 +439,27 @@
                                                             <i class="fa fa-pencil" aria-hidden="true"></i>
                                                         </button>
 
-
                                                         <button type="button"
                                                                 title="Delete Selling Link"
-                                                                style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 18px; line-height: 1;"
-                                                                class="delete-selling-link"
+                                                                style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 14px; line-height: 1;"
+                                                                class="delete-selling-link" 
+                                                                data-bs-toggle="modal" data-bs-target="#deleteSellingLinkModal"
                                                                 data-product-id="@Model.Id"
                                                                 data-id="@item.Id">
                                                             <i class="fa fa-trash" aria-hidden="true"></i>
                                                         </button>
-                                                        </div>
                                                     </div>
-                                                }
+                                                </div>
                                             }
-                                        </div>
+                                        }
+                                        else
+                                        {
+                                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                <div>
+                                                    <span>No Selling Link.</span><br />
+                                                </div>
+                                            </div>
+}
                                     </div>
                                 </div>
                             </div>
@@ -467,13 +468,11 @@
                 </div>
             </div>
         </div>
-    </div>
+      </div>
     <!-- Container-fluid Ends-->
 </div>
 
-
 @* create of sell location *@
-
 
 <div class="modal fade" id="addLocationModal" tabindex="-1" aria-labelledby="addLocationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
@@ -536,9 +535,7 @@
     </div>
 </div>
 
-
 @* edit of sell location*@
-
 
 <div class="modal fade" id="editLocationModal" tabindex="-1" aria-labelledby="editLocationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
@@ -550,13 +547,14 @@
             <form id="editLocationForm" method="post">
                 @Html.AntiForgeryToken()
                 <input hidden name="Id" id="id" value="@Model.Id"/>
-                <input hidden name="MarkerId" id="markerId" value="@ViewBag.MarkerId"/>
+                <input hidden name="MarkerId" id="markerId" value="@ViewBag.MarkerId"/> 
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-5">
                             <div class="mb-3">
                                 <label class="form-label">Name of Location</label>
-                                <input type="text" name="LocationName" id="locationName" class="form-control" placeholder="Enter location name" required readonly />
+                                <input  type="text" name="LocationName" id="locationName" class="form-control" placeholder="Enter location name" required readonly />
+                                    <div class="readonly-note">*Not editable</div>
                                 <span class="text-danger field-validation-valid" data-valmsg-for="LocationName" data-valmsg-replace="true"></span>
                             </div>
                             <div class="mb-3">
@@ -571,7 +569,7 @@
                                 <div id="addressWarningEdit" class="text-warning mt-1"></div>
                                 <span class="text-danger field-validation-valid" data-valmsg-for="LocationAddress" data-valmsg-replace="true"></span>
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3" hidden>
                                 <label class="form-label">Location Type</label>
                                 <input type="text" name="Type" id="type" class="form-control" value="Point" readonly />
                                 <span class="text-danger field-validation-valid" data-valmsg-for="Type" data-valmsg-replace="true"></span>
@@ -601,9 +599,7 @@
     </div>
 </div>
 
-
 @* create of selling link *@
-
 
 <div class="modal fade" id="addSellingLinkModal" tabindex="-1" aria-labelledby="addSellingLinkModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -644,7 +640,6 @@
 </div>
 @* edit of selling link*@
 
-
 <div class="modal fade" id="editSellingLinkModal" tabindex="-1" aria-labelledby="editSellingLinkModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -684,13 +679,12 @@
     </div>
 </div>
 
-
 @section Scripts {
     @Html.AntiForgeryToken()
     <script src="~/assets/js/ocopproduct/formModal.js"></script>
-    <script src="~/assets/js/ocopproduct/create.js"></script>
+    <script src="~/assets/js/ocopproduct/crud.js"></script>
     <script src="~/assets/js/sweetalert-custom.js"></script>
-   
+    
     <!-- HERE Maps API Scripts -->
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
@@ -698,15 +692,14 @@
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
     <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
 
-
     <script>
         // Pass the API key from configuration to a global JavaScript variable
         window.HERE_API_KEY = '@Configuration["HEREMAP_API_KEY"]';
     </script>
-   
+    
     <script src="~/assets/js/ocopproduct/heremap-loader.js"></script>
     <script src="~/assets/js/ocopproduct/edit-location-map.js"></script>
-   
+    
     <script>
         (function () {
             const success = @Html.Raw(Json.Serialize(TempData["Success"]));
@@ -725,3 +718,4 @@
         }, 1000);
     </script>
 }
+

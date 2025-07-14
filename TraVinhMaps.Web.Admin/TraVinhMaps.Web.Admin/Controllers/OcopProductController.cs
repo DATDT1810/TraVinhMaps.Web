@@ -55,7 +55,6 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 new BreadcrumbItem { Title = "Ocop Product Management", Url = Url.Action("Index", "OcopProduct")! },
                 new BreadcrumbItem { Title = "Ocop Product Details" } // default URL for the current page
             };
-
             var ocopProduct = await _ocopProductService.GetByIdAsync(id);
             var sellingLinks = await _sellingLinkService.GetSellingLinkByOcopProductId(id);
 
@@ -98,8 +97,10 @@ namespace TraVinhMaps.Web.Admin.Controllers
             };
             var ocopTypes = await _ocopTypeService.ListAllAsync();
             var company = await _companyService.ListAllAsync();
+            var tag = await _tagService.ListAllAsync();
             ViewBag.OcopTypes = ocopTypes;
             ViewBag.Companies = company;
+            ViewBag.Tags = tag;
             return View();
         }
 
@@ -114,6 +115,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
                                             .Select(ms => $"Key: {ms.Key}, Errors: {string.Join(", ", ms.Value.Errors.Select(e => e.ErrorMessage))}")
                                             .ToList();
                 TempData["ErrorMessage"] = string.Join("<br/>", errorMessages);
+
+                await LoadViewBags();
                 return View("CreateOcopProduct", ocopProductViewModel);
             }
 
@@ -128,6 +131,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
                         ModelState.AddModelError("ProductImageFile",
                             $"File \"{file.FileName}\" is not a supported image format. Allowed formats: {string.Join(", ", allowedExtensions)}.");
                         TempData["ErrorMessage"] = ModelState["ProductImageFile"]?.Errors.FirstOrDefault()?.ErrorMessage;
+
+                        await LoadViewBags();
                         return View("CreateOcopProduct", ocopProductViewModel);
                     }
                 }
@@ -136,6 +141,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             {
                 ModelState.AddModelError("ProductImageFile", "At least one product image is required.");
                 TempData["ErrorMessage"] = ModelState["ProductImageFile"]?.Errors.FirstOrDefault()?.ErrorMessage;
+                await LoadViewBags();
                 return View("CreateOcopProduct", ocopProductViewModel);
             }
 
@@ -145,6 +151,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 if (result?.value?.data == null)
                 {
                     TempData["ErrorMessage"] = "Failed to create ocop product: No data returned.";
+                    await LoadViewBags();
                     return View("CreateOcopProduct", ocopProductViewModel);
                 }
 
@@ -171,17 +178,30 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
             catch (HttpRequestException ex)
             {
-                TempData["ErrorMessage"] = $"Failed to create ocop product or sell locations: {ex.Message}";
+                TempData["ErrorMessage"] = ex.Message;
+                await LoadViewBags();
                 return View("CreateOcopProduct", ocopProductViewModel);
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = $"Something went wrong, please try again: {ex.Message}";
+                await LoadViewBags();
                 return View("CreateOcopProduct", ocopProductViewModel);
             }
         }
 
         // GET: OcopProduct/UpdateOcopProduct/{id}
+        private async Task LoadViewBags()
+        {
+            var ocopTypes = await _ocopTypeService.ListAllAsync();
+            var company = await _companyService.ListAllAsync();
+            var tag = await _tagService.ListAllAsync();
+            ViewBag.OcopTypes = ocopTypes;
+            ViewBag.Companies = company;
+            ViewBag.Tags = tag;
+        }
+
+
         [HttpGet("UpdateOcopProduct")]
         public async Task<IActionResult> UpdateOcopProduct(string id)
         {
@@ -198,6 +218,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
             var ocopTypes = await _ocopTypeService.ListAllAsync();
             var company = await _companyService.ListAllAsync();
+            var tag = await _tagService.ListAllAsync();
+            ViewBag.Tags = tag;
             ViewBag.OcopTypes = ocopTypes;
             ViewBag.Companies = company;
             UpdateOcopProductRequest updateOcopProductRequest = new UpdateOcopProductRequest
@@ -225,6 +247,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             {
                 return NotFound();
             }
+
             var updateOcopProductRequest = new UpdateOcopProductRequest
             {
                 Id = request.Id,
@@ -241,15 +264,24 @@ namespace TraVinhMaps.Web.Admin.Controllers
 
             try
             {
-                await _ocopProductService.UpdateAsync(updateOcopProductRequest);
+                var result = await _ocopProductService.UpdateAsync(updateOcopProductRequest);
+
+                if (result == null || result.Status == "error")
+                {
+                    TempData["ErrorMessage"] = "Failed to update ocop product: " + (result?.Message ?? "Unknown error.");
+                    await LoadViewBags();
+                    return View("UpdateOcopProduct", updateOcopProductRequest);
+                }
+
+                TempData["SuccessMessage"] = result.Message ?? "Ocop product updated successfully!";
+                return RedirectToAction("DetailOcopProduct", new { id = request.Id });
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Something went wrong, please try again: " + ex.Message + "\n" + ex.StackTrace;
+                TempData["ErrorMessage"] = ex.Message;
+                await LoadViewBags();
                 return View("UpdateOcopProduct", updateOcopProductRequest);
             }
-            TempData["SuccessMessage"] = "Ocop product updated successfully!";
-            return RedirectToAction("Index");
         }
 
         // POST: OcopProduct/DeleteOcopProduct
@@ -330,7 +362,31 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = $"Failed to create point of sell: {ex.Message}" });
+                var userFriendlyMessage = "An unexpected error occurred.";
+
+                try
+                {
+                    var startIndex = ex.Message.IndexOf('{');
+                    if (startIndex >= 0)
+                    {
+                        var jsonPart = ex.Message.Substring(startIndex);
+
+                        using var document = System.Text.Json.JsonDocument.Parse(jsonPart);
+                        if (document.RootElement.TryGetProperty("message", out var messageProp))
+                        {
+                            var extractedMessage = messageProp.GetString();
+                            if (!string.IsNullOrEmpty(extractedMessage))
+                            {
+                                userFriendlyMessage = extractedMessage;
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                }
+
+                return Json(new { success = false, message = userFriendlyMessage });
             }
         }
 
@@ -396,8 +452,31 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error updating sell location: {ex.Message}\n{ex.StackTrace}");
-                return Json(new { success = false, message = $"Failed to update sell location: {ex.Message}" });
+                var userFriendlyMessage = "An unexpected error occurred.";
+
+                try
+                {
+                    var startIndex = ex.Message.IndexOf('{');
+                    if (startIndex >= 0)
+                    {
+                        var jsonPart = ex.Message.Substring(startIndex);
+
+                        using var document = System.Text.Json.JsonDocument.Parse(jsonPart);
+                        if (document.RootElement.TryGetProperty("message", out var messageProp))
+                        {
+                            var extractedMessage = messageProp.GetString();
+                            if (!string.IsNullOrEmpty(extractedMessage))
+                            {
+                                userFriendlyMessage = extractedMessage;
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                }
+
+                return Json(new { success = false, message = userFriendlyMessage });
             }
         }
 
@@ -444,8 +523,42 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = $"Failed to create point of selling link: {ex.Message}" });
+                var userFriendlyMessage = "An unexpected error occurred.";
+
+                try
+                {
+                    var startIndex = ex.Message.IndexOf('{');
+                    if (startIndex >= 0)
+                    {
+                        var jsonPart = ex.Message.Substring(startIndex);
+
+                        using var document = System.Text.Json.JsonDocument.Parse(jsonPart);
+                        if (document.RootElement.TryGetProperty("message", out var messageProp))
+                        {
+                            var extractedMessage = messageProp.GetString();
+                            if (!string.IsNullOrEmpty(extractedMessage))
+                            {
+                                userFriendlyMessage = extractedMessage;
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    // ignore parse errors
+                }
+
+                // LOG TO SEE WHAT IS HAPPENING
+                return Json(new
+                {
+                    success = false,
+                    message = userFriendlyMessage,
+                    rawError = ex.Message,
+                    stack = ex.StackTrace
+                });
             }
+
+
         }
 
         // GET: OcopProduct/UpdateSellingLink/{id}
@@ -458,32 +571,48 @@ namespace TraVinhMaps.Web.Admin.Controllers
             {
                 return Json(new { success = false, message = string.Join("; ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)) });
             }
+            var sellingLinkRequest = new UpdateSellingLinkRequest
+            {
+                Id = sellingLinkResponse.Id,
+                ProductId = sellingLinkResponse.ProductId,
+                Title = sellingLinkResponse.Title,
+                Link = sellingLinkResponse.Link
+            };
             try
             {
-                var sellingLinkRequest = new UpdateSellingLinkRequest
-                {
-                    Id = sellingLinkResponse.Id,
-                    ProductId = sellingLinkResponse.ProductId,
-                    Title = sellingLinkResponse.Title,
-                    Link = sellingLinkResponse.Link
-                };
-                try
-                {
-                    ViewBag.SellingLinkId = sellingLinkResponse.Id;
-                    var result = await _sellingLinkService.UpdateAsync(sellingLinkRequest, cancellationToken);
-                    return Json(new { success = true, message = "Selling link updated successfully!" });
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error updating seing link: {ex.Message}\n{ex.StackTrace}");
-                    return Json(new { success = false, message = $"Failed to update seing link: {ex.Message}" });
-                }
+                ViewBag.SellingLinkId = sellingLinkResponse.Id;
+                var result = await _sellingLinkService.UpdateAsync(sellingLinkRequest, cancellationToken);
+                return Json(new { success = true, message = "Selling link updated successfully!" });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error updating sell location: {ex.Message}\n{ex.StackTrace}");
-                return Json(new { success = false, message = $"Failed to update sell location: {ex.Message}" });
+                var userFriendlyMessage = "An unexpected error occurred.";
+
+                try
+                {
+                    var startIndex = ex.Message.IndexOf('{');
+                    if (startIndex >= 0)
+                    {
+                        var jsonPart = ex.Message.Substring(startIndex);
+
+                        using var document = System.Text.Json.JsonDocument.Parse(jsonPart);
+                        if (document.RootElement.TryGetProperty("message", out var messageProp))
+                        {
+                            var extractedMessage = messageProp.GetString();
+                            if (!string.IsNullOrEmpty(extractedMessage))
+                            {
+                                userFriendlyMessage = extractedMessage;
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                }
+
+                return Json(new { success = false, message = userFriendlyMessage });
             }
+
         }
 
         // DELETE: OcopProduct/DeleteSellingLink/{id}

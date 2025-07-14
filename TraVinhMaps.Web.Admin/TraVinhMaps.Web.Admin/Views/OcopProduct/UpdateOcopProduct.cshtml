@@ -130,8 +130,14 @@
                                          <div class="mb-3">
                                             <label>Ocop Product Tag</label>
                                             <select asp-for="TagId" class="form-select">
-                                                <option selected value="68244abd2b06dbe39f973e8c">Ocop
-                                                </option>
+                                                @foreach (var tag in (IEnumerable<TraVinhMaps.Web.Admin.Models.Tags.TagsResponse>)ViewBag.Tags)
+                                                {
+                                                    if(@tag.Name == "Ocop"){
+                                                        <option value="@tag.Id" selected="@(Model.TagId == tag.Id ? "selected" : null)">
+                                                            @tag.Name
+                                                        </option>
+                                                    }
+                                                }
                                             </select>
                                         </div>
                                     </div>
@@ -158,8 +164,10 @@
 
 @section Scripts {
     @Html.AntiForgeryToken()
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script src="~/assets/js/ocopproduct/crud.js"></script>
+    <script src="~/assets/js/ocopproduct/formModal.js"></script>
     <script>
         setTimeout(function () {
             var alert = document.getElementById("alert-message");

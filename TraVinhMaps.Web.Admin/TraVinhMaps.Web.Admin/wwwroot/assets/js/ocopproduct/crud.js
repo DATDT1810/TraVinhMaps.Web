@@ -51,7 +51,6 @@ document.addEventListener('click', function (e) {
     }
 });
 
-
 // add sell location
 $(document).ready(function () {
     $("#addLocationForm").on("submit", function (e) {
@@ -81,11 +80,9 @@ $(document).ready(function () {
                         url: `/Admin/OcopProduct/Detail/${ocopProductId}`,
                         type: "GET",
                         success: function (data) {
-                        // Redirect lại trang chi tiết để load toàn bộ
-                        var ocopProductId = form.find('input[name="Id"]').val();
-                        window.location.href = `/Admin/OcopProduct/Detail/${ocopProductId}`;
-                    },
-
+                            var newLocationList = $(data).find("#sellocation-list").html();
+                            $("#sellocation-list").html(newLocationList);
+                        },
                         error: function (xhr, status, error) {
                             console.log("Reload Error:", xhr.responseText);
                             showTimedAlert("Error!", "Failed to reload location data.", "error", 2000);
@@ -106,7 +103,7 @@ $(document).ready(function () {
 // edit sell location
 $(document).ready(function () {
     // Populate Edit Location Modal
-    $(".edit-location-btn").on("click", function () {
+    $(document).on("click", ".edit-location-btn", function () {
         var button = $(this);
         console.log("Button Data:", button.data());
         $("#id").val(button.data("id") || "");
@@ -146,8 +143,8 @@ $(document).ready(function () {
                         url: `/Admin/OcopProduct/Detail/${ocopProductId}`, 
                         type: "GET",
                         success: function (data) {
-                            var newLocationList = $(data).find("#locationList").html();
-                            $("#locationList").html(newLocationList);
+                            var editLocationList = $(data).find("#sellocation-list").html();
+                            $("#sellocation-list").html(editLocationList);
                         },
                         error: function (xhr) {
                             showTimedAlert("Error!", "Failed to reload location data.", "error", 2000);
@@ -193,7 +190,8 @@ $(document).ready(function () {
                         url: `/Admin/OcopProduct/Detail/${ocopProductId}`,
                         type: "GET",
                         success: function (data) {
-                            window.location.href = `/Admin/OcopProduct/Detail/${ocopProductId}`;
+                            var newSellingLinkList = $(data).find("#sellinglink-list").html();
+                            $("#sellinglink-list").html(newSellingLinkList);
                         },
 
                         error: function (xhr, status, error) {
@@ -215,7 +213,7 @@ $(document).ready(function () {
 });
 // edit selling link
 $(document).ready(function () {
-    $(".edit-selling-link-btn").on("click", function () {
+    $(document).on("click", ".edit-selling-link-btn", function (){
         var button = $(this);
         console.log("Button Data:", button.data());
          $("#productIdEdit").val(button.data("product-id"));
@@ -252,8 +250,8 @@ $(document).ready(function () {
                         url: `/Admin/OcopProduct/Detail/${ocopProductId}`, 
                         type: "GET",
                         success: function (data) {
-                            var newSellingLinkList = $(data).find("#sellinglink-list").html();
-                            $("#sellinglink-list").html(newSellingLinkList);
+                            var editSellingLinkList = $(data).find("#sellinglink-list").html();
+                            $("#sellinglink-list").html(editSellingLinkList);
                         },
                         error: function (xhr) {
                             showTimedAlert("Error!", "Failed to reload selling link data.", "error", 2000);
@@ -270,3 +268,244 @@ $(document).ready(function () {
         });
     });
 });
+//Delete Sell Location
+    $(document).on("click", ".delete-sell-location", function (e) {
+    e.preventDefault();
+
+    const button = $(this);
+    const row = button.closest(".sellocation-item");
+    const productId = button.data("product-id");
+    const locationName = button.data("location-name");
+    const token = $('input[name="__RequestVerificationToken"]').val();
+
+    showConfirmAlert(
+        "Confirmation",
+        `Are you sure you want to delete "${locationName}"?`,
+        "Delete",
+        "Cancel"
+    ).then((confirmed) => {
+        if (!confirmed) return;
+
+        $.ajax({
+            url: `/Admin/OcopProduct/DeleteSellLocation/${productId}/${locationName}`,
+            method: "DELETE",
+            headers: {
+                "RequestVerificationToken": token,
+                "Content-Type": "application/json"
+            },
+            success: function (response) {
+                if (response.success) {
+                    showTimedAlert("Success!", response.message || "Location deleted successfully!", "success", 2000);
+                    $("#deleteLocationModal").modal("hide");
+
+                    // Reload location list dynamically
+                    var ocopProductId = $("#id").val();
+                    $.ajax({
+                        url: `/Admin/OcopProduct/Detail/${ocopProductId}`, 
+                        type: "GET",
+                        success: function (data) {
+                            var editLocationList = $(data).find("#sellocation-list").html();
+                            $("#sellocation-list").html(editLocationList);
+                        },
+                        error: function (xhr) {
+                            showTimedAlert("Error!", "Failed to reload location data.", "error", 2000);
+                        }
+                    });
+                } else {
+                    showTimedAlert("Error!", response.message, "error", 1000);
+                }
+            },
+            error: function (xhr) {
+                showTimedAlert(
+                    "Error",
+                    "An error occurred while deleting the sell location: " +
+                        (xhr.responseJSON?.message || "Unknown error"),
+                    "error",
+                    3000
+                );
+            }
+        });
+    });
+});
+    
+//Delete Selling Link
+    $(document).on("click", ".delete-selling-link", function (e) {
+    e.preventDefault();
+
+    const button = $(this);
+    const row = button.closest(".sellinglink-item");
+    const sellingLinkId = button.data("id");
+    const productId = button.data("product-id");
+    const token = $('input[name="__RequestVerificationToken"]').val();
+
+    showConfirmAlert(
+        "Confirmation",
+        "Are you sure you want to delete this selling link?",
+        "Delete",
+        "Cancel"
+    ).then((confirmed) => {
+        if (!confirmed) return;
+
+        $.ajax({
+            url: `/Admin/OcopProduct/DeleteSellingLink/${sellingLinkId}`,
+            method: "DELETE",
+            headers: {
+                "RequestVerificationToken": token,
+                "Content-Type": "application/json"
+            },
+            success: function (response) {
+                if (response.success) {
+                    showTimedAlert("Success!", response.message || "Selling link updated successfully!", "success", 2000);
+                    $("#deleteSellingLinkModal").modal("hide");
+
+                    // Reload location list dynamically
+                    var ocopProductId = $("#productIdEdit").val();
+                    $.ajax({
+                        url: `/Admin/OcopProduct/Detail/${ocopProductId}`, 
+                        type: "GET",
+                        success: function (data) {
+                            var editSellingLinkList = $(data).find("#sellinglink-list").html();
+                            $("#sellinglink-list").html(editSellingLinkList);
+                        },
+                        error: function (xhr) {
+                            showTimedAlert("Error!", "Failed to reload selling link data.", "error", 2000);
+                        }
+                    });
+                } else {
+                    showTimedAlert("Error!", response.message, "error", 1000);
+                }
+            },
+            error: function (xhr) {
+                showTimedAlert(
+                    "Error",
+                    "An error occurred while deleting the selling link: " +
+                        (xhr.responseJSON?.message || "Unknown error"),
+                    "error",
+                    3000
+                );
+            }
+        });
+    });
+});   
+// // Delete ocop product
+// $(document).on("click", ".delete-ocop-product", function (e) {
+//     e.preventDefault();
+//     const ocopProductId = $(this).data("id");
+//     const token = $('input[name="__RequestVerificationToken"]').val();
+//     const row = $(this).closest("tr"); 
+
+//     showConfirmAlert(
+//         "Confirmation",
+//         "Are you sure you want to delete this ocop product?",
+//         "Delete",
+//         "Cancel"
+//     ).then((confirmed) => {
+//         if (confirmed) {
+//             $.ajax({
+//                 url: "/Admin/OcopProduct/DeleteOcopProduct",
+//                 method: "POST",
+//                 data: { id: ocopProductId },
+//                 headers: {
+//                     "RequestVerificationToken": token
+//                 },
+//                 success: function (response) {
+//                     if (response.success) {
+//                         row
+//                             .find("td:eq(4) span")
+//                             .text("Inactive")
+//                             .removeClass("badge-light-primary")
+//                             .addClass("badge-light-danger");
+
+//                         const actionCell = row.find("td:last-child ul.action");
+//                         actionCell.find(".delete-ocop-product").replaceWith(
+//                             `<a class="restore undelete-ocop-product" href="javascript:void(0)" data-id="${ocopProductId}" title="Restore"><i class="fa fa-undo"></i></a>`
+//                         );
+
+//                         table.row(row).invalidate().draw(false);
+//                         showTimedAlert("Success!", response.message, "success", 1000);
+//                     } else {
+//                         showTimedAlert("Error!", response.message, "error", 1000);
+//                     }
+//                 },
+//                 error: function (xhr) {
+//                     showErrorAlert(
+//                         "Error",
+//                         "An error occurred while delete the ocop product: " +
+//                         (xhr.responseJSON?.message || "Unknown error")
+//                     );
+//                 },
+//             });
+//         }
+//     });
+// });
+
+
+//     // Restore ocop product
+//     $(document).on("click", ".undelete-ocop-product", function (e) {
+//         e.preventDefault();
+//         const ocopProductId = $(this).data("id");
+//         const token = $('input[name="__RequestVerificationToken"]').val();
+
+//         showConfirmAlert(
+//             "Confirmation",
+//             "Are you sure you want to restore this ocop product?",
+//             "Restore",
+//             "Cancel"
+//         ).then((confirmed) => {
+//             if (confirmed) {
+//                 $.ajax({
+//                     url: "/Admin/OcopProduct/RestoreOcopProduct",
+//                     method: "POST",
+//                     data: { id: ocopProductId },
+//                     headers: {
+//                         RequestVerificationToken: token,
+//                     },
+//                     success: function (response) {
+//                         if (response.success) {
+//                             const row = $('a[data-id="' + ocopProductId + '"]').closest("tr");
+
+//                             row
+//                                 .find("td:eq(4) span")
+//                                 .text("Active")
+//                                 .removeClass("badge-light-danger")
+//                                 .addClass("badge-light-primary");
+
+//                             // Update action dropdown from Unban -> Ban
+//                             const actionCell = row.find("td:last-child ul.action");
+//                             actionCell.find(".undelete-ocop-product").replaceWith(
+//                                 `<a class="delete delete-ocop-product" href="javascript:void(0)" data-id="${ocopProductId}" title="Delete"><i class="fa fa-trash"></i> 
+//                   </a>`
+//                             );
+
+//                             table.row(row).invalidate().draw(false);
+//                             showTimedAlert("Success!", response.message, "success", 1000);
+//                         } else {
+//                             showTimedAlert("Error!", response.message, "error", 1000);
+//                         }
+//                     },
+//                     error: function (xhr) {
+//                         showErrorAlert(
+//                             "Error",
+//                             "An error occurred while restore the ocop product: " +
+//                             (xhr.responseJSON?.message || "Unknown error")
+//                         );
+//                     },
+//                 });
+//             }
+//         });
+//     });
+    // Toggle sellocation items
+    const toggleButton = document.getElementById('toggle-sellocation');
+    const locationItems = document.querySelectorAll('.sellocation-item');
+    if (toggleButton) {
+        toggleButton.addEventListener('click', function () {
+            const isExpanded = toggleButton.getAttribute('data-expanded') === 'true';
+            locationItems.forEach((item, index) => {
+                if (index > 0) {
+                    item.classList.toggle('d-none', isExpanded);
+                }
+            });
+            toggleButton.textContent = isExpanded ? 'Xem thêm' : 'Thu gọn';
+            toggleButton.setAttribute('data-expanded', (!isExpanded).toString());
+        });
+    }

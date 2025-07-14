@@ -60,32 +60,32 @@
                                     <div class="col">
                                         <label>Company Locations</label>
                                         <div id="locationsContainer">
-    @for (int i = 0; i < Model.Locations.Count; i++)
-    {
-        <div class="location-item border p-3 mb-2 rounded" data-index="@i">
-            <div class="mb-2">
-                <label>Type</label>
-                <select asp-for="Locations[i].Type" class="form-select" required>
-                    <option value="">-- Select Type --</option>
-                    <option value="Point" selected="@(Model.Locations[i].Type == "Point" ? "selected" : null)">Point</option>
-                    <option value="Branch" selected="@(Model.Locations[i].Type == "Branch" ? "selected" : null)">Branch</option>
-                    <option value="Office" selected="@(Model.Locations[i].Type == "Office" ? "selected" : null)">Office</option>
-                </select>
-                <span asp-validation-for="Locations[i].Type" class="text-danger"></span>
-            </div>
-            <div class="mb-2">
-                <label>Latitude</label>
-                <input asp-for="Locations[i].Latitude" class="form-control" />
-                <span asp-validation-for="Locations[i].Latitude" class="text-danger"></span>
-            </div>
-            <div class="mb-2">
-                <label>Longitude</label>
-                <input asp-for="Locations[i].Longitude" class="form-control" />
-                <span asp-validation-for="Locations[i].Longitude" class="text-danger"></span>
-            </div>
-        </div>
-    }
-</div>
+                                            @for (int i = 0; i < Model.Locations.Count; i++)
+                                            {
+                                                <div class="location-item border p-3 mb-2 rounded" data-index="@i">
+                                                    <div class="mb-2">
+                                                        <label>Type</label>
+                                                        <select asp-for="Locations[i].Type" class="form-select" required>
+                                                            <option value="">-- Select Type --</option>
+                                                            <option value="Point" selected="@(Model.Locations[i].Type == "Point" ? "selected" : null)">Point</option>
+                                                            <option value="Branch" selected="@(Model.Locations[i].Type == "Branch" ? "selected" : null)">Branch</option>
+                                                            <option value="Office" selected="@(Model.Locations[i].Type == "Office" ? "selected" : null)">Office</option>
+                                                        </select>
+                                                        <span asp-validation-for="Locations[i].Type" class="text-danger"></span>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label>Latitude</label>
+                                                        <input asp-for="Locations[i].Latitude" class="form-control" />
+                                                        <span asp-validation-for="Locations[i].Latitude" class="text-danger"></span>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label>Longitude</label>
+                                                        <input asp-for="Locations[i].Longitude" class="form-control" />
+                                                        <span asp-validation-for="Locations[i].Longitude" class="text-danger"></span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -130,6 +130,7 @@
     @Html.AntiForgeryToken()
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/assets/js/company/index.js"></script>
     <script>
         setTimeout(function () {
             var alert = document.getElementById("alert-message");
