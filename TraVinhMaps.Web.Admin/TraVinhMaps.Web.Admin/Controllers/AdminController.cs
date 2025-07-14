@@ -108,6 +108,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
         }
 
         // GET: Admin/Index
+        [Authorize(Roles = "super-admin")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -139,7 +140,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(admin);
         }
 
-        // [Authorize(Roles = "super-admin")]  
+        [Authorize(Roles = "super-admin")]
         // GET: Admin/Create
         [HttpGet("Create")]
         public IActionResult Create()
@@ -153,7 +154,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View();
         }
 
-        // [Authorize(Roles = "super-admin")]
+        [Authorize(Roles = "super-admin")]
         // POST: Admin/Create
         [HttpPost("Create")]
         [ValidateAntiForgeryToken]
@@ -184,8 +185,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return Json(new { success = false, message = "Failed to create admin" });
             }
         }
-
         // Get: Admin/Restore
+        [Authorize(Roles = "super-admin")]
         [HttpGet("Restore/{id}")]
         public async Task<IActionResult> Restore(string id)
         {
@@ -194,6 +195,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
         }
 
         // POST: Admin/Restore
+        [Authorize(Roles = "super-admin")]
         [HttpPost("Restore")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreConfirm(string id, CancellationToken cancellationToken = default)
@@ -222,6 +224,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
         }
 
         // POST: Admin/Delete
+        [Authorize(Roles = "super-admin")]
         [HttpPost("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirm(string id, CancellationToken cancellationToken)

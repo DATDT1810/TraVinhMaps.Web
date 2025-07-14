@@ -10,13 +10,13 @@ namespace TraVinhMaps.Web.Admin.Models.TouristDestination
     public class ContactDestination
     {
         [DisplayName("Phone Number")]
-        [Phone(ErrorMessage = "Invalid phone number")]
+        [RegularExpression(@"^(\+84|0[35789])[0-9]{8}$", ErrorMessage = "Invalid Vietnamese phone number format.")]
         public string? Phone { get; set; }
         [DisplayName("Email Address")]
         [EmailAddress(ErrorMessage = "Invalid email address")]
         public string? Email { get; set; }
         [DisplayName("Website")]
-        [Url(ErrorMessage = "Invalid URL")]
+        [RegularExpression(@"^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$", ErrorMessage = "Invalid website URL format.")]
         public string? Website { get; set; }
     }
 }

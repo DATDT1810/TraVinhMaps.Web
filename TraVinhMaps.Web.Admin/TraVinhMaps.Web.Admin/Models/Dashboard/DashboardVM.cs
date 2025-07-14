@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TraVinhMaps.Web.Admin.Models.Review;
 using TraVinhMaps.Web.Admin.Models.Users;
 
 namespace TraVinhMaps.Web.Admin.Models.Dashboard
@@ -14,6 +15,7 @@ namespace TraVinhMaps.Web.Admin.Models.Dashboard
         public List<UserResponse> RecentUsers { get; set; } = new List<UserResponse>();
         public List<UserStatisticVM> UserStatistics { get; set; } = new List<UserStatisticVM>();
         public Dictionary<string, Dictionary<string, int>> PerformanceByTag { get; set; } = new Dictionary<string, Dictionary<string, int>>();
+        public List<ReviewResponse> LatestReviews { get; set; } = new();
     }
 
     public class UserStatisticVM

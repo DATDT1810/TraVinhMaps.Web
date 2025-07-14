@@ -362,31 +362,56 @@
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Tag</th>
                                     <th scope="col">Customer</th>
                                     <th scope="col">Destination Name</th>
-                                    <th scope="col">Rate</th>
+                                    <th scope="col">Rate <span style="color: #ffc107;">&#9733;</span></th>
                                     <th scope="col">Review</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td class="d-flex align-items-center"><img class="me-2"
-                                            src="../assets/images/tags/destination.png" alt="Destination"
-                                            style="width: 33px;"><span class="font-success">Destination</span></td>
-                                    <td><img class="img-fluid table-avtar" src="../assets/images/avtar/3.jpg"
-                                            alt="Destination"> Alizaban</td>
-                                    <td>Ba Om Pond</td>
-                                    <td>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                        <i class="fa fa-star text-warning"></i>
-                                    </td>
-                                    <td>Chase Nguyen</td>
-                                </tr>
+                                @{
+                                    int count = 1;
+                                }
+                                @if (Model.LatestReviews != null && Model.LatestReviews.Any())
+                                {
+                                    @foreach (var item in Model.LatestReviews)
+                                    {
+                                        <tr class="user-removes">
+                                            <td>@count</td>
+                                            <td>
+                                                @item.UserName
+                                            </td>
+                                            <td>
+                                                @item.DestinationName
+                                            </td>
+                                            <td>
+                                                @{
+                                                    int starCount = (int)Math.Floor((double)item.Rating);
+                                                    int totalStars = 5;
+                                                }
+                                                @for(int i = 1; i <= totalStars; i++)
+                                                {
+                                                    if (i <= starCount)
+                                                    {
+                                                        <i class="fa fa-star font-warning"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="fa fa-star" style="color: #ccc;"></i>
+                                                    }
+                                                }
+                                            </td>
+                                            <td>
+                                                @item.Comment
+                                            </td>
+                                        </tr>
+                                        count++;
+                                    }
+                                }
+                                else
+                                {
+                                    <p>No reviews found.</p>
+                                }
                             </tbody>
                         </table>
                     </div>

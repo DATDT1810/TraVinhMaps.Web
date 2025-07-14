@@ -48,50 +48,43 @@ namespace TraVinhMaps.Web.Admin.Controllers
 
         // GET: EventAndFestivalManagement/CreateEventAndFestival
         [HttpGet("CreateEventAndFestival")]
-        public IActionResult CreateEventAndFestival()
+        public async Task<IActionResult> CreateEventAndFestivalAsync()
         {
-            return View();
+            var model = new CreateEventAndFestivalRequestViewModel
+            {
+                NameEvent = "",
+                Name = "",
+                Address = "",
+                Type = "Point",
+                longitude = 106.3346,
+                latitude = 9.9513,
+                StartDate = DateTime.Now.ToString("MM/dd/yyyy"),
+                EndDate = DateTime.Now.AddDays(7).ToString("MM/dd/yyyy"),
+                Category = "Event",
+                ImagesFile = new List<IFormFile>(),
+                Description = "",
+            };
+            return View(model);
         }
 
-        // POST: EventAndFestivalManagement/CreateEventAndFestival
-        [HttpPost("CreateEventAndFestival")]
-        public async Task<IActionResult> CreateEventAndFestival(CreateEventAndFestivalRequest createEventAndFestivalRequest)
-        {
-            // await _eventAndFestivalService.CreateEventAndFestival(createEventAndFestivalRequest);
-            return RedirectToAction("Index");
-        }
-
-        // GET: EventAndFestivalManagement/CreateEventFestival
-        [HttpGet("CreateEventFestival")]
-        public IActionResult CreateEventFestival()
-        {
-            return View();
-        }
 
         // POST: EventAndFestivalManagement/CreateEventFestival
         [HttpPost("CreateEventFestival")]
         public async Task<IActionResult> CreateEventFestival(CreateEventAndFestivalRequestViewModel createEventAndFestivalRequestViewModel)
         {
-            if (createEventAndFestivalRequestViewModel.ImagesFile == null ||
-    !createEventAndFestivalRequestViewModel.ImagesFile.Any(f => f != null && f.Length > 0))
-            {
-                TempData["errorMessage"] = "Add at least 1 valid picture for event and festival, please try again";
-                return View(createEventAndFestivalRequestViewModel);
-            }
-
-            if (!ModelState.IsValid)
+            if (createEventAndFestivalRequestViewModel == null)
             {
                 TempData["errorMessage"] = "Add event/festival failure, please try again";
-                return View(createEventAndFestivalRequestViewModel);
+                return RedirectToAction("CreateEventAndFestival", createEventAndFestivalRequestViewModel);
             }
+            var markers = await _markerService.ListAllAsync();
+            var tags = await _tagService.ListAllAsync();
             string format = "MM/dd/yyyy";
             CultureInfo provider = CultureInfo.InvariantCulture;
-            var tags = await _tagService.ListAllAsync();
-            var markers = await _markerService.ListAllAsync();
             CreateEventAndFestivalRequest createEventAndFestivalRequest = new CreateEventAndFestivalRequest()
             {
                 NameEvent = createEventAndFestivalRequestViewModel.NameEvent,
-                Description = createEventAndFestivalRequestViewModel.Description,
+                Description = createEventAndFestivalRequestViewModel.Description ?? string.Empty,
                 StartDate = DateTime.ParseExact(createEventAndFestivalRequestViewModel.StartDate, format, provider),
                 EndDate = DateTime.ParseExact(createEventAndFestivalRequestViewModel.EndDate, format, provider),
                 Category = createEventAndFestivalRequestViewModel.Category,
@@ -100,7 +93,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 {
                     Name = createEventAndFestivalRequestViewModel.Name,
                     Address = createEventAndFestivalRequestViewModel.Address,
-                    MarkerId = markers.FirstOrDefault(t => t.Name == "Event And Festival")?.Id,
+                    MarkerId = markers.FirstOrDefault(m => m.Name == "Event And Festival")?.Id,
                     location = new Location
                     {
                         Type = createEventAndFestivalRequestViewModel.Type,
@@ -109,7 +102,12 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 },
                 TagId = tags.FirstOrDefault(t => t.Name == "Festivals")?.Id,
             };
-            await _eventAndFestivalService.CreateEventAndFestival(createEventAndFestivalRequest);
+            var success = await _eventAndFestivalService.CreateEventAndFestival(createEventAndFestivalRequest);
+            if (success == null)
+            {
+                TempData["errorMessage"] = "Add event/festival failure, please try again";
+                return RedirectToAction("CreateEventAndFestival", createEventAndFestivalRequestViewModel);
+            }
             TempData["successMessage"] = "Add event/festival successfull";
             return RedirectToAction("Index");
         }

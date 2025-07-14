@@ -80,9 +80,13 @@
                             <h4 class="f-w-600">Welcome Admin</h4>
                         </div>
                     </div>
-                    <div class="welcome-content d-xl-block d-none"><span class="text-truncate col-12">Here's what's
+                    <div class="welcome-content d-xl-block d-none">
+                        <span class="text-truncate col-12">
+                            Here's what's
                             happening with
-                            your App today. </span></div>
+                            your App today.
+                        </span>
+                    </div>
                 </div>
                 <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
                     <ul class="nav-menus">
@@ -109,6 +113,8 @@
                             </ul>
                         </li>
 
+                        </li>
+
                         <li class="profile-nav onhover-dropdown">
                             <div class="media profile-media">
                                 <img class="b-r-10" src="../assets/images/dashboard/profile.png" alt="">
@@ -133,8 +139,10 @@
                                 <li>
                                     <form asp-controller="Authen" asp-action="Logout" method="post">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-pill btn-outline-primary btn-sm">Log
-                                            Out</button>
+                                        <button type="submit" class="btn btn-pill btn-outline-primary btn-sm">
+                                            Log
+                                            Out
+                                        </button>
                                     </form>
                                 </li>
                             </ul>
@@ -192,14 +200,17 @@
                                     <span>Account Management</span>
                                 </a>
                             </li>
-                            <!-- Admin Management -->
-                            <li class="sidebar-list" id="adminManagementMenu">
-                                <a class="sidebar-link sidebar-title link-nav" asp-controller="Admin"
-                                    asp-action="Index">
-                                    <i class="fa fa-user-secret"></i>
-                                    <span>Admin Management</span>
-                                </a>
-                            </li>
+                            @if (User.IsInRole("super-admin"))
+                            {
+                                <!-- Admin Management -->
+                                <li class="sidebar-list" id="adminManagementMenu">
+                                    <a class="sidebar-link sidebar-title link-nav" asp-controller="Admin"
+                                        asp-action="Index">
+                                        <i class="fa fa-user-secret"></i>
+                                        <span>Admin Management</span>
+                                    </a>
+                                </li>
+                            }
                             <!-- Destination Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav"
@@ -304,8 +315,10 @@
                                 </a>
                                 <ul class="sidebar-submenu">
                                     <li><a asp-controller="OcopProduct" asp-action="OcopDashboard">Ocop</a></li>
-                                    <li><a asp-controller="TouristDestinationManagement"
-                                            asp-action="DestinationsStatistics">Destination</a></li>
+                                    <li>
+                                        <a asp-controller="TouristDestinationManagement"
+                                            asp-action="DestinationsStatistics">Destination</a>
+                                    </li>
                                 </ul>
                             </li>
                         </ul>
@@ -356,7 +369,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
     <!-- Plugins JS Ends-->
-
     <!-- ckeditor5 js-->
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 

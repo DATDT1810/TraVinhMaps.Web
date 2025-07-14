@@ -31,13 +31,9 @@ namespace TraVinhMaps.Web.Admin.Models.TouristDestination
         public HistoryStoryUpdateRequest? HistoryStory { get; set; }
         public string DestinationTypeId { get; set; }
         public OpeningHoursDestination? OpeningHours { get; set; }
-        [MinLength(3, ErrorMessage = "Capacity must be at least 3 characters")]
-        [MaxLength(30, ErrorMessage = "Capacity must be less than or equal to 30 characters")]
         public string? Capacity { get; set; }
         public ContactDestination? Contact { get; set; }
         public required string TagId { get; set; }
-        [MinLength(3, ErrorMessage = "Ticket must be at least 3 characters")]
-        [MaxLength(30, ErrorMessage = "Ticket must be less than or equal to 30 characters")]
         public string? Ticket { get; set; }
     }
 }
