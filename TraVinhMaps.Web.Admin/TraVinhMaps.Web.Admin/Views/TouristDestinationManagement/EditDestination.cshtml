@@ -2,7 +2,7 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
 @model UpdateDestinationViewRequest;
 @{
-    ViewData["Title"] = "EditDestination";
+    ViewData["Title"] = "Edit Destination";
 }
 
 <div class="page-body">
@@ -10,7 +10,7 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
-                    <h4>Destination Edit</h4>
+                    <h4>Edit Destination</h4>
                     @if (ViewBag.error != null)
                     {
                         <span class="text-danger">@ViewBag.error</span>
@@ -21,7 +21,7 @@
                         <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
                                     style="font-size: 20px;"></i></a></li>
                         <li class="breadcrumb-item"><a asp-action="Index">Destination Management</a></li>
-                        <li class="breadcrumb-item active">Create Destination </li>
+                        <li class="breadcrumb-item active">Edit Destination </li>
                     </ol>
                 </div>
             </div>

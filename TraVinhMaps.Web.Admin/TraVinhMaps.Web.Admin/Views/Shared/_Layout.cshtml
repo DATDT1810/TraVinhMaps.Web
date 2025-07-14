@@ -9,9 +9,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="Riho admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
+        content="TraVinhGo admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
     <meta name="keywords"
-        content="admin template, Riho admin template, dashboard template, flat admin template, responsive admin template, web app">
+        content="admin template, TraVinhGo admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="pixelstrap">
     <link rel="icon" href="~/assets/images/faticon.png" type="image/x-icon">
     <link rel="shortcut icon" href="~/assets/images/faticon.png" type="image/x-icon">
@@ -36,9 +36,7 @@
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/scrollbar.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/animate.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/owlcarousel.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/echart.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/date-picker.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/chartist.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/owlcarousel.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/dropzone.css">
     <!-- Plugins css Ends-->
@@ -53,7 +51,6 @@
 
     <!-- App css-->
     <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
-    <link id="color" rel="stylesheet" href="~/assets/css/color-1.css" media="screen">
     <!-- Responsive css-->
     <link rel="stylesheet" type="text/css" href="~/assets/css/responsive.css">
 </head>
@@ -95,6 +92,23 @@
                         <li class="onhover-dropdown notification-down">
                             @await Component.InvokeAsync("Notification")
                         </li>
+                        <li class="onhover-dropdown language-dropdown">
+                            <div class="media profile-media">
+                                <div class="media-body d-xl-block d-none box-col-none">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span id="currentLanguage">English</span>
+                                        <i class="middle fa fa-angle-down"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <ul class="profile-dropdown onhover-show-div">
+                                <li><button type="button" class="dropdown-item"
+                                        onclick="changeLanguage('en','English')">English</button></li>
+                                <li><button type="button" class="dropdown-item"
+                                        onclick="changeLanguage('vi','Vietnamese')">Vietnamese</button></li>
+                            </ul>
+                        </li>
+
                         <li class="profile-nav onhover-dropdown">
                             <div class="media profile-media">
                                 <img class="b-r-10" src="../assets/images/dashboard/profile.png" alt="">
@@ -167,7 +181,7 @@
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="Home" asp-action="Index">
                                     <i class="fa fa-home"></i>
-                                    <span class="lan-3">Dashboard</span>
+                                    <span class="lan-3">Dashboards</span>
                                 </a>
                             </li>
                             <!-- Account Management -->
@@ -258,12 +272,12 @@
                                     <span>Send Notifications</span>
                                 </a>
                             </li>
-                            <!-- Maker Management -->
+                            <!-- Marker Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="MarkerManagement"
                                     asp-action="Index">
                                     <i class="fa fa-map-marker"></i>
-                                    <span>Maker Managment</span>
+                                    <span>Marker Managment</span>
                                 </a>
                             </li>
                             <!-- Itineraries Management -->
@@ -327,22 +341,13 @@
     <script src="~/assets/js/config.js"></script>
     <!-- Plugins JS start-->
     <script src="~/assets/js/sidebar-menu.js"></script>
-    <script src="~/assets/js/sidebar-pin.js"></script>
     <script src="~/assets/js/slick/slick.min.js"></script>
     <script src="~/assets/js/slick/slick.js"></script>
     <script src="~/assets/js/header-slick.js"></script>
 
     <!-- calendar js-->
-    <script src="~/assets/js/datepicker/date-picker/datepicker.js"></script>
-    <script src="~/assets/js/datepicker/date-picker/datepicker.en.js"></script>
-    <script src="~/assets/js/datepicker/date-picker/datepicker.custom.js"></script>
-    <script src="~/assets/js/typeahead/handlebars.js"></script>
     <script src="~/assets/js/dropzone/dropzone.js"></script>
     <script src="~/assets/js/dropzone/dropzone-script.js"></script>
-    <script src="~/assets/js/typeahead/typeahead.bundle.js"></script>
-    <script src="~/assets/js/typeahead/typeahead.custom.js"></script>
-    <script src="~/assets/js/typeahead-search/handlebars.js"></script>
-    <script src="~/assets/js/typeahead-search/typeahead-custom.js"></script>
     <script src="~/assets/js/height-equal.js"></script>
     <script src="~/assets/js/animation/wow/wow.min.js"></script>
     <script src="~/assets/js/owlcarousel/owl.carousel.js"></script>
@@ -360,11 +365,12 @@
 
     <!-- Theme js-->
     <script src="~/assets/js/script.js"></script>
-    <script src="~/assets/js/theme-customizer/customizer.js"></script>
-    <script src="~/assets/js/error-handler.js"></script>
-    <script src="~/assets/js/session-handler.js"></script>
+    <script src="~/assets/js/translate/translation.js"></script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@7.0.5/dist/browser/signalr.min.js"></script>
+
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 

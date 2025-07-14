@@ -12,7 +12,7 @@
         position: relative;
         overflow: visible;
         overflow-y: auto;
-        overflow-x: hidden;
+        overflow-x: auto;
     }
 
     .chart-container {
@@ -25,6 +25,19 @@
         max-height: 100%;
         width: 100%;
     }
+
+    .no-data-message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #146c43;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 10px 20px;
+        border-radius: 5px;
+        display: none;
+        z-index: 10;
+    }
 </style>
 
 <!-- Page Sidebar Ends-->
@@ -35,20 +48,13 @@
                 <div class="col-6">
                     <h4>@ViewData["Title"]</h4>
                 </div>
-                <div class="col-6">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">
-                                <i class="fa fa-home" style="font-size: 20px;"></i> </a></li>
-                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
-                        {
-                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
-                            {
-                                <li class="breadcrumb-item">@item</li>
-                            }
-                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
-                        }
-                    </ol>
-                </div>
+                @{
+                    var breadcrumbs = ViewData["Breadcrumb"] as List<BreadcrumbItem>;
+                }
+                @if (breadcrumbs != null)
+                {
+                    @await Html.PartialAsync("_Breadcrumb", breadcrumbs)
+                }
             </div>
         </div>
     </div>
@@ -173,7 +179,8 @@
                     <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
                         <h5 class="me-3">Performance by Tag</h5>
                         <div class="d-flex flex-wrap gap-2 align-items-center">
-                            <select class="form-select w-auto" id="tagSelect" multiple>
+                            <select class="form-select" id="tagSelect" multiple multiselect-search="true"
+                                multiselect-select-all="true" multiselect-max-items="5" placeholder="Select tags">
                                 <option value="Destination">Destination</option>
                                 <option value="Ocop">Ocop</option>
                                 <option value="Local specialty">Local Specialty</option>
@@ -186,14 +193,13 @@
                                 <option value="month">Last Month</option>
                                 <option value="year">Last Year</option>
                             </select>
-                            <button title="(PNG & CSV)" class="btn btn-primary" id="downloadPerformanceChart">
-                                Download Chart
-                            </button>
+                            <button title="(PNG & CSV)" class="btn btn-primary" id="downloadPerformanceChart">Download
+                                Chart</button>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="chart-container">
-                            <div id="performanceChart-loading" style="display: none; text-align: center;">Loading...
+                            <div class="no-data-message text-center" id="performanceChart-no-data">No data available
                             </div>
                             <canvas id="performanceChart"></canvas>
                         </div>
@@ -201,7 +207,7 @@
                 </div>
             </div>
 
-            <!-- New Users Chart (Full-width) -->
+            <!-- User Creation Chart -->
             <div class="col-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
@@ -215,18 +221,29 @@
                     </div>
                     <div class="card-body">
                         <div class="chart-container">
-                            <div id="timeChart-loading" style="display: none; text-align: center;">Loading...</div>
+                            <div class="no-data-message text-center" id="timeChart-no-data">No data available</div>
                             <canvas id="timeChart"></canvas>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Other Charts Section -->
+            <!-- User Statistics Overview -->
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h5>User Statistics Overview</h5>
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+                        <h5 class="me-2 mb-2">User Statistics Overview</h5>
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <div class="d-flex flex-wrap gap-2 align-items-center">
+                                <select class="form-select w-auto" id="downloadUserStatSelect">
+                                    <option value="ageChart">Age Distribution</option>
+                                    <option value="genderChart">Gender Distribution</option>
+                                    <option value="statusChart">Status Distribution</option>
+                                </select>
+                                <button class="btn btn-primary" id="downloadUserStatChart" title="(PNG & CSV)">Download
+                                    Chart</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -244,6 +261,8 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="chart-container">
+                                            <div class="no-data-message text-center" id="ageChart-no-data">No data
+                                                available</div>
                                             <canvas id="ageChart"></canvas>
                                         </div>
                                     </div>
@@ -263,6 +282,9 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="chart-container">
+                                            <div class="no-data-message text-center" id="genderChart-no-data">No data
+                                                available
+                                            </div>
                                             <canvas id="genderChart"></canvas>
                                         </div>
                                     </div>
@@ -281,32 +303,43 @@
                                         </select>
                                     </div>
                                     <div class="card-body">
-                                        <div class="chart-container">
+                                        <div class="chart-container position-relative">
+                                            <div class="no-data-message text-center" id="statusChart-no-data">No data
+                                                available
+                                            </div>
                                             <canvas id="statusChart"></canvas>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
                             <!-- Hometown Chart -->
                             <div class="col-md-12 col-lg-12">
                                 <div class="card">
-                                    <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h5>Hometown Distribution</h5>
-                                        <select class="form-select w-auto" id="hometownChartSelect">
-                                            <option value="day">Today</option>
-                                            <option value="week">Last Week</option>
-                                            <option value="month">Last Month</option>
-                                            <option value="year">Last Year</option>
-                                        </select>
-                                        <button title="(PNG & CSV)" class="btn btn-primary ms-2"
-                                            id="downloadHometownChart">Download
-                                            Chart</button>
+                                    <div
+                                        class="card-header d-flex justify-content-between align-items-center flex-wrap">
+                                        <h5 class="mb-2 mb-sm-0">Hometown Distribution</h5>
+                                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                                            <select class="form-select w-auto" id="hometownChartSelect">
+                                                <option value="day">Today</option>
+                                                <option value="week">Last Week</option>
+                                                <option value="month">Last Month</option>
+                                                <option value="year">Last Year</option>
+                                            </select>
+                                            <button title="(PNG & CSV)" class="btn btn-primary"
+                                                id="downloadHometownChart">
+                                                Download Chart
+                                            </button>
+                                        </div>
                                     </div>
+
                                     <div class="card-body">
                                         <div class="chart-hometown-container" style="height: 600px; overflow-y: auto;">
+                                            <div class="no-data-message text-center" id="hometownChart-no-data">No data
+                                                available
+                                            </div>
                                             <canvas id="hometownChart"></canvas>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
@@ -321,7 +354,6 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <h4>Top 5 Reviews</h4>
-                                <span><code>#Review new</code></span>
                             </div>
                         </div>
                     </div>
@@ -368,6 +400,7 @@
 @section Scripts {
     <script src="~/assets/js/sweetalert-custom.js"></script>
     <script src="~/assets/js/usermanagement/chart.js"></script>
+    <script src="~/assets/js/multiselect-dropdown.js"></script>
     <script>
         // Define initial data and time range
         const initialTimeRange = '@(ViewData["TimeRange"] ?? "month")';
@@ -379,7 +412,7 @@
             hometown: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Hometown ?? new Dictionary<string, int>())),
             time: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Time ?? new Dictionary<string, int>())),
             performance: @Html.Raw(Json.Serialize(Model.PerformanceByTag ?? new Dictionary<string, Dictionary<string, int>>()))
-                            };
+                                                    };
         console.log("Initial data:", initialData); // Debug log
 
         // Initialize charts when the window loads

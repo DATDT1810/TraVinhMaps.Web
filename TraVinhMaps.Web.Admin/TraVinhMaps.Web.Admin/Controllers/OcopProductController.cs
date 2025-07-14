@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TraVinhMaps.Web.Admin.Models;
 using TraVinhMaps.Web.Admin.Models.Location;
 using TraVinhMaps.Web.Admin.Models.OcopProduct;
 using TraVinhMaps.Web.Admin.Models.SellingLink;
@@ -30,17 +31,31 @@ namespace TraVinhMaps.Web.Admin.Controllers
             _companyService = companyService;
             _tagService = tagService;
         }
+
+        // GET: OcopProduct/Index
         public async Task<IActionResult> Index()
         {
-            ViewData["Title"] = "Ocop product list";
-            ViewData["Breadcrumb"] = new List<string> { "Ocop Product", "Ocop product list" };
+            ViewData["Title"] = "Ocop Product Management";
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Ocop Product Management", Url = Url.Action("Index", "OcopProduct")! },
+                new BreadcrumbItem { Title = "Ocop Product List" } // default URL for the current page
+            };
             var listOcopProduct = await _ocopProductService.ListAllAsync();
             return View(listOcopProduct);
         }
 
+        // GET: OcopProduct/Detail/{id}
         [HttpGet("Detail/{id}")]
         public async Task<IActionResult> DetailOcopProduct(string id, CancellationToken cancellationToken = default)
         {
+            ViewData["Title"] = "Ocop Product Management";
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Ocop Product Management", Url = Url.Action("Index", "OcopProduct")! },
+                new BreadcrumbItem { Title = "Ocop Product Details" } // default URL for the current page
+            };
+
             var ocopProduct = await _ocopProductService.GetByIdAsync(id);
             var sellingLinks = await _sellingLinkService.GetSellingLinkByOcopProductId(id);
 
@@ -50,8 +65,6 @@ namespace TraVinhMaps.Web.Admin.Controllers
 
             if (ocopProduct != null)
             {
-                //ocopProduct.TagId = ocopProduct.TagId?.ToString().Replace("ObjectId(\"", "").Replace("\")", "");
-
                 try
                 {
                     var ocopType = await _ocopTypeService.GetByIdAsync(ocopProduct.OcopTypeId, cancellationToken);
@@ -72,15 +85,24 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(ocopProduct);
         }
 
+        // GET: OcopProduct/CreateOcopProduct
         [HttpGet("CreateOcopProduct")]
         public async Task<IActionResult> CreateOcopProduct()
         {
+            ViewData["Title"] = "Ocop Product Management";
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Ocop Product Management", Url = Url.Action("Index", "OcopProduct")! },
+                new BreadcrumbItem { Title = "Create Ocop Product" } // default URL for the current page
+            };
             var ocopTypes = await _ocopTypeService.ListAllAsync();
             var company = await _companyService.ListAllAsync();
             ViewBag.OcopTypes = ocopTypes;
             ViewBag.Companies = company;
             return View();
         }
+
+        // POST: OcopProduct/CreateOcopProduct
         [HttpPost("CreateOcopProductPost")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateOcopProductPost(OcopProductViewModel ocopProductViewModel, CancellationToken cancellationToken = default)
@@ -142,7 +164,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     CreatedAt = result.value.data.CreatedAt,
                     UpdateAt = result.value.data.UpdateAt
                 };
-                
+
                 TempData["SuccessMessage"] = "Ocop product and sell locations created successfully!";
                 return RedirectToAction("Index");
             }
@@ -158,9 +180,16 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // GET: OcopProduct/UpdateOcopProduct/{id}
         [HttpGet("UpdateOcopProduct")]
         public async Task<IActionResult> UpdateOcopProduct(string id)
         {
+            ViewData["Title"] = "Ocop Product Management";
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Ocop Product Management", Url = Url.Action("Index", "OcopProduct")! },
+                new BreadcrumbItem { Title = "Update Ocop Product" } // default URL for the current page
+            };
             var findOcopProduct = await _ocopProductService.GetByIdAsync(id);
             if (findOcopProduct == null)
             {
@@ -186,6 +215,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(updateOcopProductRequest);
         }
 
+        // POST: OcopProduct/UpdateOcopProductPost
         [HttpPost("UpdateOcopProductPost")]
         public async Task<IActionResult> UpdateOcopProductPost(OcopProductResponse request, CancellationToken cancellationToken = default)
         {
@@ -220,6 +250,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
             TempData["SuccessMessage"] = "Ocop product updated successfully!";
             return RedirectToAction("Index");
         }
+
+        // POST: OcopProduct/DeleteOcopProduct
         [HttpPost("DeleteOcopProduct")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteOcopProduct(string id, CancellationToken cancellationToken = default)
@@ -235,7 +267,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
-
+        // POST: OcopProduct/RestoreOcopProduct
         [HttpPost("RestoreOcopProduct")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreOcopProduct(string id, CancellationToken cancellationToken = default)
@@ -250,6 +282,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return Json(new { success = false, message = $"Error restore ocop product : {ex.Message}" });
             }
         }
+
+        // Sell Location Management
         [HttpGet("CreateSellLocation")]
         public IActionResult CreateSellLocation(string id)
         {
@@ -257,10 +291,12 @@ namespace TraVinhMaps.Web.Admin.Controllers
             var sellLocationViewModel = new SellLocationViewModel
             {
                 Id = id,
-                MarkerId = "68486609935049741c54a644" 
+                MarkerId = "68486609935049741c54a644"
             };
             return View(sellLocationViewModel);
         }
+
+        // POST: OcopProduct/CreateSellLocation
         [HttpPost("CreateSellLocation")]
         public async Task<IActionResult> CreateSellLocation(string id, SellLocationViewModel sellLocationViewModel, CancellationToken cancellationToken = default)
         {
@@ -296,6 +332,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return Json(new { success = false, message = $"Failed to create point of sell: {ex.Message}" });
             }
         }
+
+        // GET: OcopProduct/UpdateSellLocation/{id}/{locationName}
         [HttpGet("UpdateSellLocation")]
         public async Task<IActionResult> UpdateSellLocation(string id, string locationName)
         {
@@ -320,6 +358,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(sellLocationViewModel);
         }
 
+        // POST: OcopProduct/UpdateSellLocationPost
         [HttpPost("UpdateSellLocationPost")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateSellLocationPost(string id, SellLocationViewModel sellLocationViewModel, CancellationToken cancellationToken = default)
@@ -360,6 +399,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return Json(new { success = false, message = $"Failed to update sell location: {ex.Message}" });
             }
         }
+
+        // DELETE: OcopProduct/DeleteSellLocation/{id}/{name}
         [HttpDelete("DeleteSellLocation/{id}/{name}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteSellLocation(string id, string name, CancellationToken cancellationToken = default)
@@ -375,6 +416,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // Selling Link Management
         [HttpPost("CreateSellingLink")]
         public async Task<IActionResult> CreateSellingLink(SellingLinkViewModel sellingLinkViewModel, CancellationToken cancellationToken = default)
         {
@@ -386,7 +428,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             try
             {
                 var result = await _sellingLinkService.AddAsync(sellingLinkViewModel, cancellationToken);
-                
+
                 var sellLocation = new SellingLinkResponse
                 {
                     Id = result.Data.Id,
@@ -405,6 +447,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // GET: OcopProduct/UpdateSellingLink/{id}
         [HttpPost("UpdateSellingLinkPost")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateSellingLinkPost(SellingLinkResponse sellingLinkResponse, CancellationToken cancellationToken = default)
@@ -441,6 +484,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return Json(new { success = false, message = $"Failed to update sell location: {ex.Message}" });
             }
         }
+
+        // DELETE: OcopProduct/DeleteSellingLink/{id}
         [HttpDelete("DeleteSellingLink/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteSellingLink(string id, CancellationToken cancellationToken = default)
@@ -489,6 +534,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return RedirectToAction("DetailOcopProduct", new { id });
             }
         }
+
+        // POST: OcopProduct/DeleteOcopProductImage
         [HttpPost("DeleteOcopProductImage")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteOcopProductImage(string id, string imageUrl)
@@ -510,8 +557,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return RedirectToAction("DetailOcopProduct", new { id });
             }
         }
-        
 
+        // GET: OcopProduct/ImportProducts
         [HttpGet("ImportProducts")]
         public async Task<IActionResult> ImportProducts()
         {
@@ -561,12 +608,16 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
-        // Analytics
+        // Analytics Dashboard
         [HttpGet("dashboard")]
         public async Task<IActionResult> OcopDashboard([FromQuery] List<string> productIds = null, string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null)
         {
-            ViewData["Title"] = "OCOP Dashboard";
-            ViewData["Breadcrumb"] = new List<string> { "Analytics", "Ocop" };
+            ViewData["Title"] = "OCOP Product Analytics";
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Ocop Product Analytics", Url = Url.Action("dashboard", "OcopProduct")! },
+                new BreadcrumbItem { Title = "Ocop Analytics" } // default URL for the current page
+            };
 
             try
             {

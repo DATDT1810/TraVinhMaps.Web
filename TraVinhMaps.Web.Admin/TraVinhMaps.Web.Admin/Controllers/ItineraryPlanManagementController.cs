@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
+using TraVinhMaps.Web.Admin.Models;
 using TraVinhMaps.Web.Admin.Models.ItineraryPlans;
 using TraVinhMaps.Web.Admin.Models.TouristDestination;
 using TraVinhMaps.Web.Admin.Services.ItineraryPlan;
@@ -31,11 +32,16 @@ namespace TraVinhMaps.Web.Admin.Controllers
             _tagService = tagService;
         }
 
+        // GET: ItineraryPlanManagement/Index
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            ViewData["Title"] = "Itinerary plan";
-            ViewData["Breadcrumb"] = new List<string> { "Itinerary plan Management", "Itinerary plan List" };
+            ViewData["Title"] = "Itinerary Plan Management";
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Itinerary Plan Management", Url = Url.Action("Index", "ItineraryPlanManagement")! },
+                new BreadcrumbItem { Title = "Itinerary Plan List" } // default URL for the current page
+            };
             var itineraryPlans = await _itineraryPlanService.ListAllAsync();
             if (itineraryPlans == null)
             {
@@ -45,6 +51,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(itineraryPlans);
         }
 
+        // GET: ItineraryPlanManagement/CreateItineratyPlan
         [HttpGet("CreateItineratyPlan")]
         public async Task<IActionResult> CreateItineratyPlan()
         {
@@ -52,6 +59,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View();
         }
 
+        // POST: ItineraryPlanManagement/CreateItineratyPlan
         [HttpPost("CreateItineratyPlan")]
         public async Task<IActionResult> CreateItineratyPlan(ItineraryPlanRequestViewModel itineraryPlanRequestViewModel)
         {
@@ -87,6 +95,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        // GET: ItineraryPlanManagement/DetailItineraryPlan
         [HttpGet("DetailItineraryPlan")]
         public async Task<IActionResult> DetailItineraryPlan(string id)
         {
@@ -107,6 +116,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(itineraryPlanResponseViewModel);
         }
 
+        // POST: ItineraryPlanManagement/EditItineraryPlan
         [HttpGet("EditItineraryPlan")]
         public async Task<IActionResult> EditItineraryPlan(string id)
         {
@@ -137,6 +147,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(updateItineraryPlanResponse);
         }
 
+        // POST: ItineraryPlanManagement/EditItineraryPlan
         [HttpPost("EditItineraryPlan")]
         public async Task<IActionResult> EditItineraryPlan(UpdateItineraryPlanResponse updateItineraryPlanResponse)
         {
@@ -166,6 +177,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        // POST: ItineraryPlanManagement/DeleteItineraryPlan
         [HttpPost("DeleteItineraryPlan")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteItineraryPlan(string id, CancellationToken cancellationToken)
@@ -181,6 +193,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // POST: ItineraryPlanManagement/DeleteItineraryPlanByForm
         [HttpPost("DeleteItineraryPlanByForm")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteItineraryPlanByForm(string id, CancellationToken cancellationToken)
@@ -203,6 +216,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // POST: ItineraryPlanManagement/RestoreItineraryPlan
         [HttpPost("RestoreItineraryPlan")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreItineraryPlan(string id, CancellationToken cancellationToken)
@@ -218,6 +232,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // POST: ItineraryPlanManagement/RestoreItineraryPlanByForm
         [HttpPost("RestoreItineraryPlanlByForm")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreItineraryPlanlByForm(string id, CancellationToken cancellationToken)
@@ -235,19 +250,21 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
-
+        // GET: ItineraryPlanManagement/Error
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View("Error!");
         }
 
+        // Helper methods
         private async Task<List<string>> GetDestinationNamesAsync()
         {
             var destinations = await _destinationService.ListAllAsync();
             return destinations.Select(d => d.Name).ToList();
         }
 
+        // Helper methods to get destination IDs and details by name or ID
         private async Task<List<string>> GetIdByDestinationName(List<string> destinationNameList)
         {
             var destinations = await _destinationService.ListAllAsync();
@@ -264,6 +281,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return matchedIds;
         }
 
+        // Helper method to get destination details by a list of IDs
         private async Task<List<TouristDestinationResponse>> GetDestinationListByIdList(List<string> listId)
         {
             var destinations = await _destinationService.ListAllAsync();
@@ -280,6 +298,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return destinationList;
         }
 
+        // Helper methods to get duration and estimated cost lists
         private List<SelectListItem> GetDurationList() => new List<SelectListItem>
         {
             new SelectListItem { Value = "One day", Text = "One day" },
@@ -289,6 +308,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             new SelectListItem { Value = "5 days 4 night", Text = "5 days 4 night" },
         };
 
+        // Helper method to get estimated cost list
         private List<SelectListItem> GetEstimatedCostList() => new List<SelectListItem>
         {
             new SelectListItem { Value = "1 million", Text = "1 million" },

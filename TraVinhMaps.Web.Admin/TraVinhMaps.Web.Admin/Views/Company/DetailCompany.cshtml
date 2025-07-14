@@ -2,19 +2,15 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model CompanyResponse
 @{
-    ViewData["Title"] = "DetailCompany";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Company Details";
 }
 
-@{
-    ViewData["Title"] = "DetailCompany";
-}
 <div class="page-body">
     <div class="container-fluid">
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
-                    <h4>Company Detail</h4>
+                    <h4>@ViewData["Title"]</h4>
                     @if (TempData["ErrorMessage"] != null)
                     {
                         <div id="alert-message" class="alert alert-danger">
@@ -29,15 +25,13 @@
                         </div>
                     }
                 </div>
-                <div class="col-6">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a asp-controller="Home" asp-action="Index"><i class="fa fa-home" style="font-size: 20px;"></i></a>
-                        </li>
-                        <li class="breadcrumb-item">ECommerce</li>
-                        <li class="breadcrumb-item active">Product Page</li>
-                    </ol>
-                </div>
+                @{
+                    var breadcrumbs = ViewData["Breadcrumb"] as List<BreadcrumbItem>;
+                }
+                @if (breadcrumbs != null)
+                {
+                    @await Html.PartialAsync("_Breadcrumb", breadcrumbs)
+                }
             </div>
         </div>
     </div>
