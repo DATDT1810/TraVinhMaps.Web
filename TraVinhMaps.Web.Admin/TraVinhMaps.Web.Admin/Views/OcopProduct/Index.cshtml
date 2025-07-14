@@ -87,7 +87,7 @@
                             </div>
                         </div>
                         <div class="table-responsive custom-scrollbar">
-                            <table class="display" id="basic-9">
+                            <table class="display" id="project-status">
                                 <thead class="bg-primary">
                                     <tr>
                                         <th>No.</th>
@@ -186,10 +186,10 @@
 
 @section Scripts {
     @Html.AntiForgeryToken()
-    <!-- Add SheetJS libraries for Excel export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="~/assets/js/sweetalert-custom.js"></script>
-    <script src="~/assets/js/ocopproduct/index.js"></script>
+    <script src="~/assets/js/ocopproduct/crud.js"></script>
+    <script src="~/assets/js/ocopproduct/formModal.js"></script>
     <script>
         (function () {
             const success = @Html.Raw(Json.Serialize(TempData["Success"]));

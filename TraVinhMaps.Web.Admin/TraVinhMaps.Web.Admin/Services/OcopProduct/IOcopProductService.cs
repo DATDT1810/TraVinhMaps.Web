@@ -15,6 +15,7 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
         Task<long> CountAsync(Expression<Func<OcopProductResponse, bool>> predicate = null, CancellationToken cancellationToken = default);
         Task<IEnumerable<OcopProductResponse>> GetOcopProductByOcopTypeId(string ocopTypeId, CancellationToken cancellationToken = default);
         Task<IEnumerable<OcopProductResponse>> GetOcopProductByCompanyId(string companyId, CancellationToken cancellationToken = default);
+        Task<OcopProductResponse> GetOcopProductByName(string name, CancellationToken cancellationToken = default);
         Task<List<string>> AddImageOcopProduct(string id, List<IFormFile> imageFiles, CancellationToken cancellationToken = default);
         Task<DeleteImageOcopProductResponse> DeleteImageOcopProduct(string id, string imageUrl, CancellationToken cancellationToken = default);
         Task<SellLocationResponse> AddSellLocation(string id, SellLocationResponse sellLocation, CancellationToken cancellationToken = default);
