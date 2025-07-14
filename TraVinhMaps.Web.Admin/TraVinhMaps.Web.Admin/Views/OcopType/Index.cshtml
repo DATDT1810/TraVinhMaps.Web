@@ -20,14 +20,8 @@
                                 <i class="fa fa-home" style="font-size: 20px;"></i>
                             </a>
                         </li>
-                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
-                        {
-                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
-                            {
-                                <li class="breadcrumb-item">@item</li>
-                            }
-                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
-                        }
+                        <li class="breadcrumb-item">Ocop Type</li>
+                        <li class="breadcrumb-item active">Ocop Type List</li>
                     </ol>
                 </div>
             </div>
@@ -111,6 +105,8 @@
 
 @section Scripts {
     @Html.AntiForgeryToken()
+    <!-- Add SheetJS libraries for Excel export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="~/assets/js/sweetalert-custom.js"></script>
     <script src="~/assets/js/ocoptype/index.js"></script>
     <script>
