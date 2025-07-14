@@ -118,6 +118,10 @@
         padding: 15px;
         text-align: center;
     }
+
+    .location-info-table td {
+        padding-bottom: 2px;
+    }
 </style>
 
 <div class="page-body">
@@ -202,7 +206,7 @@
                             <p>@Model.Address</p>
                             <hr>
                             <div>
-                                <table class="product-page-width">
+                                <table class="product-page-width location-info-table">
                                     <tbody>
                                         <tr>
                                             <td> <b>Create At:</b></td>
@@ -317,13 +321,13 @@
                                 <ul>
                                     <li>
                                         <div class="media-body">
-                                            <h6>Opening time:</h6>
+                                          
                                             <p>@(Model.OpeningHours?.OpenTime ?? "")</p>
                                         </div>
                                     </li>
                                     <li>
                                         <div class="media-body">
-                                            <h6>Closing time:</h6>
+                                           
                                             <p>@(Model.OpeningHours?.CloseTime ?? "")</p>
                                         </div>
                                     </li>
@@ -365,7 +369,7 @@
                                         <div class="media"><i style="font-size: 25px;" class="fa fa-link"
                                                 aria-hidden="true"></i> &nbsp&nbsp&nbsp
                                             <div class="media-body">
-                                                <h5>Webside </h5>
+                                                <h5>Website </h5>
                                                 <div style="width: 200px; cursor: pointer;"
                                                     onclick="copyWebsiteToClipboard(this)">
                                                     <p>@(Model.Contact?.Website ?? "")</p>

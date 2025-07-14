@@ -9,9 +9,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="Riho admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
+          content="Riho admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
     <meta name="keywords"
-        content="admin template, Riho admin template, dashboard template, flat admin template, responsive admin template, web app">
+          content="admin template, Riho admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="pixelstrap">
     <link rel="icon" href="~/assets/images/faticon.png" type="image/x-icon">
     <link rel="shortcut icon" href="~/assets/images/faticon.png" type="image/x-icon">
@@ -20,7 +20,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&amp;display=swap"
-        rel="stylesheet">
+          rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="~/assets/css/font-awesome.min.css">
     <!-- ico-font-->
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/icofont.css">
@@ -83,18 +83,22 @@
                             <h4 class="f-w-600">Welcome Admin</h4>
                         </div>
                     </div>
-                    <div class="welcome-content d-xl-block d-none"><span class="text-truncate col-12">Here's what's
+                    <div class="welcome-content d-xl-block d-none">
+                        <span class="text-truncate col-12">
+                            Here's what's
                             happening with
-                            your App today. </span></div>
+                            your App today.
+                        </span>
+                    </div>
                 </div>
                 <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
                     <ul class="nav-menus">
                         <li>
                             <div class="mode"><i class="moon" data-feather="moon"> </i></div>
                         </li>
-                        <li class="onhover-dropdown notification-down">
+                        @* <li class="onhover-dropdown notification-down">
                             @await Component.InvokeAsync("Notification")
-                        </li>
+                        </li> *@
                         <li class="profile-nav onhover-dropdown">
                             <div class="media profile-media">
                                 <img class="b-r-10" src="../assets/images/dashboard/profile.png" alt="">
@@ -119,8 +123,10 @@
                                 <li>
                                     <form asp-controller="Authen" asp-action="Logout" method="post">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-pill btn-outline-primary btn-sm">Log
-                                            Out</button>
+                                        <button type="submit" class="btn btn-pill btn-outline-primary btn-sm">
+                                            Log
+                                            Out
+                                        </button>
                                     </form>
                                 </li>
                             </ul>
@@ -137,7 +143,7 @@
                 <div class="logo-wrapper">
                     <a asp-controller="Home" asp-action="Index">
                         <img class="img-fluid" src="~/assets/images/logo/logo.png" alt="Logo"
-                            style="width: 100px; margin-left: 50px; margin-top: -20px;">
+                             style="width: 100px; margin-left: 50px; margin-top: -20px;">
                     </a>
                     <div class="back-btn"><i class="fa fa-angle-left"></i></div>
                     <div class="toggle-sidebar">
@@ -173,23 +179,26 @@
                             <!-- Account Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="UserManagement"
-                                    asp-action="Index">
+                                   asp-action="Index">
                                     <i class="fa fa-user"></i>
                                     <span>Account Management</span>
                                 </a>
                             </li>
-                            <!-- Admin Management -->
-                            <li class="sidebar-list" id="adminManagementMenu">
-                                <a class="sidebar-link sidebar-title link-nav" asp-controller="Admin"
-                                    asp-action="Index">
-                                    <i class="fa fa-user-secret"></i>
-                                    <span>Admin Management</span>
-                                </a>
-                            </li>
+                            @if (User.IsInRole("super-admin"))
+                            {
+                                <!-- Admin Management -->
+                                <li class="sidebar-list" id="adminManagementMenu">
+                                    <a class="sidebar-link sidebar-title link-nav" asp-controller="Admin"
+                                       asp-action="Index">
+                                        <i class="fa fa-user-secret"></i>
+                                        <span>Admin Management</span>
+                                    </a>
+                                </li>
+                            }
                             <!-- Destination Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav"
-                                    asp-controller="TouristDestinationManagement" asp-action="Index">
+                                   asp-controller="TouristDestinationManagement" asp-action="Index">
                                     <i class="fa fa-globe"></i>
                                     <span>Destination</span>
                                 </a>
@@ -197,7 +206,7 @@
                             <!-- Ocop Product -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="OcopProduct"
-                                    asp-action="Index">
+                                   asp-action="Index">
                                     <i class="fa fa-shopping-bag"></i>
                                     <span>Ocop Product</span>
                                 </a>
@@ -205,7 +214,7 @@
                             <!-- Ocop Type -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="OcopType"
-                                    asp-action="Index">
+                                   asp-action="Index">
                                     <i class="fa fa-suitcase"></i>
                                     <span>Ocop Type</span>
                                 </a>
@@ -213,7 +222,7 @@
                             <!-- Company -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="Company"
-                                    asp-action="Index">
+                                   asp-action="Index">
                                     <i class="fa fa-building"></i>
                                     <span>Company</span>
                                 </a>
@@ -221,7 +230,7 @@
                             <!-- Review -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="Review"
-                                    asp-action="Index">
+                                   asp-action="Index">
                                     <i class="fa fa-comments"></i>
                                     <span>Review Management</span>
                                 </a>
@@ -229,7 +238,7 @@
                             <!-- Local Specialties Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="LocalSpecialties"
-                                    asp-action="Index">
+                                   asp-action="Index">
                                     <i class="fa fa-cutlery"></i>
                                     <span>Local Specialties</span>
                                 </a>
@@ -237,7 +246,7 @@
                             <!-- Event and Festival Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav"
-                                    asp-controller="EventAndFestivalManagement" asp-action="Index">
+                                   asp-controller="EventAndFestivalManagement" asp-action="Index">
                                     <i class="fa fa-calendar"></i>
                                     <span>Event And Festival</span>
                                 </a>
@@ -245,7 +254,7 @@
                             <!-- Tips Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="CommunityTips"
-                                    asp-action="Index">
+                                   asp-action="Index">
                                     <i class="fa fa-lightbulb-o"></i>
                                     <span>Tips Managment</span>
                                 </a>
@@ -253,7 +262,7 @@
                             <!-- Send Notifications -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="Notifications"
-                                    asp-action="Index">
+                                   asp-action="Index">
                                     <i class="fa fa-bell"></i>
                                     <span>Send Notifications</span>
                                 </a>
@@ -261,7 +270,7 @@
                             <!-- Maker Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="MarkerManagement"
-                                    asp-action="Index">
+                                   asp-action="Index">
                                     <i class="fa fa-map-marker"></i>
                                     <span>Maker Managment</span>
                                 </a>
@@ -269,7 +278,7 @@
                             <!-- Itineraries Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="ItineraryPlanManagement"
-                                    asp-action="Index">
+                                   asp-action="Index">
                                     <i class="fa fa-compass"></i>
                                     <span>Itineraries</span>
                                 </a>
@@ -277,7 +286,7 @@
                             <!-- Feedback Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="Feedback"
-                                    asp-action="Index">
+                                   asp-action="Index">
                                     <i class="fa fa-envelope"></i>
                                     <span>Feedback</span>
                                 </a>
@@ -290,8 +299,10 @@
                                 </a>
                                 <ul class="sidebar-submenu">
                                     <li><a asp-controller="OcopProduct" asp-action="OcopDashboard">Ocop</a></li>
-                                    <li><a asp-controller="TouristDestinationManagement"
-                                            asp-action="DestinationsStatistics">Destination</a></li>
+                                    <li>
+                                        <a asp-controller="TouristDestinationManagement"
+                                           asp-action="DestinationsStatistics">Destination</a>
+                                    </li>
                                 </ul>
                             </li>
                         </ul>
@@ -351,7 +362,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
     <!-- Plugins JS Ends-->
-
     <!-- ckeditor5 js-->
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 
