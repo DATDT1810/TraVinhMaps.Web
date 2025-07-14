@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TraVinhMaps.Web.Admin.Models;
 using TraVinhMaps.Web.Admin.Models.Dashboard;
 using TraVinhMaps.Web.Admin.Models.Review;
 using TraVinhMaps.Web.Admin.Services.Admin;
@@ -25,7 +26,12 @@ namespace TraVinhMaps.Web.Admin.Controllers
         public async Task<IActionResult> Index(string timeRange = "month", string[]? tagNames = null)
         {
             ViewData["Title"] = "Dashboard";
-            ViewData["Breadcrumb"] = new List<string> { "Dashboard", "Default" };
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Dashboard", Url = Url.Action("Index", "Home")! },
+                new BreadcrumbItem { Title = "Default" } // default URL for the current page
+            };
+
 
             // Validate timeRange to prevent invalid values
             timeRange = timeRange.ToLower() switch
@@ -73,16 +79,17 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 var endDate = DateTime.UtcNow.AddHours(7).Date.AddDays(1); // Ngày mai
 
                 var performance = await _userService.GetPerformanceByTagAsync(
-                tagNames: tagNames,
-                includeOcop: true,
-                includeDestination: true,
-                includeLocalSpecialty: true,
-                includeTips: true,
-                includeFestivals: true,
-                startDate: startDate,
-                endDate: endDate,
-                cancellationToken: CancellationToken.None
-            );
+           tagNames: tagNames,
+           includeOcop: true,
+           includeDestination: true,
+           includeLocalSpecialty: true,
+           includeTips: true,
+           includeFestivals: true,
+           timeRange: timeRange,
+           startDate: startDate,
+           endDate: endDate,
+           cancellationToken: CancellationToken.None
+           );
                 model.PerformanceByTag = performance ?? new Dictionary<string, Dictionary<string, int>>();
             }
             catch (Exception ex)

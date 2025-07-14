@@ -1,7 +1,7 @@
 @using TraVinhMaps.Web.Admin.Models.Admins
 @model AdminResponse
 @{
-    ViewData["Title"] = "Details";
+   // ViewData["Title"] = "Details";
 }
 
 
@@ -12,23 +12,13 @@
                 <div class="col-6">
                     <h4>@ViewData["Title"]</h4>
                 </div>
-                <div class="col-6">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a asp-controller="Home" asp-action="Index">
-                                <i class="fa fa-home" style="font-size: 20px;"></i>
-                            </a>
-                        </li>
-                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
-                        {
-                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
-                            {
-                                <li class="breadcrumb-item">@item</li>
-                            }
-                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
-                        }
-                    </ol>
-                </div>
+                @{
+                    var breadcrumbs = ViewData["Breadcrumb"] as List<BreadcrumbItem>;
+                }
+                @if (breadcrumbs != null)
+                {
+                    @await Html.PartialAsync("_Breadcrumb", breadcrumbs)
+                }
             </div>
         </div>
     </div>

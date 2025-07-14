@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using TraVinhMaps.Web.Admin.Models;
 using TraVinhMaps.Web.Admin.Models.Notifications;
 using TraVinhMaps.Web.Admin.Services.Notifications;
 
@@ -18,7 +19,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             ViewData["Title"] = "Send Notification";
-            ViewData["Breadcrumb"] = new List<string> { "Send Notification", "Notifications List" };
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Send Notification", Url = Url.Action("Index", "Notifications")! },
+                new BreadcrumbItem { Title = "Notifications List" } // default URL for the current page
+            };
             var notifications = await _notificationService.GetUniqueNotificationsAsync();
             return View(notifications);
         }
@@ -27,7 +32,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
         public async Task<IActionResult> Details(string id, CancellationToken cancellationToken = default)
         {
             ViewData["Title"] = "Send Notification";
-            ViewData["Breadcrumb"] = new List<string> { "Send Notification", "Details" };
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Send Notification", Url = Url.Action("Index", "Notifications")! },
+                new BreadcrumbItem { Title = "Notifications Details" } // default URL for the current page
+            };
             var notification = await _notificationService.GetByIdAsync(id, cancellationToken);
             if (notification == null)
             {
@@ -41,7 +50,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
         public IActionResult SendNotification()
         {
             ViewData["Title"] = "Send Notification";
-            ViewData["Breadcrumb"] = new List<string> { "Send Notification", "Send" };
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Send Notification", Url = Url.Action("Index", "Notifications")! },
+                new BreadcrumbItem { Title = "Send" } // default URL for the current page
+            };
             return View();
         }
 

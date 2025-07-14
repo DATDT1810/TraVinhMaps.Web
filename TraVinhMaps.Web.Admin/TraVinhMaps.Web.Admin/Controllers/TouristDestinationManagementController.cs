@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using TraVinhMaps.Web.Admin.Models;
 using TraVinhMaps.Web.Admin.Models.TouristDestination;
 using TraVinhMaps.Web.Admin.Models.TouristDestination.Mappers;
 using TraVinhMaps.Web.Admin.Services.DestinationTypes;
@@ -29,11 +30,16 @@ namespace TraVinhMaps.Web.Admin.Controllers
 
         }
 
+        // GET: TouristDestinationManagement/Index
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             ViewData["Title"] = "Destination Management";
-            ViewData["Breadcrumb"] = new List<string> { "Destination Management", "Destination List" };
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Destination Management", Url = Url.Action("Index", "TouristDestinationManagement")! },
+                new BreadcrumbItem { Title = "Destination List" } // default URL for the current page
+            };
             var destinations = await _destinationService.ListAllAsync();
             if (destinations == null)
             {
@@ -43,6 +49,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(destinations);
         }
 
+        // GET: TouristDestinationManagement/CreateDestination
         [HttpGet("CreateDestination")]
         public async Task<IActionResult> CreateDestination()
         {
@@ -50,6 +57,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View();
         }
 
+        // POST: TouristDestinationManagement/CreateDestination
         [HttpPost("CreateDestination")]
         public async Task<IActionResult> CreateDestination(TouristDestinationViewRequest touristDestinationViewRequest)
         {
@@ -97,6 +105,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        // GET: TouristDestinationManagement/DetailDestination
         [HttpGet("DetailDestination")]
         public async Task<IActionResult> DetailDestination(string id)
         {
@@ -116,6 +125,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(destinationDetail);
         }
 
+        // POST: TouristDestinationManagement/DeleteDestination
         [HttpGet("EditDestination")]
         public async Task<IActionResult> EditDestination(string id)
         {
@@ -142,6 +152,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // POST: TouristDestinationManagement/EditDestination
         [HttpPost("EditDestination")]
         public async Task<IActionResult> EditDestination(UpdateDestinationViewRequest updateDestinationViewRequest)
         {
@@ -176,6 +187,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return RedirectToAction("DetailDestination", new { id = updateDestinationViewRequest.Id });
         }
 
+        // POST: TouristDestinationManagement/DeleteDestination
         [HttpPost("DeleteDestination")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteDestination(string id, CancellationToken cancellationToken)
@@ -191,6 +203,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // POST: TouristDestinationManagement/DeleteDestinationByForm
         [HttpPost("DeleteDestinationByForm")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteDestinationByForm(string id, CancellationToken cancellationToken)
@@ -206,6 +219,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // POST: TouristDestinationManagement/RestoreDestination
         [HttpPost("RestoreDestination")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreDestination(string id, CancellationToken cancellationToken)
@@ -221,6 +235,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // POST: TouristDestinationManagement/RestoreDestinationByForm
         [HttpPost("RestoreDestinationByForm")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreDestinationByForm(string id, CancellationToken cancellationToken)
@@ -236,6 +251,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // POST: TouristDestinationManagement/DeleteDestinationImage
         [HttpPost("DeleteDestinationImage")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteDestinationImage(string id, string urlImage)
@@ -279,6 +295,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // POST: TouristDestinationManagement/DeleteHistoryDestinationImage
         [HttpPost("DeleteHistoryDestinationImage")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteHistoryDestinationImage(string id, string urlImage)
@@ -304,6 +321,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // POST: TouristDestinationManagement/AddDestinationImage
         [HttpPost("AddDestinationImage")]
         public async Task<IActionResult> AddDestinationImage(string id, List<IFormFile> imageDestinationFileList)
         {
@@ -333,6 +351,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // POST: TouristDestinationManagement/AddDestinationHistoryImage
         [HttpPost("AddDestinationHistoryImage")]
         public async Task<IActionResult> AddDestinationHistoryImage(string id, List<IFormFile> imageDestinationFileList)
         {
@@ -362,6 +381,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // GET: TouristDestinationManagement/RestoreDestination
         private bool IsImageFile(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -376,6 +396,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return true;
         }
 
+        // Check if all files in the list are valid image files
         private bool IsImageListFile(List<IFormFile> formFiles)
         {
             foreach (var item in formFiles)
@@ -388,6 +409,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return true;
         }
 
+        // Get the list of destination types for dropdown
         private async Task<List<SelectListItem>> GetDestinationTypeList()
         {
             var destinationTypes = await _destinationTypeService.ListAllAsync();
@@ -403,12 +425,17 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return selectList;
         }
 
-        // Analytics
+        // Analytics for destinations
+        // GET: TouristDestinationManagement/DestinationsStatistics
         [HttpGet("destinations-statistics")]
         public async Task<IActionResult> DestinationsStatistics([FromQuery] List<string> destinationIds = null, string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null)
         {
             ViewData["Title"] = "Destinations statistics";
-            ViewData["Breadcrumb"] = new List<string> { "Analytics", "Destinations" };
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Analytics", Url = Url.Action("DestinationsStatistics", "TouristDestinationManagement")! },
+                new BreadcrumbItem { Title = "Destinations statistics" } // default URL for the current page
+            };
 
             try
             {
@@ -440,6 +467,5 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return View("DestinationsStatistics", new DestinationStatisticsViewModel());
             }
         }
-
     }
 }

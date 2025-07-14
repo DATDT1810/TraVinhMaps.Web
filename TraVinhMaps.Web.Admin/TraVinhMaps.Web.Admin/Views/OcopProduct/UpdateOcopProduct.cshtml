@@ -2,14 +2,14 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
 @model UpdateOcopProductRequest;
 @{
-    ViewData["Title"] = "UpdateOcopProduct";
+    ViewData["Title"] = "Update Ocop Product";
 }
 <div class="page-body">
     <div class="container-fluid">
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
-                    <h4>Ocop Product Edit</h4>
+                    <h4>@ViewData["Title"]</h4>
                     @if (TempData["ErrorMessage"] != null)
                     {
                         <div id="alert-message" class="alert alert-danger">
@@ -18,17 +18,13 @@
                     }
 
                 </div>
-                <div class="col-6">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index-2.html">
-                                <svg class="stroke-icon">
-                                    <use
-                                        href="https://admin.pixelstrap.net/riho/assets/svg/icon-sprite.svg#stroke-home">
-                                    </use>
-                                </svg></a></li>
-                        <li class="breadcrumb-item"><a asp-action="Index">Ocop Product Management</a></li>
-                    </ol>
-                </div>
+                @{
+                    var breadcrumbs = ViewData["Breadcrumb"] as List<BreadcrumbItem>;
+                }
+                @if (breadcrumbs != null)
+                {
+                    @await Html.PartialAsync("_Breadcrumb", breadcrumbs)
+                }
             </div>
         </div>
     </div>

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using TraVinhMaps.Web.Admin.Models;
 using TraVinhMaps.Web.Admin.Models.CommunityTips;
 using TraVinhMaps.Web.Admin.Services.CommunityTips;
 using TraVinhMaps.Web.Admin.Services.Tags;
@@ -26,8 +27,12 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [HttpGet("Index")]
         public async Task<IActionResult> Index()
         {
-            ViewData["Title"] = "Tips List";
-            ViewData["Breadcrumb"] = new List<string> { "Tips Management", "Tips List" };
+            ViewData["Title"] = "Tips Management";
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Tips Management", Url = Url.Action("Index", "CommunityTips")! },
+                new BreadcrumbItem { Title = "Tips Management List" } // default URL for the current page
+            };
 
             var tips = await _communityTipsService.ListAllAsync();
 
@@ -52,8 +57,12 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> CommunityTipsDetails(string id, CancellationToken cancellationToken = default)
         {
-            ViewData["Title"] = "Tips List";
-            ViewData["Breadcrumb"] = new List<string> { "Tips List", "Details" };
+            ViewData["Title"] = "Tips Details";
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Tips Management", Url = Url.Action("Index", "CommunityTips")! },
+                new BreadcrumbItem { Title = "Tips Management Details" } // default URL for the current page
+            };
 
             var tips = await _communityTipsService.GetByIdAsync(id, cancellationToken);
             if (tips == null)
@@ -72,8 +81,12 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [HttpGet("Create")]
         public async Task<IActionResult> Create(CancellationToken cancellationToken)
         {
-            ViewData["Title"] = "Add Tips";
-            ViewData["Breadcrumb"] = new List<string> { "Tips Management", "Add" };
+            ViewData["Title"] = "Create Tip";
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Tips Management", Url = Url.Action("Index", "CommunityTips")! },
+                new BreadcrumbItem { Title = "Create Tip " } // default URL for the current page
+            };
 
             var tags = await _tagService.ListAllAsync();
             ViewBag.Tags = new SelectList(tags, "Id", "Name");
@@ -121,8 +134,12 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [HttpGet("Edit")]
         public async Task<IActionResult> Edit(string id)
         {
-            ViewData["Title"] = "Edit Tips";
-            ViewData["Breadcrumb"] = new List<string> { "Tips Management", "Edit" };
+            ViewData["Title"] = "Edit Tip";
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Tips Management", Url = Url.Action("Index", "CommunityTips")! },
+                new BreadcrumbItem { Title = "Edit Tips" } // default URL for the current page
+            };
 
             try
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using TraVinhMaps.Web.Admin.Models;
 using TraVinhMaps.Web.Admin.Models.Company;
 using TraVinhMaps.Web.Admin.Models.Contact;
 using TraVinhMaps.Web.Admin.Models.Location;
@@ -18,20 +19,36 @@ namespace TraVinhMaps.Web.Admin.Controllers
         {
             _companyService = companyService;
         }
+
+        // GET: Company/Index
         public async Task<IActionResult> Index()
         {
-            ViewData["Title"] = "Company List";
-            ViewData["Breadcrumb"] = new List<string> { "Company", "Company List" };
+            ViewData["Title"] = "Company Management";
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Company Management", Url = Url.Action("Index", "Company")! },
+                new BreadcrumbItem { Title = "Company List" } // default URL for the current page
+            };
+            
             var listCompany = await _companyService.ListAllAsync();
             return View(listCompany);
         }
+
+        // GET: Company/DetailCompany
         [HttpGet("DetailCompany")]
         public async Task<IActionResult> DetailCompany(string id)
         {
+            ViewData["Title"] = "Company Details";
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Company Management", Url = Url.Action("Index", "Company")! },
+                new BreadcrumbItem { Title = "Company Details" } // default URL for the current page
+            };
             var company = await _companyService.GetByIdAsync(id);
             return View(company);
         }
 
+        // GET: Company/CreateCompany
         [HttpGet("CreateCompany")]
         public async Task<IActionResult> CreateCompany()
         {
@@ -44,6 +61,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
             };
             return View(model);
         }
+
+        // POST: Company/CreateCompanyPost
         [HttpPost("CreateCompanyPost")]
 
         public async Task<IActionResult> CreateCompanyPost(CompanyViewModel companyViewModel, CancellationToken cancellationToken = default)
@@ -92,9 +111,17 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return View("CreateCompany", companyViewModel);
             }
         }
+
+        // GET: Company/UpdateCompany
         [HttpGet("UpdateCompany")]
         public async Task<IActionResult> UpdateCompany(string id)
         {
+            ViewData["Title"] = "Update Company";
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Company Management", Url = Url.Action("Index", "Company")! },
+                new BreadcrumbItem { Title = "Update Company" } // default URL for the current page
+            };
             var findCompany = await _companyService.GetByIdAsync(id);
             if (findCompany == null)
             {
@@ -120,6 +147,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(updateCompanyRequest);
         }
 
+        // POST: Company/UpdateCompanyPost
         [HttpPost("UpdateCompanyPost")]
         public async Task<IActionResult> UpdateCompanyPost(CompanyResponse request, CancellationToken cancellationToken = default)
         {

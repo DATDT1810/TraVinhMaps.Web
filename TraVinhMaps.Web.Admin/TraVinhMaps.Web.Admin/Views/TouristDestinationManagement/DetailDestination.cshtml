@@ -3,7 +3,6 @@
 @model TouristDestinationResponse
 @{
     ViewData["Title"] = "DetailDestination";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <style>
@@ -84,13 +83,8 @@
         cursor: pointer;
     }
 
-    @* .upload-placeholder:hover {
-        background-color: #e0e0e0;
-    } *@
-
     div.gallery {
         margin: 5px;
-        @* border: 1px solid #ccc; *@
         border-radius: 9px;
         float: left;
         width: 180px;
@@ -98,7 +92,6 @@
 
     div.add_gallery {
         margin: 5px;
-        @* border: 1px solid #ccc; *@
         border-radius: 9px;
         float: left;
         width: 180px;
@@ -129,14 +122,14 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
-                    <h4>Destination Detail</h4>
+                    <h4>Destination Details</h4>
                 </div>
                 <div class="col-6">
                     <ol class="breadcrumb">
                          <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
                                     style="font-size: 20px;"></i></a></li>
-                        <li class="breadcrumb-item"><a asp-action="Index">Destination management</a></li>
-                        <li class="breadcrumb-item active">Destination Detail</li>
+                        <li class="breadcrumb-item"><a asp-action="Index">Destination Management</a></li>
+                        <li class="breadcrumb-item active">Destination Details</li>
                     </ol>
                 </div>
             </div>

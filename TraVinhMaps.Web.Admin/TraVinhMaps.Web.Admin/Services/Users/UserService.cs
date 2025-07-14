@@ -120,14 +120,22 @@ namespace TraVinhMaps.Web.Admin.Services.Users
 
         public async Task<UserResponse> GetByIdAsync(string id, CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync(userApi + id);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var content = await response.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return JsonSerializer.Deserialize<UserResponse>(content, options) ?? throw new HttpRequestException("User not found.");
+                var response = await _httpClient.GetAsync(userApi + id, cancellationToken);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync(cancellationToken);
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    return JsonSerializer.Deserialize<UserResponse>(content, options);
+                }
             }
-            throw new HttpRequestException("Unable to fetch user.");
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[GetByIdAsync] Error: {ex.Message}");
+            }
+            return null;
         }
 
         public async Task<bool> RestoreUser(string id, CancellationToken cancellationToken = default)
@@ -150,15 +158,22 @@ namespace TraVinhMaps.Web.Admin.Services.Users
 
         public async Task<List<UserResponse>> GetRecentUsersAsync(int count, CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync(userApi + "all", cancellationToken);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var content = await response.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var users = JsonSerializer.Deserialize<IEnumerable<UserResponse>>(content, options) ?? new List<UserResponse>();
-                return users.OrderByDescending(u => u.CreatedAt).Take(count).ToList();
+                var response = await _httpClient.GetAsync(userApi + "all", cancellationToken);
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var users = JsonSerializer.Deserialize<IEnumerable<UserResponse>>(content, options) ?? new List<UserResponse>();
+                    return users.OrderByDescending(u => u.CreatedAt).Take(count).ToList();
+                }
             }
-            throw new HttpRequestException("Unable to fetch recent users.");
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[GetRecentUsersAsync] Error: {ex.Message}");
+            }
+            return new List<UserResponse>();
         }
 
         public async Task<UserResponse> AddAdminAsync(UserRequest request, CancellationToken cancellationToken = default)
@@ -181,30 +196,36 @@ namespace TraVinhMaps.Web.Admin.Services.Users
         }
         public async Task<Dictionary<string, object>> GetUserStatisticsAsync(string groupBy, string timeRange, CancellationToken cancellationToken = default)
         {
-            var url = $"{userApi}stats?groupBy={groupBy}&timeRange={timeRange}";
-            var response = await _httpClient.GetAsync(url, cancellationToken);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var content = await response.Content.ReadAsStringAsync(cancellationToken);
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var baseResult = JsonSerializer.Deserialize<UserBase<JsonElement>>(content, options);
+                var url = $"{userApi}stats?groupBy={groupBy}&timeRange={timeRange}";
+                var response = await _httpClient.GetAsync(url, cancellationToken);
 
-                if (baseResult?.Data.ValueKind == JsonValueKind.Object)
+                if (response.IsSuccessStatusCode)
                 {
-                    var result = new Dictionary<string, object>();
-                    foreach (var prop in baseResult.Data.EnumerateObject())
+                    var content = await response.Content.ReadAsStringAsync(cancellationToken);
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var baseResult = JsonSerializer.Deserialize<UserBase<JsonElement>>(content, options);
+
+                    if (baseResult?.Data.ValueKind == JsonValueKind.Object)
                     {
-                        // If groupBy is specific (e.g., "age"), only process that key
-                        if (groupBy != "all" && prop.Name != groupBy) continue;
-                        var subDict = JsonSerializer.Deserialize<Dictionary<string, int>>(prop.Value.GetRawText(), options);
-                        result[prop.Name] = subDict;
+                        var result = new Dictionary<string, object>();
+                        foreach (var prop in baseResult.Data.EnumerateObject())
+                        {
+                            if (groupBy != "all" && prop.Name != groupBy) continue;
+                            var subDict = JsonSerializer.Deserialize<Dictionary<string, int>>(prop.Value.GetRawText(), options);
+                            result[prop.Name] = subDict;
+                        }
+                        return result;
                     }
-                    return result;
                 }
-                return new Dictionary<string, object>();
             }
-            throw new HttpRequestException("Unable to fetch user statistics.");
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[GetUserStatsAsync] Error: {ex.Message}");
+            }
+
+            return new Dictionary<string, object>();
         }
 
         public async Task<Dictionary<string, Dictionary<string, int>>> GetPerformanceByTagAsync(
@@ -214,15 +235,22 @@ namespace TraVinhMaps.Web.Admin.Services.Users
     bool includeLocalSpecialty,
     bool includeTips,
     bool includeFestivals,
-    DateTime? startDate,
-    DateTime? endDate,
+    string timeRange = "month",
+    DateTime? startDate = null,
+    DateTime? endDate = null,
     CancellationToken cancellationToken = default)
         {
-            // 1. Chuẩn hóa thời gian
-            startDate ??= DateTime.UtcNow.AddHours(7).AddDays(-30).Date;
-            endDate ??= DateTime.UtcNow.AddHours(7).Date.AddDays(1);
+            // 1. Tính toán thời gian nếu cần (tùy theo timeRange)
+            startDate ??= timeRange switch
+            {
+                "day" => DateTime.UtcNow.AddHours(7).Date,
+                "week" => DateTime.UtcNow.AddHours(7).Date.AddDays(-7),
+                "month" => DateTime.UtcNow.AddHours(7).Date.AddMonths(-1),
+                "year" => DateTime.UtcNow.AddHours(7).Date.AddYears(-1),
+                _ => DateTime.UtcNow.AddHours(7).Date.AddDays(-30)
+            };
+            endDate ??= DateTime.UtcNow.AddHours(7).Date.AddDays(1); // ngày mai
 
-            // 2. Dùng QueryHelpers (Microsoft.AspNetCore.WebUtilities)
             var query = new Dictionary<string, string?>
             {
                 ["includeOcop"] = includeOcop.ToString().ToLower(),
@@ -230,25 +258,25 @@ namespace TraVinhMaps.Web.Admin.Services.Users
                 ["includeLocalSpecialty"] = includeLocalSpecialty.ToString().ToLower(),
                 ["includeTips"] = includeTips.ToString().ToLower(),
                 ["includeFestivals"] = includeFestivals.ToString().ToLower(),
+                ["timeRange"] = timeRange,
                 ["startDate"] = startDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ"),
                 ["endDate"] = endDate.Value.ToString("yyyy-MM-ddTHH:mm:ssZ")
             };
 
-            // thêm từng tag dưới khóa "tags"
             if (tagNames != null)
             {
                 foreach (var tag in tagNames.Where(t => !string.IsNullOrWhiteSpace(t)))
+                {
                     query.Add("tags", tag);
+                }
             }
 
             var url = QueryHelpers.AddQueryString($"{userApi}performance-tags", query);
 
-            // 3. Gọi API đúng kiểu async
             using var response = await _httpClient.GetAsync(url, cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-
             var parsed = await response.Content.ReadFromJsonAsync<BaseResponseModel<Dictionary<string, Dictionary<string, int>>>>(options, cancellationToken);
 
             return parsed?.Data ?? new Dictionary<string, Dictionary<string, int>>();

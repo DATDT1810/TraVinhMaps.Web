@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using TraVinhMaps.Web.Admin.Models;
 using TraVinhMaps.Web.Admin.Models.Markers;
 using TraVinhMaps.Web.Admin.Services.Markers;
 
@@ -22,11 +23,16 @@ namespace TraVinhMaps.Web.Admin.Controllers
             _markerService = markerService;
         }
 
+        // GET: MarkerManagement/Index
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            ViewData["Title"] = "Marker";
-            ViewData["Breadcrumb"] = new List<string> { "Marker Management", "Marker List" };
+            ViewData["Title"] = "Marker Management";
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Marker Management", Url = Url.Action("Index", "MarkerManagement")! },
+                new BreadcrumbItem { Title = "Marker List" } // default URL for the current page
+            };
             var Markers = await _markerService.ListAllAsync();
             if (Markers == null)
             {

@@ -71,7 +71,7 @@ $(document).ready(function () {
             success: function (response) {
                 console.log("AJAX Success Response:", response);
                 if (response.success) {
-                    showTimedAlert("Success!", response.message || "Location added successfully!", "success", 2000);
+                    showTimedAlert("Success!", response.message || "Location added successfully!", "success", 1000);
                     $("#addLocationModal").modal("hide");
 
                     // Load ngầm dữ liệu mới từ server
@@ -85,17 +85,17 @@ $(document).ready(function () {
                         },
                         error: function (xhr, status, error) {
                             console.log("Reload Error:", xhr.responseText);
-                            showTimedAlert("Error!", "Failed to reload location data.", "error", 2000);
+                            showTimedAlert("Error!", "Failed to reload location data.", "error", 1000);
                         }
                     });
                 } else {
-                    showTimedAlert("Error!", response.message || "Failed to add location.", "error", 2000);
+                    showTimedAlert("Error!", response.message || "Failed to add location.", "error", 1000);
                 }
             },
             error: function (xhr, status, error) {
                 console.log("AJAX Error:", xhr.responseJSON || xhr.responseText);
                 var errorMessage = xhr.responseJSON?.message || "An error occurred while adding the location.";
-                showTimedAlert("Error!", errorMessage, "error", 2000);
+                showTimedAlert("Error!", errorMessage, "error", 1000);
             }
         });
     });
@@ -134,7 +134,7 @@ $(document).ready(function () {
             success: function (response) {
                 console.log("AJAX Success Response:", response);
                 if (response.success) {
-                    showTimedAlert("Success!", response.message || "Location updated successfully!", "success", 2000);
+                    showTimedAlert("Success!", response.message || "Location updated successfully!", "success", 1000);
                     $("#editLocationModal").modal("hide");
 
                     // Reload location list dynamically
@@ -147,16 +147,16 @@ $(document).ready(function () {
                             $("#sellocation-list").html(editLocationList);
                         },
                         error: function (xhr) {
-                            showTimedAlert("Error!", "Failed to reload location data.", "error", 2000);
+                            showTimedAlert("Error!", "Failed to reload location data.", "error", 1000);
                         }
                     });
                 } else {
-                    showTimedAlert("Error!", response.message || "Failed to update location.", "error", 2000);
+                    showTimedAlert("Error!", response.message || "Failed to update location.", "error", 1000);
                 }
             },
             error: function (xhr) {
                 var errorMessage = xhr.responseJSON?.message || "An error occurred while updating the location.";
-                showTimedAlert("Error!", errorMessage, "error", 2000);
+                showTimedAlert("Error!", errorMessage, "error", 1000);
             }
         });
     });
@@ -182,7 +182,7 @@ $(document).ready(function () {
             success: function (response) {
                 console.log("AJAX Success Response:", response);
                 if (response.success) {
-                    showTimedAlert("Success!", response.message || "Location added successfully!", "success", 2000);
+                    showTimedAlert("Success!", response.message || "Location added successfully!", "success", 1000);
                     $("#addSellingLinkModal").modal("hide");
 
                     var ocopProductId = form.find('input[name="ProductId"]').val();
@@ -196,17 +196,17 @@ $(document).ready(function () {
 
                         error: function (xhr, status, error) {
                             console.log("Reload Error:", xhr.responseText);
-                            showTimedAlert("Error!", "Failed to reload location data.", "error", 2000);
+                            showTimedAlert("Error!", "Failed to reload location data.", "error", 1000);
                         }
                     });
                 } else {
-                    showTimedAlert("Error!", response.message || "Failed to add location.", "error", 2000);
+                    showTimedAlert("Error!", response.message || "Failed to add location.", "error", 1000);
                 }
             },
             error: function (xhr, status, error) {
                 console.log("AJAX Error:", xhr.responseJSON || xhr.responseText);
                 var errorMessage = xhr.responseJSON?.message || "An error occurred while adding the location.";
-                showTimedAlert("Error!", errorMessage, "error", 2000);
+                showTimedAlert("Error!", errorMessage, "error", 1000);
             }
         });
     });
@@ -241,7 +241,7 @@ $(document).ready(function () {
             success: function (response) {
                 console.log("AJAX Success Response:", response);
                 if (response.success) {
-                    showTimedAlert("Success!", response.message || "Selling link updated successfully!", "success", 2000);
+                    showTimedAlert("Success!", response.message || "Selling link updated successfully!", "success", 1000);
                     $("#editSellingLinkModal").modal("hide");
 
                     // Reload location list dynamically
@@ -254,16 +254,16 @@ $(document).ready(function () {
                             $("#sellinglink-list").html(editSellingLinkList);
                         },
                         error: function (xhr) {
-                            showTimedAlert("Error!", "Failed to reload selling link data.", "error", 2000);
+                            showTimedAlert("Error!", "Failed to reload selling link data.", "error", 1000);
                         }
                     });
                 } else {
-                    showTimedAlert("Error!", response.message || "Failed to update selling link.", "error", 2000);
+                    showTimedAlert("Error!", response.message || "Failed to update selling link.", "error", 1000);
                 }
             },
             error: function (xhr) {
                 var errorMessage = xhr.responseJSON?.message || "An error occurred while updating the selling link.";
-                showTimedAlert("Error!", errorMessage, "error", 2000);
+                showTimedAlert("Error!", errorMessage, "error", 1000);
             }
         });
     });
@@ -295,7 +295,7 @@ $(document).ready(function () {
             },
             success: function (response) {
                 if (response.success) {
-                    showTimedAlert("Success!", response.message || "Location deleted successfully!", "success", 2000);
+                    showTimedAlert("Success!", response.message || "Location deleted successfully!", "success", 1000);
                     $("#deleteLocationModal").modal("hide");
 
                     // Reload location list dynamically
@@ -308,7 +308,7 @@ $(document).ready(function () {
                             $("#sellocation-list").html(editLocationList);
                         },
                         error: function (xhr) {
-                            showTimedAlert("Error!", "Failed to reload location data.", "error", 2000);
+                            showTimedAlert("Error!", "Failed to reload location data.", "error", 1000);
                         }
                     });
                 } else {
@@ -355,7 +355,7 @@ $(document).ready(function () {
             },
             success: function (response) {
                 if (response.success) {
-                    showTimedAlert("Success!", response.message || "Selling link updated successfully!", "success", 2000);
+                    showTimedAlert("Success!", response.message || "Selling link updated successfully!", "success", 1000);
                     $("#deleteSellingLinkModal").modal("hide");
 
                     // Reload location list dynamically
@@ -368,7 +368,7 @@ $(document).ready(function () {
                             $("#sellinglink-list").html(editSellingLinkList);
                         },
                         error: function (xhr) {
-                            showTimedAlert("Error!", "Failed to reload selling link data.", "error", 2000);
+                            showTimedAlert("Error!", "Failed to reload selling link data.", "error", 1000);
                         }
                     });
                 } else {
@@ -387,113 +387,7 @@ $(document).ready(function () {
         });
     });
 });   
-// // Delete ocop product
-// $(document).on("click", ".delete-ocop-product", function (e) {
-//     e.preventDefault();
-//     const ocopProductId = $(this).data("id");
-//     const token = $('input[name="__RequestVerificationToken"]').val();
-//     const row = $(this).closest("tr"); 
 
-//     showConfirmAlert(
-//         "Confirmation",
-//         "Are you sure you want to delete this ocop product?",
-//         "Delete",
-//         "Cancel"
-//     ).then((confirmed) => {
-//         if (confirmed) {
-//             $.ajax({
-//                 url: "/Admin/OcopProduct/DeleteOcopProduct",
-//                 method: "POST",
-//                 data: { id: ocopProductId },
-//                 headers: {
-//                     "RequestVerificationToken": token
-//                 },
-//                 success: function (response) {
-//                     if (response.success) {
-//                         row
-//                             .find("td:eq(4) span")
-//                             .text("Inactive")
-//                             .removeClass("badge-light-primary")
-//                             .addClass("badge-light-danger");
-
-//                         const actionCell = row.find("td:last-child ul.action");
-//                         actionCell.find(".delete-ocop-product").replaceWith(
-//                             `<a class="restore undelete-ocop-product" href="javascript:void(0)" data-id="${ocopProductId}" title="Restore"><i class="fa fa-undo"></i></a>`
-//                         );
-
-//                         table.row(row).invalidate().draw(false);
-//                         showTimedAlert("Success!", response.message, "success", 1000);
-//                     } else {
-//                         showTimedAlert("Error!", response.message, "error", 1000);
-//                     }
-//                 },
-//                 error: function (xhr) {
-//                     showErrorAlert(
-//                         "Error",
-//                         "An error occurred while delete the ocop product: " +
-//                         (xhr.responseJSON?.message || "Unknown error")
-//                     );
-//                 },
-//             });
-//         }
-//     });
-// });
-
-
-//     // Restore ocop product
-//     $(document).on("click", ".undelete-ocop-product", function (e) {
-//         e.preventDefault();
-//         const ocopProductId = $(this).data("id");
-//         const token = $('input[name="__RequestVerificationToken"]').val();
-
-//         showConfirmAlert(
-//             "Confirmation",
-//             "Are you sure you want to restore this ocop product?",
-//             "Restore",
-//             "Cancel"
-//         ).then((confirmed) => {
-//             if (confirmed) {
-//                 $.ajax({
-//                     url: "/Admin/OcopProduct/RestoreOcopProduct",
-//                     method: "POST",
-//                     data: { id: ocopProductId },
-//                     headers: {
-//                         RequestVerificationToken: token,
-//                     },
-//                     success: function (response) {
-//                         if (response.success) {
-//                             const row = $('a[data-id="' + ocopProductId + '"]').closest("tr");
-
-//                             row
-//                                 .find("td:eq(4) span")
-//                                 .text("Active")
-//                                 .removeClass("badge-light-danger")
-//                                 .addClass("badge-light-primary");
-
-//                             // Update action dropdown from Unban -> Ban
-//                             const actionCell = row.find("td:last-child ul.action");
-//                             actionCell.find(".undelete-ocop-product").replaceWith(
-//                                 `<a class="delete delete-ocop-product" href="javascript:void(0)" data-id="${ocopProductId}" title="Delete"><i class="fa fa-trash"></i> 
-//                   </a>`
-//                             );
-
-//                             table.row(row).invalidate().draw(false);
-//                             showTimedAlert("Success!", response.message, "success", 1000);
-//                         } else {
-//                             showTimedAlert("Error!", response.message, "error", 1000);
-//                         }
-//                     },
-//                     error: function (xhr) {
-//                         showErrorAlert(
-//                             "Error",
-//                             "An error occurred while restore the ocop product: " +
-//                             (xhr.responseJSON?.message || "Unknown error")
-//                         );
-//                     },
-//                 });
-//             }
-//         });
-//     });
     // Toggle sellocation items
     const toggleButton = document.getElementById('toggle-sellocation');
     const locationItems = document.querySelectorAll('.sellocation-item');
@@ -509,3 +403,6 @@ $(document).ready(function () {
             toggleButton.setAttribute('data-expanded', (!isExpanded).toString());
         });
     }
+
+
+    

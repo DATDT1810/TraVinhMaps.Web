@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using TraVinhMaps.Web.Admin.Models;
 using TraVinhMaps.Web.Admin.Models.Users;
 using TraVinhMaps.Web.Admin.Services.Auth;
 using TraVinhMaps.Web.Admin.Services.Users;
@@ -16,19 +17,30 @@ namespace TraVinhMaps.Web.Admin.Controllers
             _tokenService = tokenService;
         }
 
+        // GET: Admin/Users
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             ViewData["Title"] = "Account Management";
-            ViewData["Breadcrumb"] = new List<string> { "Account Management", "Account List" };
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Account Management", Url = Url.Action("Index", "UserManagement")! },
+                new BreadcrumbItem { Title = "Account List" } // default URL for the current page
+            };
             var users = await _userService.ListAllAsync();
             return View(users);
         }
+
+        // GET: Admin/Users/Details/{id}
         [HttpGet("Details")]
         public async Task<IActionResult> Details(string id)
         {
             ViewData["Title"] = "Account Details";
-            ViewData["Breadcrumb"] = new List<string> { "Account List", "Details" };
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Account Management", Url = Url.Action("Details", "UserManagement")! },
+                new BreadcrumbItem { Title = "Account Details" } // default URL for the current page
+            };
             var user = await _userService.GetByIdAsync(id);
             if (user == null)
             {
@@ -42,7 +54,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
         public IActionResult Create()
         {
             ViewData["Title"] = "Account Create";
-            ViewData["Breadcrumb"] = new List<string> { "Account Create", "Create" };
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Account Create", Url = Url.Action("Create", "UserManagement")! },
+                new BreadcrumbItem { Title = "Create" } // default URL for the current page
+            };
             return View();
         }
 
