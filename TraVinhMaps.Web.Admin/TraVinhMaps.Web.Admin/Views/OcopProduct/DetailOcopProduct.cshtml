@@ -62,6 +62,17 @@
     .upload-placeholder:hover {
         background-color: #e0e0e0;
     }
+    input[readonly] {
+        background-color: #f5f5f5;  
+        color: #555;               
+    }
+    .readonly-note {
+        color: red;
+        font-size: 0.875em; 
+        font-style: italic;
+        margin-top: 4px;
+    }
+
     #locations-container .location-group:nth-child(n+2) {
     display: none;
 }
@@ -92,8 +103,7 @@
                         <li class="breadcrumb-item">
                             <a asp-controller="Home" asp-action="Index"><i class="fa fa-home" style="font-size: 20px;"></i></a>
                         </li>
-                        <li class="breadcrumb-item" >  <a asp-controller="OcopProduct" asp-action="Index">Ocop Product</a> </li>
-                        <li class="breadcrumb-item active">Ocop Product Detail</li>
+                        <li class="breadcrumb-item active">Ocop Product Detail Page</li>
                     </ol>
                 </div>
             </div>
@@ -247,8 +257,8 @@
                             </div>
                             <hr>
                             <div>
-                                <span><h6>Description </h6></span>
-                               @Html.Raw(Model.ProductDescription)
+                                <span><h6 style="padding-bottom: 10px;">Description </h6></span>
+                                @Model.ProductDescription
                             </div>
                             <div class="m-t-15 btn-showcase">
                                 <div class="d-inline">
@@ -267,163 +277,144 @@
                 </div>
                 <div class="col-xxl-12 box-col-12 order-xxl-0 order-1">
                     <div class="card">
-                        <div class="card-body" style="max-height: 700px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 10px;">
+                        <div class="card-body" style="max-height: 500px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
                             <div class="d-flex justify-content-between">
-                                <h5 style="font-weight: bold;">Point of sell</h5>
-                                <a class="btn btn-success btn-sm px-2 py-1" title="Create Point of Sell" data-bs-toggle="modal" data-bs-target="#addLocationModal"><i class="fa fa-plus"></i></a>
+                                <h5 style="font-weight: bold;">Store off sell</h5>
+                                <a class="btn btn-success btn-sm px-2 py-1"
+                                    title="Create Point of Sell"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#addLocationModal"
+                                    style="margin-left: 54px;">
+                                    <i class="fa fa-plus"></i>
+                                    </a>
                                 </a>
-                            </div><hr>
+                            </div>
+                            <hr style="margin: 0px;">
 
                             <div>
-                            @if (Model.Sellocations == null || !Model.Sellocations.Any())
-                                {
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <div>
-                                            <b>No Location Name.</b><br />
-                                            <span>No Location Address.</span>
-                                        </div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div id="sellocation-list" style="max-height: 750px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
-                                        @{
-                                            bool showOnlyFirst = true;
-                                        }
-                                        @for (int i = 0; i < Model.Sellocations.Count; i++)
-                                        {
-                                            var item = Model.Sellocations[i];
-                                            var isLast = i == Model.Sellocations.Count - 1;
+                            @if (Model.Sellocations != null && Model.Sellocations.Any())
+                            {
+                                <div id="sellocation-list" style="max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+                                    @for (int i = 0; i < Model.Sellocations.Count; i++)
+                                    {
+                                        var item = Model.Sellocations[i];
+                                        var isLast = i == Model.Sellocations.Count - 1;
 
-                                            <div class="location-card" style="background: #f0f2f3; padding: 16px; border-radius: 8px; border: 1px solid #ddd;">
-                                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
-                                                    <div>
-                                                        <h3 style="margin: 0; font-weight: 600;">
-                                                            @(item?.LocationName ?? "No Location Name.")
-                                                        </h3>
-                                                        <div style="font-size: 0.9rem;">
-                                                            @(item?.LocationAddress ?? "No Location Address.")
-                                                        </div>
-                                                    </div>
-                                                    <div style="display: flex; gap: 6px;">
-                                                        <button type="button"
-                                                                title="Edit"
-                                                                style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 18px;"
-                                                                class="edit-location-btn"
-                                                                data-bs-toggle="modal" data-bs-target="#editLocationModal"
-                                                                data-id="@Model.Id"
-                                                                data-name="@item.LocationName"
-                                                                data-address="@item.LocationAddress"
-                                                                data-marker="@item.MarkerId"
-                                                                data-type="@(item.Location?.Type ?? "Point")"
-                                                                data-longitude="@(item?.Location?.Longitude ?? 0)"
-                                                                data-latitude="@(item?.Location?.Latitude ?? 0)">
-                                                            <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                        </button>
-
-                                                        <button type="button"
-                                                                title="Delete"
-                                                                style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 18px;"
-                                                                class="delete-sell-location"
-                                                                data-product-id="@Model.Id"
-                                                                data-location-name="@item.LocationName">
-                                                            <i class="fa fa-trash" aria-hidden="true"></i>
-                                                        </button>
+                                        <div class="location-card" style="background: #f0f2f3; padding: 16px; border-radius: 8px; border: 1px solid #ddd;">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                                                <div>
+                                                    <h3 style="margin: 0; font-weight: 600;">
+                                                        @(item?.LocationName ?? "No Location Name.")
+                                                    </h3>
+                                                    <div style="font-size: 0.9rem;">
+                                                        @(item?.LocationAddress ?? "No Location Address.")
                                                     </div>
                                                 </div>
-                                                <div style="display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; align-items: center;">
-                                                    <label style="font-size: 0.8rem; min-width: 70px; margin: 0;">Longitude</label>
-                                                    <input type="text"
-                                                        class="form-control"
-                                                        readonly
-                                                        style="flex: 1; min-width: 150px; border-radius: 10px;"
-                                                        value="@(item?.Location?.Longitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")" />
+                                                <div style="display: flex; gap: 6px;">
+                                                    <button type="button"
+                                                            title="Edit"
+                                                            style="background: none; border: none; padding: 4px; cursor: pointer;"
+                                                            class="edit-location-btn"
+                                                            data-bs-toggle="modal" data-bs-target="#editLocationModal"
+                                                            data-id="@Model.Id"
+                                                            data-name="@item.LocationName"
+                                                            data-address="@item.LocationAddress"
+                                                            data-marker="@item.MarkerId"
+                                                            data-type="@(item?.Location?.Type ?? "Point")"
+                                                            data-longitude="@(item?.Location?.Longitude ?? 0)"
+                                                            data-latitude="@(item?.Location?.Latitude ?? 0)">
+                                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                    </button>
 
-                                                    <label style="font-size: 0.8rem; min-width: 70px; margin: 0;">Latitude</label>
-                                                    <input type="text"
-                                                        class="form-control"
-                                                        readonly
-                                                        style="flex: 1; min-width: 150px; border-radius: 10px;"
-                                                        value="@(item?.Location?.Latitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")" />
-                                                </div>
-                                                <div style="position: relative; border-radius: 8px; overflow: hidden; border: 1px solid #333; height: 300px;">
-                                                    <div class="here-map-container"
-                                                         id="map-container-@(i)"
-                                                         style="height: 100%; width: 100%;"
-                                                         data-latitude="@(item?.Location?.Latitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")"
-                                                         data-longitude="@(item?.Location?.Longitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")">
-                                                        <!-- The map will be initialized here by JavaScript -->
-                                                    </div>
-                                                    <div class="map-overlay edit-location-btn"
-                                                         title="Edit"
-                                                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; cursor: pointer;"
-                                                         data-bs-toggle="modal"
-                                                         data-bs-target="#editLocationModal"
-                                                         data-id="@Model.Id"
-                                                         data-name="@item.LocationName"
-                                                         data-address="@item.LocationAddress"
-                                                         data-marker="@item.MarkerId"
-                                                         data-type="@(item.Location?.Type ?? "Point")"
-                                                         data-longitude="@(item?.Location?.Longitude ?? 0)"
-                                                         data-latitude="@(item?.Location?.Latitude ?? 0)">
-                                                    </div>
+                                                    <button type="button"
+                                                            title="Delete"
+                                                            style="background: none; border: none; padding: 4px; cursor: pointer;"
+                                                            class="delete-sell-location"
+                                                            data-bs-toggle="modal" data-bs-target="#deleteLocationModal"
+                                                            data-product-id="@Model.Id"
+                                                            data-location-name="@item.LocationName">
+                                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                                    </button>
                                                 </div>
                                             </div>
+                                            <div style="display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; align-items: center;">
+                                                <label style="font-size: 0.8rem; min-width: 70px; margin: 0;">Longitude</label>
+                                                <input type="text"
+                                                    class="form-control"
+                                                    readonly
+                                                    style="flex: 1; min-width: 150px; border-radius: 10px;"
+                                                    value="@(item?.Location?.Longitude?.ToString("F6") ?? "0")" />
 
-                                        }
+                                                <label style="font-size: 0.8rem; min-width: 70px; margin: 0;">Latitude</label>
+                                                <input type="text"
+                                                    class="form-control"
+                                                    readonly
+                                                    style="flex: 1; min-width: 150px; border-radius: 10px;"
+                                                    value="@(item?.Location?.Latitude?.ToString("F6") ?? "0")" />
+                                            </div>
+                                            <div style="border-radius: 8px; overflow: hidden; border: 1px solid #333; max-height: 200px;">
+                                                <img src="https://tile.openstreetmap.org/10/545/385.png" alt="Map Placeholder" style="width: 100%; display: block;">
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <span>No Location Name.</span><br />
+                                        <span>No Location Address.</span>
                                     </div>
-                                }
+                                </div>
+                            }
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="card">
-            <div class="row product-page-main">
-                <div class="col-sm-12">
-                    <ul class="nav nav-tabs border-tab nav-primary mb-0" id="top-tab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="top-home-tab" data-bs-toggle="tab"
-                               href="#top-home" role="tab" aria-controls="top-home"
-                               aria-selected="false">Selling link</a>
-                            <div class="material-border"></div>
-                        </li>
-                    </ul>
+            <div class="card-body">
+                <div class="col-sm-12" style="padding: 0px;">
                     <div class="tab-content" id="top-tabContent">
                         <div class="tab-pane fade active show" id="top-home" role="tabpanel"
                              aria-labelledby="top-home-tab">
                             <div style="height: 250px; margin-top: 10px;">
-                                <div class="card-body">
-                                    <div class="filter-block">
-                                        <div class="d-flex justify-content-between">
-                                            <h5 style="font-weight: bold;">Point of selling link</h5>
-                                            <a class="btn btn-success btn-sm px-2 py-1" title="Create Point of Selling Link" data-bs-toggle="modal" data-bs-target="#addSellingLinkModal"><i class="fa fa-plus"></i></a>
-                                        </div>
-                                        <hr>
-                                        <div id="sellinglink-list" style="max-height: 230px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 10px;">
-                                            @if (sellingLinks == null || !sellingLinks.Any())
+                                <div class="filter-block">
+                                    <div class="d-flex justify-content-between">
+                                        <h5 style="font-weight: bold;">📌 Store of selling link</h5>
+                                        <a class="btn btn-success btn-sm px-2 py-1" title="Create Point of Selling Link" data-bs-toggle="modal" data-bs-target="#addSellingLinkModal"><i class="fa fa-plus"></i></a>
+                                    </div>
+                                    <hr>
+                                    <div id="sellinglink-list" style="max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 10px;">
+                                        @if (sellingLinks != null && sellingLinks.Any())
+                                        {
+                                            @for (int i = 0; i < sellingLinks.Count; i++)
                                             {
-                                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                                    <div>
-                                                        <b>No Selling Link.</b><br />
+                                                var item = sellingLinks[i];
+                                                var isLast = i == sellingLinks.Count - 1;
+
+                                                <div class="sellinglink-item" style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; @(isLast ? "" : "border-bottom: 1px solid #ddd;")">
+                                                    <div style="min-width: 0; flex: 1;">
+                                                        <ul style="list-style-type: disc; padding-left: 20px;">
+                                                            <li style="padding: 0px;">
+                                                                <div style="padding-bottom: 10px;">
+                                                                    <b>Title Name: </b>
+                                                                    <span>@(item?.Title ?? "No Title")</span><br>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                        <span style="padding-left: 5px;">
+                                                            <i class="fa fa-link"></i>
+                                                            Link:
+                                                            <a href="@(item?.Link ?? "#")" target="_blank" style="color: #007bff;">
+                                                                @(item?.Link ?? "")
+                                                            </a>
+                                                        </span>
                                                     </div>
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                @for (int i = 0; i < sellingLinks.Count; i++)
-                                                {
-                                                    var item = sellingLinks[i];
-                                                    var isLast = i == Model.Sellocations.Count - 1;
-                                                    <div class="sellinglink-item" style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; @(isLast ? "" : "border-bottom: 1px solid #ddd;")">
-                                                        <div style="min-width: 0; flex: 1;">
-                                                            <b>Title Of Selling Link:</b>
-                                                            <span>@(item.Title ?? "No Selling Link.")</span> <br>
-                                                            <b>Selling Name: </b>
-                                                            <span>@(item.Link ?? "No Selling Link.")</span> 
-                                                        </div>
-                                                        <div style="display: flex; gap: 6px; margin-left: 10px; align-self: flex-start;">
-                                                            <button type="button"
+                                                    <div style="display: flex; gap: 6px; margin-left: 10px; align-self: flex-start;">
+                                                        <button type="button"
                                                                 title="Edit"
                                                                 style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 18px; line-height: 1;"
                                                                 class="edit-selling-link-btn"
@@ -437,17 +428,25 @@
 
                                                         <button type="button"
                                                                 title="Delete Selling Link"
-                                                                style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 18px; line-height: 1;"
-                                                                class="delete-selling-link"
+                                                                style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 14px; line-height: 1;"
+                                                                class="delete-selling-link" 
+                                                                data-bs-toggle="modal" data-bs-target="#deleteSellingLinkModal"
                                                                 data-product-id="@Model.Id"
                                                                 data-id="@item.Id">
                                                             <i class="fa fa-trash" aria-hidden="true"></i>
                                                         </button>
-                                                        </div>
                                                     </div>
-                                                }
+                                                </div>
                                             }
-                                        </div>
+                                        }
+                                        else
+                                        {
+                                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                <div>
+                                                    <span>No Selling Link.</span><br />
+                                                </div>
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -537,44 +536,32 @@
                 <input hidden name="Id" id="id" value="@Model.Id"/>
                 <input hidden name="MarkerId" id="markerId" value="@ViewBag.MarkerId"/> 
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-5">
-                            <div class="mb-3">
-                                <label class="form-label">Name of Location</label>
-                                <input type="text" name="LocationName" id="locationName" class="form-control" placeholder="Enter location name" required readonly />
-                                <span class="text-danger field-validation-valid" data-valmsg-for="LocationName" data-valmsg-replace="true"></span>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Address</label>
-                                <div style="position: relative;">
-                                    <div class="input-group">
-                                        <input type="text" name="LocationAddress" id="locationAddress" class="form-control" placeholder="Enter address" required autocomplete="off"/>
-                                        <button class="btn btn-outline-secondary" type="button" id="searchAddressBtn">Search</button>
-                                    </div>
-                                    <div id="addressSuggestions" class="list-group" style="position: absolute; z-index: 1056; width: 100%; max-height: 220px; overflow-y: auto;"></div>
-                                </div>
-                                <div id="addressWarningEdit" class="text-warning mt-1"></div>
-                                <span class="text-danger field-validation-valid" data-valmsg-for="LocationAddress" data-valmsg-replace="true"></span>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Location Type</label>
-                                <input type="text" name="Type" id="type" class="form-control" value="Point" readonly />
-                                <span class="text-danger field-validation-valid" data-valmsg-for="Type" data-valmsg-replace="true"></span>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Longitude</label>
-                                <input type="number" name="Longitude" id="longitude" class="form-control" step="any" placeholder="Enter longitude" required min="-180" max="180" readonly />
-                                <span class="text-danger field-validation-valid" data-valmsg-for="Longitude" data-valmsg-replace="true"></span>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Latitude</label>
-                                <input type="number" name="Latitude" id="latitude" class="form-control" step="any" placeholder="Enter latitude" required min="-90" max="90" readonly />
-                                <span class="text-danger field-validation-valid" data-valmsg-for="Latitude" data-valmsg-replace="true"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-7">
-                            <div id="editMapContainer" style="width: 100%; height: 400px; border-radius: 8px; border: 1px solid #ddd;"></div>
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label">Name of Location</label>
+                        <input type="text" name="LocationName" id="locationName" class="form-control" placeholder="Enter location name" readonly />
+                        <div class="readonly-note">*Not editable</div>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="LocationName" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <input type="text" name="LocationAddress" id="locationAddress" class="form-control" placeholder="Enter address" required />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="LocationAddress" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Location Type</label>
+                        <input type="text" name="Type" id="type" class="form-control" value="Point" readonly />
+                        <div class="readonly-note">*Not editable</div>
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Type" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Longitude</label>
+                        <input type="number" name="Longitude" id="longitude" class="form-control" step="any" placeholder="Enter longitude" required min="-180" max="180" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Longitude" data-valmsg-replace="true"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Latitude</label>
+                        <input type="number" name="Latitude" id="latitude" class="form-control" step="any" placeholder="Enter latitude" required min="-90" max="90" />
+                        <span class="text-danger field-validation-valid" data-valmsg-for="Latitude" data-valmsg-replace="true"></span>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -613,8 +600,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Name Of Selling Link</label>
-                        <input type="text" name="Link" id="linkAdd" class="form-control" placeholder="Enter" required />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="Link" data-valmsg-replace="true"></span>
+                        <input type="text" name="Link" id="linkAdd" class="form-control" placeholder="Enter" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -669,7 +655,7 @@
 @section Scripts {
     @Html.AntiForgeryToken()
     <script src="~/assets/js/ocopproduct/formModal.js"></script>
-    <script src="~/assets/js/ocopproduct/create.js"></script>
+    <script src="~/assets/js/ocopproduct/crud.js"></script>
     <script src="~/assets/js/sweetalert-custom.js"></script>
     
     <!-- HERE Maps API Scripts -->

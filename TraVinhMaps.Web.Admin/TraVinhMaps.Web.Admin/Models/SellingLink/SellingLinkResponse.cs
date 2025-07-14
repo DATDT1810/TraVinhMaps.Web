@@ -10,7 +10,7 @@ namespace TraVinhMaps.Web.Admin.Models.SellingLink
         public required string Id { get; set; }
         public required string ProductId { get; set; }
         public required string Title { get; set; }
-        public required string Link { get; set; }
+        public string? Link { get; set; }
         public DateTime? UpdateAt { get; set; }
         public required DateTime CreatedAt { get; set; }
     }

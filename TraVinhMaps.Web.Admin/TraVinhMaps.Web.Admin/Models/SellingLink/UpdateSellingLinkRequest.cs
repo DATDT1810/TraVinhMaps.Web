@@ -14,9 +14,6 @@ namespace TraVinhMaps.Web.Admin.Models.SellingLink
 
         [Required(ErrorMessage = "Title is required.")]
         public string Title { get; set; }
-
-        [Required(ErrorMessage = "Link is required.")]
-        [Url(ErrorMessage = "Please enter a valid URL.")]
-        public string Link { get; set; }
+        public string? Link { get; set; }
     }
 }

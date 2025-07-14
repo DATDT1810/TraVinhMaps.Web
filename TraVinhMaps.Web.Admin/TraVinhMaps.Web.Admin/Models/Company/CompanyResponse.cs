@@ -14,7 +14,7 @@ namespace TraVinhMaps.Web.Admin.Models.Company
         public required string Address { get; set; }
         public required List<LocationResponse> Locations { get; set; } 
         public ContactResponse? Contact { get; set; }
-        public required DateTime CreatedAt { get; set; }
-        public DateTime? UpdateAt { get; set; }
+        public required DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdateAt { get; set; } = DateTime.UtcNow;
     }
 }

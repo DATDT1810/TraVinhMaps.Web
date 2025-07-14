@@ -63,6 +63,21 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
                 throw new HttpRequestException($"Unable to fetch list ocop product by ocop type id. Status: {response.StatusCode}, Error: {errorResult}");
             }
         }
+        public async Task<OcopProductResponse> GetOcopProductByName(string name, CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync(ocopProductApi + "GetOcopProductByName");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                return JsonSerializer.Deserialize<OcopProductResponse>(content, option) ?? throw new HttpRequestException("Fail to find ocop product by name.");
+            }
+            else
+            {
+                var errorResult = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException($"Unable to fetch ocop product by name. Status: {response.StatusCode}, Error: {errorResult}");
+            }
+        }
 
         public async Task<IEnumerable<OcopProductResponse>> ListAllAsync(CancellationToken cancellationToken = default)
         {
@@ -100,15 +115,31 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
             }
 
             HttpResponseMessage responseMessage = await _httpClient.PostAsync(ocopProductApi + "AddOcopProduct", content, cancellationToken);
+
             if (!responseMessage.IsSuccessStatusCode)
             {
                 var errorResult = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
-                throw new HttpRequestException($"Unable to create ocop product. Status: {responseMessage.StatusCode}, Error: {errorResult}");
+                OcopProductMessage? apiError = null;
+                try
+                {
+                    apiError = JsonSerializer.Deserialize<OcopProductMessage>(errorResult, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                }
+                catch
+                {
+                    // Bỏ qua nếu không parse được
+                }
+
+                if (apiError != null && !string.IsNullOrEmpty(apiError.Message))
+                {
+                    throw new HttpRequestException(apiError.Message);
+                }
+                throw new HttpRequestException($"Unable to create ocop product. Status: {responseMessage.StatusCode}");
             }
 
             var contentResult = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
             var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var productResponse = JsonSerializer.Deserialize<CreateOcopProductResponse<OcopProductResponse>>(contentResult, option) ?? throw new HttpRequestException("Unable to create ocop product.");
+            
             foreach (var sellLocationVM in entity.SellLocations)
             {
                 var sellLocation = new SellLocationResponse
@@ -128,6 +159,7 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
 
             return productResponse;
         }
+
         public async Task<List<string>> AddImageOcopProduct(string id, List<IFormFile> imageFiles, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(id))
@@ -266,18 +298,21 @@ namespace TraVinhMaps.Web.Admin.Services.OcopProduct
             var data = JsonSerializer.Serialize(entity, options);
             var content = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
 
-            HttpResponseMessage responseMessage = await _httpClient.PutAsync(ocopProductApi + "UpdateOcopProduct", content);
-            if (responseMessage.IsSuccessStatusCode)
+            HttpResponseMessage responseMessage = await _httpClient.PutAsync(ocopProductApi + "UpdateOcopProduct", content, cancellationToken);
+
+            var contentResponse = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
+
+            var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+            var apiResponse = JsonSerializer.Deserialize<OcopProductMessage>(contentResponse, option)
+                            ?? throw new HttpRequestException("Fail to update ocop product.");
+
+            if (!responseMessage.IsSuccessStatusCode || apiResponse.Status == "error")
             {
-                var contentResponse = await responseMessage.Content.ReadAsStringAsync();
-                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return JsonSerializer.Deserialize<OcopProductMessage>(contentResponse, option) ?? throw new HttpRequestException("Fail to update ocop product.");
+                throw new HttpRequestException(apiResponse.Message ?? $"Unable to update ocop product. Status: {responseMessage.StatusCode}");
             }
-            else
-            {
-                var errorResult = await responseMessage.Content.ReadAsStringAsync();
-                throw new HttpRequestException($"Unable to fetch update ocop product. Status: {responseMessage.StatusCode}, Error: {errorResult}");
-            }
+
+            return apiResponse;
         }
 
         public async Task<UpdateSellLocationResponse> UpdateSellLocation(string id, SellLocationResponse sellLocation, CancellationToken cancellationToken = default)

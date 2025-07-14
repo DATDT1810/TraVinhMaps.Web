@@ -20,14 +20,8 @@
                                 <i class="fa fa-home" style="font-size: 20px;"></i>
                             </a>
                         </li>
-                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
-                        {
-                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
-                            {
-                                <li class="breadcrumb-item">@item</li>
-                            }
-                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
-                        }
+                        <li class="breadcrumb-item">Review</li>
+                        <li class="breadcrumb-item active">Review List</li>
                     </ol>
                 </div>
             </div>
@@ -53,7 +47,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div method="get" class="d-flex justify-content-between mb-3">
-                            <div>
+                            <div style="margin-top: 25px;">
                                 <button class="btn btn-primary" id="exportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
@@ -115,7 +109,7 @@
                                     }
                                     <input type="date" name="endAt" id="endAt" class="form-control" value="@endAtValue" max="@maxDate" />
                                 </div>
-                                <div>
+                                <div style="margin-top: 10px;">
                                     <button type="submit" class="btn btn-primary mt-3">Find</button>
                                 </div>
                             </form>
@@ -127,7 +121,7 @@
                                         <th>No. &nbsp</th>
                                         <th>User Name</th>
                                         <th>Destination</th>
-                                        <th>Rating</th>
+                                        <th style="width: 80px;">Rating <span style="color: #ffc107;">&#9733;</span></th>
                                         <th>Comment</th>
                                         <th>Created At</th>
                                         <th>Action</th>
@@ -147,7 +141,7 @@
                                             <td>
                                                 @item.DestinationName
                                             </td>
-                                            <td>
+                                            <td class="text-end">
                                                 @item.Rating
                                             </td>
                                             <td>
