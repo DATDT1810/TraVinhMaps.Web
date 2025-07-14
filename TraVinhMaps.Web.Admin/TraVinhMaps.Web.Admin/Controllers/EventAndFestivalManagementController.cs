@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Globalization;
+using TraVinhMaps.Web.Admin.Models;
 using TraVinhMaps.Web.Admin.Models.EventAndFestivalFeature;
 using TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature;
 using TraVinhMaps.Web.Admin.Services.Markers;
@@ -26,10 +27,16 @@ namespace TraVinhMaps.Web.Admin.Controllers
             _markerService = markerService;
         }
 
+        // GET: EventAndFestivalManagement/Index
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             ViewData["Breadcrumb"] = new List<string> { "Event And Festival Management", "Event And Festival List" };
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Event And Festival Management", Url = Url.Action("Index", "EventAndFestivalManagement")! },
+                new BreadcrumbItem { Title = "Event And Festival List" } // default URL for the current page
+            };
             var eventAndFestivals = await _eventAndFestivalService.ListAllAsync();
             if (eventAndFestivals == null)
             {
@@ -39,6 +46,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(eventAndFestivals);
         }
 
+        // GET: EventAndFestivalManagement/CreateEventAndFestival
         [HttpGet("CreateEventAndFestival")]
         public async Task<IActionResult> CreateEventAndFestivalAsync()
         {
@@ -60,6 +68,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
         }
 
 
+        // POST: EventAndFestivalManagement/CreateEventFestival
         [HttpPost("CreateEventFestival")]
         public async Task<IActionResult> CreateEventFestival(CreateEventAndFestivalRequestViewModel createEventAndFestivalRequestViewModel)
         {
@@ -103,6 +112,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        // GET: EventAndFestivalManagement/DetailEventFestival
         [HttpGet("DetailEventFestival")]
         public async Task<IActionResult> DetailEventFestival(string id)
         {
@@ -119,7 +129,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
             ViewBag.marker = await _markerService.GetMarkerById(eventAndFestivalDetail.Location.MarkerId);
             return View(eventAndFestivalDetail);
         }
-
+        
+        // GET: EventAndFestivalManagement/EditEventAndFestival
         [HttpGet("EditEventAndFestival")]
         public async Task<IActionResult> EditEventAndFestival(string id)
         {
@@ -160,6 +171,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(updateEventAndFestivalRequestViewModel);
         }
 
+        // POST: EventAndFestivalManagement/EditEventAndFestival
         [HttpPost("EditEventAndFestival")]
         public async Task<IActionResult> EditEventAndFestival(UpdateEventAndFestivalRequestViewModel updateEventAndFestivalRequestViewModel)
         {
@@ -202,6 +214,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return RedirectToAction("DetailEventFestival", new { id = updateEventAndFestivalRequestViewModel.Id });
         }
 
+        // POST: EventAndFestivalManagement/DeleteEventAndFestival  
         [HttpPost("DeleteEventAndFestival")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteEventAndFestival(string id, CancellationToken cancellationToken)
@@ -217,6 +230,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // POST: EventAndFestivalManagement/DeleteEventAndFestivalByForm
         [HttpPost("DeleteEventAndFestivalByForm")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteEventAndFestivalByForm(string id, CancellationToken cancellationToken)
@@ -233,6 +247,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return RedirectToAction("DetailEventFestival", new { id = id });
             }
         }
+
+        // POST: EventAndFestivalManagement/RestoreEventAndFestival
         [HttpPost("RestoreEventAndFestival")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreEventAndFestival(string id, CancellationToken cancellationToken)
@@ -248,6 +264,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // POST: EventAndFestivalManagement/RestoreEventAndFestivalByForm
         [HttpPost("RestoreEventAndFestivalByForm")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreEventAndFestivalByForm(string id, CancellationToken cancellationToken)
@@ -265,6 +282,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // POST: EventAndFestivalManagement/AddEventAndFestivalImage
         [HttpPost("AddEventAndFestivalImage")]
         public async Task<IActionResult> AddEventAndFestivalImage(string id, List<IFormFile> imageDestinationFileList)
         {
@@ -294,6 +312,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // POST: EventAndFestivalManagement/DeleteEventAndFestivalImage
         [HttpPost("DeleteEventAndFestivalImage")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteEventAndFestivalImage(string id, string urlImage)
@@ -338,13 +357,14 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
-
+        // GET: EventAndFestivalManagement/Error
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View("Error!");
         }
-
+        
+        // Helper methods to validate image files
         private bool IsImageFile(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -359,6 +379,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return true;
         }
 
+        // Helper method to validate a list of image files
         private bool IsImageListFile(List<IFormFile> formFiles)
         {
             foreach (var item in formFiles)

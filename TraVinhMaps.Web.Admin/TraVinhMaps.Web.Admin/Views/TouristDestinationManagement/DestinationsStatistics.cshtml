@@ -14,21 +14,13 @@
                 <div class="col-6">
                     <h4>@ViewData["Title"]</h4>
                 </div>
-                <div class="col-6">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a asp-controller="Home" asp-action="Index"><i class="fa fa-home" style="font-size: 20px;"></i></a>
-                        </li>
-                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
-                        {
-                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
-                            {
-                                <li class="breadcrumb-item">@item</li>
-                            }
-                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
-                        }
-                    </ol>
-                </div>
+                @{
+                    var breadcrumbs = ViewData["Breadcrumb"] as List<BreadcrumbItem>;
+                }
+                @if (breadcrumbs != null)
+                {
+                    @await Html.PartialAsync("_Breadcrumb", breadcrumbs)
+                }
             </div>
         </div>
     </div>
@@ -43,7 +35,8 @@
                         {
                             <div class="alert alert-danger">@error</div>
                         }
-                        else if (Model == null || (Model.DestinationStatsOverview == null && !Model.UserDemographics.Any()))
+                        else if (Model == null || (Model.DestinationStatsOverview == null &&
+                        !Model.UserDemographics.Any()))
                         {
                             <div class="alert alert-warning">No analytics data available.</div>
                         }
@@ -53,13 +46,15 @@
                             <h6 class="text-primary mb-3">Overview</h6>
                             <div class="row mb-3">
                                 <div class="col-md-3">
-                                    <p>Total Destinations: <span>@Model.DestinationStatsOverview.TotalDestinations</span></p>
+                                    <p>Total Destinations: <span>@Model.DestinationStatsOverview.TotalDestinations</span>
+                                    </p>
                                 </div>
                                 <div class="col-md-3">
                                     <p>Total Views: <span>@Model.DestinationStatsOverview.TotalViews</span></p>
                                 </div>
                                 <div class="col-md-3">
-                                    <p>Total Interactions: <span>@Model.DestinationStatsOverview.TotalInteractions</span></p>
+                                    <p>Total Interactions: <span>@Model.DestinationStatsOverview.TotalInteractions</span>
+                                    </p>
                                 </div>
                                 <div class="col-md-3">
                                     <p>Total Favorites: <span>@Model.DestinationStatsOverview.TotalFavorites</span></p>
@@ -98,7 +93,8 @@
                                         <option value="png">Download PNG</option>
                                         <option value="csv">Download CSV</option>
                                     </select>
-                                    <button id="analyticsDownloadChartBtn" class="btn btn-primary w-100 mt-2">Download</button>
+                                    <button id="analyticsDownloadChartBtn"
+                                        class="btn btn-primary w-100 mt-2">Download</button>
                                 </div>
                             </div>
 
@@ -138,7 +134,8 @@
                                         <option value="png">Download PNG</option>
                                         <option value="csv">Download CSV</option>
                                     </select>
-                                    <button id="demographicsDownloadChartBtn" class="btn btn-primary w-100 mt-2">Download</button>
+                                    <button id="demographicsDownloadChartBtn"
+                                        class="btn btn-primary w-100 mt-2">Download</button>
                                 </div>
                             </div>
 
@@ -175,7 +172,8 @@
                                         <option value="png">Download PNG</option>
                                         <option value="csv">Download CSV</option>
                                     </select>
-                                    <button id="topInteractionDownloadChartBtn" class="btn btn-primary w-100 mt-2">Download</button>
+                                    <button id="topInteractionDownloadChartBtn"
+                                        class="btn btn-primary w-100 mt-2">Download</button>
                                 </div>
                             </div>
 
@@ -212,7 +210,8 @@
                                         <option value="png">Download PNG</option>
                                         <option value="csv">Download CSV</option>
                                     </select>
-                                    <button id="topFavoritesDownloadChartBtn" class="btn btn-primary w-100 mt-2">Download</button>
+                                    <button id="topFavoritesDownloadChartBtn"
+                                        class="btn btn-primary w-100 mt-2">Download</button>
                                 </div>
                             </div>
 
@@ -254,7 +253,9 @@
                             <div class="row mb-3">
                                 <div class="col-md-9">
                                     <label>Destination Name</label>
-                                    <select id="compareDestinationsSelect" class="form-select" multiple>
+                                    <select id="compareDestinationsSelect" class="form-select" multiple
+                                        multiselect-search="true" multiselect-select-all="true" multiselect-max-items="5"
+                                        placeholder="Select destinations">
                                         @foreach (var d in Model.DestinationStatsOverview.DestinationDetails)
                                         {
                                             <option value="@d.Id">@d.LocationName</option>
@@ -266,7 +267,8 @@
                                         <option value="png">Download PNG</option>
                                         <option value="csv">Download CSV</option>
                                     </select>
-                                    <button id="compareDestinationsDownloadChartBtn" class="btn btn-primary mt-2">Download</button>
+                                    <button id="compareDestinationsDownloadChartBtn"
+                                        class="btn btn-primary mt-2">Download</button>
                                 </div>
                             </div>
 
@@ -312,6 +314,8 @@
 @section Scripts {
     <script src="~/assets/js/sweetalert-custom.js"></script>
     <script src="~/assets/js/touristdestinationmanagement/chart.js"></script>
+    <script src="~/assets/js/multiselect-dropdown.js"></script>
+
     <script>
         // Extract and deserialize data from the view model into JavaScript variables
         let stats = @Html.Raw(Json.Serialize(Model.DestinationStatsOverview ?? new DestinationStatsOverview()));

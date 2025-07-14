@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using TraVinhMaps.Web.Admin.Models;
 using TraVinhMaps.Web.Admin.Models.OcopType;
 using TraVinhMaps.Web.Admin.Services.OcopType;
 
@@ -18,21 +19,29 @@ namespace TraVinhMaps.Web.Admin.Controllers
         {
             _ocopTypeService = ocopTypeService;
         }
+
+        // GET: OcopType/Index
         public async Task<IActionResult> Index()
         {
-            ViewData["Title"] = "Ocop Type list";
-            ViewData["Breadcrumb"] = new List<string> { "Ocop Type", "List" };
+            ViewData["Title"] = "Ocop Type NManagement";
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Ocop Type Management", Url = Url.Action("Index", "OcopType")! },
+                new BreadcrumbItem { Title = "Ocop Type List" } // default URL for the current page
+            };
             var listOcopType = await _ocopTypeService.ListAllAsync();
             return View(listOcopType);
         }
-
+        
+        // GET: OcopType/CreateOcopType
         [HttpGet("CreateOcopType")]
         public async Task<IActionResult> CreateOcopType()
         {
             return View();
         }
-        [HttpPost("CreateOcopTypePost")]
 
+        // POST: OcopType/CreateOcopTypePost
+        [HttpPost("CreateOcopTypePost")]
         public async Task<IActionResult> CreateOcopTypePost(CreateOcopTypeRequest createOcopTypeRequest, CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid)
@@ -73,6 +82,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return View("CreateOcopType", createOcopTypeRequest);
             }
         }
+
+        // GET: OcopType/UpdateOcopType
         [HttpGet("UpdateOcopType")]
         public async Task<IActionResult> UpdateOcopType(string id)
         {
@@ -92,6 +103,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
 
         }
 
+        // POST: OcopType/UpdateOcopTypePost
         [HttpPost("UpdateOcopTypePost")]
         public async Task<IActionResult> UpdateOcopTypePost(OcopTypeResponse request, CancellationToken cancellationToken = default)
         {

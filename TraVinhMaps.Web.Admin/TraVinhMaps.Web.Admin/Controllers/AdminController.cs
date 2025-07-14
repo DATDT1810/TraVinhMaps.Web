@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TraVinhMaps.Web.Admin.Models;
 using TraVinhMaps.Web.Admin.Models.Admins;
 using TraVinhMaps.Web.Admin.Models.Users;
 using TraVinhMaps.Web.Admin.Services.Admin;
@@ -106,21 +107,31 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // GET: Admin/Index
         [Authorize(Roles = "super-admin")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             ViewData["Title"] = "Admin Management";
-            ViewData["Breadcrumb"] = new List<string> { "Admin Management", "Admin List" };
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Admin Management", Url = Url.Action("Index", "Admin")! },
+                new BreadcrumbItem { Title = "Admin List" } // default URL for the current page
+            };
             var admins = await _adminService.ListAllAsync() ?? new List<AdminResponse>(); ;
             return View(admins);
         }
 
+        // GET: Admin/Details
         [HttpGet("Details")]
         public async Task<IActionResult> Details(string id)
         {
             ViewData["Title"] = "Admin Details";
-            ViewData["Breadcrumb"] = new List<string> { "Admin List", "Details" };
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Admin Management", Url = Url.Action("Index", "Admin")! },
+                new BreadcrumbItem { Title = "Admin Details" } // default URL for the current page
+            };
             var admin = await _adminService.GetByIdAsync(id);
             if (admin == null)
             {
@@ -135,7 +146,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
         public IActionResult Create()
         {
             ViewData["Title"] = "Admin Create";
-            ViewData["Breadcrumb"] = new List<string> { "Admin Create", "Create" };
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Admin Management", Url = Url.Action("Index", "Admin")! },
+                new BreadcrumbItem { Title = "Admin Create" } // default URL for the current page
+            };
             return View();
         }
 
@@ -170,6 +185,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return Json(new { success = false, message = "Failed to create admin" });
             }
         }
+        // Get: Admin/Restore
         [Authorize(Roles = "super-admin")]
         [HttpGet("Restore/{id}")]
         public async Task<IActionResult> Restore(string id)
@@ -178,6 +194,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(user);
         }
 
+        // POST: Admin/Restore
         [Authorize(Roles = "super-admin")]
         [HttpPost("Restore")]
         [ValidateAntiForgeryToken]
@@ -198,6 +215,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // GET: Admin/Delete
         [HttpGet("Delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
@@ -205,6 +223,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(admin);
         }
 
+        // POST: Admin/Delete
         [Authorize(Roles = "super-admin")]
         [HttpPost("Delete")]
         [ValidateAntiForgeryToken]
@@ -221,11 +240,16 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        // GET: Admin/Setting
         [HttpGet("setting")]
         public async Task<IActionResult> Settings()
         {
             ViewData["Title"] = "Security Settings";
-            ViewData["Breadcrumb"] = new List<string> { "Settings", "Security" };
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Admin", Url = Url.Action("", "")! },
+                new BreadcrumbItem { Title = "Setting" } // default URL for the current page
+            };
             var settingProfile = await _adminService.GetSettingProfileAsync();
             return View(settingProfile);
         }

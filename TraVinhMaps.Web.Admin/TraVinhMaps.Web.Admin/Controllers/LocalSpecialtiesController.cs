@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using TraVinhMaps.Web.Admin.Models;
 using TraVinhMaps.Web.Admin.Models.LocalSpecialties;
 using TraVinhMaps.Web.Admin.Models.Tags;
 using TraVinhMaps.Web.Admin.Services.LocalSpecialties;
@@ -29,7 +30,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             ViewData["Title"] = "Local Specialties";
-            ViewData["Breadcrumb"] = new List<string> { "Local Specialties  ", "Local Specialties List" };
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Local Specialties Management", Url = Url.Action("Index", "LocalSpecialties")! },
+                new BreadcrumbItem { Title = "Local Specialties List" } // default URL for the current page
+            };
             var localSpecialties = await _localSpecialtiesService.ListAllAsync();
             return View(localSpecialties);
         }
@@ -39,8 +44,12 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [HttpGet("Details/{id}")]
         public async Task<IActionResult> LocalSpecialtiesDetails(string id)
         {
-            ViewData["Title"] = "Local Specialties";
-            ViewData["Breadcrumb"] = new List<string> { "Local Specialties", "Local Specialties Details" };
+            ViewData["Title"] = "Local Specialties Details";
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Local Specialties Management", Url = Url.Action("Index", "LocalSpecialties")! },
+                new BreadcrumbItem { Title = "Local Specialties Details" } // default URL for the current page
+            };
             try
             {
                 var localSpecialty = await _localSpecialtiesService.GetByIdAsync(id);
@@ -138,8 +147,12 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [HttpGet("Create")]
         public async Task<IActionResult> Create()
         {
-            ViewData["Title"] = "Local Specialties";
-            ViewData["Breadcrumb"] = new List<string> { "Local Specialties Management", "Local Specialties List" };
+            ViewData["Title"] = "Create Local Specialty";
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Local Specialties Management", Url = Url.Action("Index", "LocalSpecialties")! },
+                new BreadcrumbItem { Title = "Create Local Specialty" } // default URL for the current page
+            };
             try
             {
                 // fetch tag "Local Specialty"
@@ -443,7 +456,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
         public async Task<IActionResult> EditLocalSpecialty(string id)
         {
             ViewData["Title"] = "Edit Local Specialty";
-            ViewData["Breadcrumb"] = new List<string> { "Local Specialties", "Edit" };
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Local Specialties Management", Url = Url.Action("Index", "LocalSpecialties")! },
+                new BreadcrumbItem { Title = "Edit Local Specialties" } // default URL for the current page
+            };
             try
             {
                 var localSpecialty = await _localSpecialtiesService.GetByIdAsync(id);

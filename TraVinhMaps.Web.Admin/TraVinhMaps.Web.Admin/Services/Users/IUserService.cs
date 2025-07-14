@@ -20,6 +20,6 @@ namespace TraVinhMaps.Web.Admin.Services.Users
         Task<UserResponse> AddAdminAsync(UserRequest request, CancellationToken cancellationToken = default);
         Task<Dictionary<string, object>> GetUserStatisticsAsync(string groupBy, string timeRange, CancellationToken cancellationToken = default);
         // chart performance
-        Task<Dictionary<string, Dictionary<string, int>>> GetPerformanceByTagAsync(IEnumerable<string>? tagNames, bool includeOcop, bool includeDestination, bool includeLocalSpecialty, bool includeTips, bool includeFestivals, DateTime? startDate, DateTime? endDate, CancellationToken cancellationToken = default);
+        Task<Dictionary<string, Dictionary<string, int>>> GetPerformanceByTagAsync(IEnumerable<string>? tagNames, bool includeOcop, bool includeDestination, bool includeLocalSpecialty, bool includeTips, bool includeFestivals, string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default);
     }
 }

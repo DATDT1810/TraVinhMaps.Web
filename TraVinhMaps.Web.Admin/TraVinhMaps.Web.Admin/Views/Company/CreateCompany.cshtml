@@ -2,16 +2,14 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
 @model CompanyViewModel;
 @{
-    ViewData["Title"] = "CreateCompany";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Create Company";
 }
 <div class="page-body">
     <div class="container-fluid">
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
-                    <h4>
-                        Company Create</h4>
+                    <h4>@ViewData["Title"]</h4>
                     @if (TempData["ErrorMessage"] != null)
                     {
                         <div id="alert-message" class="alert alert-danger">
@@ -67,32 +65,41 @@
                                         <div id="locationsContainer">
                                             @for (int i = 0; i < Model.Locations.Count; i++)
                                             {
-                                                    var currentType = Model.Locations[i].Type;
+                                                var currentType = Model.Locations[i].Type;
                                                 <div class="location-item border p-3 mb-2 rounded" data-index="@i">
                                                     <div class="mb-2">
                                                         <label>Type</label>
                                                         <select name="Locations[@i].Type" class="form-select" required>
                                                             <option value="">-- Select Type --</option>
-                                                            <option value="Point" selected="@(currentType == "Point")">Point</option>
-                                                            <option value="Branch" selected="@(currentType == "Branch")">Branch</option>
-                                                            <option value="Office" selected="@(currentType == "Office")">Office</option>
+                                                            <option value="Point" selected="@(currentType == "Point")">Point
+                                                            </option>
+                                                            <option value="Branch" selected="@(currentType == "Branch")">
+                                                                Branch</option>
+                                                            <option value="Office" selected="@(currentType == "Office")">
+                                                                Office</option>
                                                         </select>
-                                                        <span class="text-danger" asp-validation-for="Locations[@i].Type"></span>
+                                                        <span class="text-danger"
+                                                            asp-validation-for="Locations[@i].Type"></span>
                                                     </div>
                                                     <div class="mb-2">
                                                         <label>Latitude</label>
-                                                        <input name="Locations[@i].Latitude" class="form-control" value="@Model.Locations[i].Latitude" />
-                                                        <span class="text-danger" asp-validation-for="Locations[@i].Latitude"></span>
+                                                        <input name="Locations[@i].Latitude" class="form-control"
+                                                            value="@Model.Locations[i].Latitude" />
+                                                        <span class="text-danger"
+                                                            asp-validation-for="Locations[@i].Latitude"></span>
                                                     </div>
                                                     <div class="mb-2">
                                                         <label>Longitude</label>
-                                                        <input name="Locations[@i].Longitude" class="form-control" value="@Model.Locations[i].Longitude" />
-                                                        <span class="text-danger" asp-validation-for="Locations[@i].Longitude"></span>
+                                                        <input name="Locations[@i].Longitude" class="form-control"
+                                                            value="@Model.Locations[i].Longitude" />
+                                                        <span class="text-danger"
+                                                            asp-validation-for="Locations[@i].Longitude"></span>
                                                     </div>
                                                 </div>
                                             }
                                         </div>
-                                        <button type="button" id="addLocationBtn" class="btn btn-primary btn-sm mt-2">Add Location</button>
+                                        <button type="button" id="addLocationBtn"
+                                            class="btn btn-primary btn-sm mt-2">Add Location</button>
                                     </div>
                                 </div>
                                 <div id="locationTemplate" class="d-none">
@@ -109,7 +116,8 @@
                                             <label>Longitude</label>
                                             <input name="Locations[__index__].Longitude" class="form-control" />
                                         </div>
-                                        <button type="button" class="btn btn-danger btn-sm remove-location">Remove</button>
+                                        <button type="button"
+                                            class="btn btn-danger btn-sm remove-location">Remove</button>
                                     </div>
                                 </div>
 
@@ -119,17 +127,20 @@
                                         <label>Contact Information</label>
                                         <div class="mb-3">
                                             <label>Phone</label>
-                                            <input asp-for="Contact.Phone" class="form-control" placeholder="Phone number" />
+                                            <input asp-for="Contact.Phone" class="form-control"
+                                                placeholder="Phone number" />
                                             <span asp-validation-for="Contact.Phone" class="text-danger"></span>
                                         </div>
                                         <div class="mb-3">
                                             <label>Email</label>
-                                            <input asp-for="Contact.Email" class="form-control" placeholder="Email address" />
+                                            <input asp-for="Contact.Email" class="form-control"
+                                                placeholder="Email address" />
                                             <span asp-validation-for="Contact.Email" class="text-danger"></span>
                                         </div>
                                         <div class="mb-3">
                                             <label>Website</label>
-                                            <input asp-for="Contact.Website" class="form-control" placeholder="Website URL" />
+                                            <input asp-for="Contact.Website" class="form-control"
+                                                placeholder="Website URL" />
                                             <span asp-validation-for="Contact.Website" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -138,8 +149,7 @@
                                     <div class="col">
                                         <div class="text-end">
                                             <button type="submit" class="btn btn-success me-3">Create Company</button>
-                                            <a asp-action="Index"
-                                                class="btn btn-danger">Back</a>
+                                            <a asp-action="Index" class="btn btn-danger">Back</a>
                                         </div>
                                     </div>
                                 </div>
@@ -164,25 +174,25 @@
             if (alert) {
                 alert.style.display = "none";
             }
-        }, 2000); 
+        }, 2000);
         let locationIndex = @Model.Locations.Count;
 
-    document.getElementById('addLocationBtn').addEventListener('click', function () {
-        const template = document.getElementById('locationTemplate').innerHTML;
-        const html = template.replace(/__index__/g, locationIndex);
-        const container = document.getElementById('locationsContainer');
+        document.getElementById('addLocationBtn').addEventListener('click', function () {
+            const template = document.getElementById('locationTemplate').innerHTML;
+            const html = template.replace(/__index__/g, locationIndex);
+            const container = document.getElementById('locationsContainer');
 
-        const wrapper = document.createElement('div');
-        wrapper.innerHTML = html;
-        container.appendChild(wrapper.firstElementChild);
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = html;
+            container.appendChild(wrapper.firstElementChild);
 
-        locationIndex++;
-    });
+            locationIndex++;
+        });
 
-    document.getElementById('locationsContainer').addEventListener('click', function (e) {
-        if (e.target && e.target.classList.contains('remove-location')) {
-            e.target.closest('.location-item').remove();
-        }
-    });
+        document.getElementById('locationsContainer').addEventListener('click', function (e) {
+            if (e.target && e.target.classList.contains('remove-location')) {
+                e.target.closest('.location-item').remove();
+            }
+        });
     </script>
 }

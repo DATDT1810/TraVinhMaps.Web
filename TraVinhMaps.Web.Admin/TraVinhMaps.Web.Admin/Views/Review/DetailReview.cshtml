@@ -2,7 +2,7 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model ReviewResponse;
 @{
-    ViewData["Title"] = "DetailReview";
+    ViewData["Title"] = "Review Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -11,7 +11,7 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
-                    <h4>Review Detail</h4>
+                    <h4>@ViewData["Title"]</h4>
                     @if (TempData["ErrorMessage"] != null)
                     {
                         <div id="alert-message" class="alert alert-danger">
@@ -26,15 +26,13 @@
                         </div>
                     }
                 </div>
-                <div class="col-6">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a asp-controller="Home" asp-action="Index"><i class="fa fa-home" style="font-size: 20px;"></i></a>
-                        </li>
-                        <li class="breadcrumb-item">ECommerce</li>
-                        <li class="breadcrumb-item active">Review Page</li>
-                    </ol>
-                </div>
+                @{
+                    var breadcrumbs = ViewData["Breadcrumb"] as List<BreadcrumbItem>;
+                }
+                @if (breadcrumbs != null)
+                {
+                    @await Html.PartialAsync("_Breadcrumb", breadcrumbs)
+                }
             </div>
         </div>
     </div>

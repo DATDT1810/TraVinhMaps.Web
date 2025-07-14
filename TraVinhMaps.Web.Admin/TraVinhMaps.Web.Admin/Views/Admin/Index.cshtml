@@ -1,7 +1,7 @@
 @using TraVinhMaps.Web.Admin.Models.Admins
 @model IEnumerable<AdminResponse>
 @{
-    ViewData["Title"] = "Admin List";
+    // ViewData["Title"] = "Admin List";
 }
 
 <div class="page-body">
@@ -11,23 +11,13 @@
                 <div class="col-6">
                     <h4>@ViewData["Title"]</h4>
                 </div>
-                <div class="col-6">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a asp-controller="Home" asp-action="Index">
-                                <i class="fa fa-home" style="font-size: 20px;"></i>
-                            </a>
-                        </li>
-                        @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
-                        {
-                            foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
-                            {
-                                <li class="breadcrumb-item">@item</li>
-                            }
-                            <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
-                        }
-                    </ol>
-                </div>
+                @{
+                    var breadcrumbs = ViewData["Breadcrumb"] as List<BreadcrumbItem>;
+                }
+                @if (breadcrumbs != null)
+                {
+                    @await Html.PartialAsync("_Breadcrumb", breadcrumbs)
+                }
             </div>
         </div>
     </div>
@@ -39,9 +29,8 @@
                         <div class="d-flex justify-content-between mb-3">
                             <div class="d-flex gap-2 mb-3">
                                 <a asp-controller="Admin" asp-action="Create" class="btn btn-success">
-                                    <i class="fa fa-plus me-1"></i>Add Admin
+                                    <i class="fa fa-plus me-1"></i>Add Administrator
                                 </a>
-
                                 <button class="btn btn-primary" title="Export Admin List" id="adminExportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
@@ -143,6 +132,6 @@
                         showTimedAlert("Error!", "@TempData["CreateAdminError"]", "error", 1000);
                     </text>
             }
-                                            });
+                                                    });
     </script>
 }

@@ -9,9 +9,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-          content="Riho admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
+        content="TraVinhGo admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
     <meta name="keywords"
-          content="admin template, Riho admin template, dashboard template, flat admin template, responsive admin template, web app">
+        content="admin template, TraVinhGo admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="pixelstrap">
     <link rel="icon" href="~/assets/images/faticon.png" type="image/x-icon">
     <link rel="shortcut icon" href="~/assets/images/faticon.png" type="image/x-icon">
@@ -20,7 +20,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&amp;display=swap"
-          rel="stylesheet">
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="~/assets/css/font-awesome.min.css">
     <!-- ico-font-->
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/icofont.css">
@@ -36,9 +36,7 @@
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/scrollbar.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/animate.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/owlcarousel.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/echart.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/date-picker.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/chartist.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/owlcarousel.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/dropzone.css">
     <!-- Plugins css Ends-->
@@ -53,7 +51,6 @@
 
     <!-- App css-->
     <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
-    <link id="color" rel="stylesheet" href="~/assets/css/color-1.css" media="screen">
     <!-- Responsive css-->
     <link rel="stylesheet" type="text/css" href="~/assets/css/responsive.css">
 </head>
@@ -96,9 +93,28 @@
                         <li>
                             <div class="mode"><i class="moon" data-feather="moon"> </i></div>
                         </li>
-                        @* <li class="onhover-dropdown notification-down">
+                        <li class="onhover-dropdown notification-down">
                             @await Component.InvokeAsync("Notification")
-                        </li> *@
+                        </li>
+                        <li class="onhover-dropdown language-dropdown">
+                            <div class="media profile-media">
+                                <div class="media-body d-xl-block d-none box-col-none">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span id="currentLanguage">English</span>
+                                        <i class="middle fa fa-angle-down"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <ul class="profile-dropdown onhover-show-div">
+                                <li><button type="button" class="dropdown-item"
+                                        onclick="changeLanguage('en','English')">English</button></li>
+                                <li><button type="button" class="dropdown-item"
+                                        onclick="changeLanguage('vi','Vietnamese')">Vietnamese</button></li>
+                            </ul>
+                        </li>
+
+                        </li>
+
                         <li class="profile-nav onhover-dropdown">
                             <div class="media profile-media">
                                 <img class="b-r-10" src="../assets/images/dashboard/profile.png" alt="">
@@ -143,7 +159,7 @@
                 <div class="logo-wrapper">
                     <a asp-controller="Home" asp-action="Index">
                         <img class="img-fluid" src="~/assets/images/logo/logo.png" alt="Logo"
-                             style="width: 100px; margin-left: 50px; margin-top: -20px;">
+                            style="width: 100px; margin-left: 50px; margin-top: -20px;">
                     </a>
                     <div class="back-btn"><i class="fa fa-angle-left"></i></div>
                     <div class="toggle-sidebar">
@@ -173,13 +189,13 @@
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="Home" asp-action="Index">
                                     <i class="fa fa-home"></i>
-                                    <span class="lan-3">Dashboard</span>
+                                    <span class="lan-3">Dashboards</span>
                                 </a>
                             </li>
                             <!-- Account Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="UserManagement"
-                                   asp-action="Index">
+                                    asp-action="Index">
                                     <i class="fa fa-user"></i>
                                     <span>Account Management</span>
                                 </a>
@@ -189,7 +205,7 @@
                                 <!-- Admin Management -->
                                 <li class="sidebar-list" id="adminManagementMenu">
                                     <a class="sidebar-link sidebar-title link-nav" asp-controller="Admin"
-                                       asp-action="Index">
+                                        asp-action="Index">
                                         <i class="fa fa-user-secret"></i>
                                         <span>Admin Management</span>
                                     </a>
@@ -198,7 +214,7 @@
                             <!-- Destination Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav"
-                                   asp-controller="TouristDestinationManagement" asp-action="Index">
+                                    asp-controller="TouristDestinationManagement" asp-action="Index">
                                     <i class="fa fa-globe"></i>
                                     <span>Destination</span>
                                 </a>
@@ -206,7 +222,7 @@
                             <!-- Ocop Product -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="OcopProduct"
-                                   asp-action="Index">
+                                    asp-action="Index">
                                     <i class="fa fa-shopping-bag"></i>
                                     <span>Ocop Product</span>
                                 </a>
@@ -214,7 +230,7 @@
                             <!-- Ocop Type -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="OcopType"
-                                   asp-action="Index">
+                                    asp-action="Index">
                                     <i class="fa fa-suitcase"></i>
                                     <span>Ocop Type</span>
                                 </a>
@@ -222,7 +238,7 @@
                             <!-- Company -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="Company"
-                                   asp-action="Index">
+                                    asp-action="Index">
                                     <i class="fa fa-building"></i>
                                     <span>Company</span>
                                 </a>
@@ -230,7 +246,7 @@
                             <!-- Review -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="Review"
-                                   asp-action="Index">
+                                    asp-action="Index">
                                     <i class="fa fa-comments"></i>
                                     <span>Review Management</span>
                                 </a>
@@ -238,7 +254,7 @@
                             <!-- Local Specialties Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="LocalSpecialties"
-                                   asp-action="Index">
+                                    asp-action="Index">
                                     <i class="fa fa-cutlery"></i>
                                     <span>Local Specialties</span>
                                 </a>
@@ -246,7 +262,7 @@
                             <!-- Event and Festival Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav"
-                                   asp-controller="EventAndFestivalManagement" asp-action="Index">
+                                    asp-controller="EventAndFestivalManagement" asp-action="Index">
                                     <i class="fa fa-calendar"></i>
                                     <span>Event And Festival</span>
                                 </a>
@@ -254,7 +270,7 @@
                             <!-- Tips Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="CommunityTips"
-                                   asp-action="Index">
+                                    asp-action="Index">
                                     <i class="fa fa-lightbulb-o"></i>
                                     <span>Tips Managment</span>
                                 </a>
@@ -262,23 +278,23 @@
                             <!-- Send Notifications -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="Notifications"
-                                   asp-action="Index">
+                                    asp-action="Index">
                                     <i class="fa fa-bell"></i>
                                     <span>Send Notifications</span>
                                 </a>
                             </li>
-                            <!-- Maker Management -->
+                            <!-- Marker Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="MarkerManagement"
-                                   asp-action="Index">
+                                    asp-action="Index">
                                     <i class="fa fa-map-marker"></i>
-                                    <span>Maker Managment</span>
+                                    <span>Marker Managment</span>
                                 </a>
                             </li>
                             <!-- Itineraries Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="ItineraryPlanManagement"
-                                   asp-action="Index">
+                                    asp-action="Index">
                                     <i class="fa fa-compass"></i>
                                     <span>Itineraries</span>
                                 </a>
@@ -286,7 +302,7 @@
                             <!-- Feedback Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="Feedback"
-                                   asp-action="Index">
+                                    asp-action="Index">
                                     <i class="fa fa-envelope"></i>
                                     <span>Feedback</span>
                                 </a>
@@ -301,7 +317,7 @@
                                     <li><a asp-controller="OcopProduct" asp-action="OcopDashboard">Ocop</a></li>
                                     <li>
                                         <a asp-controller="TouristDestinationManagement"
-                                           asp-action="DestinationsStatistics">Destination</a>
+                                            asp-action="DestinationsStatistics">Destination</a>
                                     </li>
                                 </ul>
                             </li>
@@ -338,22 +354,13 @@
     <script src="~/assets/js/config.js"></script>
     <!-- Plugins JS start-->
     <script src="~/assets/js/sidebar-menu.js"></script>
-    <script src="~/assets/js/sidebar-pin.js"></script>
     <script src="~/assets/js/slick/slick.min.js"></script>
     <script src="~/assets/js/slick/slick.js"></script>
     <script src="~/assets/js/header-slick.js"></script>
 
     <!-- calendar js-->
-    <script src="~/assets/js/datepicker/date-picker/datepicker.js"></script>
-    <script src="~/assets/js/datepicker/date-picker/datepicker.en.js"></script>
-    <script src="~/assets/js/datepicker/date-picker/datepicker.custom.js"></script>
-    <script src="~/assets/js/typeahead/handlebars.js"></script>
     <script src="~/assets/js/dropzone/dropzone.js"></script>
     <script src="~/assets/js/dropzone/dropzone-script.js"></script>
-    <script src="~/assets/js/typeahead/typeahead.bundle.js"></script>
-    <script src="~/assets/js/typeahead/typeahead.custom.js"></script>
-    <script src="~/assets/js/typeahead-search/handlebars.js"></script>
-    <script src="~/assets/js/typeahead-search/typeahead-custom.js"></script>
     <script src="~/assets/js/height-equal.js"></script>
     <script src="~/assets/js/animation/wow/wow.min.js"></script>
     <script src="~/assets/js/owlcarousel/owl.carousel.js"></script>
@@ -370,11 +377,12 @@
 
     <!-- Theme js-->
     <script src="~/assets/js/script.js"></script>
-    <script src="~/assets/js/theme-customizer/customizer.js"></script>
-    <script src="~/assets/js/error-handler.js"></script>
-    <script src="~/assets/js/session-handler.js"></script>
+    <script src="~/assets/js/translate/translation.js"></script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@7.0.5/dist/browser/signalr.min.js"></script>
+
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 

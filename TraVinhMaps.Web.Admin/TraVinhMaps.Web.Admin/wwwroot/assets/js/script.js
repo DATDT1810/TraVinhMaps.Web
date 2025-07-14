@@ -1,32 +1,28 @@
 /*! -----------------------------------------------------------------------------------
 
-
 -----------------------------------------------------------------------------------
 
         01. password show hide
         02. Background Image js
         03. sidebar filter
-        04. Language js
-        05. Translate js
 
  --------------------------------------------------------------------------------- */
 
 (function ($) {
   "use strict";
+
   $(document).on("click", function (e) {
     var outside_space = $(".outside");
     if (
       !outside_space.is(e.target) &&
       outside_space.has(e.target).length === 0
     ) {
-      $(".menu-to-be-close").removeClass("d-block");
-      $(".menu-to-be-close").css("display", "none");
+      $(".menu-to-be-close").removeClass("d-block").css("display", "none");
     }
   });
 
-  $(".prooduct-details-box .close").on("click", function (e) {
-    var tets = $(this).parent().parent().parent().parent().addClass("d-none");
-    console.log(tets);
+  $(".prooduct-details-box .close").on("click", function () {
+    $(this).closest(".prooduct-details-box").addClass("d-none");
   });
 
   if ($(".page-wrapper").hasClass("horizontal-wrapper")) {
@@ -39,39 +35,31 @@
       }
     );
     $(window).on("scroll", function () {
-      if ($(this).scrollTop() < 600) {
-        $(".sidebar-list").removeClass("hoverd");
-      }
+      if ($(this).scrollTop() < 600) $(".sidebar-list").removeClass("hoverd");
     });
   }
 
-  /*----------------------------------------
-     password show hide
-     ----------------------------------------*/
+  /* Password show/hide */
   $(".show-hide").show();
   $(".show-hide span").addClass("show");
 
   $(".show-hide span").click(function () {
+    const input = $('input[name="login[password]"]');
     if ($(this).hasClass("show")) {
-      $('input[name="login[password]"]').attr("type", "text");
+      input.attr("type", "text");
       $(this).removeClass("show");
     } else {
-      $('input[name="login[password]"]').attr("type", "password");
+      input.attr("type", "password");
       $(this).addClass("show");
     }
   });
+
   $('form button[type="submit"]').on("click", function () {
     $(".show-hide span").addClass("show");
-    $(".show-hide")
-      .parent()
-      .find('input[name="login[password]"]')
-      .attr("type", "password");
+    $('input[name="login[password]"]').attr("type", "password");
   });
 
-
-  
-
-  $(".mega-menu-container").css("display", "none");
+  $(".mega-menu-container").hide();
   $(".header-search").click(function () {
     $(".search-full").addClass("open");
   });
@@ -79,75 +67,151 @@
     $(".search-full").removeClass("open");
     $("body").removeClass("offcanvas");
   });
+
   $(".mobile-toggle").click(function () {
     $(".nav-menus").toggleClass("open");
   });
+
   $(".mobile-toggle-left").click(function () {
     $(".left-header").toggleClass("open");
   });
+
   $(".bookmark-search").click(function () {
     $(".form-control-search").toggleClass("open");
   });
+
   $(".filter-toggle").click(function () {
     $(".product-sidebar").toggleClass("open");
   });
+
   $(".toggle-data").click(function () {
     $(".product-wrapper").toggleClass("sidebaron");
   });
+
   $(".form-control-search input").keyup(function (e) {
-    if (e.target.value) {
-      $(".page-wrapper").addClass("offcanvas-bookmark");
-    } else {
-      $(".page-wrapper").removeClass("offcanvas-bookmark");
-    }
+    $(".page-wrapper").toggleClass("offcanvas-bookmark", !!e.target.value);
   });
+
   $(".search-full input").keyup(function (e) {
-    console.log(e.target.value);
-    if (e.target.value) {
-      $("body").addClass("offcanvas");
-    } else {
-      $("body").removeClass("offcanvas");
-    }
+    $("body").toggleClass("offcanvas", !!e.target.value);
   });
 
   $("body").keydown(function (e) {
     if (e.keyCode == 27) {
-      $(".search-full input").val("");
-      $(".form-control-search input").val("");
+      $(".search-full input, .form-control-search input").val("");
       $(".page-wrapper").removeClass("offcanvas-bookmark");
       $(".search-full").removeClass("open");
       $(".search-form .form-control-search").removeClass("open");
       $("body").removeClass("offcanvas");
     }
   });
-  $(".mode").on("click", function () {
-    const bodyModeDark = $("body").hasClass("dark-only");
 
-    if (!bodyModeDark) {
-      $(".mode").addClass("active");
-      localStorage.setItem("mode", "dark-only");
-      $("body").addClass("dark-only");
-      $("body").removeClass("light");
-    }
-    if (bodyModeDark) {
+  // ========================
+  //  DARK MODE: toggle + icon
+  // ========================
+  $(".mode").on("click", function () {
+    const isDark = $("body").hasClass("dark-only");
+    const $icon = $(this).find("i");
+
+    if (isDark) {
+      $("body").removeClass("dark-only").addClass("light");
       $(".mode").removeClass("active");
       localStorage.setItem("mode", "light");
-      $("body").removeClass("dark-only");
-      $("body").addClass("light");
+      $icon.attr("data-feather", "moon");
+    } else {
+      $("body").addClass("dark-only").removeClass("light");
+      $(".mode").addClass("active");
+      localStorage.setItem("mode", "dark-only");
+      $icon.attr("data-feather", "sun");
     }
-  }); 
-  // $("body").addClass(
-  //   localStorage.getItem("mode")
-  //     ? localStorage.getItem("mode")
-  //     : "light"
-  // ); 
-  $(".mode").addClass(
-    localStorage.getItem("mode") === "dark-only" ? "active" : " "
-  );
 
-  // sidebar filter
-  $(".md-sidebar .md-sidebar-toggle ").on("click", function (e) {
-    $(".md-sidebar .md-sidebar-aside ").toggleClass("open");
+    if (typeof feather !== "undefined") {
+      feather.replace(); // cập nhật lại icon
+    }
+  });
+
+  // ========================
+  //  APPLY dark mode + sidebar active on page load
+  // ========================
+  $(document).ready(function () {
+    const savedMode = localStorage.getItem("mode");
+    const $icon = $(".mode").find("i");
+
+    if (savedMode === "dark-only") {
+      $("body").addClass("dark-only").removeClass("light");
+      $(".mode").addClass("active");
+      $icon.attr("data-feather", "sun");
+    } else {
+      $("body").removeClass("dark-only").addClass("light");
+      $(".mode").removeClass("active");
+      $icon.attr("data-feather", "moon");
+    }
+
+    if (typeof feather !== "undefined") {
+      feather.replace(); // khởi tạo lại icon
+    }
+
+    // ========================
+    // Sidebar Active
+    // ========================
+    $(document).ready(function () {
+      let path = window.location.pathname.toLowerCase().replace(/\/$/, "");
+      if (path === "") path = "/"; // root path là "/"
+
+      let bestMatchLink = null;
+      let bestMatchLength = 0;
+
+      $("#sidebar-menu .sidebar-link").removeClass("active");
+      $("#sidebar-menu .sidebar-list").removeClass("active");
+      $("#sidebar-menu .sidebar-submenu").css("display", "none");
+
+      $("#sidebar-menu .sidebar-link").each(function () {
+        const $link = $(this);
+        const hrefAttr = $link.attr("href")?.toLowerCase().replace(/\/$/, "");
+        const dataHrefAttr = $link
+          .attr("data-href")
+          ?.toLowerCase()
+          .replace(/\/$/, "");
+        const href = dataHrefAttr || hrefAttr;
+        if (!href || href === "#") return;
+
+        const isSubLink = $link.closest("ul").hasClass("sidebar-submenu");
+        const isMatch = path === href || path.startsWith(href + "/");
+
+        if (isMatch) {
+          const weight = href.length + (isSubLink ? 1000 : 0);
+          if (weight > bestMatchLength) {
+            bestMatchLink = $link;
+            bestMatchLength = weight;
+          }
+        }
+      });
+
+      if (bestMatchLink) {
+        bestMatchLink.addClass("active");
+
+        const parentListItem = bestMatchLink.closest("li.sidebar-list");
+        if (parentListItem) parentListItem.addClass("active");
+
+        const submenu = bestMatchLink.closest("ul.sidebar-submenu");
+        if (submenu.length) {
+          submenu.css("display", "block");
+          submenu.closest("li.sidebar-list").addClass("active");
+        }
+      } else {
+        // ✅ fallback: nếu không có match nào → chọn Dashboard
+        const dashboardLink = $('#sidebar-menu .sidebar-link[href="/"]');
+        if (dashboardLink.length) {
+          dashboardLink.addClass("active");
+          dashboardLink.closest("li.sidebar-list").addClass("active");
+        }
+      }
+    });
+  });
+
+  // Sidebar filter
+  $(".md-sidebar .md-sidebar-toggle").on("click", function () {
+    $(".md-sidebar .md-sidebar-aside").toggleClass("open");
   });
 
   $(".loader-wrapper").fadeOut("slow", function () {
@@ -155,23 +219,16 @@
   });
 
   $(window).on("scroll", function () {
-    if ($(this).scrollTop() > 600) {
-      $(".tap-top").fadeIn();
-    } else {
-      $(".tap-top").fadeOut();
-    }
+    $(".tap-top").fadeToggle($(this).scrollTop() > 600);
   });
 
   $(".tap-top").click(function () {
-    $("html, body").animate(
-      {
-        scrollTop: 0,
-      },
-      600
-    );
+    $("html, body").animate({ scrollTop: 0 }, 600);
     return false;
   });
-  (function ($, window, document, undefined) {
+
+  // Ripple effect
+  (function ($, window, document) {
     "use strict";
     var $ripple = $(".js-ripple");
     $ripple.on("click.ui.ripple", function (e) {
@@ -180,161 +237,21 @@
       var $circle = $this.find(".c-ripple__circle");
       var x = e.pageX - $offset.left;
       var y = e.pageY - $offset.top;
-      $circle.css({
-        top: y + "px",
-        left: x + "px",
-      });
+      $circle.css({ top: y + "px", left: x + "px" });
       $this.addClass("is-active");
     });
     $ripple.on(
       "animationend webkitAnimationEnd oanimationend MSAnimationEnd",
-      function (e) {
+      function () {
         $(this).removeClass("is-active");
       }
     );
   })(jQuery, window, document);
 
-  // active link
-
+  // UI toggles
   $(".chat-menu-icons .toogle-bar").click(function () {
     $(".chat-menu").toggleClass("show");
   });
-
-  // Language
-  var tnum = "en";
-
-  $(document).ready(function () {
-    if (localStorage.getItem("primary") != null) {
-      var primary_val = localStorage.getItem("primary");
-      $("#ColorPicker1").val(primary_val);
-      var secondary_val = localStorage.getItem("secondary");
-      $("#ColorPicker2").val(secondary_val);
-    }
-
-    $(document).click(function (e) {
-      $(".translate_wrapper, .more_lang").removeClass("active");
-    });
-    $(".translate_wrapper .current_lang").click(function (e) {
-      e.stopPropagation();
-      $(this).parent().toggleClass("active");
-
-      setTimeout(function () {
-        $(".more_lang").toggleClass("active");
-      }, 5);
-    });
-
-    /*TRANSLATE*/
-    translate(tnum);
-
-    $(".more_lang .lang").click(function () {
-      $(this).addClass("selected").siblings().removeClass("selected");
-      $(".more_lang").removeClass("active");
-
-      var i = $(this).find("i").attr("class");
-      var lang = $(this).attr("data-value");
-      var tnum = lang;
-      translate(tnum);
-
-      $(".current_lang .lang-txt").text(lang);
-      $(".current_lang i").attr("class", i);
-    });
-  });
-
-  function translate(tnum) {
-    $(".lan-1").text(trans[0][tnum]);
-    $(".lan-2").text(trans[1][tnum]);
-    $(".lan-3").text(trans[2][tnum]);
-    $(".lan-4").text(trans[3][tnum]);
-    $(".lan-5").text(trans[4][tnum]);
-    $(".lan-6").text(trans[5][tnum]);
-    $(".lan-7").text(trans[6][tnum]);
-    $(".lan-8").text(trans[7][tnum]);
-    $(".lan-9").text(trans[8][tnum]);
-  }
-
-  var trans = [
-    {
-      en: "General",
-      pt: "Geral",
-      es: "Generalo",
-      fr: "GÃ©nÃ©rale",
-      de: "Generel",
-      cn: "ä¸€èˆ¬",
-      ae: "Ø­Ø¬Ù†Ø±Ø§Ù„ Ù„ÙˆØ§Ø¡",
-    },
-    {
-      en: "Dashboards,widgets & layout.",
-      pt: "PainÃ©is, widgets e layout.",
-      es: "Paneloj, fenestraÄµoj kaj aranÄo.",
-      fr: "Tableaux de bord, widgets et mise en page.",
-      de: "Dashboards, widgets en lay-out.",
-      cn: "ä»ªè¡¨æ¿ï¼Œå°å·¥å…·å'Œå¸ƒå±€ã€‚",
-      ae: "Ù„ÙˆØ­Ø§Øª Ø§Ù„Ù…Ø¹Ù„ÙˆÙ…Ø§Øª ÙˆØ§Ù„Ø£Ø¯ÙˆØ§Øª ÙˆØ§Ù„ØªØ®Ø·ÙŠØ·.",
-    },
-    {
-      en: "Dashboards",
-      pt: "PainÃ©is",
-      es: "Paneloj",
-      fr: "Tableaux",
-      de: "Dashboards",
-      cn: " ä»ªè¡¨æ¿ ",
-      ae: "ÙˆØ­Ø§Øª Ø§Ù„Ù‚ÙŠØ§Ø¯Ø© ",
-    },
-    {
-      en: "Default",
-      pt: "PadrÃ£o",
-      es: "Vaikimisi",
-      fr: "DÃ©faut",
-      de: "Standaard",
-      cn: "é›»å­å•†å‹™",
-      ae: "ÙˆØ¥ÙØªØ±Ø§Ø¶ÙŠ",
-    },
-    {
-      en: "Ecommerce",
-      pt: "ComÃ©rcio eletrÃ´nico",
-      es: "Komerco",
-      fr: "Commerce Ã©lectronique",
-      de: "E-commerce",
-      cn: "é›»å­å•†å‹™",
-      ae: "ÙˆØ§Ù„ØªØ¬Ø§Ø±Ø© Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠØ©",
-    },
-    {
-      en: "Widgets",
-      pt: "Ferramenta",
-      es: "Vidin",
-      fr: "Widgets",
-      de: "Widgets",
-      cn: "å°éƒ¨ä»¶",
-      ae: "ÙˆØ§Ù„Ø­Ø§Ø¬ÙŠØ§Øª",
-    },
-    {
-      en: "Page layout",
-      pt: "Layout da pÃ¡gina",
-      es: "PaÄa aranÄo",
-      fr: "Tableaux",
-      de: "Mise en page",
-      cn: "é é¢ä½ˆå±€",
-      ae: "ÙˆØªØ®Ø·ÙŠØ· Ø§Ù„ØµÙØ­Ø©",
-    },
-    {
-      en: "Applications",
-      pt: "FormulÃ¡rios",
-      es: "Aplikoj",
-      fr: "Applications",
-      de: "Toepassingen",
-      cn: "æ‡‰ç”¨é ˜åŸŸ",
-      ae: "ÙˆØ§Ù„ØªØ·Ø¨ÙŠÙ‚Ø§Øª",
-    },
-    {
-      en: "Ready to use Apps",
-      pt: "Pronto para usar aplicativos",
-      es: "Preta uzi Apps",
-      fr: " Applications prÃªtes Ã  lemploi ",
-      de: "Klaar om apps te gebruiken",
-      cn: "ä»ªè¡¨æ¿",
-      ae: "Ø¬Ø§Ù‡Ø² Ù„Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø§Ù„ØªØ·Ø¨ÙŠÙ‚Ø§Øª",
-    },
-  ];
 
   $(".mobile-title svg").click(function () {
     $(".header-mega").toggleClass("d-block");
@@ -347,46 +264,4 @@
   $("#flip-btn").click(function () {
     $(".flip-card-inner").addClass("flipped");
   });
-
-  /*$("#flip-back").click(function () {
-    $(".flip-card-inner").removeClass("flipped");
-  });
-  // ================== show and hide input start
-  const toggle = document.getElementById("searchIcon")
-  let newinput = false
-  toggle.addEventListener("click", function(){
-    newinput = !newinput
-    if(newinput){
-      document.getElementById("searchInput").classList.add("show")
-    }else{
-      document.getElementById("searchInput").classList.remove("show")
-    }
-  })*/
-  // ================ show and hide input css end 
-
-  // Dark mode persistence
-  (function() {
-    // Check for saved dark mode preference on page load
-    document.addEventListener('DOMContentLoaded', function() {
-      const darkModeEnabled = localStorage.getItem('darkMode') === 'enabled';
-      if (darkModeEnabled) {
-        document.body.classList.add('dark-only');
-      }
-    });
-
-    // Listen for dark mode toggle clicks
-    document.addEventListener('click', function(e) {
-      const target = e.target.closest('.mode');
-      if (target) {
-        if (document.body.classList.contains('dark-only')) {
-          document.body.classList.remove('dark-only');
-          localStorage.setItem('darkMode', 'disabled');
-        } else {
-          document.body.classList.add('dark-only');
-          localStorage.setItem('darkMode', 'enabled');
-        }
-      }
-    });
-  })();
-
 })(jQuery);

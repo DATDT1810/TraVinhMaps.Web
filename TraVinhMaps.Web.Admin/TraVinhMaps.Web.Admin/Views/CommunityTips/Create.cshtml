@@ -3,7 +3,7 @@
 @model CommunityTipsRequest
 
 @{
-    ViewData["Title"] = "Create Tips";
+    ViewData["Title"] = "Create Tip";
 }
 
 <div>
@@ -14,20 +14,13 @@
                     <div class="col-6">
                         <h4>@ViewData["Title"]</h4>
                     </div>
-                    <div class="col-6">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i
-                                        class="fa fa-home" style="font-size: 20px;"></i></a></li>
-                            @if (ViewData["Breadcrumb"] is List<string> breadcrumbs)
-                            {
-                                foreach (var item in breadcrumbs.Take(breadcrumbs.Count - 1))
-                                {
-                                    <li class="breadcrumb-item">@item</li>
-                                }
-                                <li class="breadcrumb-item active">@breadcrumbs.Last()</li>
-                            }
-                        </ol>
-                    </div>
+                    @{
+                        var breadcrumbs = ViewData["Breadcrumb"] as List<BreadcrumbItem>;
+                    }
+                    @if (breadcrumbs != null)
+                    {
+                        @await Html.PartialAsync("_Breadcrumb", breadcrumbs)
+                    }
                 </div>
             </div>
         </div>
@@ -53,8 +46,8 @@
                                         <div class="col">
                                             <div class="mb-3">
                                                 <label asp-for="Content" class="control-label">Enter Content</label>
-                                                <textarea asp-for="Content" id="Description" class="form-control" rows="7"
-                                                    required></textarea>
+                                                <textarea asp-for="Content" id="Description" class="form-control"
+                                                    rows="7" required></textarea>
                                                 <span asp-validation-for="Content" class="text-danger"></span>
                                             </div>
                                         </div>
@@ -109,7 +102,7 @@
                         showTimedAlert("Error!", "@TempData["CreateTipsError"]", "error", 1000);
                     </text>
             }
-                    });
-        
+                        });
+
     </script>
 }
