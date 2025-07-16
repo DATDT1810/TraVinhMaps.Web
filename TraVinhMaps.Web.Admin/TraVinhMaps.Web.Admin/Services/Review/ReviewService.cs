@@ -40,12 +40,61 @@ namespace TraVinhMaps.Web.Admin.Services.Review
             {
                 var contentResult = await response.Content.ReadAsStringAsync(cancellationToken);
                 var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return System.Text.Json.JsonSerializer.Deserialize<long>(contentResult, option);
+                var result = System.Text.Json.JsonSerializer.Deserialize<ApiResponse<long>>(contentResult, option);
+                return result.Data;
             }
             else
             {
                 var errorResult = await response.Content.ReadAsStringAsync(cancellationToken);
                 throw new HttpRequestException($"Unable to fetch count review. Status: {response.StatusCode}, Error: {errorResult}");
+            }
+        }
+        public async Task<long> GetTotalUsersReviewedAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync(reviewApi + "GetTotalUsersReviewedAsync");
+            if (response.IsSuccessStatusCode)
+            {
+                var contentResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var result = System.Text.Json.JsonSerializer.Deserialize<ApiResponse<long>>(contentResult, option);
+                return result.Data;
+            }
+            else
+            {
+                var errorResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new HttpRequestException($"Unable to fetch total users review. Status: {response.StatusCode}, Error: {errorResult}");
+            }
+        }
+        public async Task<long> GetTotalFiveStarReviewsAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync(reviewApi + "GetTotalFiveStarReviewsAsync");
+            if (response.IsSuccessStatusCode)
+            {
+                var contentResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var result = System.Text.Json.JsonSerializer.Deserialize<ApiResponse<long>>(contentResult, option);
+                return result.Data;
+            }
+            else
+            {
+                var errorResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new HttpRequestException($"Unable to fetch total five star review. Status: {response.StatusCode}, Error: {errorResult}");
+            }
+        }
+        public async Task<string> GetTopReviewerAsync(CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync(reviewApi + "GetTopReviewerAsync");
+            if (response.IsSuccessStatusCode)
+            {
+                var contentResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var result = System.Text.Json.JsonSerializer.Deserialize<TopReviewerResponse>(contentResult, option);
+                return result.UserName;
+            }
+            else
+            {
+                var errorResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new HttpRequestException($"Unable to fetch top reviewer. Status: {response.StatusCode}, Error: {errorResult}");
             }
         }
 
