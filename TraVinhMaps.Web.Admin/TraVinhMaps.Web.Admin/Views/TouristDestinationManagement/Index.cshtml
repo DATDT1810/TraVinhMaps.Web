@@ -67,7 +67,7 @@
                                     }
                                     @foreach (var item in Model)
                                     {
-                                        <tr class="destination">
+                                        <tr class="destination" data-status="@item.status.ToString().ToLower()">
                                             <td>@count</td>
                                             <td>
                                                 <div class="product-names">

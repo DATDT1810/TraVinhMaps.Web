@@ -52,7 +52,7 @@
                                     <div class="col">
                                         <div class="mb-3">
                                             <label>Product Description</label>
-                                            <textarea asp-for="ProductDescription" class="form-control"
+                                            <textarea asp-for="ProductDescription" id="Description" class="form-control text-justify"
                                                 placeholder="Description of product"
                                                 id="exampleFormControlTextarea4" rows="10"></textarea>
                                             <span asp-validation-for="ProductDescription" class="text-danger"></span>
@@ -62,7 +62,7 @@
                                 <div class="row">
                                     <div class="col-sm-4">
                                         <div class="mb-3">
-                                            <label>Product Price</label>
+                                            <label>Reference Price</label>
                                             <input asp-for="ProductPrice" class="form-control" type="text"
                                                 placeholder="Price of product">
                                             <span asp-validation-for="ProductPrice" class="text-danger"></span>
@@ -87,7 +87,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <div class="mb-3">
-                                            <label>Company Id</label>
+                                            <label>Company name</label>
                                             <select asp-for="CompanyId" class="form-select">
                                                 <option value="">-- Select Ocop Type --</option>
                                                 @foreach (var company in (IEnumerable<TraVinhMaps.Web.Admin.Models.Company.CompanyResponse>)ViewBag.Companies )
@@ -168,6 +168,7 @@
     <script src="~/assets/js/sweetalert-custom.js"></script>
     <script src="~/assets/js/ocopproduct/crud.js"></script>
     <script src="~/assets/js/ocopproduct/formModal.js"></script>
+    <script src="~/assets/js/ckeditor5.js"></script>
     <script>
         setTimeout(function () {
             var alert = document.getElementById("alert-message");

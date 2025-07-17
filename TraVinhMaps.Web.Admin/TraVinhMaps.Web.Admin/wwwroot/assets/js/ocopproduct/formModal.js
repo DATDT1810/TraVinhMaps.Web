@@ -1,69 +1,4 @@
-﻿// $(document).ready(function () {
-//     const table = $("#project-status").DataTable({
-//         paging: true,
-//         ordering: true,
-//         info: true,
-//         searching: true,
-//         columnDefs: [
-//             {
-//                 targets: 0,
-//                 searchable: false,
-//                 orderable: false,
-//             },
-//             {
-//                 // Cột Status
-//                 targets: 4,
-//                 render: (data, type) => {
-//                     if (type === "filter" || type === "sort") {
-//                         return $("<div>").html(data).text().trim(); // Bóc text từ HTML
-//                     }
-//                     return data; // Giữ nguyên badge khi hiển thị
-//                 }
-//             }
-//         ]
-//     });
-
-//     /* ========== Vẽ lại số thứ tự No. ========== */
-//     table.on('order.dt search.dt draw.dt', function () {
-//         let i = 1;
-//         table
-//             .cells(null, 0, { search: 'applied', order: 'applied' })
-//             .every(function () {
-//                 this.data(i++);
-//             });
-//     }).draw();
-
-//     /* ========== 2. BỘ LỌC THEO COMBOBOX ========== */
-//     $("#statusFilter").on("change", () => table.draw());
-
-//     // Hàm filter
-//     $.fn.dataTable.ext.search.push((settings, data) => {
-//         const filter = $("#statusFilter").val(); // all | inactive
-//         const status = data[4]; // Text thuần nhờ render
-
-//         if (filter === "inactive") return status === "Inactive";
-//         return status === "Active"; // "all" chỉ hiển thị Active
-//     });
-
-//     $("#statusFilter").val("active").trigger("change"); // Mặc định
-
-//     /* ========== 3. HÀM CẬP NHẬT 1 HÀNG ========== */
-//     function updateRow(row, isActive) {
-//         const statusSpan = row.find("td:eq(4) span");
-//         if (isActive) {
-//             statusSpan.text("Active")
-//                 .removeClass("badge-light-danger")
-//                 .addClass("badge-light-primary");
-//         } else {
-//             statusSpan.text("Inactive")
-//                 .removeClass("badge-light-primary")
-//                 .addClass("badge-light-danger");
-//         }
-//         table.row(row).invalidate().draw(false); // Giữ nguyên trang
-//     }
-
-// });
-$(document).ready(function () {
+﻿$(document).ready(function () {
     const table = $("#project-status").DataTable({
         paging: true,
         ordering: true,
@@ -77,7 +12,7 @@ $(document).ready(function () {
             },
             {
                 // Cột Status
-                targets: 4,
+                targets: 3,
                 render: (data, type) => {
                     if (type === "filter" || type === "sort") {
                         return $("<div>").html(data).text().trim();
@@ -103,7 +38,7 @@ $(document).ready(function () {
 
     $.fn.dataTable.ext.search.push((settings, data) => {
         const filter = $("#statusFilter").val(); // all | inactive
-        const status = data[4]; // Cột 4: Status
+        const status = data[3]; // Cột 4: Status
 
         if (filter === "inactive") return status === "Inactive";
         return status === "Active";

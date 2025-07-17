@@ -87,6 +87,12 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [HttpGet("UpdateOcopType")]
         public async Task<IActionResult> UpdateOcopType(string id)
         {
+            ViewData["Title"] = "Ocop Type NManagement";
+            ViewData["Breadcrumb"] = new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem { Title = "Ocop Type Management", Url = Url.Action("Index", "OcopType")! },
+                new BreadcrumbItem { Title = "Edit Ocop Type" } // default URL for the current page
+            };
             var findOcopType = await _ocopTypeService.GetByIdAsync(id);
             if (findOcopType == null)
             {

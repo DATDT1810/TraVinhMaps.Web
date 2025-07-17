@@ -244,11 +244,11 @@
                                             {
                                                 if (i <= starCount)
                                                 {
-                                                    <i class="fa fa-star font-warning"></i> @* sao vàng *@
+                                                    <i class="fa fa-star font-warning"></i>
                                                 }
                                                 else
                                                 {
-                                                    <i class="fa fa-star" style="color: #ccc;"></i> @* sao xám hoặc mờ *@
+                                                    <i class="fa fa-star" style="color: #ccc;"></i> 
                                                 }
                                             }
 
@@ -402,12 +402,14 @@
                     <div class="tab-content" id="top-tabContent">
                         <div class="tab-pane fade active show" id="top-home" role="tabpanel"
                             aria-labelledby="top-home-tab">
-                            @Html.Raw(Model.Description ?? "<p>No description available.</p>")
+                            <div class="mb-0 mt-2 text-justify">
+                                @Html.Raw(Model.Description ?? "<p>No description available.</p>")
+                            </div>
                         </div>
                         <div class="tab-pane fade" id="top-profile" role="tabpanel" aria-labelledby="profile-top-tab">
-                            <p class="mb-0 m-t-20">
-                                @(Model.HistoryStory != null ? Model.HistoryStory.Content??"No history description available." : "No history description available.")
-                            </p>
+                            <div class="mb-0 mt-2 text-justify">
+                                @Html.Raw(Model.HistoryStory != null ? Model.HistoryStory.Content??"No history description available." : "No history description available.")
+                            </div>
                         </div>
                         <div class="tab-pane fade" id="top-contact" role="tabpanel" aria-labelledby="contact-top-tab">
                             @if(Model.HistoryStory != null && Model.HistoryStory.Images != null && Model.HistoryStory.Images.Any()) {

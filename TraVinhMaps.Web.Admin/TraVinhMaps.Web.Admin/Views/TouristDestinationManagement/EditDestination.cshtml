@@ -7,7 +7,6 @@
 }
 
 <style>
-    /* Change search button to green with white text */
     #searchAddressBtn {
         background-color: #28a745;
         color: white;
@@ -19,14 +18,11 @@
         border-color: #1e7e34;
     }
 
-    /* Fix for textarea focus border overlapping the search button */
     .input-group:focus-within #searchAddressBtn {
-        /* When the textarea is focused, lift the button above the focus glow */
         z-index: 4;
-        border-color: #86b7fe; /* Optional: match Bootstrap's focus color on the button's border */
+        border-color: #86b7fe; 
     }
 
-    /* Add padding to the destination type dropdown to prevent text from touching the arrow */
     .form-select.text-truncate {
         padding-right: 2.25rem; 
     }

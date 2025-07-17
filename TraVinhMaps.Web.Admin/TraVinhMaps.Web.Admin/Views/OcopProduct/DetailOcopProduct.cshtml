@@ -12,6 +12,16 @@
     var sellingLinks = ViewBag.SellingLinks as List<SellingLinkResponse>;
 }
 <style>
+    .btn-showcase {
+        margin-top: 0;
+        padding-top: 7px; 
+        border-top: 1px solid #eee;
+    }
+
+    .d-inline {
+        display: inline-block;
+        margin-right: 10px; 
+    }
     .Delete-button-image {
         position: absolute;
         top: 2px;
@@ -55,23 +65,25 @@
         height: 100%;
         cursor: pointer;
     }
-    .ocop-margin{
+
+    .ocop-margin {
         margin-bottom: 15px;
     }
 
     .readonly-note {
         color: red;
-        font-size: 0.875em; 
+        font-size: 0.875em;
         font-style: italic;
         margin-top: 4px;
     }
+
     .upload-placeholder:hover {
         background-color: #e0e0e0;
     }
-    #locations-container .location-group:nth-child(n+2) {
-    display: none;
-}
 
+    #locations-container .location-group:nth-child(n+2) {
+        display: none;
+    }
 </style>
 <div class="page-body">
     <div class="container-fluid">
@@ -84,7 +96,7 @@
                         <div id="alert-message" class="alert alert-danger">
                             @TempData["ErrorMessage"]
                         </div>
-                    }   
+                    }
 
                     @if (TempData["SuccessMessage"] != null)
                     {
@@ -96,9 +108,11 @@
                 <div class="col-6">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                            <a asp-controller="Home" asp-action="Index"><i class="fa fa-home" style="font-size: 20px;"></i></a>
+                            <a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
+                                    style="font-size: 20px;"></i></a>
                         </li>
-                        <li class="breadcrumb-item" >  <a asp-controller="OcopProduct" asp-action="Index">Ocop Product</a> </li>
+                        <li class="breadcrumb-item"> <a asp-controller="OcopProduct" asp-action="Index">Ocop Product</a>
+                        </li>
                         <li class="breadcrumb-item active">Ocop Product Detail</li>
                     </ol>
                 </div>
@@ -125,7 +139,8 @@
                                 else
                                 {
                                     <div class="item" style="height: 90px; width: 70px;">
-                                        <img class="img-fluid" src="/assets/images/no-image.png" alt="no image available" style="width: 100%; height: 100%;" />
+                                        <img class="img-fluid" src="/assets/images/no-image.png" alt="no image available"
+                                            style="width: 100%; height: 100%;" />
                                     </div>
                                 }
                             </div>
@@ -135,32 +150,35 @@
                                     @foreach (var item in Model.ProductImage)
                                     {
                                         <div class="item" style="height: 90px; width: 70px;">
-                                            <img src="@item" alt="image ocop product" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-                                            <form asp-controller="OcopProduct"
-                                              asp-action="DeleteOcopProductImage" method="post"> 
+                                            <img src="@item" alt="image ocop product"
+                                                style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                                            <form asp-controller="OcopProduct" asp-action="DeleteOcopProductImage"
+                                                method="post">
                                                 @Html.AntiForgeryToken()
                                                 <input hidden name="id" value="@Model.Id" />
                                                 <input hidden name="imageUrl" value="@item" />
                                                 <button type="submit" class="Delete-button-image"
-                                                onclick="event.stopPropagation();">
+                                                    onclick="event.stopPropagation();">
                                                     &times;
                                                 </button>
-                                            </form> 
+                                            </form>
                                         </div>
                                     }
                                 }
                                 else
                                 {
                                     <div class="item" style="height: 90px; width: 70px;">
-                                        <img class="img-fluid" src="/assets/images/no-image.png" alt="no image available" style="width: 100%; height: 100%;" />
+                                        <img class="img-fluid" src="/assets/images/no-image.png" alt="no image available"
+                                            style="width: 100%; height: 100%;" />
                                     </div>
                                 }
                             </div>
                             <div class="item add-image-box">
-                                <form asp-controller="OcopProduct" asp-action="AddOcopProductImage" method="post" class="upload-placeholder" enctype="multipart/form-data">
+                                <form asp-controller="OcopProduct" asp-action="AddOcopProductImage" method="post"
+                                    class="upload-placeholder" enctype="multipart/form-data">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@Model.Id" />
-                                    <div class="upload-placeholder">+</div>     
+                                    <div class="upload-placeholder">+</div>
                                     <input hidden type="file" name="imageFile" multiple onchange="this.form.submit()" />
                                 </form>
                             </div>
@@ -168,122 +186,110 @@
                     </div>
                 </div>
                 <div class="col-xxl-8 box-col-6 order-xxl-0 order-1">
-                    <div class="card">
-                        <div class="card-body" style="height: 650px;">
-                            <div class="product-page-details ocop-margin">
-                                <h3>@Model.ProductName</h3>
-                            </div>
-                            <div class="ocop-margin">
-                                <span><b>Price : </b></span>
-                                @Model.ProductPrice
-                            </div>
-                            <div style="max-height: 160px; overflow-y: auto;">
-                                <table style="border-collapse: collapse; width: 100%;">
-                                    <tbody>
-                                        <tr class="ocop-margin" style="display: flex; align-items: center;">
-                                            <td style="width: 100px; white-space: nowrap;"><b>Ocop Type : </b></td>
-                                            <td>
-                                                @ViewBag.OcopTypeName
-                                            </td>
-                                        </tr>
-                                        <tr class="ocop-margin" style="display: flex; align-items: center;">
-                                            <td style="width: 90px; white-space: nowrap;"><b>Company : </b></td>
-                                            <td>
-                                                <span>@ViewBag.CompanyName</span>
-                                            </td>
-                                        </tr>
-                                        <tr class="ocop-margin" style="display: flex; align-items: center;">
-                                            <td style="width: 160px; white-space: nowrap;"><b>Ocop Year Release : </b></td>
-                                            <td>
-                                                <span>@Model.OcopYearRelease</span>
-                                            </td>
-                                        </tr>
-                                        <tr class="ocop-margin" style="display: flex; align-items: center;">
-                                            <td style="width: 40px; white-space: nowrap;"><b>Tag : </b></td>
-                                            <td>
-                                                <span>@ViewBag.TagName</span>
-                                            </td>
-                                        </tr>
-                                    <tbody>
-                                </table>
-                            </div>
-                            <div class="ocop-margin">
-                                <table style="border-collapse: collapse; width: 100%;">
-                                    <tbody>
-                                        <tr class="ocop-margin" style="display: flex; align-items: center;">
-                                            <td style="width: 100px; white-space: nowrap;"><b>Created At :</b></td>
-                                            <td >
-                                                @Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
-                                            </td>
-                                        </tr>
-                                        <tr class="ocop-margin" style="display: flex; align-items: center;">
-                                            <td style="width: 100px; white-space: nowrap;"><b>Update At :</b></td>
-                                            <td class="txt-success">
-                                                @(Model.UpdateAt.HasValue 
-    ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy, HH:mm") 
-    : "No update")
+                <div class="card">
+                    <div class="card-body" style="height: 650px;">
+                        <div class="product-page-details ocop-margin">
+                            <h3>@Model.ProductName</h3>
+                        </div>
+                        <div class="ocop-margin" style="display: flex; align-items: center; margin-bottom: 5px;">
+                            <span style="flex: 0 0 150px; padding-right: 10px;"><b>Reference Price:</b></span>
+                            <span style="flex-grow: 1;">@(decimal.Parse(Model.ProductPrice!).ToString("N0", new
+                                                        System.Globalization.CultureInfo("vi-VN")) + "₫")</span>
+                        </div>
 
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        <div style="max-height: 160px; overflow-y: auto;">
+                            <div class="ocop-margin" style="display: flex; align-items: center; margin-bottom: 5px;">
+                                <span style="flex: 0 0 150px; padding-right: 10px;"><b>Ocop Type:</b></span>
+                                <span style="flex-grow: 1;">@ViewBag.OcopTypeName</span>
                             </div>
-                            <div class="ocop-margin">
-                                <div>
-                                    <span><b class="product-title">Star</b></span>
-                                    @{
-                                        int starCount = (int)Math.Floor((double)Model.OcopPoint);
-                                        int totalStars = 5;
-                                    }
-                                    @for(int i = 1; i <= totalStars; i++)
-                                    {
-                                        if (i <= starCount)
-                                        {
-                                            <i class="fa fa-star font-warning"></i>
-                                        }
-                                        else
-                                        {
-                                            <i class="fa fa-star" style="color: #ccc;"></i>
-                                        }
-                                    }
-                                    <span>(@Model.OcopPoint)</span>
-                                </div>
-                                
+                            <div class="ocop-margin" style="display: flex; align-items: center; margin-bottom: 5px;">
+                                <span style="flex: 0 0 150px; padding-right: 10px;"><b>Company:</b></span>
+                                <span style="flex-grow: 1;"><span>@ViewBag.CompanyName</span></span>
                             </div>
-                            <hr>
-                            <div>
-                                <span>
-                                    <h6 style="padding-bottom: 10px">Description </h6>
+                            <div class="ocop-margin" style="display: flex; align-items: center; margin-bottom: 5px;">
+                                <span style="flex: 0 0 150px; padding-right: 10px;"><b>Ocop Year Release:</b></span>
+                                <span style="flex-grow: 1;"><span>@Model.OcopYearRelease</span></span>
+                            </div>
+                            <div class="ocop-margin" style="display: flex; align-items: center; margin-bottom: 5px;">
+                                <span style="flex: 0 0 150px; padding-right: 10px;"><b>Tag:</b></span>
+                                <span style="flex-grow: 1;"><span>@ViewBag.TagName</span></span>
+                            </div>
+                        </div>
+                        <div class="ocop-margin">
+                            <div class="ocop-margin" style="display: flex; align-items: center; margin-bottom: 5px;">
+                                <span style="flex: 0 0 150px; padding-right: 10px;"><b>Created At:</b></span>
+                                <span style="flex-grow: 1;">@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span>
+                            </div>
+                            <div class="ocop-margin" style="display: flex; align-items: center; margin-bottom: 5px;">
+                                <span style="flex: 0 0 150px; padding-right: 10px;"><b>Update At:</b></span>
+                                <span class="txt-success" style="flex-grow: 1;">
+                                    @(
+                                    Model.UpdateAt.HasValue
+                                    ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy, HH:mm")
+                                    : "No update"
+                                    )
                                 </span>
-                               @Html.Raw(Model.ProductDescription)
                             </div>
-                            <div class="m-t-15 btn-showcase">
-                                <div class="d-inline">
-                                    <a class="btn btn-success" asp-action="UpdateOcopProduct" asp-route-id="@Model.Id">
-                                        <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit Ocop Product
-                                    </a>
-                                </div>
-                                <div class="d-inline">
-                                    <a class="btn btn-danger" asp-action="Index">
-                                        Back
-                                    </a>
-                                </div>
+                        </div>
+
+                        <div class="ocop-margin">
+                            <div>
+                                <span class="product-title"><b>Ocop Star</b></span>
+                                @{
+                                    int starCount = (int)Math.Floor((double)Model.OcopPoint);
+                                    int totalStars = 5;
+                                }
+                                @for (int i = 1; i <= totalStars; i++)
+                                {
+                                    if (i <= starCount)
+                                    {
+                                        <i class="fa fa-star font-warning"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa fa-star" style="color: #ccc;"></i>
+                                    }
+                                }
+                                <span>(@Model.OcopPoint)</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="text-justify">
+                            <span>
+                                <h6 style="padding-bottom: 10px">Description </h6>
+                            </span>
+                            @Html.Raw(Model.ProductDescription)
+                        </div>
+                        <div class="m-t-15 btn-showcase">
+                            <div class="d-inline">
+                                <a class="btn btn-success" asp-action="UpdateOcopProduct" asp-route-id="@Model.Id">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit Ocop Product
+                                </a>
+                            </div>
+                            <div class="d-inline">
+                                <a class="btn btn-danger" asp-action="Index">
+                                    Back
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
+                </div>
                 <div class="col-xxl-12 box-col-12 order-xxl-0 order-1">
                     <div class="card">
-                        <div class="card-body" style="max-height: 700px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+                        <div class="card-body"
+                            style="max-height: 700px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
                             <div class="d-flex justify-content-between">
                                 <h5 style="font-weight: bold;">Store of sell</h5>
-                                <a class="btn btn-success btn-sm px-2 py-1" title="Create Point of Sell" data-bs-toggle="modal" data-bs-target="#addLocationModal"><i class="fa fa-plus"></i></a>
-                                
+                                <a class="btn btn-success btn-sm px-2 py-1" title="Create Point of Sell"
+                                    data-bs-toggle="modal" data-bs-target="#addLocationModal"><i
+                                        class="fa fa-plus"></i></a>
+
                             </div>
                             <hr style="margin : 0px">
 
                             <div>
-                            @if (Model.Sellocations == null || !Model.Sellocations.Any())
+                                @if (Model.Sellocations == null || !Model.Sellocations.Any())
                                 {
                                     <div style="display: flex; justify-content: space-between; align-items: center;">
                                         <div>
@@ -294,7 +300,8 @@
                                 }
                                 else
                                 {
-                                    <div id="sellocation-list" style="max-height: 750px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+                                    <div id="sellocation-list"
+                                        style="max-height: 750px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
                                         @{
                                             bool showOnlyFirst = true;
                                         }
@@ -303,8 +310,10 @@
                                             var item = Model.Sellocations[i];
                                             var isLast = i == Model.Sellocations.Count - 1;
 
-                                            <div class="location-card" style="background: #f0f2f3; padding: 16px; border-radius: 8px; border: 1px solid #ddd;">
-                                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                                            <div class="location-card"
+                                                style="background: #f0f2f3; padding: 16px; border-radius: 8px; border: 1px solid #ddd;">
+                                                <div
+                                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
                                                     <div>
                                                         <h3 style="margin: 0; font-weight: 600;">
                                                             @(item?.LocationName ?? "No Location Name.")
@@ -314,66 +323,56 @@
                                                         </div>
                                                     </div>
                                                     <div style="display: flex; gap: 6px;">
-                                                        <button type="button"
-                                                                title="Edit"
-                                                                style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 18px;"
-                                                                class="edit-location-btn"
-                                                                data-bs-toggle="modal" data-bs-target="#editLocationModal"
-                                                                data-id="@Model.Id"
-                                                                data-name="@item.LocationName"
-                                                                data-address="@item.LocationAddress"
-                                                                data-marker="@item.MarkerId"
-                                                                data-type="@(item.Location?.Type ?? "Point")"
-                                                                data-longitude="@(item?.Location?.Longitude ?? 0)"
-                                                                data-latitude="@(item?.Location?.Latitude ?? 0)">
+                                                        <button type="button" title="Edit"
+                                                            style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 18px;"
+                                                            class="edit-location-btn" data-bs-toggle="modal"
+                                                            data-bs-target="#editLocationModal" data-id="@Model.Id"
+                                                            data-name="@item.LocationName" data-address="@item.LocationAddress"
+                                                            data-marker="@item.MarkerId"
+                                                            data-type="@(item.Location?.Type ?? "Point")"
+                                                            data-longitude="@(item?.Location?.Longitude ?? 0)"
+                                                            data-latitude="@(item?.Location?.Latitude ?? 0)">
                                                             <i class="fa fa-pencil" aria-hidden="true"></i>
                                                         </button>
 
-                                                        <button type="button"
-                                                                title="Delete"
-                                                                style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 18px;"
-                                                                class="delete-sell-location"
-                                                                data-product-id="@Model.Id"
-                                                                data-location-name="@item.LocationName">
+                                                        <button type="button" title="Delete"
+                                                            style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 18px;"
+                                                            class="delete-sell-location" data-product-id="@Model.Id"
+                                                            data-location-name="@item.LocationName">
                                                             <i class="fa fa-trash" aria-hidden="true"></i>
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div style="display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; align-items: center;">
-                                                    <label style="font-size: 0.8rem; min-width: 70px; margin: 0;">Longitude</label>
-                                                    <input type="text"
-                                                        class="form-control"
-                                                        readonly
+                                                <div
+                                                    style="display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; align-items: center;">
+                                                    <label
+                                                        style="font-size: 0.8rem; min-width: 70px; margin: 0;">Longitude</label>
+                                                    <input type="text" class="form-control" readonly
                                                         style="flex: 1; min-width: 150px; border-radius: 10px;"
                                                         value="@(item?.Location?.Longitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")" />
 
-                                                    <label style="font-size: 0.8rem; min-width: 70px; margin: 0;">Latitude</label>
-                                                    <input type="text"
-                                                        class="form-control"
-                                                        readonly
+                                                    <label
+                                                        style="font-size: 0.8rem; min-width: 70px; margin: 0;">Latitude</label>
+                                                    <input type="text" class="form-control" readonly
                                                         style="flex: 1; min-width: 150px; border-radius: 10px;"
                                                         value="@(item?.Location?.Latitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")" />
                                                 </div>
-                                                <div style="position: relative; border-radius: 8px; overflow: hidden; border: 1px solid #333; height: 300px;">
-                                                    <div class="here-map-container"
-                                                         id="map-container-@(i)"
-                                                         style="height: 100%; width: 100%;"
-                                                         data-latitude="@(item?.Location?.Latitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")"
-                                                         data-longitude="@(item?.Location?.Longitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")">
+                                                <div
+                                                    style="position: relative; border-radius: 8px; overflow: hidden; border: 1px solid #333; height: 300px;">
+                                                    <div class="here-map-container" id="map-container-@(i)"
+                                                        style="height: 100%; width: 100%;"
+                                                        data-latitude="@(item?.Location?.Latitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")"
+                                                        data-longitude="@(item?.Location?.Longitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")">
                                                         <!-- The map will be initialized here by JavaScript -->
                                                     </div>
-                                                    <div class="map-overlay edit-location-btn"
-                                                         title="Edit"
-                                                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; cursor: pointer;"
-                                                         data-bs-toggle="modal"
-                                                         data-bs-target="#editLocationModal"
-                                                         data-id="@Model.Id"
-                                                         data-name="@item.LocationName"
-                                                         data-address="@item.LocationAddress"
-                                                         data-marker="@item.MarkerId"
-                                                         data-type="@(item.Location?.Type ?? "Point")"
-                                                         data-longitude="@(item?.Location?.Longitude ?? 0)"
-                                                         data-latitude="@(item?.Location?.Latitude ?? 0)">
+                                                    <div class="map-overlay edit-location-btn" title="Edit"
+                                                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; cursor: pointer;"
+                                                        data-bs-toggle="modal" data-bs-target="#editLocationModal"
+                                                        data-id="@Model.Id" data-name="@item.LocationName"
+                                                        data-address="@item.LocationAddress" data-marker="@item.MarkerId"
+                                                        data-type="@(item.Location?.Type ?? "Point")"
+                                                        data-longitude="@(item?.Location?.Longitude ?? 0)"
+                                                        data-latitude="@(item?.Location?.Latitude ?? 0)">
                                                     </div>
                                                 </div>
                                             </div>
@@ -381,84 +380,87 @@
                                         }
                                     </div>
                                 }
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <div class="col-sm-12" style="padding: 0px;">
-                    <div class="tab-content" id="top-tabContent">
-                        <div class="tab-pane fade active show" id="top-home" role="tabpanel"
-                             aria-labelledby="top-home-tab">
-                            <div style="height: 250px; margin-top: 10px;">
-                                <div class="filter-block">
-                                    <div class="d-flex justify-content-between">
-                                        <h5 style="font-weight: bold;">📌 Store of selling link</h5>
-                                        <a class="btn btn-success btn-sm px-2 py-1" title="Create Point of Selling Link" data-bs-toggle="modal" data-bs-target="#addSellingLinkModal"><i class="fa fa-plus"></i></a>
-                                    </div>
-                                    <hr>
-                                    <div id="sellinglink-list" style="max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 10px;">
-                                        @if (sellingLinks != null && sellingLinks.Any())
-                                        {
-                                            @for (int i = 0; i < sellingLinks.Count; i++)
+            <div class="card">
+                <div class="card-body">
+                    <div class="col-sm-12" style="padding: 0px;">
+                        <div class="tab-content" id="top-tabContent">
+                            <div class="tab-pane fade active show" id="top-home" role="tabpanel"
+                                aria-labelledby="top-home-tab">
+                                <div style="height: 250px; margin-top: 10px;">
+                                    <div class="filter-block">
+                                        <div class="d-flex justify-content-between">
+                                            <h5 style="font-weight: bold;">📌 Store of selling link</h5>
+                                            <a class="btn btn-success btn-sm px-2 py-1"
+                                                title="Create Point of Selling Link" data-bs-toggle="modal"
+                                                data-bs-target="#addSellingLinkModal"><i class="fa fa-plus"></i></a>
+                                        </div>
+                                        <hr>
+                                        <div id="sellinglink-list"
+                                            style="max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 10px;">
+                                            @if (sellingLinks != null && sellingLinks.Any())
                                             {
-                                                var item = sellingLinks[i];
-                                                var isLast = i == sellingLinks.Count - 1;
+                                                @for (int i = 0; i < sellingLinks.Count; i++)
+                                                {
+                                                    var item = sellingLinks[i];
+                                                    var isLast = i == sellingLinks.Count - 1;
 
-                                                <div class="sellinglink-item" style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; @(isLast ? "" : "border-bottom: 1px solid #ddd;")">
-                                                    <div style="min-width: 0; flex: 1;">
-                                                        <ul style="list-style-type: disc; padding-left: 20px;">
-                                                            <li style="padding: 0px;">
-                                                                <div style="padding-bottom: 10px;">
-                                                                    <b>Title Name: </b>
-                                                                    <span>@(item?.Title ?? "No Title")</span><br>
-                                                                </div>
-                                                            </li>
-                                                        </ul>
-                                                        <span style="padding-left: 5px;">
-                                                            <i class="fa fa-link"></i>
-                                                            Link:
-                                                            <a href="@(item?.Link ?? "#")" target="_blank" style="color: #007bff;">
-@(item?.Link ?? "")
-                                                            </a>
-                                                        </span>
+                                                    <div class="sellinglink-item"
+                                                        style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; @(isLast ? "" : "border-bottom: 1px solid #ddd;")">
+                                                        <div style="min-width: 0; flex: 1;">
+                                                            <ul style="list-style-type: disc; padding-left: 20px;">
+                                                                <li style="padding: 0px;">
+                                                                    <div style="padding-bottom: 10px;">
+                                                                        <b>Title Name: </b>
+                                                                        <span>@(item?.Title ?? "No Title")</span><br>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                            <span style="padding-left: 5px;">
+                                                                <i class="fa fa-link"></i>
+                                                                Link:
+                                                                <a href="@(item?.Link ?? "#")" target="_blank"
+                                                                    style="color: #007bff;">
+                                                                    @(item?.Link ?? "")
+                                                                </a>
+                                                            </span>
+                                                        </div>
+                                                        <div
+                                                            style="display: flex; gap: 6px; margin-left: 10px; align-self: flex-start;">
+                                                            <button type="button" title="Edit"
+                                                                style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 14px; line-height: 1;"
+                                                                class="edit-selling-link-btn" data-bs-toggle="modal"
+                                                                data-bs-target="#editSellingLinkModal"
+                                                                data-product-id="@Model.Id" data-id="@item.Id"
+                                                                data-title="@item.Title" data-link="@item.Link">
+                                                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                            </button>
+
+                                                            <button type="button" title="Delete Selling Link"
+                                                                style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 14px; line-height: 1;"
+                                                                class="delete-selling-link" data-bs-toggle="modal"
+                                                                data-bs-target="#deleteSellingLinkModal"
+                                                                data-product-id="@Model.Id" data-id="@item.Id">
+                                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                    <div style="display: flex; gap: 6px; margin-left: 10px; align-self: flex-start;">
-                                                        <button type="button"
-                                                                title="Edit"
-                                                                style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 14px; line-height: 1;"
-                                                                class="edit-selling-link-btn"
-                                                                data-bs-toggle="modal" data-bs-target="#editSellingLinkModal"
-                                                                data-product-id="@Model.Id"
-                                                                data-id="@item.Id"
-                                                                data-title="@item.Title"
-                                                                data-link="@item.Link">
-                                                            <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                        </button>
-
-                                                        <button type="button"
-                                                                title="Delete Selling Link"
-                                                                style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 14px; line-height: 1;"
-                                                                class="delete-selling-link" 
-                                                                data-bs-toggle="modal" data-bs-target="#deleteSellingLinkModal"
-                                                                data-product-id="@Model.Id"
-                                                                data-id="@item.Id">
-                                                            <i class="fa fa-trash" aria-hidden="true"></i>
-                                                        </button>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div
+                                                    style="display: flex; justify-content: space-between; align-items: center;">
+                                                    <div>
+                                                        <span>No Selling Link.</span><br />
                                                     </div>
                                                 </div>
                                             }
-                                        }
-                                        else
-                                        {
-                                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                                <div>
-                                                    <span>No Selling Link.</span><br />
-                                                </div>
-                                            </div>
-}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -467,254 +469,294 @@
                 </div>
             </div>
         </div>
-      </div>
-    <!-- Container-fluid Ends-->
-</div>
+        <!-- Container-fluid Ends-->
+    </div>
 
 @* create of sell location *@
 
-<div class="modal fade" id="addLocationModal" tabindex="-1" aria-labelledby="addLocationModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addLocationModalLabel">Add New Location</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="addLocationForm" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="Id" value="@Model.Id" />
-                <input type="hidden" name="MarkerId" value="68486609935049741c54a644" />
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-5">
-                            <div class="mb-3">
-                                <label class="form-label">Name of Location</label>
-                                <input type="text" name="LocationName" id="locationNameAdd" class="form-control" placeholder="Enter location name" required />
-                                <span class="text-danger field-validation-valid" data-valmsg-for="LocationName" data-valmsg-replace="true"></span>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Address</label>
-                                <div style="position: relative;">
-                                    <div class="input-group">
-                                        <input type="text" name="LocationAddress" id="locationAddressAdd" class="form-control" placeholder="Enter address" required autocomplete="off"/>
-                                        <button class="btn btn-outline-secondary" type="button" id="searchAddressBtnAdd">Search</button>
-                                    </div>
-                                    <div id="addressSuggestionsAdd" class="list-group" style="position: absolute; z-index: 1056; width: 100%; max-height: 220px; overflow-y: auto;"></div>
+    <div class="modal fade" id="addLocationModal" tabindex="-1" aria-labelledby="addLocationModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addLocationModalLabel">Add New Location</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addLocationForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <input type="hidden" name="MarkerId" value="68486609935049741c54a644" />
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="mb-3">
+                                    <label class="form-label">Name of Location</label>
+                                    <input type="text" name="LocationName" id="locationNameAdd" class="form-control"
+                                        placeholder="Enter location name" required />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="LocationName"
+                                        data-valmsg-replace="true"></span>
                                 </div>
-                                <div id="addressWarningAdd" class="text-warning mt-1"></div>
-                                <span class="text-danger field-validation-valid" data-valmsg-for="LocationAddress" data-valmsg-replace="true"></span>
+                                <div class="mb-3">
+                                    <label class="form-label">Address</label>
+                                    <div style="position: relative;">
+                                        <div class="input-group">
+                                            <input type="text" name="LocationAddress" id="locationAddressAdd"
+                                                class="form-control" placeholder="Enter address" required
+                                                autocomplete="off" />
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                id="searchAddressBtnAdd">Search</button>
+                                        </div>
+                                        <div id="addressSuggestionsAdd" class="list-group"
+                                            style="position: absolute; z-index: 1056; width: 100%; max-height: 220px; overflow-y: auto;">
+                                        </div>
+                                    </div>
+                                    <div id="addressWarningAdd" class="text-warning mt-1"></div>
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="LocationAddress"
+                                        data-valmsg-replace="true"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Location Type</label>
+                                    <input type="text" name="Type" id="typeAdd" class="form-control" value="Point"
+                                        readonly />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="Type"
+                                        data-valmsg-replace="true"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Longitude</label>
+                                    <input type="number" name="Longitude" id="longitudeAdd" class="form-control"
+                                        step="any" placeholder="Enter longitude" required min="-180" max="180" />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="Longitude"
+                                        data-valmsg-replace="true"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Latitude</label>
+                                    <input type="number" name="Latitude" id="latitudeAdd" class="form-control"
+                                        step="any" placeholder="Enter latitude" required min="-90" max="90" />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="Latitude"
+                                        data-valmsg-replace="true"></span>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Location Type</label>
-                                <input type="text" name="Type" id="typeAdd" class="form-control" value="Point" readonly />
-                                <span class="text-danger field-validation-valid" data-valmsg-for="Type" data-valmsg-replace="true"></span>
+                            <div class="col-md-7">
+                                <div id="addMapContainer"
+                                    style="width: 100%; height: 400px; border-radius: 8px; border: 1px solid #ddd;">
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Longitude</label>
-                                <input type="number" name="Longitude" id="longitudeAdd" class="form-control" step="any" placeholder="Enter longitude" required min="-180" max="180" />
-                                <span class="text-danger field-validation-valid" data-valmsg-for="Longitude" data-valmsg-replace="true"></span>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Latitude</label>
-                                <input type="number" name="Latitude" id="latitudeAdd" class="form-control" step="any" placeholder="Enter latitude" required min="-90" max="90" />
-                                <span class="text-danger field-validation-valid" data-valmsg-for="Latitude" data-valmsg-replace="true"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-7">
-                            <div id="addMapContainer" style="width: 100%; height: 400px; border-radius: 8px; border: 1px solid #ddd;"></div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save Location</button>
-                </div>
-            </form>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save Location</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
 @* edit of sell location*@
 
-<div class="modal fade" id="editLocationModal" tabindex="-1" aria-labelledby="editLocationModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editLocationModalLabel">Edit Location</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="editLocationForm" method="post">
-                @Html.AntiForgeryToken()
-                <input hidden name="Id" id="id" value="@Model.Id"/>
-                <input hidden name="MarkerId" id="markerId" value="@ViewBag.MarkerId"/> 
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-5">
-                            <div class="mb-3">
-                                <label class="form-label">Name of Location</label>
-                                <input  type="text" name="LocationName" id="locationName" class="form-control" placeholder="Enter location name" required readonly />
+    <div class="modal fade" id="editLocationModal" tabindex="-1" aria-labelledby="editLocationModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editLocationModalLabel">Edit Location</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editLocationForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <input hidden name="Id" id="id" value="@Model.Id" />
+                    <input hidden name="MarkerId" id="markerId" value="@ViewBag.MarkerId" />
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="mb-3">
+                                    <label class="form-label">Name of Location</label>
+                                    <input type="text" name="LocationName" id="locationName" class="form-control"
+                                        placeholder="Enter location name" required readonly />
                                     <div class="readonly-note">*Not editable</div>
-                                <span class="text-danger field-validation-valid" data-valmsg-for="LocationName" data-valmsg-replace="true"></span>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Address</label>
-                                <div style="position: relative;">
-                                    <div class="input-group">
-                                        <input type="text" name="LocationAddress" id="locationAddress" class="form-control" placeholder="Enter address" required autocomplete="off"/>
-                                        <button class="btn btn-outline-secondary" type="button" id="searchAddressBtn">Search</button>
-                                    </div>
-                                    <div id="addressSuggestions" class="list-group" style="position: absolute; z-index: 1056; width: 100%; max-height: 220px; overflow-y: auto;"></div>
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="LocationName"
+                                        data-valmsg-replace="true"></span>
                                 </div>
-                                <div id="addressWarningEdit" class="text-warning mt-1"></div>
-                                <span class="text-danger field-validation-valid" data-valmsg-for="LocationAddress" data-valmsg-replace="true"></span>
+                                <div class="mb-3">
+                                    <label class="form-label">Address</label>
+                                    <div style="position: relative;">
+                                        <div class="input-group">
+                                            <input type="text" name="LocationAddress" id="locationAddress"
+                                                class="form-control" placeholder="Enter address" required
+                                                autocomplete="off" />
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                id="searchAddressBtn">Search</button>
+                                        </div>
+                                        <div id="addressSuggestions" class="list-group"
+                                            style="position: absolute; z-index: 1056; width: 100%; max-height: 220px; overflow-y: auto;">
+                                        </div>
+                                    </div>
+                                    <div id="addressWarningEdit" class="text-warning mt-1"></div>
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="LocationAddress"
+                                        data-valmsg-replace="true"></span>
+                                </div>
+                                <div class="mb-3" hidden>
+                                    <label class="form-label">Location Type</label>
+                                    <input type="text" name="Type" id="type" class="form-control" value="Point"
+                                        readonly />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="Type"
+                                        data-valmsg-replace="true"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Longitude</label>
+                                    <input type="number" name="Longitude" id="longitude" class="form-control" step="any"
+                                        placeholder="Enter longitude" required min="-180" max="180" readonly />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="Longitude"
+                                        data-valmsg-replace="true"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Latitude</label>
+                                    <input type="number" name="Latitude" id="latitude" class="form-control" step="any"
+                                        placeholder="Enter latitude" required min="-90" max="90" readonly />
+                                    <span class="text-danger field-validation-valid" data-valmsg-for="Latitude"
+                                        data-valmsg-replace="true"></span>
+                                </div>
                             </div>
-                            <div class="mb-3" hidden>
-                                <label class="form-label">Location Type</label>
-                                <input type="text" name="Type" id="type" class="form-control" value="Point" readonly />
-                                <span class="text-danger field-validation-valid" data-valmsg-for="Type" data-valmsg-replace="true"></span>
+                            <div class="col-md-7">
+                                <div id="editMapContainer"
+                                    style="width: 100%; height: 400px; border-radius: 8px; border: 1px solid #ddd;">
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Longitude</label>
-                                <input type="number" name="Longitude" id="longitude" class="form-control" step="any" placeholder="Enter longitude" required min="-180" max="180" readonly />
-                                <span class="text-danger field-validation-valid" data-valmsg-for="Longitude" data-valmsg-replace="true"></span>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Latitude</label>
-                                <input type="number" name="Latitude" id="latitude" class="form-control" step="any" placeholder="Enter latitude" required min="-90" max="90" readonly />
-                                <span class="text-danger field-validation-valid" data-valmsg-for="Latitude" data-valmsg-replace="true"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-7">
-                            <div id="editMapContainer" style="width: 100%; height: 400px; border-radius: 8px; border: 1px solid #ddd;"></div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                </div>
-            </form>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
 @* create of selling link *@
 
-<div class="modal fade" id="addSellingLinkModal" tabindex="-1" aria-labelledby="addSellingLinkModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addSellingLinkLabel">Add New Location</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal fade" id="addSellingLinkModal" tabindex="-1" aria-labelledby="addSellingLinkModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addSellingLinkLabel">Add New Location</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addSellingLinkForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="ProductId" value="@Model.Id" />
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Title Of Selling Link</label>
+                            <select name="Title" id="titleAdd" class="form-select" required>
+                                <option value="">-- Select a title --</option>
+                                <option value="Facebook">Facebook</option>
+                                <option value="Shopee">Shopee</option>
+                                <option value="Lazada">Lazada</option>
+                                <option value="Tiki">Tiki</option>
+                                <option value="Website">Website</option>
+                            </select>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="Title"
+                                data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Name Of Selling Link</label>
+                            <input type="text" name="Link" id="linkAdd" class="form-control" placeholder="Enter"
+                                required />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="Link"
+                                data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save Location</button>
+                    </div>
+                </form>
             </div>
-            <form id="addSellingLinkForm" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="ProductId" value="@Model.Id" />
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Title Of Selling Link</label>
-                        <select name="Title" id="titleAdd" class="form-select" required>
-                            <option value="">-- Select a title --</option>
-                            <option value="Facebook">Facebook</option>
-                            <option value="Shopee">Shopee</option>
-                            <option value="Lazada">Lazada</option>
-                            <option value="Tiki">Tiki</option>
-                            <option value="Website">Website</option>
-                        </select>
-                        <span class="text-danger field-validation-valid" data-valmsg-for="Title" data-valmsg-replace="true"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Name Of Selling Link</label>
-                        <input type="text" name="Link" id="linkAdd" class="form-control" placeholder="Enter" required />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="Link" data-valmsg-replace="true"></span>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save Location</button>
-                </div>
-            </form>
         </div>
     </div>
-</div>
 @* edit of selling link*@
 
-<div class="modal fade" id="editSellingLinkModal" tabindex="-1" aria-labelledby="editSellingLinkModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editSellingLinkModalLabel">Edit Selling Link</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal fade" id="editSellingLinkModal" tabindex="-1" aria-labelledby="editSellingLinkModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editSellingLinkModalLabel">Edit Selling Link</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editSellingLinkForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="ProductId" id="productIdEdit" value="@Model.Id" />
+                    <input type="hidden" name="Id" id="idEdit" />
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Title Of Selling Link</label>
+                            <select name="Title" id="titleEdit" class="form-select" required>
+                                <option value="">-- Select a title --</option>
+                                <option value="Facebook">Facebook</option>
+                                <option value="Shopee">Shopee</option>
+                                <option value="Lazada">Lazada</option>
+                                <option value="Tiki">Tiki</option>
+                                <option value="Website">Website</option>
+                            </select>
+                            <span class="text-danger field-validation-valid" data-valmsg-for="Title"
+                                data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Name Of Selling Link</label>
+                            <input type="text" name="Link" id="linkEdit" class="form-control" placeholder="Enter"
+                                required />
+                            <span class="text-danger field-validation-valid" data-valmsg-for="Link"
+                                data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save Location</button>
+                    </div>
+                </form>
             </div>
-            <form id="editSellingLinkForm" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="ProductId" id="productIdEdit" value="@Model.Id" />
-                <input type="hidden" name="Id" id="idEdit"/>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Title Of Selling Link</label>
-                        <select name="Title" id="titleEdit" class="form-select" required>
-                            <option value="">-- Select a title --</option>
-                            <option value="Facebook">Facebook</option>
-                            <option value="Shopee">Shopee</option>
-                            <option value="Lazada">Lazada</option>
-                            <option value="Tiki">Tiki</option>
-                            <option value="Website">Website</option>
-                        </select>
-                        <span class="text-danger field-validation-valid" data-valmsg-for="Title" data-valmsg-replace="true"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Name Of Selling Link</label>
-                        <input type="text" name="Link" id="linkEdit" class="form-control" placeholder="Enter" required />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="Link" data-valmsg-replace="true"></span>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save Location</button>
-                </div>
-            </form>
         </div>
     </div>
-</div>
 
 @section Scripts {
     @Html.AntiForgeryToken()
-    <script src="~/assets/js/ocopproduct/formModal.js"></script>
-    <script src="~/assets/js/ocopproduct/crud.js"></script>
-    <script src="~/assets/js/sweetalert-custom.js"></script>
-    
-    <!-- HERE Maps API Scripts -->
-    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
-    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
-    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
-    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+        <script src="~/assets/js/ocopproduct/formModal.js"></script>
+        <script src="~/assets/js/ocopproduct/crud.js"></script>
+        <script src="~/assets/js/sweetalert-custom.js"></script>
 
-    <script>
-        // Pass the API key from configuration to a global JavaScript variable
-        window.HERE_API_KEY = '@Configuration["HEREMAP_API_KEY"]';
-    </script>
-    
-    <script src="~/assets/js/ocopproduct/heremap-loader.js"></script>
-    <script src="~/assets/js/ocopproduct/edit-location-map.js"></script>
-    
-    <script>
-        (function () {
-            const success = @Html.Raw(Json.Serialize(TempData["Success"]));
-            const error = @Html.Raw(Json.Serialize(TempData["Error"]));
-            if (success) showSuccessAlert("Success!", success);
-            if (error) showErrorAlert("Error!", error);
-        })();
-        document.querySelector('.upload-placeholder').addEventListener('click', function() {
-        document.querySelector('input[name="imageFile"]').click();
-    });
-        setTimeout(function () {
-            var alert = document.getElementById("alert-message");
-            if (alert) {
-                alert.style.display = "none";
-            }
-        }, 1000);
-    </script>
+        <!-- HERE Maps API Scripts -->
+        <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+        <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+        <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+        <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+
+        <script>
+            // Pass the API key from configuration to a global JavaScript variable
+            window.HERE_API_KEY = '@Configuration["HEREMAP_API_KEY"]';
+        </script>
+
+        <script src="~/assets/js/ocopproduct/heremap-loader.js"></script>
+        <script src="~/assets/js/ocopproduct/edit-location-map.js"></script>
+
+        <script>
+            (function () {
+                const success = @Html.Raw(Json.Serialize(TempData["Success"]));
+                const error = @Html.Raw(Json.Serialize(TempData["Error"]));
+                if (success) showSuccessAlert("Success!", success);
+                if (error) showErrorAlert("Error!", error);
+            })();
+            document.querySelector('.upload-placeholder').addEventListener('click', function () {
+                document.querySelector('input[name="imageFile"]').click();
+            });
+            setTimeout(function () {
+                var alert = document.getElementById("alert-message");
+                if (alert) {
+                    alert.style.display = "none";
+                }
+            }, 1000);
+        </script>
 }
-

@@ -1,4 +1,5 @@
 @using TraVinhMaps.Web.Admin.Models.Company;
+@using TraVinhMaps.Web.Admin.Helper
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model IEnumerable<CompanyResponse>;
 @{
@@ -55,7 +56,7 @@
                             <table class="display" id="project-status">
                                 <thead class="bg-primary">
                                     <tr>
-                                        <th>No. &nbsp</th>
+                                        <th>No.</th>
                                         <th>Name</th>
                                         <th>Address</th>
                                         <th>Created At</th>
@@ -72,16 +73,16 @@
                                         <tr class="user-removes">
                                             <td>@count</td>
                                             <td>
-                                                @item.Name
+                                                @Html.TruncateWords(item.Name, 8)
                                             </td>
                                             <td>
-                                                @item.Address
+                                                @Html.TruncateWords(item.Address, 4)
                                             </td>
                                             <td>
                                                 @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                             </td>
                                             <td>
-                                                @item.UpdateAt?.ToLocalTime().ToString("dd/MM/yy, HH:mm")
+                                                @(item.UpdateAt?.ToLocalTime().ToString("dd/MM/yy, HH:mm") ?? "N/A")
                                             </td>
                                             <td class="text-center align-middle">
                                                 <ul class="action d-flex justify-content-center align-items-center mb-0"
