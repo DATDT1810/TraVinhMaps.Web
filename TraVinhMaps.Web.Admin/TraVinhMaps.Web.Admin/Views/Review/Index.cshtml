@@ -2,7 +2,8 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model IEnumerable<ReviewResponse>;
 @{
-    ViewData["Title"] = "Review Management";
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="page-body">
@@ -12,13 +13,17 @@
                 <div class="col-6">
                     <h4>@ViewData["Title"]</h4>
                 </div>
-                @{
-                    var breadcrumbs = ViewData["Breadcrumb"] as List<BreadcrumbItem>;
-                }
-                @if (breadcrumbs != null)
-                {
-                    @await Html.PartialAsync("_Breadcrumb", breadcrumbs)
-                }
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home" style="font-size: 20px;"></i>
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">Review</li>
+                        <li class="breadcrumb-item active">Review List</li>
+                    </ol>
+                </div>
             </div>
         </div>
     </div>
@@ -38,6 +43,118 @@
     <!-- Container-fluid starts-->
     <div class="container-fluid">
         <div class="row">
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="col-xl-3 col-sm-6">
+                        <div class="card o-hidden small-widget">
+                            <div class="card-body total-project border-b-primary border-2"><span
+                                    class="f-light f-w-500 f-14">Total Users Review</span>
+                                <div class="project-details">
+                                    <div class="project-counter">
+                                        <h2 class="f-w-600">@ViewBag.TotalUsersReview</h2>
+                                    </div>
+                                    <div class="product-sub bg-primary-light">
+                                        <img src="~/assets/images/dashboard_icon/People.png" alt=""
+                                            style="width: 25px;">
+                                    </div>
+                                </div>
+                                <ul class="bubbles">
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-sm-6">
+                        <div class="card o-hidden small-widget">
+                            <div class="card-body total-upcoming"><span class="f-light f-w-500 f-14">User Has The Most Comments</span>
+                                <div class="project-details">
+                                    <div class="project-counter">
+                                        <h2 class="f-w-600">@ViewBag.TopReviewer</h2><span class="f-12 f-w-400">(This month)
+                                        </span>
+                                    </div>
+                                    <div class="product-sub bg-light-light">
+                                        <img src="../assets/images/dashboard_icon/People.png" alt=""
+                                            style="width: 25px;">
+                                    </div>
+                                </div>
+                                <ul class="bubbles">
+                                    <li class="bubble"> </li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-sm-6">
+                        <div class="card o-hidden small-widget">
+                            <div class="card-body total-Complete border-b-secondary border-2"><span
+                                    class="f-light f-w-500 f-14">Total Reviews</span>
+                                <div class="project-details">
+                                    <div class="project-counter">
+                                        <h2 class="f-w-600">@ViewBag.CountReview</h2><span class="f-12 f-w-400">
+                                        </span>
+                                    </div>
+                                    <div class="product-sub bg-secondary-light">
+                                        <img src="../assets/images/dashboard_icon/Star.png" alt="" style="width: 30px;">
+                                    </div>
+                                </div>
+                                <ul class="bubbles">
+                                    <li class="bubble"> </li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"> </li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"> </li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"> </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-sm-6">
+                        <div class="card o-hidden small-widget">
+                            <div class="card-body total-Progress border-b-warning border-2"> <span
+                                    class="f-light f-w-500 f-14">Total Review 5 <span style="color: #ffc107;">&#9733;</span></span>
+                                <div class="project-details">
+                                    <div class="project-counter">
+                                        <h2 class="f-w-600">@ViewBag.TotalFiveStarReviews</h2>
+                                    </div>
+                                    <div class="product-sub bg-warning-light">
+                                        <img src="../assets/images/dashboard_icon/verified-user.png" alt=""
+                                            style="width: 30px;">
+                                    </div>
+                                </div>
+                                <ul class="bubbles">
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                    <li class="bubble"></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-body">
