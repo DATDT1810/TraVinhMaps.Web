@@ -39,13 +39,30 @@ $(document).ready(function () {
   $("#statusFilter").on("change", () => table.draw());
 
   // Hàm filter
-  $.fn.dataTable.ext.search.push((settings, data) => {
-    const filter = $("#statusFilter").val(); // all | inactive
-    const status = data[4]; // Text thuần nhờ render
+  // $.fn.dataTable.ext.search.push((settings, data) => {
+  //   const filter = $("#statusFilter").val(); // all | inactive
+  //   const status = data[4]; // Text thuần nhờ render
 
-    if (filter === "inactive") return status === "Inactive";
-    return status === "Active"; // "all" chỉ hiển thị Active
-  });
+  //   if (filter === "inactive") return status === "Inactive";
+  //   return status === "Active"; // "all" chỉ hiển thị Active
+  // });
+  $.fn.dataTable.ext.search.push((settings, data, dataIndex) => {
+  const filterValue = $("#statusFilter").val(); // Sẽ là "active" hoặc "inactive"
+
+  // Lấy node của hàng hiện tại
+  const rowNode = table.row(dataIndex).node();
+  
+  // Lấy trạng thái từ thuộc tính data-status mà chúng ta đã thêm
+  // Chuyển "true" thành true (boolean) và "false" thành false (boolean)
+  const rowStatus = $(rowNode).data('status') === true;
+
+  if (filterValue === "inactive") {
+    return !rowStatus; // Hiển thị nếu trạng thái là false (không hoạt động)
+  }
+  
+  // Mặc định (filterValue === "active") chỉ hiển thị hàng có trạng thái là true (hoạt động)
+  return rowStatus; 
+});
 
   $("#statusFilter").val("active").trigger("change"); // Mặc định
 

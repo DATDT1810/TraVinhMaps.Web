@@ -178,7 +178,16 @@ const jsStrings = [
   "Failed to update chart",
   "users",
   "Value",
-  "Day"
+  "Day",
+  "Female",
+  "Male",
+  "Other",      
+  "Active",
+  "Inactive",
+  "Forbidden",
+  "Week",
+  "Month",
+  "Year",
 ];
 
 // Base URL for the translation API.
@@ -242,8 +251,7 @@ function getAllPlainTexts() {
     "placeholder",
     "alt",
     "aria-label",
-    "data-tooltip",
-    "value",
+    "data-tooltip", 
   ];
   const minTextLength = 2;
   const maxTextLength = 500;
@@ -263,6 +271,9 @@ function getAllPlainTexts() {
   };
 
   document.querySelectorAll(selectors).forEach((el) => {
+    if (el.closest('.notranslate')) {
+      return; // Nếu phần tử này nằm trong .notranslate, bỏ qua nó
+    }
     const elementTextContent = el.textContent
       ?.replace(/[\n\t\r]+/g, " ")
       .trim();
@@ -338,10 +349,11 @@ function replaceText(originalTxt, newTxt) {
     "alt",
     "aria-label",
     "data-tooltip",
-    "value",
+    // "value",
   ];
 
   document.querySelectorAll(selectors).forEach((el) => {
+      if (el.closest('.notranslate')) return; 
     el.childNodes.forEach((n) => {
       if (
         n.nodeType === Node.TEXT_NODE &&
@@ -367,6 +379,8 @@ function replaceText(originalTxt, newTxt) {
   document
     .querySelectorAll(`${selectors},img,input,textarea,select`)
     .forEach((el) => {
+        if (el.closest('.notranslate')) return;
+
       attrs.forEach((a) => {
         const v = el.getAttribute(a);
         if (v && normalizeText(v) === normOriginal) {

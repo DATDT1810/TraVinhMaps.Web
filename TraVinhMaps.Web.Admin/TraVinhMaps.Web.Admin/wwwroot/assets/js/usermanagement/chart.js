@@ -1,12 +1,16 @@
 /************************************************************
  *  Dashboard Charts Scripts
- *  Enhanced version: Combines robust chart rendering with consistent translation
  ************************************************************/
 
 // Global chart variables
-let ageChart, genderChart, statusChart, hometownChart, timeChart, performanceChart;
+let ageChart,
+  genderChart,
+  statusChart,
+  hometownChart,
+  timeChart,
+  performanceChart;
 
-// Fixed category configuration & colors
+// Fixed category configuration & colors (Original)
 const CATEGORY_CONFIG = [
   { key: "Destination", color: "#4E79A7" }, // Blue
   { key: "Ocop", color: "#F28E2B" }, // Orange
@@ -15,37 +19,41 @@ const CATEGORY_CONFIG = [
   { key: "Festivals", color: "#76B7B2" }, // Teal
 ];
 
-// Time range mapping for Vietnamese to English
+// Time range mapping for Vietnamese to English (Original)
 const timeRangeMap = {
-  'ngày': 'day',
-  'tuần': 'week',
-  'tháng': 'month',
-  'năm': 'year',
-  'all': 'all'
+  ngày: "day",
+  tuần: "week",
+  tháng: "month",
+  năm: "year",
+  all: "all",
 };
 
-// Translation function
+// --- Helper Functions (Translation, etc.) ---
 function t(key) {
-  return window.translations?.[key] || window.translationMapForCharts?.[key] || key;
+  return (
+    window.translations?.[key] || window.translationMapForCharts?.[key] || key
+  );
 }
-
-// Translate chart data
+function tReverse(translated) {
+  for (const key in window.translationMapForCharts) {
+    if (window.translationMapForCharts[key] === translated) return key;
+  }
+  return translated;
+}
 function translateChartData(data) {
   if (!data) return data;
   const translated = { ...data };
   if (Array.isArray(data.labels)) {
-    translated.labels = data.labels.map(l => t(l));
+    translated.labels = data.labels.map((l) => t(l));
   }
   if (Array.isArray(data.datasets)) {
-    translated.datasets = data.datasets.map(ds => ({
+    translated.datasets = data.datasets.map((ds) => ({
       ...ds,
       label: ds.label ? t(ds.label) : undefined,
     }));
   }
   return translated;
 }
-
-// Translate chart options
 function translateChartOptions(options) {
   if (!options) return options;
   const translated = { ...options };
@@ -53,7 +61,9 @@ function translateChartOptions(options) {
     translated.plugins.title.text = t(translated.plugins.title.text);
   }
   if (translated.plugins?.legend?.title?.text) {
-    translated.plugins.legend.title.text = t(translated.plugins.legend.title.text);
+    translated.plugins.legend.title.text = t(
+      translated.plugins.legend.title.text
+    );
   }
   if (translated.scales) {
     for (const axisKey in translated.scales) {
@@ -63,42 +73,41 @@ function translateChartOptions(options) {
   }
   return translated;
 }
-
-// Map Vietnamese time range to English
 function getApiTimeRange(vietnameseValue) {
   return timeRangeMap[vietnameseValue] || vietnameseValue;
 }
 
-// Refresh all visible charts
-function reRenderAllCharts() {
-  const statTimeRange = document.getElementById("ageChartSelect")?.value || 'tháng';
-  const performanceTimeRange = document.getElementById("timeChartSelectPerformance")?.value || 'tháng';
-  
-  fetchChartData("age", statTimeRange, null, updateAgeChart);
-  fetchChartData("gender", statTimeRange, null, updateGenderChart);
-  fetchChartData("status", statTimeRange, null, updateStatusChart);
-  fetchChartData("hometown", statTimeRange, null, updateHometownChart);
-  fetchChartData("time", statTimeRange, null, updateTimeChart);
-  fetchChartData("performance", performanceTimeRange, null, updatePerformanceChart);
-}
+// BƯỚC 1: Xóa hàm reRenderAllCharts ở đây
 
 function initializeCharts(initialData = {}) {
-  if (typeof Chart === "undefined") {
-    console.error("Chart.js not loaded.");
-    showTimedAlert(t("Error!"), t("Failed to load charting library. Please refresh the page."), "error", 1000);
-    return;
-  }
-  if (typeof ChartDataLabels === "undefined") {
-    console.error("ChartDataLabels plugin not loaded.");
-    showTimedAlert(t("Error!"), t("Failed to load chart plugins. Please refresh the page."), "error", 1000);
+  if (typeof Chart === "undefined" || typeof ChartDataLabels === "undefined") {
+    console.error("Chart.js or plugins not loaded.");
     return;
   }
   Chart.register(ChartDataLabels);
 
-  /* ---------- Reusable Download Function ---------- */
+  // CHANGE: Thêm hàm debounce để tối ưu hóa việc gọi API
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
+  // --- Core Functions (Download, Initialize, Fetch - Kept as original) ---
   function downloadChart(chart, chartId, filenamePrefix) {
     if (!chart) {
-      showTimedAlert(t("Error!"), t("No chart data available to download!"), "error", 1000);
+      showTimedAlert(
+        t("Error!"),
+        t("No chart data available to download!"),
+        "error",
+        1000
+      );
       return;
     }
     const canvas = chart.canvas;
@@ -113,8 +122,8 @@ function initializeCharts(initialData = {}) {
     imageLink.href = whiteCanvas.toDataURL("image/png");
     imageLink.download = `${filenamePrefix}_chart.png`;
     imageLink.click();
-
     const labels = chart.data.labels;
+    const originalLabels = chart.options?.plugins?.originalLabels || labels;
     const datasets = chart.data.datasets;
     let csvContent = "\uFEFF";
     if (datasets.length === 1) {
@@ -123,9 +132,12 @@ function initializeCharts(initialData = {}) {
         csvContent += `"${label}",${datasets[0].data[i] || 0}\n`;
       });
     } else {
-      csvContent += [`"${t("Day")}"`, ...datasets.map(ds => `"${t(ds.label)}"`)].join(",") + "\n";
+      csvContent +=
+        [`"${t("Day")}"`, ...datasets.map((ds) => `"${t(ds.label)}"`)].join(
+          ","
+        ) + "\n";
       labels.forEach((label, idx) => {
-        const row = [`"${label}"`, ...datasets.map(ds => ds.data[idx] || 0)];
+        const row = [`"${label}"`, ...datasets.map((ds) => ds.data[idx] || 0)];
         csvContent += row.join(",") + "\n";
       });
     }
@@ -136,8 +148,6 @@ function initializeCharts(initialData = {}) {
     csvLink.click();
     URL.revokeObjectURL(csvLink.href);
   }
-
-  /* ---------- Initialize Chart Helper ---------- */
   function initializeChart(chartId, chartType, data, options) {
     const canvas = document.getElementById(chartId);
     if (!canvas) {
@@ -150,411 +160,267 @@ function initializeCharts(initialData = {}) {
       type: chartType,
       data: translateChartData(data),
       options: translateChartOptions(options),
+      plugins: {
+        ...translateChartOptions(options).plugins,
+        originalLabels: data.labels, // Lưu lại label gốc
+      },
     });
   }
-
-  /* ---------- Get Selected Tags Helper ---------- */
   function getSelectedTags() {
     const select = document.getElementById("tagSelect");
-    if (!select) return CATEGORY_CONFIG.map(c => c.key);
-    const selected = Array.from(select.selectedOptions).map(o => o.value);
-    return selected.length ? selected : CATEGORY_CONFIG.map(c => c.key);
+    if (!select) return CATEGORY_CONFIG.map((c) => c.key);
+
+    const selectedValues = Array.from(select.selectedOptions).map((opt) =>
+      tReverse(opt.value)
+    );
+    return selectedValues.length
+      ? selectedValues
+      : CATEGORY_CONFIG.map((c) => c.key);
   }
 
-  /* ---------- Fetch Chart Data Helper ---------- */
   function fetchChartData(chartId, timeRange, tagName, callback) {
-    const loadingElement = document.getElementById(`${chartId}-loading`);
     const noDataElement = document.getElementById(`${chartId}-no-data`);
-    const canvasElement = document.getElementById(chartId);
-
-    if (loadingElement) loadingElement.style.display = "block";
-    if (noDataElement) noDataElement.style.display = "none";
-    if (canvasElement) canvasElement.style.display = "none";
-
     const timeRangeForApi = getApiTimeRange(timeRange);
-    const apiUrl = chartId === "performance"
-      ? "https://localhost:7162/api/Users/performance-tags"
-      : "https://localhost:7162/api/Users/stats";
-
+    const apiUrl =
+      chartId === "performance"
+        ? "https://localhost:7162/api/Users/performance-tags"
+        : "https://localhost:7162/api/Users/stats";
     let url = apiUrl;
     if (chartId === "performance") {
       const params = new URLSearchParams({ timeRange: timeRangeForApi });
-      getSelectedTags().forEach(tag => params.append("tags", tag));
-      params.append("includeOcop", "true");
-      params.append("includeDestination", "true");
-      params.append("includeLocalSpecialty", "true");
-      params.append("includeTips", "true");
-      params.append("includeFestivals", "true");
+      getSelectedTags().forEach((tag) => params.append("tags", tag));
       url += `?${params.toString()}`;
     } else {
       url += `?groupBy=${chartId}&timeRange=${timeRangeForApi}`;
     }
-
     fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } })
-      .then(response => {
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      .then((response) => {
+        if (!response.ok)
+          throw new Error(`HTTP error! Status: ${response.status}`);
         return response.json();
       })
-      .then(result => {
+      .then((result) => {
         let data;
         if (chartId === "performance") {
           data = result.data || {};
-        } else if (result.status === "success" && result.data && result.data[chartId]) {
+        } else if (
+          result.status === "success" &&
+          result.data &&
+          result.data[chartId]
+        ) {
           data = result.data[chartId];
         } else {
-          showTimedAlert(t("Error!"), t("Failed to update chart: Invalid response format"), "error", 1000);
           data = {};
-        }
-
-        if (Object.keys(data).length === 0) {
-          if (noDataElement) noDataElement.style.display = "block";
-          if (canvasElement) canvasElement.style.display = "none";
-          const downloadButton = document.getElementById(`download${chartId.charAt(0).toUpperCase() + chartId.slice(1)}`);
-          if (downloadButton) downloadButton.disabled = true;
-        } else {
-          if (noDataElement) noDataElement.style.display = "none";
-          if (canvasElement) canvasElement.style.display = "block";
-          const downloadButton = document.getElementById(`download${chartId.charAt(0).toUpperCase() + chartId.slice(1)}`);
-          if (downloadButton) downloadButton.disabled = false;
         }
         callback(data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(`Failed to fetch stats for ${chartId}:`, error);
-        showTimedAlert(t("Error"), t("Failed to fetch statistics"), "error", 1000);
         if (noDataElement) noDataElement.style.display = "block";
-        if (canvasElement) canvasElement.style.display = "none";
-        const downloadButton = document.getElementById(`download${chartId.charAt(0).toUpperCase() + chartId.slice(1)}`);
-        if (downloadButton) downloadButton.disabled = true;
         callback({});
-      })
-      .finally(() => {
-        if (loadingElement) loadingElement.style.display = "none";
       });
   }
 
   /* ---------- Age Chart (Bar) ---------- */
   function updateAgeChart(data) {
-    if (!data || Object.keys(data).length === 0) {
-      if (ageChart) ageChart.destroy();
-      ageChart = null;
-      const noDataElement = document.getElementById("ageChart-no-data");
-      const canvasElement = document.getElementById("ageChart");
-      const downloadButton = document.getElementById("downloadAgeChart");
-      if (noDataElement) noDataElement.style.display = "block";
-      if (canvasElement) canvasElement.style.display = "none";
-      if (downloadButton) downloadButton.disabled = true;
-      return;
-    }
+    if (ageChart) ageChart.destroy();
+
+    const noDataElement = document.getElementById("ageChart-no-data");
+    const defaultLabels = ["0-18", "18-30", "30-50", "50+"];
+    const hasData = data && Object.keys(data).length > 0;
+
+    noDataElement.style.display = hasData ? "none" : "block";
+
+    const chartValues = defaultLabels.map((label) => data?.[label] || 0);
 
     ageChart = initializeChart(
       "ageChart",
       "bar",
       {
-        labels: Object.keys(data),
-        datasets: [{
-          label: "Number of Users",
-          data: Object.values(data),
-          backgroundColor: ["#007bff", "#28a745", "#dc3545", "#ffc107", "#17a2b8", "#6f42c1", "#fd7e14"],
-          borderColor: ["#0056b3", "#218838", "#c82333", "#e0a800", "#138496", "#5a32a3", "#e06c00"],
-          borderWidth: 1,
-        }],
+        labels: defaultLabels,
+        datasets: [
+          {
+            label: "Number of Users",
+            data: chartValues,
+            backgroundColor: [
+              "#007bff",
+              "#28a745",
+              "#dc3545",
+              "#ffc107",
+              "#17a2b8",
+              "#6f42c1",
+              "#fd7e14",
+            ],
+            borderColor: [
+              "#0056b3",
+              "#218838",
+              "#c82333",
+              "#e0a800",
+              "#138496",
+              "#5a32a3",
+              "#e06c00",
+            ],
+            borderWidth: 1,
+          },
+        ],
       },
       {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
           x: { title: { display: true, text: "Age Groups" } },
-          y: { beginAtZero: true },
+          y: { beginAtZero: true, ticks: { maxTicksLimit: 11 } },
         },
         plugins: {
-          datalabels: {
-            color: "#51BB25",
-            font: { weight: "bold", size: 12 },
-            formatter: (value, context) => {
-              const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
-              return total > 0 ? `${((value / total) * 100).toFixed(1)}%` : "";
-            },
-            anchor: "end",
-            align: "top",
-            clip: false,
-          },
           legend: { display: false },
-        },
-      }
-    );
-  }
-
-  /* ---------- Gender Chart (Pie) ---------- */
-  function updateGenderChart(data) {
-    if (!data || Object.keys(data).length === 0) {
-      if (genderChart) genderChart.destroy();
-      genderChart = null;
-      const noDataElement = document.getElementById("genderChart-no-data");
-      const canvasElement = document.getElementById("genderChart");
-      if (noDataElement) noDataElement.style.display = "block";
-      if (canvasElement) canvasElement.style.display = "none";
-      return;
-    }
-
-    const genderColors = ["#173878", "#DC3545", "#51BB25"];
-    const genderBorders = ["#0F244F", "#A71D2A", "#3A8F1D"];
-    genderChart = initializeChart(
-      "genderChart",
-      "pie",
-      {
-        labels: Object.keys(data),
-        datasets: [{
-          label: "Gender",
-          data: Object.values(data),
-          backgroundColor: genderColors.slice(0, Object.keys(data).length),
-          borderColor: genderBorders.slice(0, Object.keys(data).length),
-          borderWidth: 1,
-        }],
-      },
-      {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { position: "top" },
-          tooltip: { enabled: true },
           datalabels: {
-            color: "#fff",
+            color: "#FFFFFF",
             font: { weight: "bold", size: 12 },
             formatter: (value, context) => {
-              const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
-              return total > 0 ? `${((value / total) * 100).toFixed(1)}%` : "";
-            },
-          },
-        },
-        onClick: (event, elements) => {
-          if (elements.length > 0) {
-            const index = elements[0].index;
-            const dataset = genderChart.data.datasets[0];
-            dataset.backgroundColor = genderColors.map((color, i) =>
-              i === index ? color : Chart.helpers.color(color).alpha(0.3).rgbString()
-            );
-            dataset.borderWidth = genderColors.map((_, i) => (i === index ? 2 : 1));
-            genderChart.update();
-          }
-        },
-        onHover: (event, elements) => {
-          const chartArea = genderChart.chartArea;
-          if (event.x >= chartArea.left && event.x <= chartArea.right && event.y >= chartArea.top && event.y <= chartArea.bottom) {
-            if (elements.length > 0) {
-              const index = elements[0].index;
-              genderChart.data.datasets[0].backgroundColor = genderColors.map(
-                (color, i) => i === index ? color : Chart.helpers.color(color).alpha(0.3).rgbString()
+              const total = context.chart.data.datasets[0].data.reduce(
+                (acc, val) => acc + val,
+                0
               );
-              genderChart.update();
-            } else {
-              genderChart.data.datasets[0].backgroundColor = genderColors.slice(0, Object.keys(data).length);
-              genderChart.update();
-            }
-          }
+              const percentage = total > 0 ? (value / total) * 100 : 0;
+              return `${percentage.toFixed(1)}%`;
+            },
+            anchor: "center",
+            align: "center",
+          },
         },
       }
     );
   }
 
-  /* ---------- Status Chart (Pie) ---------- */
-  function updateStatusChart(data) {
-    if (!data || Object.keys(data).length === 0) {
-      if (statusChart) statusChart.destroy();
-      statusChart = null;
-      const noDataElement = document.getElementById("statusChart-no-data");
-      const canvasElement = document.getElementById("statusChart");
-      if (noDataElement) noDataElement.style.display = "block";
-      if (canvasElement) canvasElement.style.display = "none";
-      return;
+  /* ---------- Pie/Doughnut Chart (Gender, Status) ---------- */
+  function updatePieChart(chartInstance, chartId, data, options) {
+    if (chartInstance) chartInstance.destroy();
+
+    const noDataElement = document.getElementById(`${chartId}-no-data`);
+    const hasData = data && Object.keys(data).length > 0;
+
+    noDataElement.style.display = hasData ? "none" : "block";
+
+    let finalData, finalOptions;
+    if (hasData) {
+      finalData = options.getData(data);
+      finalOptions = options.getOptions(true);
+    } else {
+      finalData = {
+        labels: [""],
+        datasets: [
+          {
+            data: [1],
+            backgroundColor: ["#55555530"],
+            borderColor: "#55555550",
+            borderWidth: 1,
+          },
+        ],
+      };
+      finalOptions = options.getOptions(false);
     }
 
-    statusChart = initializeChart(
-      "statusChart",
-      "pie",
-      {
-        labels: Object.keys(data),
-        datasets: [{
-          label: "Status",
-          data: Object.values(data),
-          backgroundColor: ["#51BB25", "#DC3545", "#F8D62B"],
-          borderColor: ["#3A8F1D", "#A71D2A", "#D4B800"],
-          borderWidth: 1,
-        }],
-      },
-      {
+    return initializeChart(chartId, "pie", finalData, finalOptions);
+  }
+
+  function updateGenderChart(data) {
+    genderChart = updatePieChart(genderChart, "genderChart", data, {
+      getData: (d) => ({
+        labels: Object.keys(d),
+        datasets: [
+          {
+            label: "Gender",
+            data: Object.values(d),
+            backgroundColor: ["#173878", "#DC3545", "#51BB25"].slice(
+              0,
+              Object.keys(d).length
+            ),
+            borderColor: ["#0F244F", "#A71D2A", "#3A8F1D"].slice(
+              0,
+              Object.keys(d).length
+            ),
+            borderWidth: 1,
+          },
+        ],
+      }),
+      getOptions: (hasData) => ({
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
+          legend: { display: hasData, position: "top" },
+          tooltip: { enabled: hasData },
           datalabels: {
+            display: hasData,
             color: "#fff",
             font: { weight: "bold", size: 12 },
             formatter: (value, context) => {
-              const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
+              const total = context.dataset.data.reduce(
+                (acc, val) => acc + val,
+                0
+              );
               return total > 0 ? `${((value / total) * 100).toFixed(1)}%` : "";
             },
           },
         },
-      }
-    );
-  }
-
-  /* ---------- Hometown Chart (Horizontal Bar) ---------- */
-  function updateHometownChart(data) {
-    if (!data || Object.keys(data).length === 0) {
-      if (hometownChart) hometownChart.destroy();
-      hometownChart = null;
-      const noDataElement = document.getElementById("hometownChart-no-data");
-      const canvasElement = document.getElementById("hometownChart");
-      if (noDataElement) noDataElement.style.display = "block";
-      if (canvasElement) canvasElement.style.display = "none";
-      return;
-    }
-
-    let dataArray = Object.entries(data).sort((a, b) => b[1] - a[1]);
-    const baseColor = "#173878";
-    const colors = dataArray.map((_, i) => Chart.helpers.color(baseColor).alpha(1 - i * 0.02).rgbString());
-
-    hometownChart = initializeChart(
-      "hometownChart",
-      "bar",
-      {
-        labels: dataArray.map(item => item[0]),
-        datasets: [{
-          label: "Number of Users",
-          data: dataArray.map(item => item[1]),
-          backgroundColor: colors,
-          borderColor: baseColor,
-          borderWidth: 1,
-        }],
-      },
-      {
-        indexAxis: "y",
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            enabled: true,
-            callbacks: {
-              label: function (context) {
-                const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
-                return `${context.label}: ${context.raw} ${t("users")} (${((context.raw / total) * 100).toFixed(2)}%)`;
-              },
-            },
-          },
-          datalabels: {
-            anchor: "end",
-            align: "start",
-            color: "#fff",
-            font: { weight: "bold", size: 8 },
-            formatter: (value) => {
-              const total = dataArray.reduce((sum, item) => sum + item[1], 0);
-              return total > 0 ? `${value} (${((value / total) * 100).toFixed(2)}%)` : "";
-            },
-            clamp: true,
-            clip: true,
-          },
-        },
-        elements: { bar: { barThickness: 48 } },
-        scales: {
-          x: { title: { display: true, text: "Number of Users" }, beginAtZero: true, grid: { display: true } },
-        },
-        onHover: (event, elements) => {
-          if (elements.length > 0) {
-            const index = elements[0].index;
-            hometownChart.data.datasets[0].backgroundColor = colors.map((color, i) =>
-              i === index ? baseColor : Chart.helpers.color(baseColor).alpha(0.7).rgbString()
-            );
-            hometownChart.update();
-          } else {
-            hometownChart.data.datasets[0].backgroundColor = colors;
-            hometownChart.update();
-          }
-        },
-      }
-    );
-  }
-
-  /* ---------- Time Chart (Line) ---------- */
-  function updateTimeChart(data) {
-    if (!data || Object.keys(data).length === 0) {
-      if (timeChart) timeChart.destroy();
-      timeChart = null;
-      const noDataElement = document.getElementById("timeChart-no-data");
-      const canvasElement = document.getElementById("timeChart");
-      if (noDataElement) noDataElement.style.display = "block";
-      if (canvasElement) canvasElement.style.display = "none";
-      return;
-    }
-
-    const labels = Object.keys(data).map(label => {
-      const timeRange = document.getElementById("timeChartSelect")?.value || 'tháng';
-      if (timeRange === "tuần") return `${t("Week")} ${label.split("-W")[1]}`;
-      if (timeRange === "năm") return new Date(label + "-01").toLocaleString("default", { month: "short", year: "numeric" });
-      if (timeRange === "ngày") return label.split(" ")[1];
-      return label;
+      }),
     });
+  }
 
-    timeChart = initializeChart(
-      "timeChart",
-      "line",
-      {
-        labels: labels,
-        datasets: [{
-          label: "Number of Users",
-          data: Object.values(data),
-          backgroundColor: "#007bff",
-          borderColor: "#0056b3",
-          borderWidth: 2,
-          fill: false,
-          pointRadius: 8,
-          pointHoverRadius: 6,
-          tension: 0.4,
-        }],
-      },
-      {
+  function updateStatusChart(data) {
+    statusChart = updatePieChart(statusChart, "statusChart", data, {
+      getData: (d) => ({
+        labels: Object.keys(d),
+        datasets: [
+          {
+            label: "Status",
+            data: Object.values(d),
+            backgroundColor: ["#51BB25", "#DC3545", "#F8D62B"],
+            borderColor: ["#3A8F1D", "#A71D2A", "#D4B800"],
+            borderWidth: 1,
+          },
+        ],
+      }),
+      getOptions: (hasData) => ({
         responsive: true,
         maintainAspectRatio: false,
-        scales: {
-          y: { beginAtZero: true, title: { display: true, text: "Number of Users" } },
-          x: {
-            title: {
-              display: true,
-              text: t((document.getElementById("timeChartSelect")?.value || 'tháng').replace(/^\w/, c => c.toUpperCase())),
+        plugins: {
+          legend: { display: hasData, position: "top" },
+          tooltip: { enabled: hasData },
+          datalabels: {
+            display: hasData,
+            color: "#fff",
+            font: { weight: "bold", size: 12 },
+            formatter: (value, context) => {
+              const total = context.dataset.data.reduce(
+                (acc, val) => acc + val,
+                0
+              );
+              return total > 0 ? `${((value / total) * 100).toFixed(1)}%` : "";
             },
           },
         },
-        plugins: {
-          datalabels: {
-            display: true,
-            color: "#ffffff",
-            font: { weight: "bold", size: 10 },
-            formatter: value => (value > 0 ? value : ""),
-            align: "center",
-            anchor: "center",
-          },
-        },
-      }
-    );
+      }),
+    });
   }
 
   /* ---------- Performance Chart (Bar) ---------- */
   function updatePerformanceChart(data) {
-    if (!data || Object.keys(data).length === 0) {
-      if (performanceChart) performanceChart.destroy();
-      performanceChart = null;
-      const noDataElement = document.getElementById("performanceChart-no-data");
-      const canvasElement = document.getElementById("performanceChart");
-      if (noDataElement) noDataElement.style.display = "block";
-      if (canvasElement) canvasElement.style.display = "none";
-      return;
-    }
+    if (performanceChart) performanceChart.destroy();
 
-    const periods = Object.keys(data[CATEGORY_CONFIG[0].key] || {});
+    const noDataElement = document.getElementById("performanceChart-no-data");
+    const hasData =
+      data &&
+      Object.keys(data).length > 0 &&
+      Object.values(data).some((d) => Object.keys(d).length > 0);
+    noDataElement.style.display = hasData ? "none" : "block";
+
+    const periods = hasData
+      ? Object.keys(data[Object.keys(data)[0]] || {})
+      : [];
+
     const datasets = CATEGORY_CONFIG.map(({ key, color }) => ({
       label: key,
-      data: periods.map(p => (data[key] && data[key][p]) || 0),
+      data: periods.map((p) => data?.[key]?.[p] || 0),
       backgroundColor: Chart.helpers.color(color).alpha(0.85).rgbString(),
       borderColor: color,
       borderWidth: 1,
@@ -572,32 +438,338 @@ function initializeCharts(initialData = {}) {
         maintainAspectRatio: false,
         scales: {
           x: { stacked: false, title: { display: true, text: "Day of Week" } },
-          y: { stacked: false, beginAtZero: true, title: { display: true, text: "Number of Interactions" } },
+          y: {
+            stacked: false,
+            beginAtZero: true,
+            title: { display: true, text: "Number of Interactions" },
+          },
         },
         plugins: {
           legend: { position: "top" },
           title: { display: true, text: "Performance by Tag" },
           tooltip: {
             callbacks: {
-              label: ctx => `${t(ctx.dataset.label)}: ${ctx.raw}`,
+              label: (ctx) => `${t(ctx.dataset.label)}: ${ctx.raw}`,
             },
           },
           datalabels: {
-            color: "#fff",
-            anchor: "end",
-            align: "start",
+            color: "#36454F",
+            anchor: "center",
+            align: "center",
             font: { weight: "bold" },
-            formatter: value => value,
+            formatter: (value) => (value > 0 ? value : null),
           },
         },
       }
     );
   }
 
-  /* ---------- Initialize and Bind Events ---------- */
-  const initialTimeRange = initialData.initialTimeRange || "tháng";
-  const initialTag = initialData.initialTag || "";
+  /* ---------- Hometown & Time Charts ---------- */
+  /**
+ * Updates the hometown distribution chart with new data.
+ * Ensures that bars have appropriate sizes, data labels are displayed inside the bars in white,
+ * and Y-axis labels (province/city names) are aligned and clearly spaced.
+ * @param {object} data Data to display on the chart, with keys as hometown names and values as user counts.
+ */
+function updateHometownChart(data) {
+    // If the chart already exists, destroy it before creating a new one
+    if (hometownChart) hometownChart.destroy();
 
+    const noDataElement = document.getElementById("hometownChart-no-data");
+    const hasData = data && Object.keys(data).length > 0;
+    
+    // Display or hide the "no data" message
+    noDataElement.style.display = hasData ? "none" : "block";
+    const chartData = hasData ? data : {};
+
+    // Convert data to an array of [key, value] pairs and sort in descending order by value
+    let dataArray = Object.entries(chartData).sort((a, b) => b[1] - a[1]);
+
+    // Define the base color and create a color gradient for the bars
+    const baseColor = "#173878"; // Dark blue color
+    const colors = dataArray.map((_, i) => {
+        // Use Chart.helpers.color to adjust the transparency (alpha) for each bar.
+        // The alpha value is calculated to ensure a minimum transparency,
+        // preventing bars from becoming too faint, especially for smaller data points.
+        const alpha = Math.max(0.6, 1 - i * 0.015); // Adjusted alpha decay rate and added minimum alpha of 0.6
+        return Chart.helpers.color(baseColor).alpha(alpha).rgbString();
+    });
+    // Create hover colors (lighter than the base color)
+    const hoverColors = colors.map((c) => lightenColor(c, 20));
+
+    // Calculate dynamic height for the chart based on the number of data entries.
+    // Each bar is assumed to have a minimum height of 30px to ensure enough space for labels.
+    const minBarHeight = 40; 
+    // The overall chart height will be a minimum of 300px or enough to contain all bars.
+    const desiredChartHeight = Math.max(300, dataArray.length * minBarHeight); 
+    
+    // Set the height for the canvas element containing the chart.
+    // Ensure your HTML canvas element has the id 'hometownChart'.
+    const chartCanvas = document.getElementById("hometownChart");
+    if (chartCanvas) {
+        chartCanvas.style.height = `${desiredChartHeight}px`;
+    }
+
+    // Initialize a new chart
+    hometownChart = initializeChart(
+        "hometownChart", // ID of the canvas element
+        "bar",           // Chart type: horizontal bar
+        {
+            // Labels for the Y-axis (hometown names)
+            labels: dataArray.map((item) => item[0]),
+            datasets: [
+                {
+                    label: "Number of Users", // Dataset label
+                    data: dataArray.map((item) => item[1]), // User count data
+                    backgroundColor: colors,        // Background color of the bars
+                    hoverBackgroundColor: hoverColors, // Background color on hover
+                    borderColor: baseColor,         // Border color of the bars
+                    borderWidth: 1,                 // Border width
+                },
+            ],
+        },
+        {
+            indexAxis: "y", // Set Y-axis as the index axis (creates a horizontal bar chart)
+            responsive: true, // Chart will automatically adjust its size to the container
+            maintainAspectRatio: false, // Do not maintain aspect ratio, allows dynamic height
+            hover: {
+                mode: "nearest", // Hover mode: nearest
+                axis: "y",       // Only activate hover on the Y-axis
+                intersect: true, // Activate hover when the cursor intersects with the bar
+            },
+            plugins: {
+                legend: { display: false }, // Hide the legend
+                tooltip: {
+                    enabled: true, // Enable tooltips on hover
+                    callbacks: {
+                        label: function (context) {
+                            // Format tooltip content: "Name: Number of users (Percentage%)"
+                            const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
+                            return `${context.label}: ${context.raw} users (${(
+                                (context.raw / total) *
+                                100
+                            ).toFixed(2)}%)`;
+                        },
+                    },
+                },
+                datalabels: {
+                    anchor: "end", // Label anchor position: end of the bar
+                    align: "start", // Label alignment: start from the end of the bar (right side) to be inside the bar
+                    color: "#FFFFFF", // Data label text color: White
+                    font: { weight: "bold", size: 9 }, // Font size and weight
+                    formatter: (value) => {
+                        // Format data label displayed on the bar: "Count (Percentage%)"
+                        const total = dataArray.reduce((sum, item) => sum + item[1], 0);
+                        return total > 0
+                            ? `${value} (${((value / total) * 100).toFixed(2)}%)`
+                            : "";
+                    },
+                    // Adjust padding so data labels are not too close to the bar edge
+                    padding: {
+                        left: 5,
+                        right: 5
+                    },
+                    clamp: true, // Clamp labels within the chart area
+                    clip: true,  // Clip labels if they extend beyond the chart area
+                },
+            },
+            elements: {
+                bar: {
+                    // barThickness: 48, // Can be adjusted or uncommented if fixed bar thickness control is desired
+                    // maxBarThickness: 40 // Or limit the maximum bar thickness
+                },
+            },
+            scales: {
+                x: {
+                    title: { display: true, text: "Number of Users" }, // X-axis title
+                    beginAtZero: true, // Start X-axis from 0
+                    grid: { display: true }, // Display X-axis grid
+                    ticks: {
+                        color: '#666' // Text color for X-axis labels
+                    }
+                },
+                y: {
+                    ticks: {
+                        autoSkip: false, 
+                        maxRotation: 0,  
+                        minRotation: 0,  
+                        color: '#666',   
+                        padding: 15,     
+                    },
+                    grid: {
+                        display: false 
+                    }
+                }
+            },
+            layout: {
+                padding: {
+                    right: 20 
+                }
+            }
+        }
+    );
+}
+
+/**
+ * Helper function to lighten a color.
+ * @param {string} color Original color (rgb or hex).
+ * @param {number} percent Percentage to lighten (0-100).
+ * @returns {string} Lightened color in rgb format.
+ */
+function lightenColor(color, percent) {
+    let r, g, b;
+
+    // Extract RGB values from rgb(...) or rgba(...) format
+    if (color.startsWith("rgb")) {
+        const rgba = color.match(/\d+/g).map(Number);
+        [r, g, b] = rgba;
+    } else if (color.startsWith("#")) {
+        // Extract RGB values from hex format
+        const num = parseInt(color.slice(1), 16);
+        r = (num >> 16) & 255;
+        g = (num >> 8) & 255;
+        b = num & 255;
+    }
+
+    // Increase RGB values to lighten the color, capping at 255
+    r = Math.min(255, r + Math.round(2.55 * percent));
+    g = Math.min(255, g + Math.round(2.55 * percent));
+    b = Math.min(255, b + Math.round(2.55 * percent));
+
+    return `rgb(${r}, ${g}, ${b})`;
+}
+
+  // /* ---------- Time Chart (Line) ---------- */
+  function lightenColor(color, percent) {
+    let r, g, b;
+
+    // Tách từ rgb(...) hoặc rgba(...)
+    if (color.startsWith("rgb")) {
+      const rgba = color.match(/\d+/g).map(Number);
+      [r, g, b] = rgba;
+    } else if (color.startsWith("#")) {
+      const num = parseInt(color.slice(1), 16);
+      r = (num >> 16) & 255;
+      g = (num >> 8) & 255;
+      b = num & 255;
+    }
+
+    r = Math.min(255, r + Math.round(2.55 * percent));
+    g = Math.min(255, g + Math.round(2.55 * percent));
+    b = Math.min(255, b + Math.round(2.55 * percent));
+
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+
+  // CHANGE: Sửa lại hàm updateTimeChart để dịch thuật chính xác
+  function updateTimeChart(data) {
+    if (timeChart) timeChart.destroy();
+    const noDataElement = document.getElementById("timeChart-no-data");
+    const hasData = data && Object.keys(data).length > 0;
+    noDataElement.style.display = hasData ? "none" : "block";
+
+    const chartData = hasData ? data : {};
+    const labels = hasData ? Object.keys(chartData) : [];
+    const timeRange = document.getElementById("timeChartSelect")?.value || "tháng";
+
+    // Mảng các tháng đã được dịch để sử dụng cho chế độ xem 'năm'
+    const translatedMonthsShort = [
+      t("Jan"), t("Feb"), t("Mar"), t("Apr"), t("May"), t("Jun"),
+      t("Jul"), t("Aug"), t("Sep"), t("Oct"), t("Nov"), t("Dec")
+    ];
+
+    timeChart = initializeChart(
+      "timeChart",
+      "line",
+      {
+        labels: labels.map((label) => {
+          switch (timeRange) {
+            case "tuần":
+              return `${t("Week")} ${label.split("-W")[1]}`;
+            case "năm":
+              const date = new Date(label + "-01");
+              return `${translatedMonthsShort[date.getMonth()]} ${date.getFullYear()}`;
+            case "ngày":
+              return label; // Giả sử API trả về định dạng ngày đã phù hợp
+            default:
+              return label; // 'tháng' và các trường hợp khác
+          }
+        }),
+        datasets: [
+          {
+            label: "Number of Users", // Sẽ được dịch bởi `translateChartData`
+            data: Object.values(chartData),
+            backgroundColor: "#007bff",
+            borderColor: "#0056b3",
+            borderWidth: 2,
+            fill: false,
+            pointRadius: 8,
+            pointHoverRadius: 6,
+            tension: 0.4,
+          },
+        ],
+      },
+      {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: "Number of Users" }, // Sẽ được dịch bởi `translateChartOptions`
+          },
+          x: {
+            title: {
+              display: true,
+              // Truyền key dịch thuật, ví dụ: "Tháng", "Năm"...
+              text: t(timeRange.charAt(0).toUpperCase() + timeRange.slice(1))
+            },
+          },
+        },
+        plugins: {
+          datalabels: {
+            display: true,
+            color: "#ffffff",
+            font: { weight: "bold", size: 10 },
+            formatter: (value) => (value > 0 ? value : ""),
+            align: "center",
+            anchor: "center",
+          },
+        },
+      }
+    );
+  }
+
+
+  /* ---------- Initialize and Bind Events ---------- */
+
+  //  --- Re-render all charts function ---
+  function reRenderAllCharts() {
+    const statTimeRange =
+      document.getElementById("ageChartSelect")?.value || "month";
+    const performanceTimeRange =
+      document.getElementById("timeChartSelectPerformance")?.value || "month";
+
+    fetchChartData("age", statTimeRange, null, updateAgeChart);
+    fetchChartData("gender", statTimeRange, null, updateGenderChart);
+    fetchChartData("status", statTimeRange, null, updateStatusChart);
+    fetchChartData("hometown", statTimeRange, null, updateHometownChart);
+    fetchChartData("time", statTimeRange, null, updateTimeChart);
+    fetchChartData(
+      "performance",
+      performanceTimeRange,
+      getSelectedTags(),
+      updatePerformanceChart
+    );
+  }
+
+  // --- Expose reRenderAllCharts globally ---
+  // This allows the function to be called from outside this script, e.g., on language
+  window.reRenderAllCharts = reRenderAllCharts;
+
+  // --- Initial Data Fetch ---
+  reRenderAllCharts();
+
+  // --- Bind Select Change Events for Each Chart ---
   const chartConfigs = [
     { id: "age", updateFn: updateAgeChart, selectId: "ageChartSelect" },
     { id: "gender", updateFn: updateGenderChart, selectId: "genderChartSelect" },
@@ -607,68 +779,117 @@ function initializeCharts(initialData = {}) {
     { id: "performance", updateFn: updatePerformanceChart, selectId: "timeChartSelectPerformance" },
   ];
 
+  // CHANGE: Áp dụng debounce cho các sự kiện 'change'
   chartConfigs.forEach(({ id, updateFn, selectId }) => {
     const select = document.getElementById(selectId);
     if (select) {
-      // Đặt giá trị mặc định là "tháng"
-      select.value = initialTimeRange;
-      // Gọi fetchChartData ngay lập tức với giá trị mặc định
-      fetchChartData(id, initialTimeRange, id === "performance" ? getSelectedTags() : null, updateFn);
-      // Thêm sự kiện change
-      select.addEventListener("change", e => {
+      const debouncedFetch = debounce((value) => {
         const tagName = id === "performance" ? getSelectedTags() : null;
-        fetchChartData(id, e.target.value, tagName, updateFn);
+        fetchChartData(id, value, tagName, updateFn);
+      }, 350); // Delay 350ms
+
+      select.addEventListener("change", (e) => {
+        debouncedFetch(e.target.value);
       });
     }
   });
 
   const tagSelect = document.getElementById("tagSelect");
   if (tagSelect) {
-    tagSelect.value = initialTag;
-    tagSelect.addEventListener("change", () => {
-      const timeRange = document.getElementById("timeChartSelectPerformance")?.value || initialTimeRange;
-      fetchChartData("performance", timeRange, getSelectedTags(), updatePerformanceChart);
-    });
-    // Khởi tạo performance chart với tag mặc định
-    fetchChartData("performance", initialTimeRange, getSelectedTags(), updatePerformanceChart);
+    const debouncedPerformanceUpdate = debounce(() => {
+        const timeRange = document.getElementById("timeChartSelectPerformance")?.value || "month";
+        fetchChartData("performance", timeRange, getSelectedTags(), updatePerformanceChart);
+    }, 350); // Delay 350ms
+
+    tagSelect.addEventListener("change", debouncedPerformanceUpdate);
   }
 
-  const downloadButtons = [
-    { id: "downloadAgeChart", chart: () => ageChart, filename: "age_distribution" },
-    { id: "downloadGenderChart", chart: () => genderChart, filename: "gender_distribution" },
-    { id: "downloadStatusChart", chart: () => statusChart, filename: "status_distribution" },
-    { id: "downloadHometownChart", chart: () => hometownChart, filename: "hometown_distribution" },
-    { id: "downloadTimeChart", chart: () => timeChart, filename: "user_creation_time" },
-    { id: "downloadPerformanceChart", chart: () => performanceChart, filename: "performance_by_tag" },
-  ];
 
-  downloadButtons.forEach(({ id, chart, filename }) => {
-    const button = document.getElementById(id);
-    if (button && !button.dataset.bound) {
-      button.dataset.bound = "true";
-      button.addEventListener("click", () => downloadChart(chart(), id.replace("download", "").toLowerCase(), filename));
+  const downloadDemographicsBtn = document.getElementById(
+    "downloadUserStatChart"
+  );
+  const demographicsSelect = document.getElementById("downloadUserStatSelect");
+  if (downloadDemographicsBtn && demographicsSelect) {
+    downloadDemographicsBtn.addEventListener("click", () => {
+      const selectedOption =
+        demographicsSelect.options[demographicsSelect.selectedIndex];
+      const selectedChartId = selectedOption.dataset.chartId; // fetch the chart ID from data attribute
+      let chartToDownload;
+      let filename;
+      switch (selectedChartId) {
+        case "ageChart":
+          chartToDownload = ageChart;
+          filename = "age_distribution";
+          break;
+        case "genderChart":
+          chartToDownload = genderChart;
+          filename = "gender_distribution";
+          break;
+        case "statusChart":
+          chartToDownload = statusChart;
+          filename = "status_distribution";
+          break;
+        default:
+          showTimedAlert(
+            t("Error"),
+            t("Invalid chart selection."),
+            "error",
+            1500
+          );
+          return;
+      }
+      if (chartToDownload) {
+        downloadChart(chartToDownload, selectedChartId, filename);
+      } else {
+        showTimedAlert(
+          t("Error!"),
+          t("Chart not ready or has no data."),
+          "error",
+          1000
+        );
+      }
+    });
+  }
+  function setupDownloadButton(buttonId, getChart, filenamePrefix) {
+    const button = document.getElementById(buttonId);
+    if (button) {
+      button.addEventListener("click", () => {
+        const chartInstance = getChart();
+        if (chartInstance) {
+          downloadChart(
+            chartInstance,
+            buttonId.replace("download", "").toLowerCase(),
+            filenamePrefix
+          );
+        } else {
+          showTimedAlert(
+            t("Error!"),
+            t("Chart not ready or has no data."),
+            "error",
+            1000
+          );
+        }
+      });
     }
-  });
-
-  const downloadUserStatBtn = document.getElementById("downloadUserStatChart");
-  const downloadUserStatSelect = document.getElementById("downloadUserStatSelect");
-  if (downloadUserStatBtn && downloadUserStatSelect) {
-    downloadUserStatBtn.addEventListener("change", () => {
-      const selected = downloadUserStatSelect.value;
-      const chartMap = {
-        ageChart: { chart: ageChart, prefix: "age" },
-        genderChart: { chart: genderChart, prefix: "gender" },
-        statusChart: { chart: statusChart, prefix: "status" },
-      };
-      const { chart, prefix } = chartMap[selected] || {};
-      if (chart) downloadChart(chart, selected, prefix);
-    });
   }
 
-  // Language change listener
-  window.addEventListener('languageChanged', reRenderAllCharts);
+  setupDownloadButton(
+    "downloadPerformanceChart",
+    () => performanceChart,
+    "performance_by_tag"
+  );
+  setupDownloadButton(
+    "downloadHometownChart",
+    () => hometownChart,
+    "hometown_distribution"
+  );
+  setupDownloadButton(
+    "downloadTimeChart",
+    () => timeChart,
+    "new_users_over_time"
+  );
 }
-
+// --- End of Core Functions ---
 function showTimedAlert(title, message, type, duration) {
   if (typeof Swal !== "undefined") {
     Swal.fire({
@@ -683,9 +904,35 @@ function showTimedAlert(title, message, type, duration) {
   }
 }
 
-// Run initialization when DOM is loaded
-document.addEventListener("DOMContentLoaded", () => {
-  initializeCharts(window.initialData || {});
+let isFirstRenderDone = false;
+
+window.addEventListener("languageChanged", () => {
+  if (typeof window.reRenderAllCharts === "function" && isFirstRenderDone) {
+    console.log("Language changed → re-rendering charts...");
+    window.reRenderAllCharts();
+  }
 });
 
-window.reRenderAllCharts = reRenderAllCharts;
+function isFilterReady() {
+  return document.getElementById("ageChartSelect") &&
+         document.getElementById("genderChartSelect") &&
+         document.getElementById("statusChartSelect") &&
+         document.getElementById("hometownChartSelect") &&
+         document.getElementById("timeChartSelectPerformance") &&
+         document.getElementById("downloadUserStatSelect") &&
+         document.getElementById("tagSelect");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initializeCharts(window.initialData || {});
+
+  setTimeout(() => {
+    if (isFilterReady() && typeof window.reRenderAllCharts === "function") {
+      console.log("Initial render → rendering all charts...");
+      window.reRenderAllCharts();
+      isFirstRenderDone = true;
+    } else {
+      console.warn("Chart filters not ready, skipping initial render.");
+    }
+  }, 500);
+});

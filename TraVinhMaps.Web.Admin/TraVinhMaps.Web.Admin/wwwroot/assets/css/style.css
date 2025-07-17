@@ -4077,6 +4077,19 @@ table tbody tr {
 }
 
 /**=====================
+    Custom text justify CSS start
+==========================**/
+.text-justify {
+  text-align: justify;
+  max-height: 180px;
+  overflow-y: auto; 
+  margin-bottom: 15px;
+} 
+/**=====================
+    Custom text justify CSS end
+==========================**/
+
+/**=====================
      2.2 Alert CSS start
 ==========================**/
 .notify-alert .close {

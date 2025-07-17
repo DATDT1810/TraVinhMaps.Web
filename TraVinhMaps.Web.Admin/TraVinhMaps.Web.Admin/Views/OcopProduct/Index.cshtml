@@ -1,4 +1,5 @@
-﻿﻿@using TraVinhMaps.Web.Admin.Models.OcopProduct;
+﻿﻿@using TraVinhMaps.Web.Admin.Helper
+@using TraVinhMaps.Web.Admin.Models.OcopProduct;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model IEnumerable<OcopProductResponse>;
 @{
@@ -36,12 +37,12 @@
         </div>
     }
     @if (TempData["SellLocationLogs"] != null)
-{
-    <div class="alert alert-info">
-        <h4>Logged Sell Locations:</h4>
-        @Html.Raw(TempData["SellLocationLogs"])
-    </div>
-}
+    {
+        <div class="alert alert-info">
+            <h4>Logged Sell Locations:</h4>
+            @Html.Raw(TempData["SellLocationLogs"])
+        </div>
+    }
     <!-- Container-fluid starts-->
     <div class="container-fluid">
         <div class="row">
@@ -81,11 +82,10 @@
                                 <thead class="bg-primary">
                                     <tr>
                                         <th>No.</th>
-                                        <th>Product Image</th>
                                         <th>Product Name</th>
-                                        <th>Product Price</th>
+                                        <th>Reference Price</th>
                                         <th>Status</th>
-                                        <th class="text-center">Star <span style="color: #ffc107;">&#9733;</span></th>
+                                        <th class="text-center"><span style="color: #ffc107;">&#9733;</span></th>
                                         <th>Year Release</th>
                                         <th>Created At</th>
                                         <th>Action</th>
@@ -110,15 +110,15 @@
                                                         else
                                                         {
                                                             <img class="img-fluid" src="/assets/images/no-image.png"
-                                                                alt="no image available" />
+                                                                alt="img ocop" />
                                                         }
                                                 </div>
-                                            </td>
-                                            <td>
-                                                @item.ProductName
-                                            </td>
-                                            <td class="text-end">
-                                                 @item.ProductPrice
+                                                <p>@Html.TruncateWords(item.ProductName, 6)</p>
+                                            </div>
+                                        </td>
+                                        <td class="text-end">
+                                            @(decimal.Parse(item.ProductPrice!).ToString("N0", new
+                                                                                        System.Globalization.CultureInfo("vi-VN")) + "₫")
                                             </td>
                                             <td>
                                                 <span
@@ -144,7 +144,7 @@
                                                         </a>
                                                     </li>
                                                     <li>
-                                                    @if (item.Status == false)
+                                                        @if (item.Status == false)
                                                         {
                                                             <a class="restore undelete-ocop-product" href="javascript:void(0)"
                                                                 data-id="@item.Id" title="Restore"><i

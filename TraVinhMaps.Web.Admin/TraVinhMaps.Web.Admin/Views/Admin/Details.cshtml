@@ -40,22 +40,21 @@
                                 <div class="profile-title">
                                     <div class="media">
                                         <div class="media-body">
+                                            <label class="form-label">Username</label>
                                             <h5 class="mb-1">@Model.Username</h5>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <hr>
                             <div class="mb-3">
                                 <label class="form-label">Email</label>
-                                <input class="form-control" value="@Model.Email" readonly>
+                                <p class="form-control-plaintext">@Model.Email</p>
                             </div>
+                            <hr>
                             <div class="mb-3">
-                                <div class="mb-3">
-                                    <label class="form-label">Password</label>
-                                    <input class="form-control" type="password" value="@Model.Password" readonly>
-                                </div>
                                 <label class="form-label">Create At</label>
-                                <input class="form-control" value="@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")" readonly>
+                                <p class="form-control-plaintext">@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</p>
                             </div>
                             <div class="row">
                                 <div class="col">

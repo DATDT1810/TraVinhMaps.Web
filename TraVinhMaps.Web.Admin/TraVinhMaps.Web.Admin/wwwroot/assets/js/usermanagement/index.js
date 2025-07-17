@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  /* ========== 1. KHỞI TẠO DATATABLES ========== */
+  /* ========== DATATABLES ========== */
   const table = $("#project-status").DataTable({
     paging: true,
     ordering: true,
@@ -7,19 +7,19 @@ $(document).ready(function () {
     searching: true,
     columnDefs: [
       {
-        // Cột Status
+        // Column Status
         targets: 4,
         render: (data, type) => {
           if (type === "filter" || type === "sort") {
-            return $("<div>").html(data).text().trim(); // Bóc text từ HTML
+            return $("<div>").html(data).text().trim(); // return text for filtering/sorting
           }
-          return data; // Giữ nguyên badge khi hiển thị
+          return data; // No change for display
         },
       },
     ],
   });
 
-   /* ========== Vẽ lại số thứ tự No. ========== */
+   /* ========== Draw Order ========== */
     table.on('order.dt search.dt draw.dt', function () {
     let i = 1;
     table
@@ -29,21 +29,21 @@ $(document).ready(function () {
       });
   }).draw();
 
-  /* ========== 2. BỘ LỌC THEO COMBOBOX ========== */
+  /* ========== FILLTER COMBOBOX ========== */
   $("#statusFilter").on("change", () => table.draw());
 
-  // Hàm filter
+  // method filter
   $.fn.dataTable.ext.search.push((settings, data) => {
     const filter = $("#statusFilter").val(); // all | inactive
-    const status = data[4]; // Text thuần nhờ render
+    const status = data[4]; // text content of the Status column
 
     if (filter === "inactive") return status === "Inactive";
-    return status === "Active"; // "all" chỉ hiển thị Active
+    return status === "Active"; // "all" just show active
   });
 
-  $("#statusFilter").val("all").trigger("change"); // Mặc định
+  $("#statusFilter").val("all").trigger("change"); // default "all"
 
-  /* ========== 3. HÀM CẬP NHẬT 1 HÀNG ========== */
+  /* ========== Update Row ========== */
   function updateRow(row, isActive) {
     const statusSpan = row.find("td:eq(4) span");
     if (isActive) {
@@ -57,7 +57,7 @@ $(document).ready(function () {
         .removeClass("badge-light-primary")
         .addClass("badge-light-danger");
     }
-    table.row(row).invalidate().draw(false); // Giữ nguyên trang
+    table.row(row).invalidate().draw(false); // No change row order
   }
 
   /* ========== 4. AJAX BAN ========== */
@@ -80,8 +80,8 @@ $(document).ready(function () {
         headers: { RequestVerificationToken: token },
         success: ({ success, message }) => {
           if (success) {
-            const row = $(this).closest("tr"); // Lấy hàng chứa nút ban
-            // Cập nhật nút Ban -> Unban
+            const row = $(this).closest("tr"); // get the row containing the ban button
+            // updaete  the button from Ban to Unban
             const banBtn = row.find(".ban-user");
             banBtn
               .removeClass("ban-user delete")
@@ -94,7 +94,7 @@ $(document).ready(function () {
               banBtn.html('<i class="fa fa-unlock"></i>');
             }
 
-            // Cập nhật trạng thái sang Inactive
+            // updateRow(row, false); 
             updateRow(row, false);
             showTimedAlert("Success!", message, "success", 1000);
           } else {
@@ -132,23 +132,23 @@ $(document).ready(function () {
         headers: { RequestVerificationToken: token },
         success: ({ success, message }) => {
           if (success) {
-            const row = $(this).closest("tr"); // Lấy hàng chứa nút unban
-            // Cập nhật nút Unban -> Ban
+            const row = $(this).closest("tr"); // get the row containing the unban button
+            // update the button from Unban to Ban
             const unbanBtn = row.find(".unban-user");
             unbanBtn
               .removeClass("unban-user restore")
               .addClass("ban-user delete")
               .attr("title", "Ban");
 
-            // Cập nhật icon bên trong
+            // pdate icon from unlock to ban
             unbanBtn.find("i").removeClass("fa-unlock").addClass("fa-ban");
 
-            // Nếu icon không có sẵn, thay bằng inner HTML
+            // if (unbanBtn.find("i").length === 0) {
             if (unbanBtn.find("i").length === 0) {
               unbanBtn.html('<i class="fa fa-ban"></i>');
             }
 
-            // Cập nhật trạng thái sang Active
+            // updateRow(row, true);
             updateRow(row, true);
             showTimedAlert("Success!", message, "success", 1000);
           } else {
@@ -201,7 +201,6 @@ function exportTableToExcel() {
           "Is Forbidden",
           "Created At",
           "Updated At",
-          "Password Hash",
           // Profile fields as separate columns
           "Full Name",
           "Date of Birth",
@@ -241,7 +240,6 @@ function exportTableToExcel() {
             user.isForbidden ? "Yes" : "No",
             user.createdAt ? new Date(user.createdAt).toLocaleString() : "—",
             user.updatedAt ? new Date(user.updatedAt).toLocaleString() : "—",
-            user.password || "—",
             // Profile fields as separate values
             profile.fullName || "—",
             profile.dateOfBirth || "—",
@@ -270,7 +268,6 @@ function exportTableToExcel() {
           { wch: 12 }, // Is Forbidden
           { wch: 20 }, // Created At
           { wch: 20 }, // Updated At
-          { wch: 70 }, // Password Hash
           // Profile field widths
           { wch: 25 }, // Full Name
           { wch: 15 }, // Date of Birth
