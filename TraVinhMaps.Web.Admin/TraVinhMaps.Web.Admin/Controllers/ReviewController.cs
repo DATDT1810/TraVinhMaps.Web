@@ -15,11 +15,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
     public class ReviewController : Controller
     {
         private readonly IReviewService _reviewService;
-        private readonly IDestinationTypeService _destinationTypeService;
-        public ReviewController(IReviewService reviewService, IDestinationTypeService destinationTypeService)
+        private readonly IDestinationService _destinationService;
+        public ReviewController(IReviewService reviewService, IDestinationService destinationService)
         {
             _reviewService = reviewService;
-            _destinationTypeService = destinationTypeService;
+            _destinationService = destinationService;
         }
 
         // GET: Review/Index
@@ -31,7 +31,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 new BreadcrumbItem { Title = "Review Management", Url = Url.Action("Index", "Review")! },
                 new BreadcrumbItem { Title = "Review List" } // default URL for the current page
             };
-            var destinationList = await _destinationTypeService.ListAllAsync();
+            var destinationList = await _destinationService.ListAllAsync();
+            var totalUsersReview = await _reviewService.GetTotalUsersReviewedAsync();
+            var totalFiveStarReviews = await _reviewService.GetTotalFiveStarReviewsAsync();
+            var topReviewer = await _reviewService.GetTopReviewerAsync();
+            var countReview = await _reviewService.CountAsync();
             IEnumerable<ReviewResponse> reviews;
             if (!string.IsNullOrEmpty(destinationId) || rating.HasValue || startAt.HasValue || endAt.HasValue)
             {
@@ -42,6 +46,10 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 reviews = await _reviewService.ListAllAsync();
             }
             ViewBag.Destination = destinationList;
+            ViewBag.TotalUsersReview = totalUsersReview;
+            ViewBag.TotalFiveStarReviews = totalFiveStarReviews;
+            ViewBag.TopReviewer = topReviewer;
+            ViewBag.CountReview = countReview;
             return View(reviews);
         }
 

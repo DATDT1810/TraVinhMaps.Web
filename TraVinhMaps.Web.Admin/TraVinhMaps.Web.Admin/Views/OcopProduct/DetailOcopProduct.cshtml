@@ -219,11 +219,10 @@
                                         <tr class="ocop-margin" style="display: flex; align-items: center;">
                                             <td style="width: 100px; white-space: nowrap;"><b>Update At :</b></td>
                                             <td class="txt-success">
-                                                @(
-                                                    Model.UpdateAt.HasValue
-                                                    ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy, HH:mm")
-                                                    : "No update"
-                                                )
+                                                @(Model.UpdateAt.HasValue 
+    ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy, HH:mm") 
+    : "No update")
+
                                             </td>
                                         </tr>
                                     </tbody>
