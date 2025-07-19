@@ -78,6 +78,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     Console.WriteLine($"[ERROR] Failed to get OcopType: {ex.Message}");
                     ViewBag.OcopTypeName = "Unknown";
                     ViewBag.CompanyName = "Unknown";
+                    ViewBag.TagName = "Unknown";
                 }
             }
             ViewData["Title"] = "Ocop Product Detail";
@@ -95,12 +96,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 new BreadcrumbItem { Title = "Ocop Product Management", Url = Url.Action("Index", "OcopProduct")! },
                 new BreadcrumbItem { Title = "Create Ocop Product" } // default URL for the current page
             };
-            var ocopTypes = await _ocopTypeService.ListAllAsync();
-            var company = await _companyService.ListAllAsync();
-            var tag = await _tagService.ListAllAsync();
-            ViewBag.OcopTypes = ocopTypes;
-            ViewBag.Companies = company;
-            ViewBag.Tags = tag;
+            await LoadViewBags();
             return View();
         }
 
@@ -193,12 +189,22 @@ namespace TraVinhMaps.Web.Admin.Controllers
         // GET: OcopProduct/UpdateOcopProduct/{id}
         private async Task LoadViewBags()
         {
-            var ocopTypes = await _ocopTypeService.ListAllAsync();
-            var company = await _companyService.ListAllAsync();
-            var tag = await _tagService.ListAllAsync();
-            ViewBag.OcopTypes = ocopTypes;
-            ViewBag.Companies = company;
-            ViewBag.Tags = tag;
+            try
+            {
+                var ocopTypes = await _ocopTypeService.ListAllAsync();
+                var company = await _companyService.ListAllAsync();
+                var tag = await _tagService.ListAllAsync();
+                ViewBag.OcopTypes = ocopTypes;
+                ViewBag.Companies = company;
+                ViewBag.Tags = tag;
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"[ERROR] Failed to get OcopType: {ex.Message}");
+                ViewBag.OcopTypes = "Unknown";
+                ViewBag.Companies = "Unknown";
+                ViewBag.Tags = "Unknown";
+            }
         }
 
 
@@ -216,12 +222,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             {
                 return View("Ocop product not found.");
             }
-            var ocopTypes = await _ocopTypeService.ListAllAsync();
-            var company = await _companyService.ListAllAsync();
-            var tag = await _tagService.ListAllAsync();
-            ViewBag.Tags = tag;
-            ViewBag.OcopTypes = ocopTypes;
-            ViewBag.Companies = company;
+            await LoadViewBags();
             UpdateOcopProductRequest updateOcopProductRequest = new UpdateOcopProductRequest
             {
                 Id = findOcopProduct.Id,

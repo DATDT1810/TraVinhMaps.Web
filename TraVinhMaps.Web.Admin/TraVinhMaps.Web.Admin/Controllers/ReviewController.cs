@@ -31,11 +31,6 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 new BreadcrumbItem { Title = "Review Management", Url = Url.Action("Index", "Review")! },
                 new BreadcrumbItem { Title = "Review List" } // default URL for the current page
             };
-            var destinationList = await _destinationService.ListAllAsync();
-            var totalUsersReview = await _reviewService.GetTotalUsersReviewedAsync();
-            var totalFiveStarReviews = await _reviewService.GetTotalFiveStarReviewsAsync();
-            var topReviewer = await _reviewService.GetTopReviewerAsync();
-            var countReview = await _reviewService.CountAsync();
             IEnumerable<ReviewResponse> reviews;
             if (!string.IsNullOrEmpty(destinationId) || rating.HasValue || startAt.HasValue || endAt.HasValue)
             {
@@ -45,11 +40,28 @@ namespace TraVinhMaps.Web.Admin.Controllers
             {
                 reviews = await _reviewService.ListAllAsync();
             }
-            ViewBag.Destination = destinationList;
-            ViewBag.TotalUsersReview = totalUsersReview;
-            ViewBag.TotalFiveStarReviews = totalFiveStarReviews;
-            ViewBag.TopReviewer = topReviewer;
-            ViewBag.CountReview = countReview;
+            try
+                {
+                     var destinationList = await _destinationService.ListAllAsync();
+                    var totalUsersReview = await _reviewService.GetTotalUsersReviewedAsync();
+                    var totalFiveStarReviews = await _reviewService.GetTotalFiveStarReviewsAsync();
+                    var topReviewer = await _reviewService.GetTopReviewerAsync();
+                    var countReview = await _reviewService.CountAsync();
+                    ViewBag.Destination = destinationList;
+                    ViewBag.TotalUsersReview = totalUsersReview;
+                    ViewBag.TotalFiveStarReviews = totalFiveStarReviews;
+                    ViewBag.TopReviewer = topReviewer;
+                    ViewBag.CountReview = countReview;
+                }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"[ERROR] Failed to get OcopType: {ex.Message}");
+                ViewBag.Destination = "Unknown";
+                ViewBag.TotalUsersReview = "No stats";
+                ViewBag.TotalFiveStarReviews = "No stats";
+                ViewBag.TopReviewer = "No stats";
+                ViewBag.CountReview = "No stats";
+            }
             return View(reviews);
         }
 

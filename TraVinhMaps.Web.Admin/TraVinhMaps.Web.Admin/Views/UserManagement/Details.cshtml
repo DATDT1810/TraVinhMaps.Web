@@ -5,6 +5,9 @@
     // ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@{
+    var destinationNames = ViewBag.DestinationNames as Dictionary<string, string>;
+}
 
 <div class="page-body">
     <div class="container-fluid">
@@ -72,12 +75,63 @@
                     </div>
                 </div>
                 <div class="col-xl-7">
+                    <div class="card">
                     <div class="card-header">
                         <h4 class="card-title mb-0">Review</h4>
-                        <div class="card-options"><a class="card-options-collapse" href="#"
-                                data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a><a
-                                class="card-options-remove" href="#" data-bs-toggle="card-remove"><i
-                                    class="fe fe-x"></i></a></div>
+                            <div class="card-body">
+                                @if (ViewBag.Reviews is List<TraVinhMaps.Web.Admin.Models.Review.ReviewResponse> reviews && reviews.Any())
+                                {
+                                    foreach (var review in reviews)
+                                    {
+                                        
+                                        var destinationName = destinationNames != null && destinationNames.ContainsKey(review.DestinationId)
+            ? destinationNames[review.DestinationId]
+            : "Unknown destination";
+                                        <div class="mb-4 border-bottom pb-3">
+                                            <p><strong>Tourist Destination Name:</strong> @destinationName</p>
+                                            <p><strong>Rating:</strong> @review.Rating</p>
+
+                                            @if (!string.IsNullOrEmpty(review.Comment))
+                                            {
+                                                <p><strong>Comment:</strong> @review.Comment</p>
+                                            }
+
+                                            @if (review.Images != null && review.Images.Any())
+                                            {
+                                                <div class="mb-2">
+                                                    <strong>Images:</strong><br />
+                                                    @foreach (var img in review.Images)
+                                                    {
+                                                        <img src="@img" alt="review image" style="width:100px; margin-right:10px;" />
+                                                    }
+                                                </div>
+                                            }
+
+                                            @if (review.Reply != null && review.Reply.Any())
+                                            {
+                                                <div class="mt-2">
+                                                    <strong>Replies:</strong>
+                                                    <ul>
+                                                        @foreach (var reply in review.Reply)
+                                                        {
+                                                            <li>
+                                                                <p><strong>UserId:</strong> @reply.UserId</p>
+                                                                <p>@reply.Content</p>
+                                                                <small class="text-muted">@reply.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</small>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <p>No reviews available.</p>
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

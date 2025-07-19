@@ -37,35 +37,46 @@
     $("#statusFilter").on("change", () => table.draw());
 
     $.fn.dataTable.ext.search.push((settings, data) => {
-        const filter = $("#statusFilter").val(); // all | inactive
-        const status = data[3]; // Cột 4: Status
+        const filter = $("#statusFilter").val(); // all | inactive | active
+        const status = (data[3] || "").trim();
 
-        if (filter === "inactive") return status === "Inactive";
-        return status === "Active";
+        if (filter === "inactive") {
+            return status === "Inactive" || status === "Không hoạt động";
+        }
+        if (filter === "active") {
+            return status === "Active" || status === "Hoạt động";
+        }
+        return true; // all
     });
 
     $("#statusFilter").val("active").trigger("change");
 
     // Hàm cập nhật lại giao diện hàng
     function updateRow(row, isActive, id) {
-        const statusSpan = row.find("td:eq(4) span");
+        const statusSpan = row.find("td:eq(3) span");
         const actionCell = row.find("td:last-child ul.action");
 
-        if (isActive) {
-            statusSpan.text("Active")
-                .removeClass("badge-light-danger")
-                .addClass("badge-light-primary");
+        // Lấy text hiện tại để xác định ngôn ngữ (Anh/Việt)
+        let currentText = statusSpan.text().toLowerCase().trim();
+        let statusText;
 
+        if (currentText === "hoạt động" || currentText === "không hoạt động") {
+            statusText = isActive ? "Hoạt động" : "Không hoạt động";
+        } else {
+            statusText = isActive ? "Active" : "Inactive";
+        }
+
+        statusSpan.text(statusText)
+            .removeClass("badge-light-danger badge-light-primary")
+            .addClass(isActive ? "badge-light-primary" : "badge-light-danger");
+
+        if (isActive) {
             actionCell.find(".undelete-ocop-product").replaceWith(`
                 <a class="delete delete-ocop-product" href="javascript:void(0)" data-id="${id}" title="Delete">
                     <i class="fa fa-trash"></i>
                 </a>
             `);
         } else {
-            statusSpan.text("Inactive")
-                .removeClass("badge-light-primary")
-                .addClass("badge-light-danger");
-
             actionCell.find(".delete-ocop-product").replaceWith(`
                 <a class="restore undelete-ocop-product" href="javascript:void(0)" data-id="${id}" title="Restore">
                     <i class="fa fa-undo"></i>
