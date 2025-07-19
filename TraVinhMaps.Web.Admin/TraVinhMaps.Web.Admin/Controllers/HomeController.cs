@@ -52,6 +52,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             {
                 TotalUsers = await _userService.CountAllUsersAsync(),
                 TotalUserActive = await _userService.CountActiveUsersAsync(),
+                TotalReviews = await _reviewService.CountAsync(),
                 UserStatistics = new List<UserStatisticVM>(),
                 LatestReviews = new List<ReviewResponse>()
             };

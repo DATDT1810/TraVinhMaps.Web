@@ -10,6 +10,7 @@ namespace TraVinhMaps.Web.Admin.Services.Review
     public interface IReviewService
     {
         Task<ReviewResponse> GetReviewByIdAsync(string id, CancellationToken cancellationToken = default);
+        Task<IEnumerable<ReviewResponse>> GetListReviewByUserId(string id, CancellationToken cancellationToken = default);
         Task<IEnumerable<ReviewResponse>> GetLatestReviewsAsync(int count = 5, CancellationToken cancellationToken = default);
         Task<long> GetTotalUsersReviewedAsync(CancellationToken cancellationToken = default);
         Task<long> GetTotalFiveStarReviewsAsync(CancellationToken cancellationToken = default);
