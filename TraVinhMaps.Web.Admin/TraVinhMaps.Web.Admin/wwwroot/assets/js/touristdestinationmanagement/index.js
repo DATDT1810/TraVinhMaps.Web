@@ -11,13 +11,12 @@ $(document).ready(function () {
         orderable: false,
       },
       {
-        // Cột Status
         targets: 4,
         render: (data, type) => {
           if (type === "filter" || type === "sort") {
-            return $("<div>").html(data).text().trim(); // Bóc text từ HTML
+            return $("<div>").html(data).text().trim();
           }
-          return data; // Giữ nguyên badge khi hiển thị
+          return data;
         },
       },
     ],
@@ -35,38 +34,23 @@ $(document).ready(function () {
     })
     .draw();
 
-  /* ========== 2. BỘ LỌC THEO COMBOBOX ========== */
+  /* ========== BỘ LỌC THEO COMBOBOX ========== */
   $("#statusFilter").on("change", () => table.draw());
 
-  // Hàm filter
-  // $.fn.dataTable.ext.search.push((settings, data) => {
-  //   const filter = $("#statusFilter").val(); // all | inactive
-  //   const status = data[4]; // Text thuần nhờ render
-
-  //   if (filter === "inactive") return status === "Inactive";
-  //   return status === "Active"; // "all" chỉ hiển thị Active
-  // });
   $.fn.dataTable.ext.search.push((settings, data, dataIndex) => {
-  const filterValue = $("#statusFilter").val(); // Sẽ là "active" hoặc "inactive"
+    const filterValue = $("#statusFilter").val();
+    const rowNode = table.row(dataIndex).node();
+    const rowStatus = $(rowNode).data("status") === true;
 
-  // Lấy node của hàng hiện tại
-  const rowNode = table.row(dataIndex).node();
-  
-  // Lấy trạng thái từ thuộc tính data-status mà chúng ta đã thêm
-  // Chuyển "true" thành true (boolean) và "false" thành false (boolean)
-  const rowStatus = $(rowNode).data('status') === true;
+    if (filterValue === "inactive") {
+      return !rowStatus;
+    }
+    return rowStatus;
+  });
 
-  if (filterValue === "inactive") {
-    return !rowStatus; // Hiển thị nếu trạng thái là false (không hoạt động)
-  }
-  
-  // Mặc định (filterValue === "active") chỉ hiển thị hàng có trạng thái là true (hoạt động)
-  return rowStatus; 
-});
+  $("#statusFilter").val("active").trigger("change");
 
-  $("#statusFilter").val("active").trigger("change"); // Mặc định
-
-  /* ========== 3. HÀM CẬP NHẬT 1 HÀNG ========== */
+  /* ========== HÀM CẬP NHẬT 1 HÀNG ========== */
   function updateRow(row, isActive) {
     const statusSpan = row.find("td:eq(4) span");
     if (isActive) {
@@ -74,16 +58,18 @@ $(document).ready(function () {
         .text("Active")
         .removeClass("badge-light-danger")
         .addClass("badge-light-primary");
+      row.data("status", true);
     } else {
       statusSpan
         .text("Inactive")
         .removeClass("badge-light-primary")
         .addClass("badge-light-danger");
+      row.data("status", false);
     }
-    table.row(row).invalidate().draw(false); // Giữ nguyên trang
+    table.row(row).invalidate().draw(); // Làm mới toàn bộ để áp dụng bộ lọc
   }
 
-  // AJAX Ban user with SweetAlert2
+  // AJAX Delete destination
   $(document).on("click", ".delete-destination", function (e) {
     e.preventDefault();
     const destinationId = $(this).data("id");
@@ -100,26 +86,17 @@ $(document).ready(function () {
           url: "/Admin/TouristDestinationManagement/DeleteDestination",
           method: "POST",
           data: { id: destinationId },
-          headers: {
-            RequestVerificationToken: token,
-          },
+          headers: { RequestVerificationToken: token },
           success: function (response) {
             if (response.success) {
-              // const row = $(`a[data-id="${destinationId}"]`).closest("tr");
               const row = $('a[data-id="' + destinationId + '"]').closest("tr");
-              row
-                .find("td:eq(4) span")
-                .text("Inactive")
-                .removeClass("badge-light-primary")
-                .addClass("badge-light-danger");
-              // Update action dropdown from Ban -> Unban
+              updateRow(row, false); // Cập nhật trạng thái Inactive
               const actionCell = row.find("td:last-child ul.action");
               actionCell.find(".delete-destination").replaceWith(
                 `<a class="restore undelete-destination" href="javascript:void(0)" data-id="${destinationId}" title="Restore">
-                      <i class="fa fa-undo"></i>
-                  </a>`
+                  <i class="fa fa-undo"></i>
+                </a>`
               );
-              table.row(row).invalidate().draw(false);
               showTimedAlert("Success!", response.message, "success", 1000);
             } else {
               showTimedAlert("Failed!", response.message, "error", 1000);
@@ -128,7 +105,7 @@ $(document).ready(function () {
           error: function (xhr) {
             showTimedAlert(
               "Error!",
-              "An error occurred while banning the destination: " +
+              "An error occurred while deleting the destination: " +
                 (xhr.responseJSON?.message || "Unknown error"),
               "error",
               1000
@@ -139,7 +116,7 @@ $(document).ready(function () {
     });
   });
 
-  // AJAX Unban user with SweetAlert2
+  // AJAX Restore destination
   $(document).on("click", ".undelete-destination", function (e) {
     e.preventDefault();
     const destinationId = $(this).data("id");
@@ -156,28 +133,17 @@ $(document).ready(function () {
           url: "/Admin/TouristDestinationManagement/RestoreDestination",
           method: "POST",
           data: { id: destinationId },
-          headers: {
-            RequestVerificationToken: token,
-          },
+          headers: { RequestVerificationToken: token },
           success: function (response) {
             if (response.success) {
               const row = $('a[data-id="' + destinationId + '"]').closest("tr");
-
-              row
-                .find("td:eq(4) span")
-                .text("Active")
-                .removeClass("badge-light-danger")
-                .addClass("badge-light-primary");
-
-              // Update action dropdown from Unban -> Ban
+              updateRow(row, true); // Cập nhật trạng thái Active
               const actionCell = row.find("td:last-child ul.action");
               actionCell.find(".undelete-destination").replaceWith(
                 `<a class="delete delete-destination" href="javascript:void(0)" data-id="${destinationId}" title="Delete">
-                      <i class="fa fa-trash"></i>
-                  </a>`
+                  <i class="fa fa-trash"></i>
+                </a>`
               );
-
-              table.row(row).invalidate().draw(false);
               showTimedAlert("Success!", response.message, "success", 1000);
             } else {
               showTimedAlert("Failed!", response.message, "error", 1000);
@@ -186,8 +152,7 @@ $(document).ready(function () {
           error: function (xhr) {
             showTimedAlert(
               "Error!",
-              "Error",
-              "An error occurred while unbanning the user: " +
+              "An error occurred while restoring the destination: " +
                 (xhr.responseJSON?.message || "Unknown error"),
               "error",
               1000
@@ -199,10 +164,9 @@ $(document).ready(function () {
   });
 });
 
-// ------- Export Destinations to Excel -------
-const sessionId = "@sessionId"; // Get session ID from Razor
+// ------- Export Destinations to Excel ------- (Giữ nguyên phần này)
+const sessionId = "@sessionId";
 
-// Handle export button click
 $("#destinationExportBtn").on("click", function () {
   showInfoAlert(
     "Exporting Destinations",
@@ -222,87 +186,42 @@ function exportDestinationsToExcel() {
     },
     success: function (response) {
       console.log("API response received:", response);
-
-      // Extract destinations from the data field in the response
       const destinations = response.data || [];
 
       if (destinations.length > 0) {
         try {
-          // Create a workbook
           const wb = XLSX.utils.book_new();
-
-          // Create header row with all fields from TouristDestinationResponse
           const headerRow = [
-            "#",
-            "ID",
-            "Name",
-            "Average Rating",
-            "Favorite Count",
-            "Description",
-            "Address",
-            "Location Type",
-            "Coordinates",
-            "Images",
-            "History Story Content",
-            "History Story Images",
-            "Destination Type ID",
-            "Opening Hours",
-            "Capacity",
-            "Contact Phone",
-            "Contact Email",
-            "Contact Website",
-            "Tag ID",
-            "Ticket",
-            "Status",
-            "Created At",
-            "Updated At",
+            "#", "ID", "Name", "Average Rating", "Favorite Count", "Description",
+            "Address", "Location Type", "Coordinates", "Images", "History Story Content",
+            "History Story Images", "Destination Type ID", "Opening Hours", "Capacity",
+            "Contact Phone", "Contact Email", "Contact Website", "Tag ID", "Ticket",
+            "Status", "Created At", "Updated At",
           ];
-
           const data = [headerRow];
 
-          // Process the destination data from the API
           destinations.forEach((destination, index) => {
-            // Format images array
             let imagesStr = "—";
             if (destination.images && destination.images.length > 0) {
               imagesStr = destination.images.join("\n");
             }
-
-            // Format history story
             let historyStoryContent = "—";
             let historyStoryImages = "—";
             if (destination.historyStory) {
               historyStoryContent = destination.historyStory.content || "—";
-              if (
-                destination.historyStory.images &&
-                destination.historyStory.images.length > 0
-              ) {
+              if (destination.historyStory.images && destination.historyStory.images.length > 0) {
                 historyStoryImages = destination.historyStory.images.join("\n");
               }
             }
-
-            // Format location coordinates
             let coordinatesStr = "—";
-            if (
-              destination.location &&
-              destination.location.coordinates &&
-              destination.location.coordinates.length >= 2
-            ) {
+            if (destination.location && destination.location.coordinates && destination.location.coordinates.length >= 2) {
               coordinatesStr = `[${destination.location.coordinates[0]}, ${destination.location.coordinates[1]}]`;
             }
-
-            // Format opening hours
             let openingHoursStr = "—";
             if (destination.openingHours) {
-              openingHoursStr = `${
-                destination.openingHours.openTime || "—"
-              } - ${destination.openingHours.closeTime || "—"}`;
+              openingHoursStr = `${destination.openingHours.openTime || "—"} - ${destination.openingHours.closeTime || "—"}`;
             }
-
-            // Format contact information
-            let contactPhone = "—";
-            let contactEmail = "—";
-            let contactWebsite = "—";
+            let contactPhone = "—", contactEmail = "—", contactWebsite = "—";
             if (destination.contact) {
               contactPhone = destination.contact.phone || "—";
               contactEmail = destination.contact.email || "—";
@@ -310,83 +229,28 @@ function exportDestinationsToExcel() {
             }
 
             const rowData = [
-              (index + 1).toString(),
-              destination.id || "—",
-              destination.name || "—",
-              destination.avarageRating !== undefined
-                ? destination.avarageRating.toFixed(2)
-                : "—",
-              destination.favoriteCount !== undefined
-                ? destination.favoriteCount
-                : "—",
-              destination.description || "—",
-              destination.address || "—",
-              destination.location?.type || "—",
-              coordinatesStr,
-              imagesStr,
-              historyStoryContent,
-              historyStoryImages,
-              destination.destinationTypeId || "—",
-              openingHoursStr,
-              destination.capacity || "—",
-              contactPhone,
-              contactEmail,
-              contactWebsite,
-              destination.tagId || "—",
-              destination.ticket || "—",
-              destination.status ? "Active" : "Inactive",
-              destination.createdAt
-                ? new Date(destination.createdAt).toLocaleString()
-                : "—",
-              destination.updateAt
-                ? new Date(destination.updateAt).toLocaleString()
-                : "—",
+              (index + 1).toString(), destination.id || "—", destination.name || "—",
+              destination.avarageRating !== undefined ? destination.avarageRating.toFixed(2) : "—",
+              destination.favoriteCount !== undefined ? destination.favoriteCount : "—",
+              destination.description || "—", destination.address || "—",
+              destination.location?.type || "—", coordinatesStr, imagesStr,
+              historyStoryContent, historyStoryImages, destination.destinationTypeId || "—",
+              openingHoursStr, destination.capacity || "—", contactPhone,
+              contactEmail, contactWebsite, destination.tagId || "—",
+              destination.ticket || "—", destination.status ? "Active" : "Inactive",
+              destination.createdAt ? new Date(destination.createdAt).toLocaleString() : "—",
+              destination.updateAt ? new Date(destination.updateAt).toLocaleString() : "—",
             ];
-
             data.push(rowData);
           });
 
-          // Create worksheet from data
           const ws = XLSX.utils.aoa_to_sheet(data);
-
-          // Set column widths for better readability
-          ws["!cols"] = [
-            { wch: 5 }, // #
-            { wch: 25 }, // ID
-            { wch: 30 }, // Name
-            { wch: 15 }, // Average Rating
-            { wch: 15 }, // Favorite Count
-            { wch: 60 }, // Description
-            { wch: 50 }, // Address
-            { wch: 15 }, // Location Type
-            { wch: 25 }, // Coordinates
-            { wch: 100 }, // Images
-            { wch: 100 }, // History Story Content
-            { wch: 100 }, // History Story Images
-            { wch: 25 }, // Destination Type ID
-            { wch: 20 }, // Opening Hours
-            { wch: 15 }, // Capacity
-            { wch: 20 }, // Contact Phone
-            { wch: 30 }, // Contact Email
-            { wch: 50 }, // Contact Website
-            { wch: 25 }, // Tag ID
-            { wch: 20 }, // Ticket
-            { wch: 10 }, // Status
-            { wch: 20 }, // Created At
-            { wch: 20 }, // Updated At
-          ];
-
-          // Configure row heights to accommodate multiline text
+          ws["!cols"] = [{ wch: 5 }, { wch: 25 }, { wch: 30 }, { wch: 15 }, { wch: 15 }, { wch: 60 }, { wch: 50 }, { wch: 15 }, { wch: 25 }, { wch: 100 }, { wch: 100 }, { wch: 100 }, { wch: 25 }, { wch: 20 }, { wch: 15 }, { wch: 20 }, { wch: 30 }, { wch: 50 }, { wch: 25 }, { wch: 20 }, { wch: 10 }, { wch: 20 }, { wch: 20 }];
           const rowCount = data.length;
           ws["!rows"] = [];
-          for (let i = 0; i < rowCount; i++) {
-            ws["!rows"][i] = { hpt: 25 }; // Default row height
-          }
+          for (let i = 0; i < rowCount; i++) ws["!rows"][i] = { hpt: 25 };
 
-          // Add the worksheet to the workbook
           XLSX.utils.book_append_sheet(wb, ws, "Tourist Destinations");
-
-          // Generate Excel file and trigger download
           const today = new Date().toISOString().slice(0, 10);
           const fileName = `tourist_destinations_${today}.xlsx`;
           XLSX.writeFile(wb, fileName);
@@ -417,13 +281,9 @@ function exportDestinationsToExcel() {
     },
     error: function (xhr, status, error) {
       console.error("API Error Details:", status, error);
-      let errorMessage =
-        "Could not retrieve destination data. Please check your connection or permissions.";
-      if (xhr.status === 401) {
-        errorMessage = "Unauthorized access. Please log in again.";
-      } else if (xhr.status === 403) {
-        errorMessage = "You do not have permission to perform this action.";
-      }
+      let errorMessage = "Could not retrieve destination data. Please check your connection or permissions.";
+      if (xhr.status === 401) errorMessage = "Unauthorized access. Please log in again.";
+      else if (xhr.status === 403) errorMessage = "You do not have permission to perform this action.";
       showTimedAlert("Export Error!", errorMessage, "error", 1000);
     },
   });
