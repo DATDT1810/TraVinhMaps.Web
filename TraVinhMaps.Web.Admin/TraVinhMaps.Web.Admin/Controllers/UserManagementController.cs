@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using TraVinhMaps.Web.Admin.Models;
 using TraVinhMaps.Web.Admin.Models.Users;
 using TraVinhMaps.Web.Admin.Services.Auth;
+using TraVinhMaps.Web.Admin.Services.Review;
+using TraVinhMaps.Web.Admin.Services.TouristDestination;
 using TraVinhMaps.Web.Admin.Services.Users;
 
 namespace TraVinhMaps.Web.Admin.Controllers
@@ -11,10 +13,14 @@ namespace TraVinhMaps.Web.Admin.Controllers
     {
         private readonly IUserService _userService;
         private readonly ITokenService _tokenService;
-        public UserManagementController(IUserService userService, ITokenService tokenService)
+        private readonly IReviewService _reviewService;
+        private readonly IDestinationService _destinationService;
+        public UserManagementController(IUserService userService, ITokenService tokenService, IReviewService reviewService, IDestinationService destinationService)
         {
             _userService = userService;
             _tokenService = tokenService;
+            _reviewService = reviewService;
+            _destinationService = destinationService;
         }
 
         // GET: Admin/Users
@@ -42,6 +48,28 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 new BreadcrumbItem { Title = "Account Details" } // default URL for the current page
             };
             var user = await _userService.GetByIdAsync(id);
+            try
+            {
+                var reviews = await _reviewService.GetListReviewByUserId(id);
+                ViewBag.Reviews = reviews;
+                var destinationMap = new Dictionary<string, string>();
+                foreach (var review in reviews)
+                {
+                    if (!destinationMap.ContainsKey(review.DestinationId))
+                    {
+                        var destination = await _destinationService.GetDestinationById(review.DestinationId);
+                        if (destination != null)
+                            destinationMap[review.DestinationId] = destination.Name;
+                    }
+                }
+                ViewBag.DestinationNames = destinationMap;
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"[ERROR] Failed to get review: {ex.Message}");
+                ViewBag.Reviews = "Unknown";
+                ViewBag.DestinationNames = "Unknow";
+            }
             if (user == null)
             {
                 return RedirectToAction("Index");

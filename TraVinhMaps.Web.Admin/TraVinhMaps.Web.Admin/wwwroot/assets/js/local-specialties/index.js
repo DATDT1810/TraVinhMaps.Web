@@ -10,21 +10,21 @@ $(document).ready(function () {
   /********************* 0. HÀM TIỆN ÍCH ************************/
   // Cập nhật badge Status trong cùng ô (cột thứ 4, index 3)
   function setStatusBadge($row, isActive) {
-    const $badge = $row.find("td:eq(3) .badge"); // td index 3 = Status
-    if (!$badge.length) return;
+  const $badge = $row.find("td:eq(3) .badge");
+  if (!$badge.length) return;
 
-    if (isActive) {
-      $badge
-        .removeClass("badge-light-danger")
-        .addClass("badge-light-primary")
-        .text("Active");
-    } else {
-      $badge
-        .removeClass("badge-light-primary")
-        .addClass("badge-light-danger")
-        .text("Inactive");
-    }
-  }
+  const currentText = $badge.text().toLowerCase().trim();
+  const isVietnamese = currentText.includes("hoạt động") || currentText.includes("không hoạt động");
+  const newText = isActive
+    ? (isVietnamese ? "Hoạt động" : "Active")
+    : (isVietnamese ? "Không hoạt động" : "Inactive");
+
+  $badge
+    .removeClass("badge-light-danger badge-light-primary")
+    .addClass(isActive ? "badge-light-primary" : "badge-light-danger")
+    .text(newText);
+}
+
 
   // Đánh lại STT cho các hàng đang hiển thị
   function updateVisibleRowStt() {
@@ -36,40 +36,51 @@ $(document).ready(function () {
 
   /********************* 1. BỘ LỌC TRẠNG THÁI ******************/
   $("#statusFilter").on("change", function () {
-    const filter = $(this).val();
-    let hasVisibleRows = false;
-    let stt = 1;
+  const filter = $(this).val(); // all | active | inactive | tag
+  let hasVisibleRows = false;
+  let stt = 1;
 
-    $("table tbody tr:not(#no-items-row)").each(function () {
-      const $row = $(this);
-      const tagIds = String($row.data("tag-id") || "").split(",");
-      const isActive = $row.find("#delete-localSpecialties").length > 0;
+  $("table tbody tr:not(#no-items-row)").each(function () {
+    const $row = $(this);
+    const tagIds = String($row.data("tag-id") || "").split(",");
 
-      let show = false;
-      if (filter === "all") show = isActive;
-      else if (filter === "inactive") show = !isActive;
-      else show = tagIds.includes(filter) && isActive;
+    // Xử lý status chắc chắn
+    const statusText = $row.find("td:eq(3) .badge").text().toLowerCase().replace(/\s+/g, "").trim();
+    const isActive = statusText === "active" || statusText === "hoạtđộng";
+    const isInactive = statusText === "inactive" || statusText === "khônghoạtđộng";
 
-      if (show) {
-        $row.show();
-        $row.find("td:first").text(stt++);
-        hasVisibleRows = true;
-      } else {
-        $row.hide();
-      }
-    });
+    let show = false;
+    if (filter === "all") {
+      show = true;
+    } else if (filter === "active") {
+      show = isActive;
+    } else if (filter === "inactive") {
+      show = isInactive;
+    } else {
+      show = tagIds.includes(filter) && isActive;
+    }
 
-    $("#no-items-row").toggle(!hasVisibleRows);
-
-    const tbody = $("#basic-9 tbody");
-    tbody.find(".empty-message-row").remove();
-    if ($("#basic-9 tbody tr:visible").length === 0) {
-      tbody.append(`
-        <tr class="empty-message-row">
-          <td colspan="6" class="text-center">No matching records found</td>
-        </tr>`);
+    if (show) {
+      $row.show();
+      $row.find("td:first").text(stt++);
+      hasVisibleRows = true;
+    } else {
+      $row.hide();
     }
   });
+
+  $("#no-items-row").toggle(!hasVisibleRows);
+
+  const tbody = $("#basic-9 tbody");
+  tbody.find(".empty-message-row").remove();
+  if ($("#basic-9 tbody tr:visible").length === 0) {
+    tbody.append(`
+      <tr class="empty-message-row">
+        <td colspan="6" class="text-center">No matching records found</td>
+      </tr>`);
+  }
+});
+
 
   /********************* 2. XÓA LOCAL SPECIALTIES *************/
   $(document).on("click", "#delete-localSpecialties", function (e) {

@@ -188,5 +188,21 @@ namespace TraVinhMaps.Web.Admin.Services.Review
                 throw new HttpRequestException($"An error occurred while fetching latest reviews: {ex.Message}", ex);
             }
         }
+
+        public async Task<IEnumerable<ReviewResponse>> GetListReviewByUserId(string id, CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient.GetAsync(reviewApi + "GetReviewsByUserId/" + id);
+            if (response.IsSuccessStatusCode)
+            {
+                var contentResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                return System.Text.Json.JsonSerializer.Deserialize<ReviewBase<List<ReviewResponse>>>(contentResult, option)?.Data ?? throw new HttpRequestException("Fail to find list review by user id.");
+            }
+            else
+            {
+                var errorResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new HttpRequestException($"Unable to fetch list review by user id. Status: {response.StatusCode}, Error: {errorResult}");
+            }
+        }
     }
 }
