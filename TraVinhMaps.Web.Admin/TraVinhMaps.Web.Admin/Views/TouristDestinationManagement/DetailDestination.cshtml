@@ -203,22 +203,18 @@
                                     <tbody>
                                         <tr>
                                             <td> <b>Create At:</b></td>
-                                            <td>@Model.CreatedAt</td>
+                                            <td>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</td>
                                         </tr>
                                         <tr>
                                             <td> <b>Update At: &nbsp;&nbsp;&nbsp;</b></td>
                                             <td class="txt-success">@(
                                                 Model.UpdateAt.HasValue
-                                                ? Model.UpdateAt.Value.ToString("dd/MM/yyyy HH:mm")
-                                                                                                : "No update"
-                                                                                                )</ td >
+                                                    ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy HH:mm")
+                                                    : "No update"
+                                            )</ td >
                                         </tr>
                                         <tr>
-                                            <td> <b>Location Type: &nbsp;&nbsp;&nbsp;</b></td>
-                                            <td>@(Model.Location.Type ?? "No type")</td>
-                                        </tr>
-                                        <tr>
-                                            <td> <b>longitude/latitude: &nbsp;&nbsp;&nbsp;</b></td>
+                                            <td> <b>Longitude/latitude: &nbsp;&nbsp;&nbsp;</b></td>
                                             <td>@Model.Location.Coordinates[0] ,&nbsp @Model.Location.Coordinates[1]
                                             </td>
                                         </tr>
@@ -314,13 +310,11 @@
                                 <ul>
                                     <li>
                                         <div class="media-body">
-                                          
                                             <p>@(Model.OpeningHours?.OpenTime ?? "")</p>
                                         </div>
                                     </li>
                                     <li>
                                         <div class="media-body">
-                                           
                                             <p>@(Model.OpeningHours?.CloseTime ?? "")</p>
                                         </div>
                                     </li>

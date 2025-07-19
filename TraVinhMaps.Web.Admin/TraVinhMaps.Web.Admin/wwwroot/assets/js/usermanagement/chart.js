@@ -14,6 +14,9 @@ let ageChart,
 const CATEGORY_CONFIG = [
   { key: "Destination", color: "#4E79A7" }, // Blue
   { key: "Ocop", color: "#F28E2B" }, // Orange
+  // CẢI TIẾN 2: Chú thích rằng key này cần phải có trong file dịch thuật của bạn.
+  // Ví dụ, trong file định nghĩa `window.translationMapForCharts`, bạn cần có:
+  // "Local specialty": "Đặc sản địa phương"
   { key: "Local specialty", color: "#59A14F" }, // Green
   { key: "Tips", color: "#E15759" }, // Red
   { key: "Festivals", color: "#76B7B2" }, // Teal
@@ -77,8 +80,6 @@ function getApiTimeRange(vietnameseValue) {
   return timeRangeMap[vietnameseValue] || vietnameseValue;
 }
 
-// BƯỚC 1: Xóa hàm reRenderAllCharts ở đây
-
 function initializeCharts(initialData = {}) {
   if (typeof Chart === "undefined" || typeof ChartDataLabels === "undefined") {
     console.error("Chart.js or plugins not loaded.");
@@ -86,7 +87,6 @@ function initializeCharts(initialData = {}) {
   }
   Chart.register(ChartDataLabels);
 
-  // CHANGE: Thêm hàm debounce để tối ưu hóa việc gọi API
   function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -162,7 +162,7 @@ function initializeCharts(initialData = {}) {
       options: translateChartOptions(options),
       plugins: {
         ...translateChartOptions(options).plugins,
-        originalLabels: data.labels, // Lưu lại label gốc
+        originalLabels: data.labels,
       },
     });
   }
@@ -242,24 +242,8 @@ function initializeCharts(initialData = {}) {
           {
             label: "Number of Users",
             data: chartValues,
-            backgroundColor: [
-              "#007bff",
-              "#28a745",
-              "#dc3545",
-              "#ffc107",
-              "#17a2b8",
-              "#6f42c1",
-              "#fd7e14",
-            ],
-            borderColor: [
-              "#0056b3",
-              "#218838",
-              "#c82333",
-              "#e0a800",
-              "#138496",
-              "#5a32a3",
-              "#e06c00",
-            ],
+            backgroundColor: ["#007bff", "#28a745", "#dc3545", "#ffc107"],
+            borderColor: ["#0056b3", "#218838", "#c82333", "#e0a800"],
             borderWidth: 1,
           },
         ],
@@ -269,7 +253,15 @@ function initializeCharts(initialData = {}) {
         maintainAspectRatio: false,
         scales: {
           x: { title: { display: true, text: "Age Groups" } },
-          y: { beginAtZero: true, ticks: { maxTicksLimit: 11 } },
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: "Number of Users" },
+            // CẢI TIẾN 3: Đảm bảo trục Y hiển thị số nguyên
+            ticks: {
+                precision: 0,
+                maxTicksLimit: 11
+            },
+          },
         },
         plugins: {
           legend: { display: false },
@@ -295,31 +287,17 @@ function initializeCharts(initialData = {}) {
   /* ---------- Pie/Doughnut Chart (Gender, Status) ---------- */
   function updatePieChart(chartInstance, chartId, data, options) {
     if (chartInstance) chartInstance.destroy();
-
     const noDataElement = document.getElementById(`${chartId}-no-data`);
     const hasData = data && Object.keys(data).length > 0;
-
     noDataElement.style.display = hasData ? "none" : "block";
-
     let finalData, finalOptions;
     if (hasData) {
       finalData = options.getData(data);
       finalOptions = options.getOptions(true);
     } else {
-      finalData = {
-        labels: [""],
-        datasets: [
-          {
-            data: [1],
-            backgroundColor: ["#55555530"],
-            borderColor: "#55555550",
-            borderWidth: 1,
-          },
-        ],
-      };
+      finalData = { labels: [""], datasets: [{ data: [1], backgroundColor: ["#55555530"], borderColor: "#55555550", borderWidth: 1 }] };
       finalOptions = options.getOptions(false);
     }
-
     return initializeChart(chartId, "pie", finalData, finalOptions);
   }
 
@@ -327,39 +305,15 @@ function initializeCharts(initialData = {}) {
     genderChart = updatePieChart(genderChart, "genderChart", data, {
       getData: (d) => ({
         labels: Object.keys(d),
-        datasets: [
-          {
-            label: "Gender",
-            data: Object.values(d),
-            backgroundColor: ["#173878", "#DC3545", "#51BB25"].slice(
-              0,
-              Object.keys(d).length
-            ),
-            borderColor: ["#0F244F", "#A71D2A", "#3A8F1D"].slice(
-              0,
-              Object.keys(d).length
-            ),
-            borderWidth: 1,
-          },
-        ],
+        datasets: [{ label: "Gender", data: Object.values(d), backgroundColor: ["#173878", "#DC3545", "#51BB25"].slice(0,Object.keys(d).length), borderColor: ["#0F244F", "#A71D2A", "#3A8F1D"].slice(0,Object.keys(d).length), borderWidth: 1 }],
       }),
       getOptions: (hasData) => ({
-        responsive: true,
-        maintainAspectRatio: false,
+        responsive: true, maintainAspectRatio: false,
         plugins: {
           legend: { display: hasData, position: "top" },
           tooltip: { enabled: hasData },
-          datalabels: {
-            display: hasData,
-            color: "#fff",
-            font: { weight: "bold", size: 12 },
-            formatter: (value, context) => {
-              const total = context.dataset.data.reduce(
-                (acc, val) => acc + val,
-                0
-              );
-              return total > 0 ? `${((value / total) * 100).toFixed(1)}%` : "";
-            },
+          datalabels: { display: hasData, color: "#fff", font: { weight: "bold", size: 12 },
+            formatter: (value, context) => { const total = context.dataset.data.reduce((acc, val) => acc + val, 0); return total > 0 ? `${((value / total) * 100).toFixed(1)}%` : ""; },
           },
         },
       }),
@@ -370,33 +324,15 @@ function initializeCharts(initialData = {}) {
     statusChart = updatePieChart(statusChart, "statusChart", data, {
       getData: (d) => ({
         labels: Object.keys(d),
-        datasets: [
-          {
-            label: "Status",
-            data: Object.values(d),
-            backgroundColor: ["#51BB25", "#DC3545", "#F8D62B"],
-            borderColor: ["#3A8F1D", "#A71D2A", "#D4B800"],
-            borderWidth: 1,
-          },
-        ],
+        datasets: [{ label: "Status", data: Object.values(d), backgroundColor: ["#51BB25", "#DC3545", "#F8D62B"], borderColor: ["#3A8F1D", "#A71D2A", "#D4B800"], borderWidth: 1 }],
       }),
       getOptions: (hasData) => ({
-        responsive: true,
-        maintainAspectRatio: false,
+        responsive: true, maintainAspectRatio: false,
         plugins: {
           legend: { display: hasData, position: "top" },
           tooltip: { enabled: hasData },
-          datalabels: {
-            display: hasData,
-            color: "#fff",
-            font: { weight: "bold", size: 12 },
-            formatter: (value, context) => {
-              const total = context.dataset.data.reduce(
-                (acc, val) => acc + val,
-                0
-              );
-              return total > 0 ? `${((value / total) * 100).toFixed(1)}%` : "";
-            },
+          datalabels: { display: hasData, color: "#fff", font: { weight: "bold", size: 12 },
+            formatter: (value, context) => { const total = context.dataset.data.reduce((acc, val) => acc + val, 0); return total > 0 ? `${((value / total) * 100).toFixed(1)}%` : ""; },
           },
         },
       }),
@@ -406,18 +342,10 @@ function initializeCharts(initialData = {}) {
   /* ---------- Performance Chart (Bar) ---------- */
   function updatePerformanceChart(data) {
     if (performanceChart) performanceChart.destroy();
-
     const noDataElement = document.getElementById("performanceChart-no-data");
-    const hasData =
-      data &&
-      Object.keys(data).length > 0 &&
-      Object.values(data).some((d) => Object.keys(d).length > 0);
+    const hasData = data && Object.keys(data).length > 0 && Object.values(data).some((d) => Object.keys(d).length > 0);
     noDataElement.style.display = hasData ? "none" : "block";
-
-    const periods = hasData
-      ? Object.keys(data[Object.keys(data)[0]] || {})
-      : [];
-
+    const periods = hasData ? Object.keys(data[Object.keys(data)[0]] || {}) : [];
     const datasets = CATEGORY_CONFIG.map(({ key, color }) => ({
       label: key,
       data: periods.map((p) => data?.[key]?.[p] || 0),
@@ -425,351 +353,140 @@ function initializeCharts(initialData = {}) {
       borderColor: color,
       borderWidth: 1,
     }));
-
-    performanceChart = initializeChart(
-      "performanceChart",
-      "bar",
+    performanceChart = initializeChart( "performanceChart", "bar", { labels: periods, datasets: datasets },
       {
-        labels: periods,
-        datasets: datasets,
-      },
-      {
-        responsive: true,
-        maintainAspectRatio: false,
+        responsive: true, maintainAspectRatio: false,
         scales: {
           x: { stacked: false, title: { display: true, text: "Day of Week" } },
           y: {
-            stacked: false,
-            beginAtZero: true,
-            title: { display: true, text: "Number of Interactions" },
+            stacked: false, beginAtZero: true, title: { display: true, text: "Number of Interactions" },
+            // CẢI TIẾN 3: Đảm bảo trục Y hiển thị số nguyên
+            ticks: { precision: 0 }
           },
         },
         plugins: {
-          legend: { position: "top" },
-          title: { display: true, text: "Performance by Tag" },
-          tooltip: {
-            callbacks: {
-              label: (ctx) => `${t(ctx.dataset.label)}: ${ctx.raw}`,
-            },
-          },
-          datalabels: {
-            color: "#36454F",
-            anchor: "center",
-            align: "center",
-            font: { weight: "bold" },
-            formatter: (value) => (value > 0 ? value : null),
-          },
+          legend: { position: "top" }, title: { display: true, text: "Performance by Tag" },
+          tooltip: { callbacks: { label: (ctx) => `${t(ctx.dataset.label)}: ${ctx.raw}` } },
+          datalabels: { color: "#36454F", anchor: "center", align: "center", font: { weight: "bold" }, formatter: (value) => (value > 0 ? value : null) },
         },
       }
     );
   }
 
   /* ---------- Hometown & Time Charts ---------- */
-  /**
- * Updates the hometown distribution chart with new data.
- * Ensures that bars have appropriate sizes, data labels are displayed inside the bars in white,
- * and Y-axis labels (province/city names) are aligned and clearly spaced.
- * @param {object} data Data to display on the chart, with keys as hometown names and values as user counts.
- */
-function updateHometownChart(data) {
-    // If the chart already exists, destroy it before creating a new one
+  function updateHometownChart(data) {
     if (hometownChart) hometownChart.destroy();
-
     const noDataElement = document.getElementById("hometownChart-no-data");
     const hasData = data && Object.keys(data).length > 0;
-    
-    // Display or hide the "no data" message
     noDataElement.style.display = hasData ? "none" : "block";
     const chartData = hasData ? data : {};
-
-    // Convert data to an array of [key, value] pairs and sort in descending order by value
     let dataArray = Object.entries(chartData).sort((a, b) => b[1] - a[1]);
-
-    // Define the base color and create a color gradient for the bars
-    const baseColor = "#173878"; // Dark blue color
-    const colors = dataArray.map((_, i) => {
-        // Use Chart.helpers.color to adjust the transparency (alpha) for each bar.
-        // The alpha value is calculated to ensure a minimum transparency,
-        // preventing bars from becoming too faint, especially for smaller data points.
-        const alpha = Math.max(0.6, 1 - i * 0.015); // Adjusted alpha decay rate and added minimum alpha of 0.6
-        return Chart.helpers.color(baseColor).alpha(alpha).rgbString();
-    });
-    // Create hover colors (lighter than the base color)
+    const baseColor = "#173878";
+    const colors = dataArray.map((_, i) => { const alpha = Math.max(0.6, 1 - i * 0.015); return Chart.helpers.color(baseColor).alpha(alpha).rgbString(); });
     const hoverColors = colors.map((c) => lightenColor(c, 20));
-
-    // Calculate dynamic height for the chart based on the number of data entries.
-    // Each bar is assumed to have a minimum height of 30px to ensure enough space for labels.
-    const minBarHeight = 40; 
-    // The overall chart height will be a minimum of 300px or enough to contain all bars.
-    const desiredChartHeight = Math.max(300, dataArray.length * minBarHeight); 
-    
-    // Set the height for the canvas element containing the chart.
-    // Ensure your HTML canvas element has the id 'hometownChart'.
+    const minBarHeight = 40;
+    const desiredChartHeight = Math.max(300, dataArray.length * minBarHeight);
     const chartCanvas = document.getElementById("hometownChart");
-    if (chartCanvas) {
-        chartCanvas.style.height = `${desiredChartHeight}px`;
-    }
-
-    // Initialize a new chart
-    hometownChart = initializeChart(
-        "hometownChart", // ID of the canvas element
-        "bar",           // Chart type: horizontal bar
-        {
-            // Labels for the Y-axis (hometown names)
-            labels: dataArray.map((item) => item[0]),
-            datasets: [
-                {
-                    label: "Number of Users", // Dataset label
-                    data: dataArray.map((item) => item[1]), // User count data
-                    backgroundColor: colors,        // Background color of the bars
-                    hoverBackgroundColor: hoverColors, // Background color on hover
-                    borderColor: baseColor,         // Border color of the bars
-                    borderWidth: 1,                 // Border width
-                },
-            ],
+    if (chartCanvas) { chartCanvas.style.height = `${desiredChartHeight}px`; }
+    hometownChart = initializeChart( "hometownChart", "bar",
+      {
+        labels: dataArray.map((item) => item[0]),
+        datasets: [{ label: "Number of Users", data: dataArray.map((item) => item[1]), backgroundColor: colors, hoverBackgroundColor: hoverColors, borderColor: baseColor, borderWidth: 1, }],
+      },
+      {
+        indexAxis: "y", responsive: true, maintainAspectRatio: false,
+        hover: { mode: "nearest", axis: "y", intersect: true },
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: true, callbacks: { label: function (context) { const total = context.dataset.data.reduce((acc, val) => acc + val, 0); return `${context.label}: ${context.raw} users (${((context.raw / total) * 100).toFixed(2)}%)`; } } },
+          datalabels: {
+            anchor: "end", align: "start", color: "#FFFFFF", font: { weight: "bold", size: 9 },
+            formatter: (value) => { const total = dataArray.reduce((sum, item) => sum + item[1], 0); return total > 0 ? `${value} (${((value / total) * 100).toFixed(2)}%)` : ""; },
+            padding: { left: 5, right: 5 }, clamp: true, clip: true,
+          },
         },
-        {
-            indexAxis: "y", // Set Y-axis as the index axis (creates a horizontal bar chart)
-            responsive: true, // Chart will automatically adjust its size to the container
-            maintainAspectRatio: false, // Do not maintain aspect ratio, allows dynamic height
-            hover: {
-                mode: "nearest", // Hover mode: nearest
-                axis: "y",       // Only activate hover on the Y-axis
-                intersect: true, // Activate hover when the cursor intersects with the bar
-            },
-            plugins: {
-                legend: { display: false }, // Hide the legend
-                tooltip: {
-                    enabled: true, // Enable tooltips on hover
-                    callbacks: {
-                        label: function (context) {
-                            // Format tooltip content: "Name: Number of users (Percentage%)"
-                            const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
-                            return `${context.label}: ${context.raw} users (${(
-                                (context.raw / total) *
-                                100
-                            ).toFixed(2)}%)`;
-                        },
-                    },
-                },
-                datalabels: {
-                    anchor: "end", // Label anchor position: end of the bar
-                    align: "start", // Label alignment: start from the end of the bar (right side) to be inside the bar
-                    color: "#FFFFFF", // Data label text color: White
-                    font: { weight: "bold", size: 9 }, // Font size and weight
-                    formatter: (value) => {
-                        // Format data label displayed on the bar: "Count (Percentage%)"
-                        const total = dataArray.reduce((sum, item) => sum + item[1], 0);
-                        return total > 0
-                            ? `${value} (${((value / total) * 100).toFixed(2)}%)`
-                            : "";
-                    },
-                    // Adjust padding so data labels are not too close to the bar edge
-                    padding: {
-                        left: 5,
-                        right: 5
-                    },
-                    clamp: true, // Clamp labels within the chart area
-                    clip: true,  // Clip labels if they extend beyond the chart area
-                },
-            },
-            elements: {
-                bar: {
-                    // barThickness: 48, // Can be adjusted or uncommented if fixed bar thickness control is desired
-                    // maxBarThickness: 40 // Or limit the maximum bar thickness
-                },
-            },
-            scales: {
-                x: {
-                    title: { display: true, text: "Number of Users" }, // X-axis title
-                    beginAtZero: true, // Start X-axis from 0
-                    grid: { display: true }, // Display X-axis grid
-                    ticks: {
-                        color: '#666' // Text color for X-axis labels
-                    }
-                },
-                y: {
-                    ticks: {
-                        autoSkip: false, 
-                        maxRotation: 0,  
-                        minRotation: 0,  
-                        color: '#666',   
-                        padding: 15,     
-                    },
-                    grid: {
-                        display: false 
-                    }
-                }
-            },
-            layout: {
-                padding: {
-                    right: 20 
-                }
-            }
-        }
+        elements: { bar: {} },
+        scales: {
+          x: {
+            title: { display: true, text: "Number of Users" }, beginAtZero: true, grid: { display: true },
+            // CẢI TIẾN 3: Đảm bảo trục X (nay là trục giá trị) hiển thị số nguyên
+            ticks: { color: '#666', precision: 0 }
+          },
+          y: {
+            ticks: { autoSkip: false, maxRotation: 0, minRotation: 0, color: '#666', padding: 15 },
+            grid: { display: false }
+          }
+        },
+        layout: { padding: { right: 20 } }
+      }
     );
-}
+  }
 
-/**
- * Helper function to lighten a color.
- * @param {string} color Original color (rgb or hex).
- * @param {number} percent Percentage to lighten (0-100).
- * @returns {string} Lightened color in rgb format.
- */
-function lightenColor(color, percent) {
-    let r, g, b;
-
-    // Extract RGB values from rgb(...) or rgba(...) format
-    if (color.startsWith("rgb")) {
-        const rgba = color.match(/\d+/g).map(Number);
-        [r, g, b] = rgba;
-    } else if (color.startsWith("#")) {
-        // Extract RGB values from hex format
-        const num = parseInt(color.slice(1), 16);
-        r = (num >> 16) & 255;
-        g = (num >> 8) & 255;
-        b = num & 255;
-    }
-
-    // Increase RGB values to lighten the color, capping at 255
-    r = Math.min(255, r + Math.round(2.55 * percent));
-    g = Math.min(255, g + Math.round(2.55 * percent));
-    b = Math.min(255, b + Math.round(2.55 * percent));
-
-    return `rgb(${r}, ${g}, ${b})`;
-}
-
-  // /* ---------- Time Chart (Line) ---------- */
   function lightenColor(color, percent) {
     let r, g, b;
-
-    // Tách từ rgb(...) hoặc rgba(...)
-    if (color.startsWith("rgb")) {
-      const rgba = color.match(/\d+/g).map(Number);
-      [r, g, b] = rgba;
-    } else if (color.startsWith("#")) {
-      const num = parseInt(color.slice(1), 16);
-      r = (num >> 16) & 255;
-      g = (num >> 8) & 255;
-      b = num & 255;
-    }
-
+    if (color.startsWith("rgb")) { const rgba = color.match(/\d+/g).map(Number); [r, g, b] = rgba; }
+    else if (color.startsWith("#")) { const num = parseInt(color.slice(1), 16); r = (num >> 16) & 255; g = (num >> 8) & 255; b = num & 255; }
     r = Math.min(255, r + Math.round(2.55 * percent));
     g = Math.min(255, g + Math.round(2.55 * percent));
     b = Math.min(255, b + Math.round(2.55 * percent));
-
     return `rgb(${r}, ${g}, ${b})`;
   }
 
-  // CHANGE: Sửa lại hàm updateTimeChart để dịch thuật chính xác
+  // /* ---------- Time Chart (Line) ---------- */
   function updateTimeChart(data) {
     if (timeChart) timeChart.destroy();
     const noDataElement = document.getElementById("timeChart-no-data");
     const hasData = data && Object.keys(data).length > 0;
     noDataElement.style.display = hasData ? "none" : "block";
-
     const chartData = hasData ? data : {};
     const labels = hasData ? Object.keys(chartData) : [];
     const timeRange = document.getElementById("timeChartSelect")?.value || "tháng";
-
-    // Mảng các tháng đã được dịch để sử dụng cho chế độ xem 'năm'
-    const translatedMonthsShort = [
-      t("Jan"), t("Feb"), t("Mar"), t("Apr"), t("May"), t("Jun"),
-      t("Jul"), t("Aug"), t("Sep"), t("Oct"), t("Nov"), t("Dec")
-    ];
-
-    timeChart = initializeChart(
-      "timeChart",
-      "line",
+    const translatedMonthsShort = [ t("Jan"), t("Feb"), t("Mar"), t("Apr"), t("May"), t("Jun"), t("Jul"), t("Aug"), t("Sep"), t("Oct"), t("Nov"), t("Dec") ];
+    timeChart = initializeChart( "timeChart", "line",
       {
         labels: labels.map((label) => {
           switch (timeRange) {
-            case "tuần":
-              return `${t("Week")} ${label.split("-W")[1]}`;
-            case "năm":
-              const date = new Date(label + "-01");
-              return `${translatedMonthsShort[date.getMonth()]} ${date.getFullYear()}`;
-            case "ngày":
-              return label; // Giả sử API trả về định dạng ngày đã phù hợp
-            default:
-              return label; // 'tháng' và các trường hợp khác
+            case "tuần": return `${t("Week")} ${label.split("-W")[1]}`;
+            case "năm": const date = new Date(label + "-01"); return `${translatedMonthsShort[date.getMonth()]} ${date.getFullYear()}`;
+            case "ngày": return label;
+            default: return label;
           }
         }),
-        datasets: [
-          {
-            label: "Number of Users", // Sẽ được dịch bởi `translateChartData`
-            data: Object.values(chartData),
-            backgroundColor: "#007bff",
-            borderColor: "#0056b3",
-            borderWidth: 2,
-            fill: false,
-            pointRadius: 8,
-            pointHoverRadius: 6,
-            tension: 0.4,
-          },
-        ],
+        datasets: [{ label: "Number of Users", data: Object.values(chartData), backgroundColor: "#007bff", borderColor: "#0056b3", borderWidth: 2, fill: false, pointRadius: 8, pointHoverRadius: 6, tension: 0.4, }],
       },
       {
-        responsive: true,
-        maintainAspectRatio: false,
+        responsive: true, maintainAspectRatio: false,
         scales: {
           y: {
-            beginAtZero: true,
-            title: { display: true, text: "Number of Users" }, // Sẽ được dịch bởi `translateChartOptions`
+            beginAtZero: true, title: { display: true, text: "Number of Users" },
+            // CẢI TIẾN 3: Đảm bảo trục Y chỉ hiển thị số nguyên
+            ticks: { precision: 0 }
           },
           x: {
-            title: {
-              display: true,
-              // Truyền key dịch thuật, ví dụ: "Tháng", "Năm"...
-              text: t(timeRange.charAt(0).toUpperCase() + timeRange.slice(1))
-            },
+            title: { display: true, text: t(timeRange.charAt(0).toUpperCase() + timeRange.slice(1)) },
           },
         },
         plugins: {
-          datalabels: {
-            display: true,
-            color: "#ffffff",
-            font: { weight: "bold", size: 10 },
-            formatter: (value) => (value > 0 ? value : ""),
-            align: "center",
-            anchor: "center",
-          },
+          datalabels: { display: true, color: "#ffffff", font: { weight: "bold", size: 10 }, formatter: (value) => (value > 0 ? value : ""), align: "center", anchor: "center" },
         },
       }
     );
   }
 
-
   /* ---------- Initialize and Bind Events ---------- */
-
-  //  --- Re-render all charts function ---
   function reRenderAllCharts() {
-    const statTimeRange =
-      document.getElementById("ageChartSelect")?.value || "month";
-    const performanceTimeRange =
-      document.getElementById("timeChartSelectPerformance")?.value || "month";
-
+    const statTimeRange = document.getElementById("ageChartSelect")?.value || "month";
+    const performanceTimeRange = document.getElementById("timeChartSelectPerformance")?.value || "month";
     fetchChartData("age", statTimeRange, null, updateAgeChart);
     fetchChartData("gender", statTimeRange, null, updateGenderChart);
     fetchChartData("status", statTimeRange, null, updateStatusChart);
     fetchChartData("hometown", statTimeRange, null, updateHometownChart);
     fetchChartData("time", statTimeRange, null, updateTimeChart);
-    fetchChartData(
-      "performance",
-      performanceTimeRange,
-      getSelectedTags(),
-      updatePerformanceChart
-    );
+    fetchChartData("performance", performanceTimeRange, getSelectedTags(), updatePerformanceChart);
   }
 
-  // --- Expose reRenderAllCharts globally ---
-  // This allows the function to be called from outside this script, e.g., on language
   window.reRenderAllCharts = reRenderAllCharts;
 
-  // --- Initial Data Fetch ---
-  reRenderAllCharts();
-
-  // --- Bind Select Change Events for Each Chart ---
   const chartConfigs = [
     { id: "age", updateFn: updateAgeChart, selectId: "ageChartSelect" },
     { id: "gender", updateFn: updateGenderChart, selectId: "genderChartSelect" },
@@ -779,18 +496,14 @@ function lightenColor(color, percent) {
     { id: "performance", updateFn: updatePerformanceChart, selectId: "timeChartSelectPerformance" },
   ];
 
-  // CHANGE: Áp dụng debounce cho các sự kiện 'change'
   chartConfigs.forEach(({ id, updateFn, selectId }) => {
     const select = document.getElementById(selectId);
     if (select) {
       const debouncedFetch = debounce((value) => {
         const tagName = id === "performance" ? getSelectedTags() : null;
         fetchChartData(id, value, tagName, updateFn);
-      }, 350); // Delay 350ms
-
-      select.addEventListener("change", (e) => {
-        debouncedFetch(e.target.value);
-      });
+      }, 350);
+      select.addEventListener("change", (e) => { debouncedFetch(e.target.value); });
     }
   });
 
@@ -799,55 +512,26 @@ function lightenColor(color, percent) {
     const debouncedPerformanceUpdate = debounce(() => {
         const timeRange = document.getElementById("timeChartSelectPerformance")?.value || "month";
         fetchChartData("performance", timeRange, getSelectedTags(), updatePerformanceChart);
-    }, 350); // Delay 350ms
-
+    }, 350);
     tagSelect.addEventListener("change", debouncedPerformanceUpdate);
   }
 
-
-  const downloadDemographicsBtn = document.getElementById(
-    "downloadUserStatChart"
-  );
+  const downloadDemographicsBtn = document.getElementById("downloadUserStatChart");
   const demographicsSelect = document.getElementById("downloadUserStatSelect");
   if (downloadDemographicsBtn && demographicsSelect) {
     downloadDemographicsBtn.addEventListener("click", () => {
-      const selectedOption =
-        demographicsSelect.options[demographicsSelect.selectedIndex];
-      const selectedChartId = selectedOption.dataset.chartId; // fetch the chart ID from data attribute
+      const selectedOption = demographicsSelect.options[demographicsSelect.selectedIndex];
+      const selectedChartId = selectedOption.dataset.chartId;
       let chartToDownload;
       let filename;
       switch (selectedChartId) {
-        case "ageChart":
-          chartToDownload = ageChart;
-          filename = "age_distribution";
-          break;
-        case "genderChart":
-          chartToDownload = genderChart;
-          filename = "gender_distribution";
-          break;
-        case "statusChart":
-          chartToDownload = statusChart;
-          filename = "status_distribution";
-          break;
-        default:
-          showTimedAlert(
-            t("Error"),
-            t("Invalid chart selection."),
-            "error",
-            1500
-          );
-          return;
+        case "ageChart": chartToDownload = ageChart; filename = "age_distribution"; break;
+        case "genderChart": chartToDownload = genderChart; filename = "gender_distribution"; break;
+        case "statusChart": chartToDownload = statusChart; filename = "status_distribution"; break;
+        default: showTimedAlert(t("Error"), t("Invalid chart selection."), "error", 1500); return;
       }
-      if (chartToDownload) {
-        downloadChart(chartToDownload, selectedChartId, filename);
-      } else {
-        showTimedAlert(
-          t("Error!"),
-          t("Chart not ready or has no data."),
-          "error",
-          1000
-        );
-      }
+      if (chartToDownload) { downloadChart(chartToDownload, selectedChartId, filename); }
+      else { showTimedAlert(t("Error!"), t("Chart not ready or has no data."), "error", 1000); }
     });
   }
   function setupDownloadButton(buttonId, getChart, filenamePrefix) {
@@ -855,84 +539,56 @@ function lightenColor(color, percent) {
     if (button) {
       button.addEventListener("click", () => {
         const chartInstance = getChart();
-        if (chartInstance) {
-          downloadChart(
-            chartInstance,
-            buttonId.replace("download", "").toLowerCase(),
-            filenamePrefix
-          );
-        } else {
-          showTimedAlert(
-            t("Error!"),
-            t("Chart not ready or has no data."),
-            "error",
-            1000
-          );
-        }
+        if (chartInstance) { downloadChart(chartInstance, buttonId.replace("download", "").toLowerCase(), filenamePrefix); }
+        else { showTimedAlert( t("Error!"), t("Chart not ready or has no data."), "error", 1000 ); }
       });
     }
   }
 
-  setupDownloadButton(
-    "downloadPerformanceChart",
-    () => performanceChart,
-    "performance_by_tag"
-  );
-  setupDownloadButton(
-    "downloadHometownChart",
-    () => hometownChart,
-    "hometown_distribution"
-  );
-  setupDownloadButton(
-    "downloadTimeChart",
-    () => timeChart,
-    "new_users_over_time"
-  );
+  setupDownloadButton("downloadPerformanceChart", () => performanceChart, "performance_by_tag");
+  setupDownloadButton("downloadHometownChart", () => hometownChart, "hometown_distribution");
+  setupDownloadButton("downloadTimeChart", () => timeChart, "new_users_over_time");
 }
 // --- End of Core Functions ---
 function showTimedAlert(title, message, type, duration) {
   if (typeof Swal !== "undefined") {
-    Swal.fire({
-      title: t(title),
-      text: t(message),
-      icon: type,
-      timer: duration,
-      showConfirmButton: false,
-    });
+    Swal.fire({ title: t(title), text: t(message), icon: type, timer: duration, showConfirmButton: false });
   } else {
     alert(`${t(title)}: ${t(message)}`);
   }
 }
 
-let isFirstRenderDone = false;
+// CẢI TIẾN 1: Tối ưu hóa logic khởi tạo và render lại biểu đồ
+// Biến cờ này đảm bảo các hàm khởi tạo chỉ chạy MỘT LẦN DUY NHẤT.
+let chartsHaveBeenInitialized = false;
 
+// Sự kiện này được gọi khi bạn thay đổi ngôn ngữ
 window.addEventListener("languageChanged", () => {
-  if (typeof window.reRenderAllCharts === "function" && isFirstRenderDone) {
-    console.log("Language changed → re-rendering charts...");
+  // Chỉ render lại biểu đồ NẾU chúng đã được khởi tạo trước đó.
+  // Điều này chỉ cập nhật dữ liệu và bản dịch, không tạo lại toàn bộ từ đầu,
+  // giúp tránh vấn đề mất bộ lọc của người dùng.
+  if (chartsHaveBeenInitialized && typeof window.reRenderAllCharts === "function") {
+    console.log("Language changed → Re-rendering charts with new translations...");
     window.reRenderAllCharts();
   }
 });
 
-function isFilterReady() {
-  return document.getElementById("ageChartSelect") &&
-         document.getElementById("genderChartSelect") &&
-         document.getElementById("statusChartSelect") &&
-         document.getElementById("hometownChartSelect") &&
-         document.getElementById("timeChartSelectPerformance") &&
-         document.getElementById("downloadUserStatSelect") &&
-         document.getElementById("tagSelect");
-}
-
+// Sự kiện này chỉ chạy một lần khi toàn bộ trang HTML đã được tải xong.
 document.addEventListener("DOMContentLoaded", () => {
-  initializeCharts(window.initialData || {});
+  // Kiểm tra để chắc chắn rằng việc khởi tạo chưa từng xảy ra.
+  if (!chartsHaveBeenInitialized) {
+    console.log("DOM Content Loaded → Initializing charts for the very first time.");
+    
+    // Gọi hàm chính để thiết lập tất cả các hàm và sự kiện.
+    initializeCharts(window.initialData || {});
 
-  setTimeout(() => {
-    if (isFilterReady() && typeof window.reRenderAllCharts === "function") {
-      console.log("Initial render → rendering all charts...");
+    // Sau khi thiết lập xong, gọi hàm để tải dữ liệu lần đầu tiên cho tất cả biểu đồ.
+    if (typeof window.reRenderAllCharts === 'function') {
+      console.log("Performing initial data fetch for all charts.");
       window.reRenderAllCharts();
-      isFirstRenderDone = true;
-    } else {
-      console.warn("Chart filters not ready, skipping initial render.");
     }
-  }, 500);
+    
+    // Đặt cờ thành true để ngăn việc khởi tạo lại trong tương lai.
+    chartsHaveBeenInitialized = true;
+  }
 });

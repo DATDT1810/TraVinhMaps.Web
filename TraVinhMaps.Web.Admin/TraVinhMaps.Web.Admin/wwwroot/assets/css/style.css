@@ -4081,8 +4081,6 @@ table tbody tr {
 ==========================**/
 .text-justify {
   text-align: justify;
-  max-height: 180px;
-  overflow-y: auto; 
   margin-bottom: 15px;
 } 
 /**=====================

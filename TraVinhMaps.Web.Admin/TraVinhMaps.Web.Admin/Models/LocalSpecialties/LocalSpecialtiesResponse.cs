@@ -15,7 +15,7 @@ namespace TraVinhMaps.Web.Admin.Models.LocalSpecialties
         public required string TagId { get; set; }
         public required bool Status { get; set; }
         public required DateTime CreatedAt { get; set; }
-        public DateTime? UpdateAt { get; set; }
+        public DateTime? UpdateAt { get; set; } = DateTime.UtcNow;
     }
 
     public class LocalSpecialtyLocation

@@ -15,7 +15,7 @@ namespace TraVinhMaps.Web.Admin.Models.TouristDestination
         public LocationDestination Location { get; set; }
         public List<string>? Images { get; set; }
         public HistoryStoryRespont? HistoryStory { get; set; }
-        public DateTime? UpdateAt { get; set; }
+        public DateTime? UpdateAt { get; set; } = DateTime.UtcNow;
         public string DestinationTypeId { get; set; }
         public OpeningHoursDestination? OpeningHours { get; set; }
         public string? Capacity { get; set; }

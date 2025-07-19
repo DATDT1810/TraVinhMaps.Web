@@ -60,7 +60,7 @@ function deleteImage(button) {
               "Error!",
               response.message || "Failed to delete image.",
               "error",
-              2000
+              1000
             );
           }
         },
@@ -68,7 +68,7 @@ function deleteImage(button) {
           var errorMessage =
             xhr.responseJSON?.message ||
             "An error occurred while deleting the image.";
-          showTimedAlert("Error!", errorMessage, "error", 2000);
+          showTimedAlert("Error!", errorMessage, "error", 1000);
         },
       });
     }
@@ -94,7 +94,7 @@ $(document).ready(function () {
         "Error!",
         `You can upload a maximum of ${maxImages} images.`,
         "error",
-        2000
+        1000
       );
       this.value = ""; // Clear input
       return;
@@ -112,7 +112,7 @@ $(document).ready(function () {
             ", "
           )}.`,
           "error",
-          2000
+          1000
         );
         this.value = "";
         return;
@@ -122,7 +122,7 @@ $(document).ready(function () {
           "Error!",
           `File ${file.name} exceeds the maximum size of 5 MB.`,
           "error",
-          2000
+          1000
         );
         this.value = "";
         return;
@@ -145,7 +145,7 @@ $(document).ready(function () {
       },
       success: function (response) {
         if (response.success) {
-          showTimedAlert("Success!", response.message, "success", 2000);
+          showTimedAlert("Success!", response.message, "success", 1000);
           // Thêm ảnh mới vào carousel bằng API add.owl.carousel
           response.imageUrls.forEach(function (imageUrl) {
             // Thêm ảnh vào carousel chính sync1
@@ -178,7 +178,7 @@ $(document).ready(function () {
           // Clear input file
           $("#imageInput").val("");
         } else {
-          showTimedAlert("Error!", response.message, "error", 2000);
+          showTimedAlert("Error!", response.message, "error", 1000);
           $("#imageInput").val("");
         }
       },
@@ -186,7 +186,7 @@ $(document).ready(function () {
         var errorMessage =
           xhr.responseJSON?.message ||
           "An error occurred while uploading the images.";
-        showTimedAlert("Error!", errorMessage, "error", 2000);
+        showTimedAlert("Error!", errorMessage, "error", 1000);
         $("#imageInput").val("");
       },
     });
@@ -230,7 +230,7 @@ $(document).ready(function () {
             "Success!",
             response.message || "Location updated successfully!",
             "success",
-            2000
+            1000
           );
           $("#editLocationModal").modal("hide");
 
@@ -251,7 +251,7 @@ $(document).ready(function () {
                 "Error!",
                 "Failed to reload location data.",
                 "error",
-                2000
+                1000
               );
             },
           });
@@ -260,7 +260,7 @@ $(document).ready(function () {
             "Error!",
             response.message || "Failed to update location.",
             "error",
-            2000
+            1000
           );
         }
       },
@@ -269,7 +269,7 @@ $(document).ready(function () {
         var errorMessage =
           xhr.responseJSON?.message ||
           "An error occurred while updating the location.";
-        showTimedAlert("Error!", errorMessage, "error", 2000);
+        showTimedAlert("Error!", errorMessage, "error", 1000);
       },
     });
   });
@@ -300,7 +300,7 @@ $(document).ready(function () {
             "Success!",
             response.message || "Location added successfully!",
             "success",
-            2000
+            1000
           );
           $("#addLocationModal").modal("hide");
 
@@ -323,7 +323,7 @@ $(document).ready(function () {
                 "Error!",
                 "Failed to reload location data.",
                 "error",
-                2000
+                1000
               );
             },
           });
@@ -332,7 +332,7 @@ $(document).ready(function () {
             "Error!",
             response.message || "Failed to add location.",
             "error",
-            2000
+            1000
           );
         }
       },
@@ -341,7 +341,7 @@ $(document).ready(function () {
         var errorMessage =
           xhr.responseJSON?.message ||
           "An error occurred while adding the location.";
-        showTimedAlert("Error!", errorMessage, "error", 2000);
+        showTimedAlert("Error!", errorMessage, "error", 1000);
       },
     });
   });
@@ -392,14 +392,14 @@ $(document).ready(function () {
                 "Success!",
                 "Location deleted successfully!",
                 "success",
-                2000
+                1000
               );
             } else {
               showTimedAlert(
                 "Error!",
                 response.message || "Failed to delete location.",
                 "error",
-                2000
+                1000
               );
             }
           },
@@ -407,7 +407,7 @@ $(document).ready(function () {
             var errorMessage =
               xhr.responseJSON?.message ||
               "An error occurred while deleting the location.";
-            showTimedAlert("Error!", errorMessage, "error", 2000);
+            showTimedAlert("Error!", errorMessage, "error", 1000);
           },
         });
       }

@@ -187,7 +187,8 @@
                             </li>
                             <!-- Dashboard -->
                             <li class="sidebar-list">
-                                <a class="sidebar-link sidebar-title link-nav" asp-controller="Home" asp-action="Index">
+                                <a class="sidebar-link sidebar-title link-nav" asp-controller="Home" asp-action="Index"
+                                    data-href="/">
                                     <i class="fa fa-home"></i>
                                     <span class="lan-3">Dashboards</span>
                                 </a>
@@ -248,13 +249,13 @@
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="Review"
                                     asp-action="Index">
                                     <i class="fa fa-comments"></i>
-                                    <span>Review Management</span>
+                                    <span>Reviews Management</span>
                                 </a>
                             </li>
                             <!-- Local Specialties Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="LocalSpecialties"
-                                    asp-action="Index">
+                                    asp-action="Index" data-href="/LocalSpecialties">
                                     <i class="fa fa-cutlery"></i>
                                     <span>Local Specialties</span>
                                 </a>
@@ -270,9 +271,9 @@
                             <!-- Tips Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="CommunityTips"
-                                    asp-action="Index">
+                                    asp-action="Index" data-href="/CommunityTips">
                                     <i class="fa fa-lightbulb-o"></i>
-                                    <span>Tips Managment</span>
+                                    <span>Tips Management</span>
                                 </a>
                             </li>
                             <!-- Send Notifications -->
@@ -314,10 +315,10 @@
                                     <span>Analytics</span>
                                 </a>
                                 <ul class="sidebar-submenu">
-                                    <li><a asp-controller="OcopProduct" asp-action="OcopDashboard">Ocop</a></li>
+                                    <li><a class="sidebar-link" href="/Admin/OcopProduct/Dashboard">Ocop</a></li>
                                     <li>
-                                        <a asp-controller="TouristDestinationManagement"
-                                            asp-action="DestinationsStatistics">Destination</a>
+                                        <a class="sidebar-link"
+                                            href="/Admin/TouristDestinationManagement/destinations-statistics">Destination</a>
                                     </li>
                                 </ul>
                             </li>
@@ -359,6 +360,10 @@
     <script src="~/assets/js/header-slick.js"></script>
 
     <!-- calendar js-->
+    <script src="~/assets/js/datepicker/date-picker/datepicker.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.en.js"></script>
+    <script src="~/assets/js/datepicker/date-picker/datepicker.custom.js"></script>
+    <script src="~/assets/js/typeahead/handlebars.js"></script>
     <script src="~/assets/js/dropzone/dropzone.js"></script>
     <script src="~/assets/js/dropzone/dropzone-script.js"></script>
     <script src="~/assets/js/height-equal.js"></script>
@@ -379,9 +384,7 @@
     <script src="~/assets/js/script.js"></script>
     <script src="~/assets/js/translate/translation.js"></script>
 
-
     <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@7.0.5/dist/browser/signalr.min.js"></script>
-
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

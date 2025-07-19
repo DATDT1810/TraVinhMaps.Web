@@ -340,7 +340,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 var result = await _destinationService.AddDestinationImage(addDestinationImageRequest);
                 if (result == null)
                 {
-                    TempData["error"] = "adding photos to this tourist attraction failed, please try again later";
+                    TempData["error"] = "Adding photos to this tourist attraction failed, please try again later";
                     return RedirectToAction("DetailDestination", new { id = id });
                 }
                 return RedirectToAction("DetailDestination", new { id = id });
