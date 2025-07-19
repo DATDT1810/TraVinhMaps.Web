@@ -23,6 +23,6 @@ namespace TraVinhMaps.Web.Admin.Models.LocalSpecialties
         public string TagId { get; set; } = default!;
 
         public bool Status { get; set; } = true;
-        public DateTime? UpdateAt { get; set; }
+        public DateTime? UpdateAt { get; set; } = DateTime.UtcNow;
     }
 }

@@ -9,6 +9,6 @@ namespace TraVinhMaps.Web.Admin.Models.OcopType
     {
         public required string Id { get; set; }
         public required string OcopTypeName { get; set; }
-        public DateTime? UpdateAt { get; set; }
+        public DateTime? UpdateAt { get; set; } = DateTime.UtcNow;
     }
 }

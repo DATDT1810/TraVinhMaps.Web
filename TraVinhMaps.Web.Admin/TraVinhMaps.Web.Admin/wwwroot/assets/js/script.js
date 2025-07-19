@@ -134,6 +134,7 @@
   //  APPLY dark mode + sidebar active on page load
   // ========================
   $(document).ready(function () {
+    // Dark mode handling (unchanged)
     const savedMode = localStorage.getItem("mode");
     const $icon = $(".mode").find("i");
 
@@ -148,65 +149,77 @@
     }
 
     if (typeof feather !== "undefined") {
-      feather.replace(); // khởi tạo lại icon
+      feather.replace(); // Initialize feather icons
     }
 
-    // ========================
     // Sidebar Active
-    // ========================
-    $(document).ready(function () {
-      let path = window.location.pathname.toLowerCase().replace(/\/$/, "");
-      if (path === "") path = "/"; // root path là "/"
+    let path = window.location.pathname.toLowerCase().replace(/\/$/, "");
+    if (path === "") path = "/"; // Root path is "/"
 
-      let bestMatchLink = null;
-      let bestMatchLength = 0;
+    // Reset all active classes and hide submenus
+    $("#sidebar-menu .sidebar-link").removeClass("active");
+    $("#sidebar-menu .sidebar-list").removeClass("active");
+    $("#sidebar-menu .sidebar-submenu").css("display", "none");
 
-      $("#sidebar-menu .sidebar-link").removeClass("active");
-      $("#sidebar-menu .sidebar-list").removeClass("active");
-      $("#sidebar-menu .sidebar-submenu").css("display", "none");
+    let bestMatchLink = null;
+    let bestMatchLength = 0;
 
-      $("#sidebar-menu .sidebar-link").each(function () {
-        const $link = $(this);
-        const hrefAttr = $link.attr("href")?.toLowerCase().replace(/\/$/, "");
-        const dataHrefAttr = $link
-          .attr("data-href")
-          ?.toLowerCase()
-          .replace(/\/$/, "");
-        const href = dataHrefAttr || hrefAttr;
-        if (!href || href === "#") return;
+    // Iterate through sidebar links
+    $("#sidebar-menu .sidebar-link").each(function () {
+      const $link = $(this);
+      const hrefAttr = $link.attr("href")?.toLowerCase().replace(/\/$/, "");
+      const dataHrefAttr = $link
+        .attr("data-href")
+        ?.toLowerCase()
+        .replace(/\/$/, "");
+      const href = dataHrefAttr || hrefAttr;
+      if (!href || href === "#") return;
 
-        const isSubLink = $link.closest("ul").hasClass("sidebar-submenu");
-        const isMatch = path === href || path.startsWith(href + "/");
+      const isSubLink = $link.closest("ul").hasClass("sidebar-submenu");
 
-        if (isMatch) {
-          const weight = href.length + (isSubLink ? 1000 : 0);
-          if (weight > bestMatchLength) {
-            bestMatchLink = $link;
-            bestMatchLength = weight;
-          }
-        }
-      });
+      // Check if the current path matches or starts with the link's href
+      const isMatch =
+        path === href || (href !== "/" && path.startsWith(href + "/"));
 
-      if (bestMatchLink) {
-        bestMatchLink.addClass("active");
-
-        const parentListItem = bestMatchLink.closest("li.sidebar-list");
-        if (parentListItem) parentListItem.addClass("active");
-
-        const submenu = bestMatchLink.closest("ul.sidebar-submenu");
-        if (submenu.length) {
-          submenu.css("display", "block");
-          submenu.closest("li.sidebar-list").addClass("active");
-        }
-      } else {
-        // ✅ fallback: nếu không có match nào → chọn Dashboard
-        const dashboardLink = $('#sidebar-menu .sidebar-link[href="/"]');
-        if (dashboardLink.length) {
-          dashboardLink.addClass("active");
-          dashboardLink.closest("li.sidebar-list").addClass("active");
+      if (isMatch) {
+        // Prioritize longer matches, with sub-links having lower priority
+        const weight = href.length + (isSubLink ? 1000 : 0);
+        if (weight > bestMatchLength) {
+          bestMatchLink = $link;
+          bestMatchLength = weight;
         }
       }
     });
+
+    // Activate the best matching link
+    if (bestMatchLink) {
+      bestMatchLink.addClass("active");
+
+      const parentListItem = bestMatchLink.closest("li.sidebar-list");
+      if (parentListItem.length) {
+        parentListItem.addClass("active");
+      }
+
+      const submenu = bestMatchLink.closest("ul.sidebar-submenu");
+      if (submenu.length) {
+        submenu.css("display", "block");
+        submenu.closest("li.sidebar-list").addClass("active");
+      }
+    } else if (path === "/") {
+      // Fallback for root path: activate Dashboard link
+      const dashboardLink = $('#sidebar-menu .sidebar-link[data-href="/"]');
+      if (dashboardLink.length) {
+        dashboardLink.addClass("active");
+        dashboardLink.closest("li.sidebar-list").addClass("active");
+      }
+    }
+
+    // Debug: Log the current path and matched href for troubleshooting
+    console.log("Current Path:", path);
+    console.log(
+      "Matched Link:",
+      bestMatchLink ? bestMatchLink.attr("href") : "None"
+    );
   });
 
   // Sidebar filter

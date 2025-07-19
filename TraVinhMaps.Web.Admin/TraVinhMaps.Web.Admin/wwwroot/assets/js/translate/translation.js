@@ -1,215 +1,504 @@
 /* =========================================================================
  * translation.js - Optimized Version
- * Description: Handles multilingual translation, optimized cache, accurate text comparison and replacement.
+ * Description: Handles multilingual translation, optimized cache, accurate text comparison and replacement,
+ *               and integration with dynamic location addition.
  * ========================================================================= */
 
 /* ----------------- Configuration & Globals ------------------ */
 
-// Strings from JS code that need translation.
 const jsStrings = [
-  "No Text",
-  "No translatable text found on the page.",
-  "Translation Error",
-  "Failed to translate text. Please try again later.",
+  // =======================================================================
+  // 1. GIAO DIỆN CHUNG & CÁC NÚT CƠ BẢN (General UI & Common Actions)
+  // =======================================================================
+  "OK",
+  "Cancel",
+  "Yes",
+  "No",
+  "Back",
+  "Remove",
   "Retry",
-  "Translating...",
-  "Translation successful!",
-  "Please wait %s seconds before translating again.",
-  "Too fast!",
-  "Notifications",
-  "Feedback",
+  "Delete",
+  "Restore",
+  "Ban",
+  "Unban",
+  "Confirm",
+  "Continue",
+  "Check all",
+  "Select tags",
+  "All",
+  "Default",
+  "English",
+  "Vietnamese",
+
+  // =======================================================================
+  // 2. THANH ĐIỀU HƯỚNG & MENU (Admin Sidebar/Navigation)
+  // =======================================================================
+  "Dashboard",
+  "Dashboards",
   "My Profile",
   "Settings",
   "Log Out",
-  "Back",
-  "Dashboards",
   "Account Management",
   "Admin Management",
+  "Review Management",
+  "Send Notifications",
+  "Analytics",
+  "Ocop",
   "Destination",
   "Ocop Product",
   "Ocop Type",
   "Company",
-  "Review Management",
   "Local Specialties",
+  "Sell Locations",
   "Event And Festival",
   "Tips Management",
-  "Send Notifications",
   "Marker Management",
   "Itineraries",
-  "Analytics",
-  "Ocop",
-  "Dashboard",
-  "Default",
-  "Check all",
-  "Vietnamese",
-  "English",
-  "Admin",
+  "Feedback",
+
+  // =======================================================================
+  // 3. TIÊU ĐỀ POPUP & ALERT CHUNG (General Alert Titles)
+  // =======================================================================
+  "Success!",
+  "Error!",
+  "Warning!",
+  "Information",
+  "Confirmation",
+  "Confirm Deletion",
+  "Confirm delete",
+  "Deleted!",
+  "Restored!",
+  "Failed!",
+  "Invalid Input",
+  "Too fast!",
+  "Notification",
+
+  // =======================================================================
+  // 4. BẢNG ĐIỀU KHIỂN & BIỂU ĐỒ (Dashboards & Charts)
+  // =======================================================================
+  "User Statistics Overview",
   "Total Users",
   "Active Users",
   "Total Reviews",
   "(This month)",
   "Upcoming",
   "Performance by Tag",
-  "Local Specialty",
-  "Tips",
-  "Festivals",
-  "All",
-  "Select tags",
-  "Today",
-  "Last Week",
-  "Last Month",
-  "Last Year",
-  "Download Chart",
   "User Creation Over Time",
-  "User Statistics Overview",
-  "Age Distribution",
-  "Gender Distribution",
-  "Status Distribution",
-  "Hometown Distribution",
-  "Top 5 Reviews",
-  "Tag",
-  "Customer",
-  "Destination Name",
-  "Rate",
-  "Review",
-  "OK",
-  "No",
-  "Cancel",
   "Number of Users",
-  "Age Groups",
-  "Gender",
-  "Status",
-  "Day of Week",
-  "Performance by Tag",
-  // Chart specific strings
-  "View Count",
-  "Interaction Count",
-  "Favorite Count",
-  "OCOP Product Analytics",
-  "Count",
-  "Product Name",
-  "OCOP User Demographics (Product – Hometown – Age Group)",
-  "Users from",
-  "N/A",
-  "Age Group",
-  "User Count",
-  "Product",
-  "Top Interacted OCOP Products",
-  "Top Favorited OCOP Products",
-  "OCOP Product Comparison",
-  "Invalid Input",
-  "Start date cannot be in the future.",
-  "End date cannot be in the future.",
-  "End date cannot be earlier than start date.",
-  "Error",
-  "No chart available for download",
-  "Label",
-  "Warning!",
-  "No analytics data found",
-  "Success!",
-  "Analytics chart refreshed",
-  "An error occurred",
-  "No demographics data found",
-  "Demographics chart refreshed",
-  "No data found",
-  "Top Interaction refreshed",
-  "Failed to refresh top interaction",
-  "Top Favorite refreshed",
-  "Failed to refresh top favorites",
-  "Please select products to compare",
-  "Comparison chart refreshed",
-  "Filters have been reset",
-  "Views",
-  "Interactions",
-  "Favorites",
-  "Destination Analytics",
-  "Count",
-  "Destinations",
-  "User Demographics (Location – Hometown – Age Group)",
-  "Location",
-  "User Count",
-  "Users from ", 
-  "Age Group: ",
-  "User Count: ", 
-  "Top Interacted Destinations",
-  "Top Destinations",
-  "Top Favorited Destinations",
-  "Destination Comparison",
-  "Compared Destinations",
-  "Invalid Input",
-  "Start date cannot be in the future.",
-  "End date cannot be in the future.",
-  "End date cannot be earlier than start date.",
-  "Warning",
-  "No analytics data found",
-  "Success!",
-  "Analytics chart refreshed",
-  "Failed to refresh analytics data",
-  "No demographics data found",
-  "Demographics chart refreshed",
-  "Failed to refresh demographics data",
-  "No data found",
-  "Top Views refreshed",
-  "Failed to refresh top views",
-  "Top Favorites refreshed",
-  "Failed to refresh top favorites",
-  "Please choose at least one destination",
-  "Comparison chart refreshed",
-  "Failed to refresh comparison data",
-  "Filters have been reset",
-  "No chart available for download",
-  "Label",
-   // Main Dashboard Chart Strings
-  "User Statistics Overview",
-  "Age Distribution",
-  "Number of Users",
-  "Age Groups",
-  "Gender Distribution",
-  "Gender",
-  "Status Distribution",
-  "Status",
   "Number of Interactions",
-  "Error!",
-  "Failed to load charting library. Please refresh the page.",
-  "Failed to load chart plugins. Please refresh the page.",
-  "No chart data available to download!",
-  "Failed to update chart: Invalid response format",
+  "Top 5 Reviews",
   "Failed to fetch statistics",
   "Failed to update chart",
   "users",
   "Value",
-  "Day",
+  "Label",
+  "Count",
+  "Age Distribution",
+  "Gender Distribution",
+  "Status Distribution",
+  "Hometown Distribution",
+  "Age Group",
+  "Age Groups",
+  "Gender",
+  "Status",
   "Female",
   "Male",
-  "Other",      
+  "Other",
   "Active",
   "Inactive",
   "Forbidden",
+  "Today",
+  "Last Week",
+  "Last Month",
+  "Last Year",
+  "Day",
   "Week",
   "Month",
   "Year",
+  "Day of Week",
+  "View Count",
+  "Interaction Count",
+  "Favorite Count",
+  "Views",
+  "Interactions",
+  "Favorites",
+  "Tag",
+  "Customer",
+  "Destination Name",
+  "Product Name",
+  "Rate",
+  "Review",
+  "Product",
+  "Location",
+  "Destinations",
+  "Compared Destinations",
+  "OCOP Product Analytics",
+  "OCOP User Demographics (Product – Hometown – Age Group)",
+  "Top Interacted OCOP Products",
+  "Top Favorited OCOP Products",
+  "OCOP Product Comparison",
+  "Destination Analytics",
+  "User Demographics (Location – Hometown – Age Group)",
+  "Top Interacted Destinations",
+  "Top Favorited Destinations",
+  "Top Destinations",
+  "Destination Comparison",
+  "Users from",
+  "Users from ",
+  "Age Group: ",
+  "User Count",
+  "User Count: ",
+  "N/A",
+  "Local Specialty",
+  "local specialty",
+  "Tips",
+  "Festivals",
+
+  // =======================================================================
+  // 5. THÔNG BÁO TƯƠNG TÁC BIỂU ĐỒ (Chart Interaction Messages)
+  // =======================================================================
+  "Download Chart",
+  "Analytics chart refreshed",
+  "Demographics chart refreshed",
+  "Comparison chart refreshed",
+  "Top Interaction refreshed",
+  "Top Favorite refreshed",
+  "Top Favorites refreshed",
+  "Top Views refreshed",
+  "Filters have been reset",
+  "Filters and selections have been reset",
+  "Failed to refresh analytics data",
+  "Failed to refresh demographics data",
+  "Failed to refresh comparison data",
+  "Failed to refresh top interaction",
+  "Failed to refresh top favorites",
+  "Failed to refresh top views",
+  "No analytics data found",
+  "No demographics data found",
+  "No data found",
+  "No chart available for download",
+  "No data available to download.",
+  "No chart data available to download!",
+  "Please select products to compare",
+  "Please choose at least one destination",
+
+  // =======================================================================
+  // 6. XÁC THỰC DỮ LIỆU & LỖI FORM (Frontend Validation & Form Errors)
+  // =======================================================================
+  "Start date cannot be in the future.",
+  "End date cannot be in the future.",
+  "End date cannot be earlier than start date.",
+  "At least one image is required",
+  "Please upload valid image files only (e.g., JPG, PNG, GIF).",
+  "You can upload a maximum of %s images.",
+  "File %s exceeds the maximum size of 5 MB.",
+  "File %s has an unsupported format. Allowed formats: %s.",
+  "Unsupported format",
+  "No matching records found",
+  "• Row %s: Product name is required",
+  "• Row %s: Product price is required",
+  "• Row %s: OcopType is required",
+  '• Row %s: OcopType "%s" not found in database',
+  "• Row %s: Company is required",
+  '• Row %s: Company "%s" not found in database',
+  "• Row %s: OcopPoint must be a number between 1 and 5",
+  "• Row %s: OcopYear must be a valid year not in the future",
+  "• Row %s: Tag is recommended",
+  '• Row %s: Tag "%s" not found in database',
+  '• Row %s: No images uploaded for product "%s"',
+  "• Row %s: Invalid file type(s): %s. Only image files are allowed.",
+
+  // =======================================================================
+  // 7. IMPORT / EXPORT
+  // =======================================================================
+  "Exporting Data",
+  "Export Successful",
+  "Export Successful!",
+  "Export Error",
+  "Export Error!",
+  "Export Warning!",
+  "Error creating Excel file: %s",
+  "Error during Excel creation:",
+  "Confirm Import",
+  "Importing...",
+  "Import Progress",
+  "Import Successful",
+  "Import Completed with Issues",
+  "Batch Import Error",
+  "Invalid Files",
+  "Invalid Products",
+  "No Valid Records",
+  "Please upload a valid Excel file (.xlsx, .xls)",
+  "Invalid data format. Please use the provided template.",
+  "No admin data available.",
+  "No company data available.",
+  "No destinations found for export.",
+  "No feedback found for export.",
+  "No festivals found for export.",
+  "No itineraries found.",
+  "No local specialties found for export.",
+  "No notifications found.",
+  "No OCOP product data available for export.",
+  "No OCOP type data available for export.",
+  "No tips found for export.",
+  "No user data available for export.",
+  "items have been exported to Excel.",
+  "Retrieving all admin data for export...",
+  "Retrieving all company data for export...",
+  "Retrieving all community tips for export...",
+  "Retrieving all feedback for export...",
+  "Retrieving all festivals for export...",
+  "Retrieving all itineraries for export...",
+  "Retrieving all local specialties for export...",
+  "Retrieving all notifications for export...",
+  "Retrieving all tourist destinations for export...",
+  "Retrieving all user data for export...",
+  "Retrieving OCOP product data for export...",
+  "Retrieving OCOP type data for export...",
+  "Add at least one image to each product.",
+  "Fix the validation errors before importing.",
+  "Some files are not images and will be skipped: %s",
+  "There are %s invalid products. (%s products missing images)<br>Do you want to continue importing only the <b>%s</b> valid products?",
+  "Are you sure you want to import %s products?",
+  "Yes, continue",
+  "Yes, import products",
+  "Preparing to import...",
+  "Importing batch %s/%s",
+  "Processing batch %s of %s <small>(%s of %s products processed)</small>",
+  "Batch %s completed successfully. Processing next batch...",
+  "Batch %s failed. Continuing with next batch...",
+  "Failed to import batch %s: %s",
+  "Import completed. <b>%s</b> products imported successfully.",
+  "Successfully imported <b>%s</b> products!",
+  "Successfully imported <b>%s</b> products.<br><b>%s</b> products failed.",
+
+  // =======================================================================
+  // 8. HÀNH ĐỘNG CRUD (Xác nhận & Lỗi) (CRUD Actions)
+  // =======================================================================
+  "Are you sure you want to perform this action?",
+  "Are you sure you want to delete this admin?",
+  "Do you really want to delete this admin?",
+  "Are you sure you want to restore this admin?",
+  "Do you want to restore this admin?",
+  "Delete failed!",
+  "Restore failed!",
+  "There was an error deleting the admin.",
+  "There was an error restoring the admin.",
+  "Yes, delete it!",
+  "Yes, restore it!",
+  "Are you sure you want to ban this user?",
+  "Are you sure you want to unban this user?",
+  "An error occurred while banning the user: %s",
+  "An error occurred while unbanning the user: %s",
+  "Are you sure you want to delete this destination?",
+  "Are you sure you want to restore this destination?",
+  "Are you sure you want to delete this event and festival?",
+  "Are you sure you want to restore this event and festival?",
+  "Are you sure you want to delete this itinerary plan?",
+  "Are you sure you want to restore this itinerary plan?",
+  "Are you sure you want to delete this local specialties?",
+  "Are you sure you want to restore this local specialties?",
+  "Restore Local Specialties",
+  "Are you sure you want to delete this marker?",
+  "Are you sure you want to restore this Marker?",
+  "Are you sure you want to delete this ocop product?",
+  "Are you sure you want to restore this ocop product?",
+  "Are you sure you want to delete this tip?",
+  "Are you sure you want to restore this tip?",
+  "Restore Tip",
+  "An error occurred while deleting.",
+  "An error occurred while restoring.",
+  "An error occurred while deleting the tip.",
+  "An error occurred while restoring the tip.",
+  "An error occurred while banning the destination: %s",
+  "An error occurred while restoring the destination: %s",
+  "Are you sure you want to delete this image?",
+  "Are you sure you want to delete this selling link?",
+  'Do you want to delete the location "%s"?',
+  "Image deleted successfully!",
+  "Location added successfully!",
+  "Location deleted successfully!",
+  "Location updated successfully!",
+  "Selling link updated successfully!",
+  "Failed to delete image.",
+  "Failed to delete location.",
+  "Failed to add location.",
+  "Failed to update location.",
+  "Failed to update selling link.",
+  "Failed to reload location data.",
+  "Failed to reload selling link data.",
+  "An error occurred while deleting the image.",
+  "An error occurred while adding the location.",
+  "An error occurred while deleting the location.",
+  "An error occurred while updating the location.",
+  "An error occurred while deleting the selling link: %s",
+  "An error occurred while updating the selling link.",
+  "An error occurred while uploading the images.",
+  "Adding photos to this tourist attraction failed, please try again later",
+
+  // =======================================================================
+  // 9. HỆ THỐNG & DỊCH THUẬT (System & Translation)
+  // =======================================================================
+  "Translating...",
+  "Translation successful!",
+  "Translation Error",
+  "Partial translation",
+  "No Text",
+  "No translatable text found on the page.",
+  "Please wait %s seconds before translating again.",
+  "Some texts could not be translated due to server limits. Please try again later.",
+  "Failed to translate text. Please try again later.",
+  "Failed to load charting library. Please refresh the page.",
+  "Failed to load chart plugins. Please refresh the page.",
+  "Failed to update chart: Invalid response format",
+  "Error: sessionId is missing or undefined",
+  "Session ID is missing. Please log in again.",
+  "Unauthorized access. Please log in again.",
+  "You do not have permission to perform this action.",
+  "API endpoint not found. Verify the URL.",
+  "Could not retrieve destination data. Please check your connection or permissions.",
+  "Could not retrieve feedback data. Please check your connection or permissions.",
+  "Could not retrieve festival data. Please check your connection or permissions.",
+  "Could not retrieve local specialties data. Please check your connection or permissions.",
+  "Could not retrieve notification data.",
+  "Could not retrieve product data. Please check your connection or permissions.",
+  "Could not retrieve tip data. Please check your connection or permissions.",
+  "Could not retrieve user data. Please check your connection or permissions.",
+  "Failed to retrieve data. Check connection or permission.",
+  "An error occurred",
+  "Unknown error",
+  "Something went wrong, please try again",
+
+  // =======================================================================
+  // 10. THƯ VIỆN BÊN THỨ BA (3rd Party Libraries)
+  // =======================================================================
+  "Search:",
+  "First",
+  "Last",
+  "Next",
+  "Previous",
+  "Show _MENU_ entries",
+  "Showing _START_ to _END_ of _TOTAL_ entries",
+  "Showing 0 to 0 of 0 entries",
+  "(filtered from _MAX_ total entries)",
+  "No data available in table",
+  "Processing...",
+  "Loading...",
+  "Show entries",
+
+  // =======================================================================
+  // 11. XÁC THỰC BACKEND & TÊN TRƯỜNG (Backend Validation & Field Names)
+  // =======================================================================
+  // --- Tên trường (Display Names) ---
+  "Email or Phone Number",
+  "Password",
+  "Remember me",
+  "Verification Code",
+  "New Password",
+  "Confirm Password",
+  "Destination title",
+  "Description",
+  "Address of destination",
+  // --- Các lỗi xác thực CỤ THỂ đã được định nghĩa trong code C# ---
+  "Email or phone number is required",
+  "Email or Phonenumber is required",
+  "Password is required",
+  "Verification code is required",
+  "New password is required",
+  "Confirm password is required",
+  "Title must be at least 20 characters long.",
+  "Title can be at most 100 characters long.",
+  "Content must be at least 20 characters long.",
+  "Content can be at most 1000 characters long.",
+  "Company name is required.",
+  "Name must be between 3 and 100 characters.",
+  "Company address is required.",
+  "Address must be between 5 and 200 characters.",
+  "At least one location is required.",
+  "Invalid phone number.",
+  "Invalid email address.",
+  "Invalid website URL.",
+  "Name cannot be longer than 100 characters.",
+  "Name is required.",
+  "Address is required.",
+  "Location is required.",
+  "Type is required.",
+  "Coordinates are required.",
+  "Food name is required.",
+  "Food name must be between 5 and 100 characters.",
+  "Description is required.",
+  "Description must be between 10 and 3000 characters.",
+  "TagId is required.",
+  "Location name is required.",
+  "Location address is required.",
+  "Longitude is required.",
+  "Longitude must be between -180 and 180.",
+  "Latitude is required.",
+  "Latitude must be between -90 and 90.",
+  "Id is required.",
+  "Image is required",
+  "Please select an icon.",
+  "Product name is required.",
+  "Product name must not exceed 100 characters.",
+  "Product description must not exceed 500 characters.",
+  "Product description must not exceed 3000 characters.",
+  "At least one product image is required.",
+  "Product price must be a valid number.",
+  "Selling link is required.",
+  "SellingLinkId must be a valid URL.",
+  "At least one sell location is required.",
+  "Product ID is required.",
+  "Title is required.",
+  "Title must be at least 2 characters",
+  "Title must be less than or equal to 100 characters",
+  "Title of destination is required",
+  "Description must be at least 10 characters",
+  "Description must be less than or equal to 3000 characters",
+  "Address must be at least 10 characters",
+  "Address must be less than or equal to 150 characters",
+  "Address of destination is required",
+  "Longitude of destination is required",
+  "Latitude of destination is required",
+  "At least one image file is required.",
+  "Only JPG, JPEG, PNG, and GIF files are allowed.",
+  // --- Mẫu lỗi MẶC ĐỊNH của .NET (quan trọng nhất) ---
+  "The %s field is required.",
+  "The field %s must be a string with a maximum length of %s.",
+  "The %s must be at least %s and at most %s characters long.",
+  "The %s field is not a valid e-mail address.",
+  "The %s field is not a valid phone number.",
+  "The field %s must be between %s and %s.",
+  "'{0}' and '{1}' do not match.",
+  "The password and confirmation password do not match.",
+  "The value '%s' is not valid for %s.",
+
+  // =======================================================================
+  // 12. NHÃN CHO FORM THÊM ĐỊA ĐIỂM (Location Form Labels)
+  // =======================================================================
+  "Name of Location",
+  "Address",
+  "Marker Type",
+  "Longitude",
+  "Latitude",
 ];
 
-// Base URL for the translation API.
 const apiBase = "https://localhost:7162/api/Translation";
-// Minimum time between translation requests (5 seconds).
 const minTranslationInterval = 5000;
-// Number of strings to send per API batch request.
 const BATCH_SIZE_FRONTEND = 40;
 
-// Last translation timestamp for rate limiting.
 let lastTranslationTime = 0;
-// The last language applied to the UI.
 let lastAppliedLang = null;
-// Global cache for all translations: { "sourceLang_targetLang": { "normalizedOriginalText": "translatedText" } }.
 let allTranslationsCache = {};
-// Map to restore original English text from translated text (e.g., "chào mừng admin" -> "Welcome Admin").
-let originalTextsMap = new Map(); // This is not currently used to affect chart translations, but good to keep.
-
-// *** NEW: Global translation map for chart.js ***
+let originalTextsMap = new Map();
 window.translationMapForCharts = {};
 
 /* ----------------- Helpers ------------------ */
+
+// Định nghĩa hàm translateText trước tất cả các hàm khác
+function translateText(text) {
+  if (!text) return text;
+  return window.translationMapForCharts?.[text] || text;
+}
 
 /**
  * Normalizes text for consistent comparison (removes extra spaces, converts to lowercase, handles Unicode).
@@ -238,21 +527,16 @@ const isLongToken = (str) =>
   /^[0-9a-fA-F]{16,}$/.test(str) || (str.length > 50 && !str.includes(" "));
 
 /**
- * Collects all translatable text from the DOM (HTML elements and attributes) and `jsStrings`.
+ * Collects all translatable text from the DOM or a specific element (for DataTable or location updates).
  * Filters out numbers and long tokens.
+ * @param {HTMLElement} [element=null] - Optional element to limit text collection.
  * @returns {string[]} Array of unique translatable strings.
  */
-function getAllPlainTexts() {
+function getAllPlainTexts(element = null) {
   const texts = new Set();
   const selectors =
     "h1,h2,h3,h4,h5,h6,p,span,a,li,button,th,td,label,strong,div,option,figcaption,cite,blockquote,summary,details,mark,small,em,i,b,u,abbr,acronym,code,kbd,samp,time,var,dialog,output,meter,progress,textarea,select,optgroup,legend,fieldset,nav,aside";
-  const attrs = [
-    "title",
-    "placeholder",
-    "alt",
-    "aria-label",
-    "data-tooltip", 
-  ];
+  const attrs = ["title", "placeholder", "alt", "aria-label", "data-tooltip"];
   const minTextLength = 2;
   const maxTextLength = 500;
 
@@ -270,9 +554,10 @@ function getAllPlainTexts() {
     return true;
   };
 
-  document.querySelectorAll(selectors).forEach((el) => {
-    if (el.closest('.notranslate')) {
-      return; // Nếu phần tử này nằm trong .notranslate, bỏ qua nó
+  const root = element || document;
+  root.querySelectorAll(selectors).forEach((el) => {
+    if (el.closest(".notranslate")) {
+      return;
     }
     const elementTextContent = el.textContent
       ?.replace(/[\n\t\r]+/g, " ")
@@ -304,7 +589,7 @@ function getAllPlainTexts() {
     }
   });
 
-  document
+  root
     .querySelectorAll(attrs.map((a) => `[${a}]`).join(","))
     .forEach((el) => {
       attrs.forEach((a) => {
@@ -315,9 +600,11 @@ function getAllPlainTexts() {
       });
     });
 
-  jsStrings.forEach((s) => {
-    if (shouldTranslate(s)) texts.add(s);
-  });
+  if (!element) {
+    jsStrings.forEach((s) => {
+      if (shouldTranslate(s)) texts.add(s);
+    });
+  }
 
   console.log("Collected strings:", Array.from(texts));
   return Array.from(texts);
@@ -343,17 +630,10 @@ function replaceText(originalTxt, newTxt) {
 
   const selectors =
     "h1,h2,h3,h4,h5,h6,p,span,a,li,button,th,td,label,strong,div,option,figcaption,cite,blockquote,summary,details,mark,small,em,i,b,u,abbr,acronym,code,kbd,samp,time,var,dialog,output,meter,progress,textarea,select,optgroup,legend,fieldset,nav,aside";
-  const attrs = [
-    "title",
-    "placeholder",
-    "alt",
-    "aria-label",
-    "data-tooltip",
-    // "value",
-  ];
+  const attrs = ["title", "placeholder", "alt", "aria-label", "data-tooltip"];
 
   document.querySelectorAll(selectors).forEach((el) => {
-      if (el.closest('.notranslate')) return; 
+    if (el.closest(".notranslate")) return;
     el.childNodes.forEach((n) => {
       if (
         n.nodeType === Node.TEXT_NODE &&
@@ -379,8 +659,7 @@ function replaceText(originalTxt, newTxt) {
   document
     .querySelectorAll(`${selectors},img,input,textarea,select`)
     .forEach((el) => {
-        if (el.closest('.notranslate')) return;
-
+      if (el.closest(".notranslate")) return;
       attrs.forEach((a) => {
         const v = el.getAttribute(a);
         if (v && normalizeText(v) === normOriginal) {
@@ -406,7 +685,6 @@ function getSourceTargetKey(sourceLang, targetLang) {
  * Stores all known translation pairs (both directions) in `allTranslationsCache`.
  */
 async function loadTranslationCache() {
-  // If cache is already loaded, skip fetching.
   if (Object.keys(allTranslationsCache).length > 0) {
     console.log(`Global cache already exists. No need to reload.`);
     return;
@@ -417,18 +695,16 @@ async function loadTranslationCache() {
     if (!r.ok) throw new Error(`API response status: ${r.status}`);
     const data = await r.json();
 
-    allTranslationsCache = {}; // Reset cache
-
+    allTranslationsCache = {};
     for (const key in data) {
       const colonIdx = key.indexOf(":");
-      if (colonIdx < 0) continue; // Skip malformed keys.
+      if (colonIdx < 0) continue;
 
       const cachedSrc = key.slice(0, colonIdx);
       const rawText = key.slice(colonIdx + 1);
       const normRaw = normalizeText(rawText);
       const targets = data[key];
 
-      // Store all translations for this rawText.
       for (const target in targets) {
         const translation = targets[target]?.trim();
         if (translation) {
@@ -447,125 +723,104 @@ async function loadTranslationCache() {
     );
   } catch (e) {
     console.error("Error loading cache from backend:", e);
-    allTranslationsCache = {}; // Ensure cache is empty on error.
+    allTranslationsCache = {};
   }
 }
 
 /**
  * Main function to change the display language on the page.
- * Fetches translations from cache or API and updates the DOM.
+ * Fetches translations from cache or API and updates the DOM silently.
  * @param {string} targetLang - The target language code (e.g., "en", "vi").
  * @param {string} targetName - The display name of the target language (e.g., "English", "Vietnamese").
- * @param {boolean} [skipAlert=false] - If true, suppresses Swal.fire alerts.
+ * @param {HTMLElement} [element=null] - Optional element to limit translation.
  */
-async function changeLanguage(targetLang, targetName, skipAlert = false) {
+async function changeLanguage(targetLang, targetName, element = null) {
   const now = Date.now();
-  // Prevent rapid calls to avoid API spam.
   if (now - lastTranslationTime < minTranslationInterval) {
     const remainingTime = (
       (minTranslationInterval - (now - lastTranslationTime)) /
       1000
     ).toFixed(1);
     console.log(`⏳ Please wait ${remainingTime}s to translate again.`);
-    if (!skipAlert) {
-      Swal.fire({
-        icon: "info",
-        title: "Too fast!",
-        text: `Please wait ${remainingTime} seconds before translating again.`,
-        showConfirmButton: false,
-        timer: 2000,
-      });
-    }
+    Swal.fire({
+      icon: "info",
+      title: translateText("Too fast!"),
+      text: translateText(`Please wait ${remainingTime} seconds before translating again.`),
+      showConfirmButton: false,
+      timer: 2000,
+    });
     return;
   }
 
-  // Save selected language to local storage and update UI element.
   localStorage.setItem("selectedLanguage", targetLang);
   const currentLangElement = document.getElementById("currentLanguage");
   if (currentLangElement) currentLangElement.innerText = targetName;
 
-  // Show loading alert if not skipped.
-  if (!skipAlert) {
-    Swal.fire({
-      title: "Translating...",
-      html: "Please wait...",
-      allowOutsideClick: false,
-      didOpen: () => Swal.showLoading(),
-    });
-  }
-
   try {
-    const sourceLang = "en"; // Application's original language is always English.
-
-    // Ensure the entire translation cache is loaded.
+    const sourceLang = "en";
     await loadTranslationCache();
 
     const cacheKeyForTranslation = getSourceTargetKey(sourceLang, targetLang);
     const translationCache = allTranslationsCache[cacheKeyForTranslation] || {};
 
-    const cacheKeyForReverting = getSourceTargetKey(lastAppliedLang, sourceLang);
+    const cacheKeyForReverting = getSourceTargetKey(
+      lastAppliedLang,
+      sourceLang
+    );
     const revertingCache = allTranslationsCache[cacheKeyForReverting] || {};
 
-
-    // Get all translatable text strings currently displayed on the DOM.
-    const allTexts = getAllPlainTexts();
+    const allTexts = getAllPlainTexts(element);
     if (allTexts.length === 0) {
-      console.log("⚠️ No translatable content found on the page.");
-      if (!skipAlert) Swal.close();
+      console.log("⚠️ No translatable content found.");
       return;
     }
 
-    const textsToTranslateViaApi = []; // Stores texts that need API translation.
-    window.translationMapForCharts = {}; // Reset chart translation map
+    const textsToTranslateViaApi = [];
+    window.translationMapForCharts = {};
 
-    // 1. Revert all texts to English first to have a clean state
-    if (lastAppliedLang && lastAppliedLang !== 'en') {
-        console.log(`Reverting from '${lastAppliedLang}' to 'en' before applying '${targetLang}'`);
-        allTexts.forEach(txt => {
-            const normTxt = normalizeText(txt);
-            if(revertingCache[normTxt]) {
-                const originalText = revertingCache[normTxt];
-                replaceText(txt, originalText);
-            }
-        });
+    if (lastAppliedLang && lastAppliedLang !== "en" && !element) {
+      console.log(
+        `Reverting from '${lastAppliedLang}' to 'en' before applying '${targetLang}'`
+      );
+      allTexts.forEach((txt) => {
+        const normTxt = normalizeText(txt);
+        if (revertingCache[normTxt]) {
+          const originalText = revertingCache[normTxt];
+          replaceText(txt, originalText);
+        }
+      });
     }
 
-
-    const textsToProcess = getAllPlainTexts(); // Re-collect texts after reverting to English
-    
+    const textsToProcess = getAllPlainTexts(element);
     textsToProcess.forEach((txt) => {
-        const normTxt = normalizeText(txt);
-        let translatedText = translationCache[normTxt];
-        
-        if (targetLang === 'en') {
-            translatedText = txt; // Revert to original
-        }
+      const normTxt = normalizeText(txt);
+      let translatedText = translationCache[normTxt];
 
-        if (translatedText) {
-            replaceText(txt, translatedText);
-            window.translationMapForCharts[txt] = translatedText;
-        } else if (targetLang !== 'en') {
-            textsToTranslateViaApi.push(txt);
-        } else {
-             window.translationMapForCharts[txt] = txt;
-        }
+      if (targetLang === "en") {
+        translatedText = txt;
+      }
+
+      if (translatedText) {
+        replaceText(txt, translatedText);
+        window.translationMapForCharts[txt] = translatedText;
+      } else if (targetLang !== "en") {
+        textsToTranslateViaApi.push(txt);
+      } else {
+        window.translationMapForCharts[txt] = txt;
+      }
     });
-
 
     lastAppliedLang = targetLang;
 
     if (textsToTranslateViaApi.length === 0) {
       console.log(`✅ All strings processed from cache. No API call needed.`);
-      window.dispatchEvent(new CustomEvent("languageChanged")); // FIRE EVENT
-      if (!skipAlert) Swal.close();
+      window.dispatchEvent(new CustomEvent("languageChanged"));
       lastTranslationTime = Date.now();
       return;
     }
 
-
-    // --- Start API translation process for remaining texts ---
     console.log(
-      `Total strings on page: ${allTexts.length}, Strings needing API translation (not cached): ${textsToTranslateViaApi.length}`
+      `Total strings: ${allTexts.length}, Strings needing API translation: ${textsToTranslateViaApi.length}`
     );
 
     let totalSuccess = 0;
@@ -580,12 +835,6 @@ async function changeLanguage(targetLang, targetName, skipAlert = false) {
     ) {
       const batch = textsToTranslateViaApi.slice(i, i + BATCH_SIZE_FRONTEND);
       const batchIndex = Math.floor(i / BATCH_SIZE_FRONTEND) + 1;
-
-      if (!skipAlert) {
-        Swal.update({
-          html: `Translating: Batch ${batchIndex}/${totalBatches} (${totalSuccess} texts translated)`,
-        });
-      }
 
       console.log(
         `Sending batch ${batchIndex}/${totalBatches} for translation:`,
@@ -632,35 +881,22 @@ async function changeLanguage(targetLang, targetName, skipAlert = false) {
       totalSuccess += Object.keys(translations).length;
     }
 
-    // *** FIRE EVENT AFTER ALL TRANSLATIONS ARE DONE ***
     window.dispatchEvent(new CustomEvent("languageChanged"));
-
-    if (!skipAlert) {
-      Swal.fire({
-        icon: "success",
-        title: "Translation complete!",
-        text: `Translated and updated ${totalSuccess} texts.`,
-        timer: 1500,
-        showConfirmButton: false,
-      });
-    }
   } catch (err) {
     console.error("Critical error during translation:", err);
-    if (!skipAlert) {
-      Swal.fire({
-        icon: "warning",
-        title: "Partial translation",
-        text: `Some texts could not be translated due to server limits. Please try again later.`,
-        showConfirmButton: false,
-        timer: 2500,
-      });
-    }
+    Swal.fire({
+      icon: "warning",
+      title: translateText("Partial translation"),
+      text: translateText(
+        "Some texts could not be translated due to server limits. Please try again later."
+      ),
+      showConfirmButton: false,
+      timer: 2500,
+    });
   } finally {
     lastTranslationTime = Date.now();
   }
 }
-
-/* ----------------- Initialization ------------------ */
 
 /**
  * Initialization function, runs when DOM is fully loaded.
@@ -674,20 +910,237 @@ async function initialize() {
   if (currentLangElement) {
     currentLangElement.innerText = langName;
   }
-  
-  lastAppliedLang = 'en'; // Assume initial state is English
 
-  if (savedLang !== 'en') {
-      await changeLanguage(savedLang, langName, true);
+  lastAppliedLang = "en";
+
+  if (savedLang !== "en") {
+    await changeLanguage(savedLang, langName);
   } else {
-      await loadTranslationCache(); // Pre-load cache even for English
+    await loadTranslationCache();
+  }
+
+  // Thêm sự kiện draw cho DataTable
+  let isTranslating = false;
+  $('table.dataTable').on('draw.dt', async function () {
+    if (isTranslating) return;
+    isTranslating = true;
+    const table = this;
+    const savedLang = localStorage.getItem("selectedLanguage") || "en";
+    const langName = savedLang === "vi" ? "Vietnamese" : "English";
+    if (savedLang !== "en") {
+      await changeLanguage(savedLang, langName, table);
+    }
+    isTranslating = false;
+  });
+}
+
+/* ----------------- Location and Image Handling ------------------ */
+
+// Định nghĩa các định dạng ảnh được phép
+const allowedExtensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"];
+
+// Function để thêm địa điểm mới
+async function addLocation() {
+  console.log("addLocation called, locationIndex:", window.locationIndex);
+  const container = document.getElementById("locations-container");
+  if (!container) {
+    console.error("locations-container not found");
+    return;
+  }
+  const locationHtml = `
+    <div class="location-group mb-3">
+        <div class="row">
+            <div class="col-sm-4">
+                <label>${translateText("Name of Location")}</label>
+                <input type="text" name="Locations[${window.locationIndex}].Name" class="form-control" placeholder="${translateText("Location name")}" required />
+                <span class="text-danger field-validation-valid" data-valmsg-for="Locations[${window.locationIndex}].Name" data-valmsg-replace="true"></span>
+            </div>
+            <div class="col-sm-4">
+                <label>${translateText("Address")}</label>
+                <input type="text" name="Locations[${window.locationIndex}].Address" class="form-control" placeholder="${translateText("Address")}" required />
+                <span class="text-danger field-validation-valid" data-valmsg-for="Locations[${window.locationIndex}].Address" data-valmsg-replace="true"></span>
+            </div>
+            <div class="col-sm-4">
+                <label>${translateText("Marker Type")}</label>
+                <input type="text" class="form-control" value="${window.sellLocationMarkerName}" readonly />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <label>${translateText("Longitude")}</label>
+                <input type="number" name="Locations[${window.locationIndex}].Longitude" class="form-control" step="any" placeholder="${translateText("Longitude")}" required min="-180" max="180" />
+                <span class="text-danger field-validation-valid" data-valmsg-for="Locations[${window.locationIndex}].Longitude" data-valmsg-replace="true"></span>
+            </div>
+            <div class="col-sm-6">
+                <label>${translateText("Latitude")}</label>
+                <input type="number" name="Locations[${window.locationIndex}].Latitude" class="form-control" step="any" placeholder="${translateText("Latitude")}" required min="-90" max="90" />
+                <span class="text-danger field-validation-valid" data-valmsg-for="Locations[${window.locationIndex}].Latitude" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <button type="button" class="btn btn-danger btn-sm mt-2 remove-location">${translateText("Remove")}</button>
+    </div>`;
+  container.insertAdjacentHTML("beforeend", locationHtml);
+  window.locationIndex++;
+
+  // Dịch lại nội dung vừa thêm
+  const savedLang = localStorage.getItem("selectedLanguage") || "en";
+  const langName = savedLang === "vi" ? "Vietnamese" : "English";
+  if (savedLang !== "en") {
+    const newLocation = container.lastElementChild;
+    await changeLanguage(savedLang, langName, newLocation);
   }
 }
 
-document.addEventListener("DOMContentLoaded", initialize);
-window.changeLanguage = changeLanguage;
+// Remove location
+document.addEventListener("click", function (e) {
+  if (e.target.classList.contains("remove-location")) {
+    e.target.parentElement.remove();
+  }
+});
 
-function t(text) {
-  if (!text) return text;
-  return window.translationMapForCharts?.[text] || text;
-}
+// Image upload and preview
+document.addEventListener("DOMContentLoaded", function () {
+  initialize(); // Gọi hàm initialize từ translation.js
+
+  const addBox = document.getElementById("addImageBox");
+  const uploadInput = document.getElementById("uploadImageInput");
+  const imagePreview = document.getElementById("imagePreview");
+  const validationMessage = document.getElementById("imageValidationMessage");
+
+  console.log("addBox:", addBox);
+  console.log("uploadInput:", uploadInput);
+  console.log("imagePreview:", imagePreview);
+  console.log("validationMessage:", validationMessage);
+
+  if (!addBox || !uploadInput || !imagePreview || !validationMessage) {
+    console.error(
+      "One or more elements not found: addImageBox, uploadInput, imagePreview, validationMessage"
+    );
+    return;
+  }
+
+  addBox.addEventListener("click", () => {
+    console.log("addImageBox clicked");
+    if (uploadInput) {
+      uploadInput.click();
+    } else {
+      console.error("uploadInput not found during click");
+    }
+  });
+
+  uploadInput.addEventListener("change", function (e) {
+    console.log("uploadImageInput changed");
+    validationMessage.textContent = "";
+    imagePreview.innerHTML = "";
+    const files = uploadInput.files;
+
+    if (!files || files.length === 0) {
+      console.log("No files selected");
+      return;
+    }
+
+    if (files.length > 5) {
+      validationMessage.textContent = translateText("You can upload a maximum of %s images.").replace("%s", "5");
+      uploadInput.value = "";
+      console.log("Too many files selected");
+      return;
+    }
+
+    let hasInvalidFormat = false;
+    Array.from(files).forEach((file) => {
+      const ext = `.${file.name.split(".").pop().toLowerCase()}`;
+      if (!allowedExtensions.includes(ext)) {
+        hasInvalidFormat = true;
+      }
+    });
+
+    if (hasInvalidFormat) {
+      validationMessage.textContent = translateText(
+        `Unsupported file format. Allowed formats are: ${allowedExtensions.join(", ")}.`
+      );
+      uploadInput.value = "";
+      console.log("Invalid file format");
+      return;
+    }
+
+    Array.from(files).forEach((file) => {
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const col = document.createElement("div");
+          col.classList.add("col-sm-3");
+
+          const itemDiv = document.createElement("div");
+          itemDiv.classList.add("item", "position-relative");
+
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          img.classList.add("w-100", "rounded");
+
+          itemDiv.appendChild(img);
+          col.appendChild(itemDiv);
+          imagePreview.appendChild(col);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  });
+});
+
+// Form validation
+$(document).ready(function () {
+  $("#createLocalSpecialtyForm").on("submit", function (e) {
+    const longInputs = document.querySelectorAll('input[name$="Longitude"]');
+    const latInputs = document.querySelectorAll('input[name$="Latitude"]');
+    const uploadInput = document.getElementById("uploadImageInput");
+    const validationMessage = document.getElementById("imageValidationMessage");
+    let isValid = true;
+
+    longInputs.forEach((input) => {
+      const value = parseFloat(input.value);
+      if (value < -180 || value > 180) {
+        $(input).next("span").text(translateText("Longitude must be between -180 and 180."));
+        isValid = false;
+      } else {
+        $(input).next("span").text("");
+      }
+    });
+
+    latInputs.forEach((input) => {
+      const value = parseFloat(input.value);
+      if (value < -90 || value > 90) {
+        $(input).next("span").text(translateText("Latitude must be between -90 and 90."));
+        isValid = false;
+      } else {
+        $(input).next("span").text("");
+      }
+    });
+
+    if (uploadInput && uploadInput.files && uploadInput.files.length > 0) {
+      const files = uploadInput.files;
+      if (files.length > 5) {
+        validationMessage.textContent = translateText("You can upload a maximum of %s images.").replace("%s", "5");
+        isValid = false;
+      }
+
+      let hasInvalidFormat = false;
+      Array.from(files).forEach((file) => {
+        const ext = `.${file.name.split(".").pop().toLowerCase()}`;
+        if (!allowedExtensions.includes(ext)) {
+          hasInvalidFormat = true;
+        }
+      });
+
+      if (hasInvalidFormat) {
+        validationMessage.textContent = translateText(
+          `Unsupported file format. Allowed formats are: ${allowedExtensions.join(", ")}.`
+        );
+        isValid = false;
+      }
+    }
+
+    if (!isValid) {
+      e.preventDefault();
+    }
+  });
+});

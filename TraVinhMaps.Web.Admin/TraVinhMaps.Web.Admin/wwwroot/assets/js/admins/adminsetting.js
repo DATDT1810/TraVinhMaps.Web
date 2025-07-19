@@ -118,7 +118,7 @@ $(document).ready(function () {
                                 showOTPModal('email', identifier, false);
                             })
                             .fail(function(error) {
-                                showErrorAlert("Error", "Cannot send OTP. Please try again.");
+                                showTimedAlert("Error", "Cannot send OTP. Please try again.", "error", 1000);
                             });
                     } else {
                         // Nếu email chưa có, cho phép cập nhật trực tiếp
@@ -146,7 +146,7 @@ $(document).ready(function () {
                                 showOTPModal('phone', identifier);
                             })
                             .fail(function(error) {
-                                showErrorAlert("Error", "Cannot send OTP. Please try again.");
+                                showTimedAlert("Error", "Cannot send OTP. Please try again.", "error", 1000);
                             });
                     } else {
                         // Nếu phone chưa có, cho phép cập nhật trực tiếp
@@ -185,10 +185,10 @@ $(document).ready(function () {
                                     showOTPModal('password', identifier);
                                 })
                                 .fail(function(error) {
-                                    showErrorAlert("Error", "Cannot send OTP. Please try again.");
+                                    showTimedAlert("Error", "Cannot send OTP. Please try again.", "error", 1000);
                                 });
                         } else {
-                            showErrorAlert("Error", "Need email or phone number to verify.");
+                            showTimedAlert("Error", "Need email or phone number to verify.", "error", 1000);
                         }
                     } else {
                         // Nếu chưa có password, cho phép tạo mới trực tiếp
@@ -248,11 +248,11 @@ $(document).ready(function () {
                 },
             })
             .done(function(response) {
-                showSuccessAlert("Success", "New OTP has been sent.");
+                showTimedAlert("Success", "New OTP has been sent.", "success", 1000);
                 startCountdown();
             })
             .fail(function(error) {
-                showErrorAlert("Error", "Cannot send new OTP.");
+                showTimedAlert("Error", "Cannot send new OTP.", "error", 1000);
             });
         }
     });
@@ -297,7 +297,7 @@ $(document).ready(function () {
                     const otpCode = $('#otpInput').val();
                     
                     if (!otpCode || otpCode.length !== 6) {
-                        showErrorAlert("Error", "Please enter the full 6-digit OTP.");
+                        showTimedAlert("Error", "Please enter the full 6-digit OTP.", "error", 1000);
                         return;
                     }
                     
@@ -317,13 +317,13 @@ $(document).ready(function () {
                             updateEmailFinal(newEmailValue);
                         },
                         error: function(error) {
-                            showErrorAlert("Error", "OTP is not correct or expired.");
+                            showTimedAlert("Error", "OTP is not correct or expired.", "error", 1000);
                         }
                     });
                 });
             })
             .fail(function(error) {
-                showErrorAlert("Error", "Cannot send OTP to new email. Please try again.");
+                showTimedAlert("Error", "Cannot send OTP to new email. Please try again.", "error", 1000);
             });
     });
     
@@ -352,7 +352,7 @@ $(document).ready(function () {
                     const otpCode = $('#otpInput').val();
                     
                     if (!otpCode || otpCode.length !== 6) {
-                        showErrorAlert("Error", "Please enter the full 6-digit OTP.");
+                        showTimedAlert("Error", "Please enter the full 6-digit OTP.", "error", 1000);
                         return;
                     }
                     
@@ -372,13 +372,13 @@ $(document).ready(function () {
                             updatePhoneFinal(newPhoneValue);
                         },
                         error: function(error) {
-                            showErrorAlert("Error", "OTP is not correct or expired.");
+                            showTimedAlert("Error", "OTP is not correct or expired.", "error", 1000);
                         }
                     });
                 });
             })
             .fail(function(error) {
-                showErrorAlert("Error", "Cannot send OTP to new phone. Please try again.");
+                showTimedAlert("Error", "Cannot send OTP to new phone. Please try again.", "error", 1000);
             });
     });
     
@@ -485,14 +485,14 @@ $(document).ready(function () {
                 "updateType": "email"
             }),
             success: function (res) {
-                showSuccessAlert("Success", "Email has been updated!");
+                showTimedAlert("Success", "Email has been updated!" , "success", 1000);
                 // Reload page after successful update
                 setTimeout(function() {
                     location.reload();
                 }, 1500);
             },
             error: function (err) {
-                showErrorAlert("Error", "Cannot update email.");
+                showTimedAlert("Error", "Cannot update email.", "error", 1000);
             }
         });
     }
@@ -511,14 +511,14 @@ $(document).ready(function () {
                 "updateType": "phone"
             }),
             success: function (res) {
-                showSuccessAlert("Success", "Phone number has been updated!");
+                showTimedAlert("Success", "Phone number has been updated!", "success", 1000);
                 // Reload page after successful update
                 setTimeout(function() {
                     location.reload();
                 }, 1500);
             },
             error: function (err) {
-                showErrorAlert("Error", "Cannot update phone number.");
+                showTimedAlert("Error", "Cannot update phone number.", "error", 1000);
             }
         });
     }
@@ -537,14 +537,14 @@ $(document).ready(function () {
                 "newPassword": newPassword
             }),
             success: function (res) {
-                showSuccessAlert("Success", "Password has been updated!");
+                showTimedAlert("Success", "Password has been updated!", "success", 1000);
                 // Reload page after successful update
                 setTimeout(function() {
                     location.reload();
                 }, 1500);
             },
             error: function (err) {
-                showErrorAlert("Error", "Cannot update password. Please check your current password and try again.");
+                showTimedAlert("Error", "Cannot update password. Please check your current password and try again.", "error", 1000);
             }
         });
     }

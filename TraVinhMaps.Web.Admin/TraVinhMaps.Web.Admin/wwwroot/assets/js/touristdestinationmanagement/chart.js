@@ -9,6 +9,9 @@ let isInitialLoad = true;
 // Chart instances
 let analyticsChart, demographicsChart, topInteractionChart, topFavoritesChart, compareDestinationsChart;
 
+// Cache for chart data
+const chartDataCache = new Map();
+
 // Base API URL
 const destinationApi = window.DESTINATION_API_URL || "https://localhost:7162/api/TouristDestination/";
 
@@ -17,37 +20,27 @@ function logDebug(message, data = null) {
     console.log(`[DestinationDashboard] ${message}`, data ? data : "");
 }
 
-// ========= BẮT ĐẦU ĐOẠN CODE ÁNH XẠ VÀ DỊCH THUẬT =========
-
-// 1. TẠO ĐỐI TƯỢNG ÁNH XẠ (TỪ ĐIỂN)
-// Ánh xạ các giá trị "value" từ tiếng Việt trong HTML sang tiếng Anh mà API yêu cầu.
+// Translation and time range mapping
 const timeRangeMap = {
     'ngày': 'day',
     'tuần': 'week',
     'tháng': 'month',
     'năm': 'year',
-    'all': 'all' // Giữ nguyên cho các trường hợp khác
+    'all': 'all'
 };
 
-// 2. HÀM TRỢ GIÚP LẤY GIÁ TRỊ TIẾNG ANH
-// Hàm này sẽ nhận giá trị tiếng Việt và trả về giá trị tiếng Anh tương ứng.
 function getApiTimeRange(vietnameseValue) {
-    // Nếu tìm thấy giá trị trong map, trả về giá trị tiếng Anh.
-    // Nếu không, trả về chính giá trị gốc (giúp code an toàn hơn).
     return timeRangeMap[vietnameseValue] || vietnameseValue;
 }
 
-// 3. HÀM DỊCH THUẬT (Giữ nguyên của bạn)
 function t(text) {
-    // Tra cứu văn bản trong bản đồ dịch thuật toàn cục. Quay trở lại văn bản gốc nếu không tìm thấy.
     return window.translationMapForCharts?.[text] || text;
 }
-// ========= KẾT THÚC ĐOẠN CODE ÁNH XẠ VÀ DỊCH THUẬT =========
 
-
-// Validate filter for all charts (end >= start, start/end <= today)
+// Validate filter inputs
 function validateFilterInputs(startDateStr, endDateStr) {
     const now = new Date();
+    now.setHours(23, 59, 59, 999);
     if (startDateStr) {
         const start = new Date(startDateStr);
         if (start > now) {
@@ -69,8 +62,59 @@ function validateFilterInputs(startDateStr, endDateStr) {
     return true;
 }
 
-// DRAW CHARTS
-// (Các hàm vẽ biểu đồ được giữ nguyên)
+// Download chart
+// Download chart
+function downloadChart(chart, filename, type) {
+    if (!chart || !chart.canvas) {
+        showTimedAlert(t("Error"), t("No chart available for download"), "error", 1000);
+        return;
+    }
+    if (!chart.data.labels || chart.data.labels.length === 0) {
+        showTimedAlert(t("Warning"), t("No data available to download."), "warning", 1000);
+        return;
+    }
+    if (type === "png") {
+        const canvas = chart.canvas;
+        const ctx = canvas.getContext('2d');
+        // Save the current canvas state
+        const originalBackground = ctx.fillStyle;
+        // Set white background
+        ctx.save();
+        ctx.globalCompositeOperation = 'destination-over';
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Generate image
+        const link = document.createElement("a");
+        link.href = chart.toBase64Image();
+        link.download = filename;
+        link.click();
+        // Restore the original canvas state
+        ctx.restore();
+        ctx.fillStyle = originalBackground;
+        chart.update(); // Ensure chart is redrawn correctly
+    } else if (type === "csv") {
+        const labels = chart.data.labels;
+        const datasets = chart.data.datasets;
+        const escapeCsv = (value) => {
+            if (value == null) return "";
+            const str = String(value).replace(/"/g, '""');
+            return `"${str}"`;
+        };
+        let csv = "\uFEFF" + escapeCsv(t("Label")) + "," + datasets.map(ds => escapeCsv(ds.label)).join(",") + "\n";
+        labels.forEach((label, idx) => {
+            const row = [escapeCsv(label)];
+            datasets.forEach(ds => row.push(ds.data[idx] ?? 0));
+            csv += row.join(",") + "\n";
+        });
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename.replace(".png", ".csv");
+        link.click();
+    }
+}
+
+// Draw chart functions
 function drawAnalyticsChart(data) {
     if (analyticsChart) analyticsChart.destroy();
     const ctx = document.getElementById("analyticsChart")?.getContext("2d");
@@ -78,7 +122,7 @@ function drawAnalyticsChart(data) {
     analyticsChart = new Chart(ctx, {
         type: "bar",
         data: {
-            labels: (data || []).map(d => d.locationName || "Unknown"),
+            labels: (data || []).map(d => t(d.locationName || "Unknown")),
             datasets: [
                 {
                     label: t("Views"),
@@ -107,7 +151,8 @@ function drawAnalyticsChart(data) {
             ],
         },
         options: {
-            responsive: true, maintainAspectRatio: false,
+            responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: { position: "top" },
                 title: { display: true, text: t("Destination Analytics") },
@@ -116,9 +161,7 @@ function drawAnalyticsChart(data) {
                 y: {
                     beginAtZero: true,
                     title: { display: true, text: t("Count") },
-                    ticks: {
-                        callback: (value) => (value >= 1000 ? value / 1000 + "k" : value),
-                    },
+                    ticks: { callback: (value) => (value >= 1000 ? value / 1000 + "k" : value) },
                 },
                 x: {
                     title: { display: true, text: t("Destinations") },
@@ -137,7 +180,8 @@ function drawDemographicsChart(data) {
         type: "bar",
         data: { labels: [], datasets: [] },
         options: {
-            responsive: true, maintainAspectRatio: false,
+            responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: { position: "top" },
                 title: { display: true, text: t("User Demographics (Location – Hometown – Age Group)") },
@@ -145,10 +189,10 @@ function drawDemographicsChart(data) {
                     callbacks: {
                         title: (context) => {
                             const location = context[0].label;
-                            const hometown = (data || []).find(d => (d.locationName || "Unknown") === location)?.hometown || "N/A";
-                            return `${location} (${t("Users from ")}${hometown})`;
+                            const hometown = (data || []).find(d => t(d.locationName || "Unknown") === location)?.hometown || t("N/A");
+                            return `${location} (${t("Users from")} ${hometown})`;
                         },
-                        label: (context) => `${t("Age Group: ")}${context.dataset.label} - ${t("User Count: ")}${context.parsed.y}`,
+                        label: (context) => `${t("Age Group")}: ${context.dataset.label} - ${t("User Count")}: ${context.parsed.y}`,
                     },
                 },
             },
@@ -159,7 +203,7 @@ function drawDemographicsChart(data) {
         },
     });
     if (Array.isArray(data) && data.length) {
-        const locations = [...new Set(data.map(item => item.locationName || "Unknown"))];
+        const locations = [...new Set(data.map(item => t(item.locationName || "Unknown")))];
         const ageGroups = [...new Set(data.map(item => t(item.ageGroup || "Unknown")))];
         const colorArr = [
             "rgba(255,99,132,0.7)", "rgba(54,162,235,0.7)", "rgba(255,206,86,0.7)",
@@ -167,12 +211,10 @@ function drawDemographicsChart(data) {
         ];
         const datasets = ageGroups.map((age, idx) => ({
             label: age,
-            data: locations.map(location => {
-                const total = data
-                    .filter(d => (d.locationName || "Unknown") === location && t(d.ageGroup || "Unknown") === age)
-                    .reduce((sum, d) => sum + (d.userCount || 0), 0);
-                return total;
-            }),
+            data: locations.map(location =>
+                data.filter(d => t(d.locationName || "Unknown") === location && t(d.ageGroup || "Unknown") === age)
+                    .reduce((sum, d) => sum + (d.userCount || 0), 0)
+            ),
             backgroundColor: colorArr[idx % colorArr.length],
             borderColor: colorArr[idx % colorArr.length].replace("0.7", "1"),
             borderWidth: 1,
@@ -192,7 +234,7 @@ function drawTopInteractionChart(data) {
     topInteractionChart = new Chart(ctx, {
         type: "bar",
         data: {
-            labels: (data || []).map(d => d.locationName || "Unknown"),
+            labels: (data || []).map(d => t(d.locationName || "Unknown")),
             datasets: [
                 {
                     label: t("Interactions"),
@@ -205,7 +247,8 @@ function drawTopInteractionChart(data) {
             ],
         },
         options: {
-            responsive: true, maintainAspectRatio: false,
+            responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: { position: "top" },
                 title: { display: true, text: t("Top Interacted Destinations") },
@@ -225,7 +268,7 @@ function drawTopFavoritesChart(data) {
     topFavoritesChart = new Chart(ctx, {
         type: "bar",
         data: {
-            labels: (data || []).map(d => d.locationName || "Unknown"),
+            labels: (data || []).map(d => t(d.locationName || "Unknown")),
             datasets: [
                 {
                     label: t("Favorites"),
@@ -238,7 +281,8 @@ function drawTopFavoritesChart(data) {
             ],
         },
         options: {
-            responsive: true, maintainAspectRatio: false,
+            responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: { position: "top" },
                 title: { display: true, text: t("Top Favorited Destinations") },
@@ -258,7 +302,7 @@ function drawCompareDestinationsChart(data) {
     compareDestinationsChart = new Chart(ctx, {
         type: "bar",
         data: {
-            labels: (data || []).map(d => d.locationName || "Unknown"),
+            labels: (data || []).map(d => t(d.locationName || "Unknown")),
             datasets: [
                 {
                     label: t("Views"),
@@ -291,34 +335,46 @@ function drawCompareDestinationsChart(data) {
                 title: { display: true, text: t("Destination Comparison") }
             },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    title: { display: true, text: t("Count") }
-                },
-                x: {
-                    title: { display: true, text: t("Compared Destinations") },
-                    ticks: { autoSkip: false, maxRotation: 60, minRotation: 30 }
-                },
+                y: { beginAtZero: true, title: { display: true, text: t("Count") } },
+                x: { title: { display: true, text: t("Compared Destinations") }, ticks: { autoSkip: false, maxRotation: 60, minRotation: 30 } },
             }
         }
     });
 }
 
-// --- REFRESH/RESET (CÁC HÀM NÀY ĐÃ ĐƯỢC CẬP NHẬT) ---
-
-async function refreshAnalyticsChart(showAlert = true) {
-    const selectedValue = document.getElementById("analyticsTimeRange")?.value || "tháng";
-    const timeRangeForApi = getApiTimeRange(selectedValue); // Ánh xạ giá trị
-
-    const startDate = document.getElementById("analyticsStartDate")?.value || "";
-    const endDate = document.getElementById("analyticsEndDate")?.value || "";
-    if (!validateFilterInputs(startDate, endDate)) return;
-
-    const url = `${destinationApi}stats-overview?timeRange=${encodeURIComponent(timeRangeForApi)}${startDate ? `&startDate=${encodeURIComponent(startDate)}` : ""}${endDate ? `&endDate=${encodeURIComponent(endDate)}` : ""}`;
+// Refresh functions with caching
+async function fetchWithCache(url, cacheKey) {
+    if (chartDataCache.has(cacheKey)) {
+        logDebug(`Cache hit for ${cacheKey}`);
+        return chartDataCache.get(cacheKey);
+    }
     try {
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const raw = await response.json();
+        const data = await response.json();
+        chartDataCache.set(cacheKey, data);
+        return data;
+    } catch (error) {
+        logDebug(`Fetch error for ${cacheKey}`, error);
+        throw error;
+    }
+}
+
+async function refreshAnalyticsChart(showAlert = true) {
+    const selectedValue = document.getElementById("analyticsTimeRange")?.value || "month";
+    const timeRangeForApi = getApiTimeRange(selectedValue);
+    let startDate = document.getElementById("analyticsStartDate")?.value || "";
+    let endDate = document.getElementById("analyticsEndDate")?.value || "";
+    if (timeRangeForApi === 'day' && !startDate && !endDate) {
+        const today = new Date().toISOString().split('T')[0];
+        startDate = today;
+        endDate = today;
+    }
+    if (!validateFilterInputs(startDate, endDate)) return;
+    const url = `${destinationApi}stats-overview?timeRange=${encodeURIComponent(timeRangeForApi)}${startDate ? `&startDate=${encodeURIComponent(startDate)}` : ""}${endDate ? `&endDate=${encodeURIComponent(endDate)}` : ""}`;
+    const cacheKey = `analytics_${timeRangeForApi}_${startDate}_${endDate}`;
+    try {
+        const raw = await fetchWithCache(url, cacheKey);
         const arr = (raw.data?.destinationDetails) ? raw.data.destinationDetails : [];
         if (!arr.length && showAlert) showTimedAlert(t("Warning"), t("No analytics data found"), "warning", 1000);
         stats = raw.data;
@@ -330,27 +386,22 @@ async function refreshAnalyticsChart(showAlert = true) {
         if (showAlert) showTimedAlert(t("Error"), t("Failed to refresh analytics data"), "error", 1000);
     }
 }
-document.getElementById("analyticsRefreshChart")?.addEventListener("click", () => refreshAnalyticsChart());
-document.getElementById("analyticsResetFilter")?.addEventListener("click", () => {
-    document.getElementById("analyticsTimeRange").value = "tháng"; // Reset về giá trị tiếng Việt
-    document.getElementById("analyticsStartDate").value = "";
-    document.getElementById("analyticsEndDate").value = "";
-    refreshAnalyticsChart();
-});
 
 async function refreshDemographicsChart(showAlert = true) {
-    const selectedValue = document.getElementById("demographicsTimeRange")?.value || "tháng";
-    const timeRangeForApi = getApiTimeRange(selectedValue); // Ánh xạ giá trị
-
-    const startDate = document.getElementById("demographicsStartDate")?.value || "";
-    const endDate = document.getElementById("demographicsEndDate")?.value || "";
+    const selectedValue = document.getElementById("demographicsTimeRange")?.value || "month";
+    const timeRangeForApi = getApiTimeRange(selectedValue);
+    let startDate = document.getElementById("demographicsStartDate")?.value || "";
+    let endDate = document.getElementById("demographicsEndDate")?.value || "";
+    if (timeRangeForApi === 'day' && !startDate && !endDate) {
+        const today = new Date().toISOString().split('T')[0];
+        startDate = today;
+        endDate = today;
+    }
     if (!validateFilterInputs(startDate, endDate)) return;
-
     const url = `${destinationApi}stats-getUserDemographics?timeRange=${encodeURIComponent(timeRangeForApi)}${startDate ? `&startDate=${encodeURIComponent(startDate)}` : ""}${endDate ? `&endDate=${encodeURIComponent(endDate)}` : ""}`;
+    const cacheKey = `demographics_${timeRangeForApi}_${startDate}_${endDate}`;
     try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const raw = await response.json();
+        const raw = await fetchWithCache(url, cacheKey);
         const arr = raw.data || [];
         if (!arr.length && showAlert) showTimedAlert(t("Warning"), t("No demographics data found"), "warning", 1000);
         demographics = arr;
@@ -362,63 +413,54 @@ async function refreshDemographicsChart(showAlert = true) {
         if (showAlert) showTimedAlert(t("Error"), t("Failed to refresh demographics data"), "error", 1000);
     }
 }
-document.getElementById("demographicsRefreshChart")?.addEventListener("click", () => refreshDemographicsChart());
-document.getElementById("demographicsResetFilter")?.addEventListener("click", () => {
-    document.getElementById("demographicsTimeRange").value = "tháng"; // Reset về giá trị tiếng Việt
-    document.getElementById("demographicsStartDate").value = "";
-    document.getElementById("demographicsEndDate").value = "";
-    refreshDemographicsChart();
-});
 
 async function refreshTopViewsChart(showAlert = true) {
-    const selectedValue = document.getElementById("topViewsTimeRange")?.value || "tháng";
-    const timeRangeForApi = getApiTimeRange(selectedValue); // Ánh xạ giá trị
-
-    const startDate = document.getElementById("topViewsStartDate")?.value || "";
-    const endDate = document.getElementById("topViewsEndDate")?.value || "";
+    const selectedValue = document.getElementById("topViewsTimeRange")?.value || "month";
+    const timeRangeForApi = getApiTimeRange(selectedValue);
+    let startDate = document.getElementById("topViewsStartDate")?.value || "";
+    let endDate = document.getElementById("topViewsEndDate")?.value || "";
+    if (timeRangeForApi === 'day' && !startDate && !endDate) {
+        const today = new Date().toISOString().split('T')[0];
+        startDate = today;
+        endDate = today;
+    }
     if (!validateFilterInputs(startDate, endDate)) return;
-
     const url = `${destinationApi}stats-getTopViewsDestinations?top=5&timeRange=${encodeURIComponent(timeRangeForApi)}${startDate ? `&startDate=${encodeURIComponent(startDate)}` : ""}${endDate ? `&endDate=${encodeURIComponent(endDate)}` : ""}`;
+    const cacheKey = `topViews_${timeRangeForApi}_${startDate}_${endDate}`;
     try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const raw = await response.json();
+        const raw = await fetchWithCache(url, cacheKey);
         const views = raw.data || [];
         if (!views.length && showAlert) showTimedAlert(t("Warning"), t("No data found"), "warning", 1000);
         topViews = views;
-        drawTopInteractionChart(topViews);
+        drawTopInteractionChart(views);
         if (views.length && showAlert) showTimedAlert(t("Success!"), t("Top Views refreshed"), "success", 1000);
+ EQUAL
     } catch (error) {
         drawTopInteractionChart([]);
         logDebug("Top Views refresh error", error);
         if (showAlert) showTimedAlert(t("Error"), t("Failed to refresh top views"), "error", 1000);
     }
 }
-document.getElementById("topViewsRefresh")?.addEventListener("click", () => refreshTopViewsChart());
-document.getElementById("topViewsReset")?.addEventListener("click", () => {
-    document.getElementById("topViewsTimeRange").value = "tháng"; // Reset về giá trị tiếng Việt
-    document.getElementById("topViewsStartDate").value = "";
-    document.getElementById("topViewsEndDate").value = "";
-    refreshTopViewsChart();
-});
 
 async function refreshTopFavoritesChart(showAlert = true) {
-    const selectedValue = document.getElementById("topFavoritesTimeRange")?.value || "tháng";
-    const timeRangeForApi = getApiTimeRange(selectedValue); // Ánh xạ giá trị
-
-    const startDate = document.getElementById("topFavoritesStartDate")?.value || "";
-    const endDate = document.getElementById("topFavoritesEndDate")?.value || "";
+    const selectedValue = document.getElementById("topFavoritesTimeRange")?.value || "month";
+    const timeRangeForApi = getApiTimeRange(selectedValue);
+    let startDate = document.getElementById("topFavoritesStartDate")?.value || "";
+    let endDate = document.getElementById("topFavoritesEndDate")?.value || "";
+    if (timeRangeForApi === 'day' && !startDate && !endDate) {
+        const today = new Date().toISOString().split('T')[0];
+        startDate = today;
+        endDate = today;
+    }
     if (!validateFilterInputs(startDate, endDate)) return;
-
     const url = `${destinationApi}stats-getTopFavoritesDestinations?top=5&timeRange=${encodeURIComponent(timeRangeForApi)}${startDate ? `&startDate=${encodeURIComponent(startDate)}` : ""}${endDate ? `&endDate=${encodeURIComponent(endDate)}` : ""}`;
+    const cacheKey = `topFavorites_${timeRangeForApi}_${startDate}_${endDate}`;
     try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const raw = await response.json();
+        const raw = await fetchWithCache(url, cacheKey);
         const favs = raw.data || [];
         if (!favs.length && showAlert) showTimedAlert(t("Warning"), t("No data found"), "warning", 1000);
         topFavorites = favs;
-        drawTopFavoritesChart(topFavorites);
+        drawTopFavoritesChart(favs);
         if (favs.length && showAlert) showTimedAlert(t("Success!"), t("Top Favorites refreshed"), "success", 1000);
     } catch (error) {
         drawTopFavoritesChart([]);
@@ -426,22 +468,18 @@ async function refreshTopFavoritesChart(showAlert = true) {
         if (showAlert) showTimedAlert(t("Error"), t("Failed to refresh top favorites"), "error", 1000);
     }
 }
-document.getElementById("topFavoritesRefresh")?.addEventListener("click", () => refreshTopFavoritesChart());
-document.getElementById("topFavoritesReset")?.addEventListener("click", () => {
-    document.getElementById("topFavoritesTimeRange").value = "tháng"; // Reset về giá trị tiếng Việt
-    document.getElementById("topFavoritesStartDate").value = "";
-    document.getElementById("topFavoritesEndDate").value = "";
-    refreshTopFavoritesChart();
-});
 
-async function refreshCompareDestinationsChart(showAlert = true) {
-    const selectedIds = $("#compareDestinationsSelect").val() || [];
-    const selectedValue = document.getElementById("compareTimeRange")?.value || "all";
-    const timeRangeForApi = getApiTimeRange(selectedValue); // Ánh xạ giá trị
-
-    const startDate = document.getElementById("compareStartDate")?.value || "";
-    const endDate = document.getElementById("compareEndDate")?.value || "";
-    if (!selectedIds.length) {
+async function refreshCompareDestinationsChart(selectedIds, showAlert = true) {
+    const timeRangeValue = document.getElementById("compareTimeRange")?.value || "month";
+    const timeRangeForApi = getApiTimeRange(timeRangeValue);
+    let startDate = document.getElementById("compareStartDate")?.value || "";
+    let endDate = document.getElementById("compareEndDate")?.value || "";
+    if (timeRangeForApi === 'day' && !startDate && !endDate) {
+        const today = new Date().toISOString().split('T')[0];
+        startDate = today;
+        endDate = today;
+    }
+    if (!selectedIds || selectedIds.length === 0) {
         drawCompareDestinationsChart([]);
         if (showAlert) showTimedAlert(t("Warning"), t("Please choose at least one destination"), "warning", 1000);
         return;
@@ -452,10 +490,9 @@ async function refreshCompareDestinationsChart(showAlert = true) {
         `&timeRange=${encodeURIComponent(timeRangeForApi)}`;
     if (startDate) url += `&startDate=${encodeURIComponent(startDate)}`;
     if (endDate) url += `&endDate=${encodeURIComponent(endDate)}`;
+    const cacheKey = `compare_${selectedIds.join('_')}_${timeRangeForApi}_${startDate}_${endDate}`;
     try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const { data = [] } = await response.json();
+        const { data = [] } = await fetchWithCache(url, cacheKey);
         compareDestinations = Array.isArray(data) ? data : [];
         drawCompareDestinationsChart(compareDestinations);
         if (!compareDestinations.length && showAlert)
@@ -468,45 +505,8 @@ async function refreshCompareDestinationsChart(showAlert = true) {
         if (showAlert) showTimedAlert(t("Error"), t("Failed to refresh comparison data"), "error", 1000);
     }
 }
-document.getElementById("compareDestinationsBtn")?.addEventListener("click", () => refreshCompareDestinationsChart());
-document.getElementById("compareDestinationsReset")?.addEventListener("click", () => {
-    document.getElementById("compareTimeRange").value = "tháng"; // Reset về giá trị tiếng Việt
-    document.getElementById("compareStartDate").value = "";
-    document.getElementById("compareEndDate").value = "";
-    $("#compareDestinationsSelect").val(null).trigger("change");
-    drawCompareDestinationsChart([]);
-    showTimedAlert(t("Success!"), t("Filters have been reset"), "success", 1000);
-});
 
-function downloadChart(chart, filename, type) {
-    if (!chart) { showTimedAlert(t("Error"), t("No chart available for download", { filename }), "error", 1000); return; }
-    if (type === "png") {
-        const link = document.createElement("a");
-        link.href = chart.toBase64Image();
-        link.download = filename; link.click();
-    } else if (type === "csv") {
-        const labels = chart.data.labels;
-        const datasets = chart.data.datasets;
-        let csv = `\uFEFF"${t('Label')}",` + datasets.map(ds => `"${t(ds.label)}"`).join(",") + "\n";
-        labels.forEach((label, idx) => {
-            const row = [`"${label}"`];
-            datasets.forEach(ds => row.push(ds.data[idx] ?? 0));
-            csv += row.join(",") + "\n";
-        });
-        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = filename.replace(".png", ".csv");
-        link.click();
-    }
-}
-document.getElementById("analyticsDownloadChartBtn")?.addEventListener("click", () => downloadChart(analyticsChart, "destination_analytics.png", document.getElementById("analyticsDownloadType")?.value || "png"));
-document.getElementById("demographicsDownloadChartBtn")?.addEventListener("click", () => downloadChart(demographicsChart, "demographics_chart.png", document.getElementById("demographicsDownloadType")?.value || "png"));
-document.getElementById("topInteractionDownloadChartBtn")?.addEventListener("click", () => downloadChart(topInteractionChart, "top_interactions.png", document.getElementById("topInteractionDownloadType")?.value || "png"));
-document.getElementById("topFavoritesDownloadChartBtn")?.addEventListener("click", () => downloadChart(topFavoritesChart, "top_favorites.png", document.getElementById("topFavoritesDownloadType")?.value || "png"));
-document.getElementById("compareDestinationsDownloadChartBtn")?.addEventListener("click", () => downloadChart(compareDestinationsChart, "destination_comparison.png", document.getElementById("compareDownloadType")?.value || "png"));
-
-// --- INITIALIZE ---
+// Initialize charts
 function initializeCharts() {
     refreshAnalyticsChart(false);
     refreshDemographicsChart(false);
@@ -516,23 +516,114 @@ function initializeCharts() {
     isInitialLoad = false;
 }
 
-// Lắng nghe sự kiện DOMContentLoaded để khởi tạo
-window.addEventListener("DOMContentLoaded", () => {
+// Consolidated DOMContentLoaded event listener
+document.addEventListener("DOMContentLoaded", function () {
+    // Initialize multiselect dropdown if needed
+    const compareSelect = document.getElementById("compareDestinationsSelect");
+    if (compareSelect && typeof multiselect === "function") {
+        multiselect({
+            element: compareSelect,
+            maxItems: 5,
+            search: true,
+            selectAll: true
+        });
+    }
+
     initializeCharts();
 
-    // *** THÊM TRÌNH LẮNG NGHE SỰ KIỆN languageChanged ***
+    // Analytics Chart
+    document.getElementById("analyticsRefreshChart")?.addEventListener("click", () => refreshAnalyticsChart(true));
+    document.getElementById("analyticsResetFilter")?.addEventListener("click", () => {
+        document.getElementById("analyticsTimeRange").value = "month";
+        document.getElementById("analyticsStartDate").value = "";
+        document.getElementById("analyticsEndDate").value = "";
+        refreshAnalyticsChart(false);
+    });
+    document.getElementById("analyticsDownloadChartBtn")?.addEventListener("click", () => {
+        const type = document.getElementById("analyticsDownloadType")?.value || "png";
+        downloadChart(analyticsChart, "destination_analytics.png", type);
+    });
+
+    // Demographics Chart
+    document.getElementById("demographicsRefreshChart")?.addEventListener("click", () => refreshDemographicsChart(true));
+    document.getElementById("demographicsResetFilter")?.addEventListener("click", () => {
+        document.getElementById("demographicsTimeRange").value = "month";
+        document.getElementById("demographicsStartDate").value = "";
+        document.getElementById("demographicsEndDate").value = "";
+        refreshDemographicsChart(false);
+    });
+    document.getElementById("demographicsDownloadChartBtn")?.addEventListener("click", () => {
+        const type = document.getElementById("demographicsDownloadType")?.value || "png";
+        downloadChart(demographicsChart, "demographics_chart.png", type);
+    });
+
+    // Top Views Chart
+    document.getElementById("topViewsRefresh")?.addEventListener("click", () => refreshTopViewsChart(true));
+    document.getElementById("topViewsReset")?.addEventListener("click", () => {
+        document.getElementById("topViewsTimeRange").value = "month";
+        document.getElementById("topViewsStartDate").value = "";
+        document.getElementById("topViewsEndDate").value = "";
+        refreshTopViewsChart(false);
+    });
+    document.getElementById("topInteractionDownloadChartBtn")?.addEventListener("click", () => {
+        const type = document.getElementById("topInteractionDownloadType")?.value || "png";
+        downloadChart(topInteractionChart, "top_interactions.png", type);
+    });
+
+    // Top Favorites Chart
+    document.getElementById("topFavoritesRefresh")?.addEventListener("click", () => refreshTopFavoritesChart(true));
+    document.getElementById("topFavoritesReset")?.addEventListener("click", () => {
+        document.getElementById("topFavoritesTimeRange").value = "month";
+        document.getElementById("topFavoritesStartDate").value = "";
+        document.getElementById("topFavoritesEndDate").value = "";
+        refreshTopFavoritesChart(false);
+    });
+    document.getElementById("topFavoritesDownloadChartBtn")?.addEventListener("click", () => {
+        const type = document.getElementById("topFavoritesDownloadType")?.value || "png";
+        downloadChart(topFavoritesChart, "top_favorites.png", type);
+    });
+
+    // Compare Destinations Chart
+    document.getElementById("compareDestinationsBtn")?.addEventListener("click", () => {
+        const select = document.getElementById("compareDestinationsSelect");
+        const selectedIds = Array.from(select?.selectedOptions || []).map(option => option.value);
+        refreshCompareDestinationsChart(selectedIds, true);
+    });
+    document.getElementById("compareDestinationsReset")?.addEventListener("click", () => {
+        const select = document.getElementById("compareDestinationsSelect");
+        if (select) {
+            // Deselect all options
+            Array.from(select.options).forEach(option => option.selected = false);
+            // Trigger change event to update multiselect UI
+            select.dispatchEvent(new Event('change'));
+        }
+        document.getElementById("compareTimeRange").value = "month";
+        document.getElementById("compareStartDate").value = "";
+        document.getElementById("compareEndDate").value = "";
+        compareDestinations = [];
+        drawCompareDestinationsChart([]);
+        showTimedAlert(t("Success!"), t("Filters and selections have been reset"), "success", 1000);
+    });
+    document.getElementById("compareDestinationsDownloadChartBtn")?.addEventListener("click", () => {
+        const type = document.getElementById("compareDestinationsDownloadType")?.value || "png";
+        downloadChart(compareDestinationsChart, "destination_comparison.png", type);
+    });
+
+    // Language Change Event
     window.addEventListener('languageChanged', () => {
         console.log("Destination dashboard: Language changed event detected, refreshing all charts...");
-
-        // Vẽ lại tất cả các biểu đồ để áp dụng bản dịch mới
+        // Clear cache on language change to ensure translated labels are updated
+        chartDataCache.clear();
         refreshAnalyticsChart(false);
         refreshDemographicsChart(false);
         refreshTopViewsChart(false);
         refreshTopFavoritesChart(false);
-
-        // Đối với biểu đồ so sánh, cần truyền lại các ID đã chọn
-        const selectedIds = $("#compareDestinationsSelect").val() || [];
-        // Chuyển `showAlert` thành `false` để không hiện thông báo khi chỉ đổi ngôn ngữ
-        refreshCompareDestinationsChart(false, selectedIds);
+        const select = document.getElementById("compareDestinationsSelect");
+        const selectedIds = Array.from(select?.selectedOptions || []).map(option => option.value);
+        if (selectedIds.length > 0) {
+            refreshCompareDestinationsChart(selectedIds, false);
+        } else {
+            drawCompareDestinationsChart([]);
+        }
     });
 });

@@ -47,19 +47,19 @@ function validateFilterInputs(startDateStr, endDateStr) {
     if (startDateStr) {
         const start = new Date(startDateStr);
         if (start > now) {
-            showTimedAlert(t("Invalid Input"), t("Start date cannot be in the future."), "warning", 2000);
+            showTimedAlert(t("Invalid Input"), t("Start date cannot be in the future."), "warning", 1000);
             return false;
         }
     }
     if (endDateStr) {
         const end = new Date(endDateStr);
         if (end > now) {
-            showTimedAlert(t("Invalid Input"), t("End date cannot be in the future."), "warning", 2000);
+            showTimedAlert(t("Invalid Input"), t("End date cannot be in the future."), "warning", 1000);
             return false;
         }
     }
     if (startDateStr && endDateStr && new Date(endDateStr) < new Date(startDateStr)) {
-        showTimedAlert(t("Invalid Input"), t("End date cannot be earlier than start date."), "warning", 2000);
+        showTimedAlert(t("Invalid Input"), t("End date cannot be earlier than start date."), "warning", 1000);
         return false;
     }
     return true;
@@ -68,9 +68,18 @@ function validateFilterInputs(startDateStr, endDateStr) {
 // Download chart (as PNG or CSV)
 function downloadChart(chart, filename, type) {
     if (!chart || !chart.canvas) {
-        showTimedAlert(t("Error"), t(`No chart available for download`), "error", 2000);
+        showTimedAlert(t("Error"), t("No chart available for download"), "error", 1000);
         return;
     }
+    if (!chart.data.labels || chart.data.labels.length === 0) {
+        showTimedAlert(t("Warning"), t("No data available to download."), "warning", 1000);
+        return;
+    }
+    if (chart === myCompareProductsChart && (!chart.data.datasets[0].data || chart.data.datasets[0].data.every(val => val === 0))) {
+        showTimedAlert(t("Warning"), t("No data available to download."), "warning", 1000);
+        return;
+    }
+
     if (type === "png") {
         const canvas = chart.canvas;
         const whiteCanvas = document.createElement("canvas");
@@ -88,7 +97,7 @@ function downloadChart(chart, filename, type) {
         const labels = chart.data.labels;
         const datasets = chart.data.datasets;
         if (!labels || labels.length === 0) {
-            showTimedAlert(t("Warning"), t("No data available to download."), "warning", 2000);
+            showTimedAlert(t("Warning"), t("No data available to download."), "warning", 1000);
             return;
         }
         const escapeCsv = (value) => {
@@ -298,7 +307,7 @@ async function refreshAnalyticsChart(showAlert = true) {
     } catch (err) {
         drawAnalyticsChart([]);
         logDebug("Analytics refresh error", err);
-        if (showAlert) showTimedAlert(t("Error!"), t("An error occurred"), "error", 2000);
+        if (showAlert) showTimedAlert(t("Error!"), t("An error occurred"), "error", 1000);
     }
 }
 
@@ -330,7 +339,7 @@ async function refreshDemographicsChart(showAlert = true) {
     } catch (err) {
         drawDemographicsChart([]);
         logDebug("Demographics refresh error", err);
-        if (showAlert) showTimedAlert(t("Error!"), t("An error occurred"), "error", 2000);
+        if (showAlert) showTimedAlert(t("Error!"), t("An error occurred"), "error", 1000);
     }
 }
 
@@ -362,7 +371,7 @@ async function refreshTopInteractionChart(showAlert = true) {
     } catch (err) {
         drawTopInteractionChart([]);
         logDebug("Top Interaction refresh error", err);
-        if (showAlert) showTimedAlert(t("Error!"), t("Failed to refresh top interaction"), "error", 2000);
+        if (showAlert) showTimedAlert(t("Error!"), t("Failed to refresh top interaction"), "error", 1000);
     }
 }
 
@@ -394,7 +403,7 @@ async function refreshTopFavoriteChart(showAlert = true) {
     } catch (err) {
         drawTopFavoriteChart([]);
         logDebug("Top Favorite refresh error", err);
-        if (showAlert) showTimedAlert(t("Error!"), t("Failed to refresh top favorites"), "error", 2000);
+        if (showAlert) showTimedAlert(t("Error!"), t("Failed to refresh top favorites"), "error", 1000);
     }
 }
 
@@ -415,7 +424,7 @@ async function refreshCompareProductsChart(productIds, showAlert = true) {
 
     if (!productIds || productIds.length === 0) {
         drawCompareProductsChart([]);
-        if (showAlert) showTimedAlert(t("Warning!"), t("Please select products to compare"), "warning", 2000);
+        if (showAlert) showTimedAlert(t("Warning!"), t("Please select products to compare"), "warning", 1000);
         return;
     }
 
@@ -434,7 +443,7 @@ async function refreshCompareProductsChart(productIds, showAlert = true) {
     } catch (err) {
         drawCompareProductsChart([]);
         logDebug("Compare Products refresh error", err);
-        if (showAlert) showTimedAlert(t("Error!"), t("An error occurred"), "error", 2000);
+        if (showAlert) showTimedAlert(t("Error!"), t("An error occurred"), "error", 1000);
     }
 }
 
@@ -446,80 +455,93 @@ function initializeOcopDashboard() {
     refreshDemographicsChart(false);
     refreshTopInteractionChart(false);
     refreshTopFavoriteChart(false);
-    drawCompareProductsChart([]);
+    drawCompareProductsChart([]); // Initially empty comparison chart
 }
-window.initializeOcopDashboard = initializeOcopDashboard;
 
-// *** HOÀN THIỆN: Event listeners cho tất cả các nút Reset và Download ***
+// Consolidated DOMContentLoaded event listener
 document.addEventListener("DOMContentLoaded", function () {
-    // *** FIX 1: THAY ĐỔI GIÁ TRỊ RESET MẶC ĐỊNH ***
-    // Thay đổi giá trị từ tiếng Việt 'tháng' sang tiếng Anh 'month' để khớp với value của <option>
-    const defaultTimeRange = 'month';
+    // Initialize dashboard
+    initializeOcopDashboard();
 
     // --- Analytics Chart ---
-    document.getElementById("analyticsRefreshChart")?.addEventListener("click", () => refreshAnalyticsChart());
+    document.getElementById("analyticsRefreshChart")?.addEventListener("click", () => {
+        refreshAnalyticsChart(true);
+    });
     document.getElementById("analyticsResetFilter")?.addEventListener("click", () => {
-        // *** FIX 2: SỬA LOGIC NÚT RESET ***
-        document.getElementById("analyticsTimeRange").value = defaultTimeRange; // Gán đúng giá trị 'month'
+        document.getElementById("analyticsTimeRange").value = "month";
         document.getElementById("analyticsStartDate").value = "";
         document.getElementById("analyticsEndDate").value = "";
         refreshAnalyticsChart(false);
     });
-    document.getElementById("analyticsDownloadPng")?.addEventListener("click", () => downloadChart(myAnalyticsChart, "ocop_analytics.png", "png"));
-    document.getElementById("analyticsDownloadCsv")?.addEventListener("click", () => downloadChart(myAnalyticsChart, "ocop_analytics.csv", "csv"));
+    document.getElementById("analyticsDownloadChartBtn")?.addEventListener("click", () => {
+        const type = document.getElementById("analyticsDownloadType").value;
+        downloadChart(myAnalyticsChart, "analytics-chart.png", type);
+    });
 
     // --- Demographics Chart ---
-    document.getElementById("demographicsRefreshChart")?.addEventListener("click", () => refreshDemographicsChart());
+    document.getElementById("demographicsRefreshChart")?.addEventListener("click", () => {
+        refreshDemographicsChart(true);
+    });
     document.getElementById("demographicsResetFilter")?.addEventListener("click", () => {
-        // *** FIX 2: SỬA LOGIC NÚT RESET ***
-        document.getElementById("demographicsTimeRange").value = defaultTimeRange; // Gán đúng giá trị 'month'
+        document.getElementById("demographicsTimeRange").value = "month";
         document.getElementById("demographicsStartDate").value = "";
         document.getElementById("demographicsEndDate").value = "";
         refreshDemographicsChart(false);
     });
-    document.getElementById("demographicsDownloadPng")?.addEventListener("click", () => downloadChart(myDemographicsChart, "ocop_demographics.png", "png"));
-    document.getElementById("demographicsDownloadCsv")?.addEventListener("click", () => downloadChart(myDemographicsChart, "ocop_demographics.csv", "csv"));
+    document.getElementById("demographicsDownloadChartBtn")?.addEventListener("click", () => {
+        const type = document.getElementById("demographicsDownloadType").value;
+        downloadChart(myDemographicsChart, "demographics-chart.png", type);
+    });
 
     // --- Top Interaction Chart ---
-    document.getElementById("topInteractionRefresh")?.addEventListener("click", () => refreshTopInteractionChart());
-    document.getElementById("topInteractionResetFilter")?.addEventListener("click", () => {
-        // *** FIX 2: SỬA LOGIC NÚT RESET ***
-        document.getElementById("topInteractionTimeRange").value = defaultTimeRange; // Gán đúng giá trị 'month'
+    document.getElementById("topInteractionRefresh")?.addEventListener("click", () => {
+        refreshTopInteractionChart(true);
+    });
+    document.getElementById("topInteractionReset")?.addEventListener("click", () => {
+        document.getElementById("topInteractionTimeRange").value = "month";
         document.getElementById("topInteractionStartDate").value = "";
         document.getElementById("topInteractionEndDate").value = "";
         refreshTopInteractionChart(false);
     });
-    document.getElementById("topInteractionDownloadPng")?.addEventListener("click", () => downloadChart(myTopInteractionChart, "ocop_top_interaction.png", "png"));
-    document.getElementById("topInteractionDownloadCsv")?.addEventListener("click", () => downloadChart(myTopInteractionChart, "ocop_top_interaction.csv", "csv"));
+    document.getElementById("topInteractionDownloadChartBtn")?.addEventListener("click", () => {
+        const type = document.getElementById("topInteractionDownloadType").value;
+        downloadChart(myTopInteractionChart, "top-interactions-chart.png", type);
+    });
 
     // --- Top Favorite Chart ---
-    document.getElementById("topFavoriteRefresh")?.addEventListener("click", () => refreshTopFavoriteChart());
-     document.getElementById("topFavoriteResetFilter")?.addEventListener("click", () => {
-        // *** FIX 2: SỬA LOGIC NÚT RESET ***
-        document.getElementById("topFavoriteTimeRange").value = defaultTimeRange; // Gán đúng giá trị 'month'
+    document.getElementById("topFavoriteRefresh")?.addEventListener("click", () => {
+        refreshTopFavoriteChart(true);
+    });
+    document.getElementById("topFavoriteReset")?.addEventListener("click", () => {
+        document.getElementById("topFavoriteTimeRange").value = "month";
         document.getElementById("topFavoriteStartDate").value = "";
         document.getElementById("topFavoriteEndDate").value = "";
         refreshTopFavoriteChart(false);
     });
-    document.getElementById("topFavoriteDownloadPng")?.addEventListener("click", () => downloadChart(myTopFavoriteChart, "ocop_top_favorite.png", "png"));
-    document.getElementById("topFavoriteDownloadCsv")?.addEventListener("click", () => downloadChart(myTopFavoriteChart, "ocop_top_favorite.csv", "csv"));
+    document.getElementById("topFavoriteDownloadChartBtn")?.addEventListener("click", () => {
+        const type = document.getElementById("topFavoriteDownloadType").value;
+        downloadChart(myTopFavoriteChart, "top-favorites-chart.png", type);
+    });
 
     // --- Compare Products Chart ---
     document.getElementById("compareProductsBtn")?.addEventListener("click", () => {
-        const selectedProductIds = $("#compareProductsSelect").val() || [];
-        refreshCompareProductsChart(selectedProductIds);
+        const select = document.getElementById("compareProductsSelect");
+        const productIds = Array.from(select.selectedOptions).map(option => option.value);
+        refreshCompareProductsChart(productIds, true);
     });
-     document.getElementById("compareResetFilter")?.addEventListener("click", () => {
-        // *** FIX 2: SỬA LOGIC NÚT RESET ***
-        $("#compareProductsSelect").val(null).trigger('change');
-        document.getElementById("compareTimeRange").value = defaultTimeRange; // Gán đúng giá trị 'month'
+    document.getElementById("compareProductsReset")?.addEventListener("click", () => {
+        const select = document.getElementById("compareProductsSelect");
+        select.selectedIndex = -1; // Clear all selections
+        document.getElementById("compareTimeRange").value = "month";
         document.getElementById("compareStartDate").value = "";
         document.getElementById("compareEndDate").value = "";
-        drawCompareProductsChart([]); 
+        drawCompareProductsChart([]); // Reset to empty chart
     });
-    document.getElementById("compareDownloadPng")?.addEventListener("click", () => downloadChart(myCompareProductsChart, "ocop_comparison.png", "png"));
-    document.getElementById("compareDownloadCsv")?.addEventListener("click", () => downloadChart(myCompareProductsChart, "ocop_comparison.csv", "csv"));
-    
+    document.getElementById("compareProductsDownloadChartBtn")?.addEventListener("click", () => {
+        const type = document.getElementById("compareProductsDownloadType").value;
+        downloadChart(myCompareProductsChart, "compare-products-chart.png", type);
+    });
+
     // --- Language Change Event ---
     window.addEventListener('languageChanged', () => {
         console.log("Language changed event detected, refreshing charts...");
@@ -527,12 +549,12 @@ document.addEventListener("DOMContentLoaded", function () {
         refreshDemographicsChart(false);
         refreshTopInteractionChart(false);
         refreshTopFavoriteChart(false);
-        
-        const selectedProductIds = $("#compareProductsSelect").val() || [];
-        if (selectedProductIds.length > 0) {
-            refreshCompareProductsChart(selectedProductIds, false);
+        const select = document.getElementById("compareProductsSelect");
+        const productIds = Array.from(select.selectedOptions).map(option => option.value);
+        if (productIds.length > 0) {
+            refreshCompareProductsChart(productIds, false);
         } else {
-            drawCompareProductsChart([]); 
+            drawCompareProductsChart([]);
         }
     });
 });

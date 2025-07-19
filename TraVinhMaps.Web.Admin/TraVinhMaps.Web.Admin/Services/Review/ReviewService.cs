@@ -20,17 +20,25 @@ namespace TraVinhMaps.Web.Admin.Services.Review
         }
         public async Task<IEnumerable<ReviewResponse>> ListAllAsync(CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync(reviewApi + "GetAllReview");
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var contentResult = await response.Content.ReadAsStringAsync(cancellationToken);
-                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return System.Text.Json.JsonSerializer.Deserialize<ReviewBase<List<ReviewResponse>>>(contentResult, option)?.Data ?? throw new HttpRequestException("Fail to find list review.");
+                var response = await _httpClient.GetAsync(reviewApi + "GetAllReview");
+                if (response.IsSuccessStatusCode)
+                {
+                    var contentResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                    var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    return System.Text.Json.JsonSerializer.Deserialize<ReviewBase<List<ReviewResponse>>>(contentResult, option)?.Data ?? throw new HttpRequestException("Fail to find list review.");
+                }
+                else
+                {
+                    // var errorResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                    // throw new HttpRequestException($"Unable to fetch list review. Status: {response.StatusCode}, Error: {errorResult}");
+                    return Enumerable.Empty<ReviewResponse>();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                var errorResult = await response.Content.ReadAsStringAsync(cancellationToken);
-                throw new HttpRequestException($"Unable to fetch list review. Status: {response.StatusCode}, Error: {errorResult}");
+                throw new HttpRequestException($"An error occurred while fetching reviews: {ex.Message}", ex);
             }
         }
         public async Task<long> CountAsync(Expression<Func<ReviewResponse, bool>> predicate = null, CancellationToken cancellationToken = default)
@@ -83,18 +91,26 @@ namespace TraVinhMaps.Web.Admin.Services.Review
         }
         public async Task<string> GetTopReviewerAsync(CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync(reviewApi + "GetTopReviewerAsync");
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var contentResult = await response.Content.ReadAsStringAsync(cancellationToken);
-                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var result = System.Text.Json.JsonSerializer.Deserialize<TopReviewerResponse>(contentResult, option);
-                return result.UserName;
+                var response = await _httpClient.GetAsync(reviewApi + "GetTopReviewerAsync");
+                if (response.IsSuccessStatusCode)
+                {
+                    var contentResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                    var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var result = System.Text.Json.JsonSerializer.Deserialize<TopReviewerResponse>(contentResult, option);
+                    return result.UserName;
+                }
+                else
+                {
+                    // var errorResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                    // throw new HttpRequestException($"Unable to fetch top reviewer. Status: {response.StatusCode}, Error: {errorResult}");
+                    return string.Empty; // Return empty string if the request fails
+                }
             }
-            else
+            catch (Exception ex)
             {
-                var errorResult = await response.Content.ReadAsStringAsync(cancellationToken);
-                throw new HttpRequestException($"Unable to fetch top reviewer. Status: {response.StatusCode}, Error: {errorResult}");
+                throw new HttpRequestException($"An error occurred while fetching the top reviewer: {ex.Message}", ex);
             }
         }
 
@@ -115,45 +131,61 @@ namespace TraVinhMaps.Web.Admin.Services.Review
         }
         public async Task<IEnumerable<ReviewResponse>> FilterReviewsAsync(string? destinationId, int? rating, DateTime? startAt, DateTime? endAt, CancellationToken cancellationToken = default)
         {
-            var queryParams = new List<string>();
-
-            if (!string.IsNullOrEmpty(destinationId))
-                queryParams.Add($"destinationId={Uri.EscapeDataString(destinationId)}");
-            if (rating.HasValue)
-                queryParams.Add($"rating={rating.Value}");
-            if (startAt.HasValue)
-                queryParams.Add($"startAt={Uri.EscapeDataString(startAt.Value.ToString("o"))}"); 
-            if (endAt.HasValue)
-                queryParams.Add($"endAt={Uri.EscapeDataString(endAt.Value.ToString("o"))}"); 
-            var queryString = queryParams.Any() ? "?" + string.Join("&", queryParams) : string.Empty;
-
-            var response = await _httpClient.GetAsync(reviewApi + "FilterReviewsAsync" + queryString, cancellationToken);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var contentResult = await response.Content.ReadAsStringAsync(cancellationToken);
-                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return System.Text.Json.JsonSerializer.Deserialize<ReviewBase<List<ReviewResponse>>>(contentResult, option)?.Data ?? throw new HttpRequestException("Unable to find reviews.");
+                var queryParams = new List<string>();
+
+                if (!string.IsNullOrEmpty(destinationId))
+                    queryParams.Add($"destinationId={Uri.EscapeDataString(destinationId)}");
+                if (rating.HasValue)
+                    queryParams.Add($"rating={rating.Value}");
+                if (startAt.HasValue)
+                    queryParams.Add($"startAt={Uri.EscapeDataString(startAt.Value.ToString("o"))}");
+                if (endAt.HasValue)
+                    queryParams.Add($"endAt={Uri.EscapeDataString(endAt.Value.ToString("o"))}");
+                var queryString = queryParams.Any() ? "?" + string.Join("&", queryParams) : string.Empty;
+
+                var response = await _httpClient.GetAsync(reviewApi + "FilterReviewsAsync" + queryString, cancellationToken);
+                if (response.IsSuccessStatusCode)
+                {
+                    var contentResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                    var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    return System.Text.Json.JsonSerializer.Deserialize<ReviewBase<List<ReviewResponse>>>(contentResult, option)?.Data ?? throw new HttpRequestException("Unable to find reviews.");
+                }
+                else
+                {
+                    // var errorResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                    // throw new HttpRequestException($"Unable to fetch reviews. Status: {response.StatusCode}, Error: {errorResult}");
+                    return Enumerable.Empty<ReviewResponse>(); // Return empty if the request fails
+                }
             }
-            else
+            catch (Exception ex)
             {
-                var errorResult = await response.Content.ReadAsStringAsync(cancellationToken);
-                throw new HttpRequestException($"Unable to fetch reviews. Status: {response.StatusCode}, Error: {errorResult}");
+                throw new HttpRequestException($"An error occurred while filtering reviews: {ex.Message}", ex);
             }
         }
 
         public async Task<IEnumerable<ReviewResponse>> GetLatestReviewsAsync(int count = 5, CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync(reviewApi + "GetLatestReviews");
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var contentResult = await response.Content.ReadAsStringAsync(cancellationToken);
-                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return System.Text.Json.JsonSerializer.Deserialize<ReviewBase<List<ReviewResponse>>>(contentResult, option)?.Data ?? throw new HttpRequestException("Fail to find list latest review.");
+                var response = await _httpClient.GetAsync(reviewApi + "GetLatestReviews");
+                if (response.IsSuccessStatusCode)
+                {
+                    var contentResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                    var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    return System.Text.Json.JsonSerializer.Deserialize<ReviewBase<List<ReviewResponse>>>(contentResult, option)?.Data ?? throw new HttpRequestException("Fail to find list latest review.");
+                }
+                else
+                {
+                    // var errorResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                    // throw new HttpRequestException($"Unable to fetch list latest review. Status: {response.StatusCode}, Error: {errorResult}");
+                    return Enumerable.Empty<ReviewResponse>(); // Return empty if the request fails
+                }
             }
-            else
+            catch (Exception ex)
             {
-                var errorResult = await response.Content.ReadAsStringAsync(cancellationToken);
-                throw new HttpRequestException($"Unable to fetch list latest review. Status: {response.StatusCode}, Error: {errorResult}");
+                throw new HttpRequestException($"An error occurred while fetching latest reviews: {ex.Message}", ex);
             }
         }
 

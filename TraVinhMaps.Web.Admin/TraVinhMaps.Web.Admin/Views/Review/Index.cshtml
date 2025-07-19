@@ -53,10 +53,6 @@
                                     <div class="project-counter">
                                         <h2 class="f-w-600">@ViewBag.TotalUsersReview</h2>
                                     </div>
-                                    <div class="product-sub bg-primary-light">
-                                        <img src="~/assets/images/dashboard_icon/People.png" alt=""
-                                            style="width: 25px;">
-                                    </div>
                                 </div>
                                 <ul class="bubbles">
                                     <li class="bubble"></li>
@@ -77,12 +73,7 @@
                             <div class="card-body total-upcoming"><span class="f-light f-w-500 f-14">User Has The Most Comments</span>
                                 <div class="project-details">
                                     <div class="project-counter">
-                                        <h2 class="f-w-600">@ViewBag.TopReviewer</h2><span class="f-12 f-w-400">(This month)
-                                        </span>
-                                    </div>
-                                    <div class="product-sub bg-light-light">
-                                        <img src="../assets/images/dashboard_icon/People.png" alt=""
-                                            style="width: 25px;">
+                                        <h2 class="f-w-600">@(!string.IsNullOrWhiteSpace(ViewBag.TopReviewer) ? ViewBag.TopReviewer : "Not available")</h2>
                                     </div>
                                 </div>
                                 <ul class="bubbles">
@@ -108,9 +99,6 @@
                                         <h2 class="f-w-600">@ViewBag.CountReview</h2><span class="f-12 f-w-400">
                                         </span>
                                     </div>
-                                    <div class="product-sub bg-secondary-light">
-                                        <img src="../assets/images/dashboard_icon/Star.png" alt="" style="width: 30px;">
-                                    </div>
                                 </div>
                                 <ul class="bubbles">
                                     <li class="bubble"> </li>
@@ -133,10 +121,6 @@
                                 <div class="project-details">
                                     <div class="project-counter">
                                         <h2 class="f-w-600">@ViewBag.TotalFiveStarReviews</h2>
-                                    </div>
-                                    <div class="product-sub bg-warning-light">
-                                        <img src="../assets/images/dashboard_icon/verified-user.png" alt=""
-                                            style="width: 30px;">
                                     </div>
                                 </div>
                                 <ul class="bubbles">

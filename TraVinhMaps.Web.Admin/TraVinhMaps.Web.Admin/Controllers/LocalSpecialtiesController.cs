@@ -301,31 +301,37 @@ namespace TraVinhMaps.Web.Admin.Controllers
         {
             if (string.IsNullOrEmpty(request.Id) || request.ImageFile == null || !request.ImageFile.Any())
             {
-                return Json(new { success = false, message = "Missing local specialty ID or no images selected." });
+                return Json(new { success = false, message = "Please select images and provide the local specialty ID." });
             }
+
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
             var maxFileSize = 5 * 1024 * 1024; // 5 MB
-            var maxImages = 5; // Max 5 images
+            var maxImages = 5;
+
             if (request.ImageFile.Count > maxImages)
             {
-                return Json(new { success = false, message = $"You can upload a maximum of {maxImages} images." });
+                return Json(new { success = false, message = $"You can upload up to {maxImages} images only." });
             }
+
             foreach (var file in request.ImageFile)
             {
                 if (file.Length == 0)
                 {
-                    return Json(new { success = false, message = $"File {file.FileName} is empty." });
+                    return Json(new { success = false, message = $"File '{file.FileName}' is empty." });
                 }
+
                 if (file.Length > maxFileSize)
                 {
-                    return Json(new { success = false, message = $"File {file.FileName} exceeds the maximum size of 5 MB." });
+                    return Json(new { success = false, message = $"File '{file.FileName}' exceeds the maximum size of 5 MB." });
                 }
+
                 var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
                 if (!allowedExtensions.Contains(extension))
                 {
-                    return Json(new { success = false, message = $"File {file.FileName} has an unsupported format. Allowed formats: {string.Join(", ", allowedExtensions)}." });
+                    return Json(new { success = false, message = $"File '{file.FileName}' has an unsupported format. Allowed: {string.Join(", ", allowedExtensions)}" });
                 }
             }
+
             try
             {
                 var imageUrls = await _localSpecialtiesService.AddLocalSpecialtiesImage(request);
@@ -333,13 +339,24 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
             catch (HttpRequestException ex)
             {
-                return Json(new { success = false, message = $"Failed to upload images: {ex.Message}" });
+                // Gợi ý: Log ex.Message nội bộ, không show cho user
+                return Json(new
+                {
+                    success = false,
+                    message = "Failed to upload images. Please check your internet connection or try again later."
+                });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = $"Unexpected error: {ex.Message}" });
+                // Log lỗi thật vào hệ thống log để điều tra (không cho người dùng biết detail)
+                return Json(new
+                {
+                    success = false,
+                    message = "An unexpected error occurred during image upload. Please try again later or contact support."
+                });
             }
         }
+
 
         // GET: /LocalSpecialties/UpdateSellLocation
         // Displays the form for updating a point of sale for a local specialty

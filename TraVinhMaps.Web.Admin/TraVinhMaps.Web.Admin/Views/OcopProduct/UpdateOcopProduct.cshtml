@@ -50,9 +50,9 @@
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <div class="mb-3">
+                                        <div class="mb-3 text-justify">
                                             <label>Product Description</label>
-                                            <textarea asp-for="ProductDescription" id="Description" class="form-control text-justify"
+                                            <textarea asp-for="ProductDescription" id="Description" class="form-control"
                                                 placeholder="Description of product"
                                                 id="exampleFormControlTextarea4" rows="10"></textarea>
                                             <span asp-validation-for="ProductDescription" class="text-danger"></span>
@@ -85,9 +85,9 @@
                                             <span asp-validation-for="OcopTypeId" class="text-danger"></span>
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-6">
                                         <div class="mb-3">
-                                            <label>Company name</label>
+                                            <label>Company Name</label>
                                             <select asp-for="CompanyId" class="form-select">
                                                 <option value="">-- Select Ocop Type --</option>
                                                 @foreach (var company in (IEnumerable<TraVinhMaps.Web.Admin.Models.Company.CompanyResponse>)ViewBag.Companies )

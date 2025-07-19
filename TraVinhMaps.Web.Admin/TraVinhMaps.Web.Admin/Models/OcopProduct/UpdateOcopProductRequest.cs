@@ -9,7 +9,7 @@ namespace TraVinhMaps.Web.Admin.Models.OcopProduct
         [Required(ErrorMessage = "Product name is required.")]
         [StringLength(100, ErrorMessage = "Product name must not exceed 100 characters.")]
         public required string ProductName { get; set; }
-        [StringLength(500, ErrorMessage = "Product description must not exceed 500 characters.")]
+        [StringLength(3000, ErrorMessage = "Product description must not exceed 3000 characters.")]
         public string? ProductDescription { get; set; }
         [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Product price must be a valid number.")]
         public string? ProductPrice { get; set; }
