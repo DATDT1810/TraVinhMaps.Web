@@ -12,7 +12,7 @@ namespace TraVinhMaps.Web.Admin.Models.OcopProduct
         [Required(ErrorMessage = "Product name is required.")]
         [StringLength(100, ErrorMessage = "Product name must not exceed 100 characters.")]
         public required string ProductName { get; set; }
-        [StringLength(500, ErrorMessage = "Product description must not exceed 500 characters.")]
+        [StringLength(2000, ErrorMessage = "Product description must not exceed 2000 characters.")]
         public string? ProductDescription { get; set; }
         [Required(ErrorMessage = "At least one product image is required.")]
         public List<IFormFile> ProductImageFile { get; set; }

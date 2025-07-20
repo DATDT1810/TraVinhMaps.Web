@@ -117,11 +117,11 @@
                                             <div data-location-id="@item.LocationId" style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; @(isLast ? "" : "border-bottom: 1px solid #ddd;")">
                                                 <div style="flex: 1;">
                                                     <b>@(item.Name ?? "No Location Name.")</b><br />
-                                                    <span style="display: inline-block; margin-right: 8px;"><b>Address:</b></span>
-                                                    <span>@(item.Address ?? "No Location Address.")</span><br />
-                                                    <span style="display: inline-block; margin-right: 8px;"><b>Location Type:</b></span>
-                                                    <span>@(item.Location?.Type ?? "No Location Type.")</span><br />
-                                                    <span style="display: inline-block; margin-right: 8px;"><b>Longitude/Latitude:</b></span>
+                                                    <span style="display: inline-block; margin-bottom: 10px; margin-top: 10px;"><b>Address:</b></span>
+                                                    <span style="margin-bottom: 10px;">@(item.Address ?? "No Location Address.")</span><br />
+                                                    <span style="display: inline-block;margin-bottom: 10px;"><b>Location Type:</b></span>
+                                                    <span style="margin-bottom: 10px;">@(item.Location?.Type ?? "No Location Type.")</span><br />
+                                                    <span style="display: inline-block;margin-bottom: 8x;"><b>Longitude/Latitude:</b></span>
                                                     <span>@(item.Location?.Coordinates != null && item.Location.Coordinates.Any() ? string.Join(", ", item.Location.Coordinates) : "No Location Coordinates.")</span>
                                                 </div>
                                                 <div style="display: flex; gap: 6px;">
@@ -151,12 +151,12 @@
                                     <table class="product-page-width">
                                         <tbody>
                                             <tr>
-                                                <td><b>Create At:</b></td>
-                                                <td>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</td>
+                                                <td style="padding-bottom: 10px;"><b>Create At:</b></td>
+                                                <td style="padding-bottom: 10px;">@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</td>
                                             </tr>
                                             <tr>
-                                                <td><b>Update At:</b></td>
-                                                <td class="txt-success">
+                                                <td style="padding-bottom: 10px;"><b>Update At:</b></td>
+                                                <td style="padding-bottom: 10px;" class="txt-success">
                                                     @(Model.UpdateAt?.ToLocalTime().ToString("dd/MM/yy, HH:mm") ?? "No update")
                                                 </td>
                                             </tr>
