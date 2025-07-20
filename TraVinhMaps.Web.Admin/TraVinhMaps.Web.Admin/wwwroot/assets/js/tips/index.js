@@ -53,19 +53,9 @@ $(document).ready(function () {
           success: function (response) {
             if (response.success) {
               showTimedAlert("Success!", response.message, "success", 1000);
-              var $actionCell = $row.find("td:last");
-              $actionCell
-                .find(".delete")
-                .parent()
-                .html(
-                  `<a id="restore-tips" class="restore" href="javascript:void(0)" data-id="` +
-                    id +
-                    `" title="Restore">
-                      <i class="fa fa-undo"></i>
-                    </a>`
-                );
-              $("#statusFilter").trigger("change");
-              updateSTT();
+              setTimeout(() => {
+                location.reload();
+              }, 1000);
             } else {
               showTimedAlert("Error!", response.message, "error", 1000);
             }
@@ -107,19 +97,9 @@ $(document).ready(function () {
           success: function (response) {
             if (response.success) {
               showTimedAlert("Success!", response.message, "success", 1000);
-              var $actionCell = $row.find("td:last");
-              $actionCell
-                .find(".restore")
-                .parent()
-                .html(
-                  `<a id="delete-tips" class="delete" href="javascript:void(0)" data-id="` +
-                    id +
-                    `" title="Delete">
-                      <i class="fa fa-trash" aria-hidden="true"></i>
-                    </a>`
-                );
-              $("#statusFilter").trigger("change");
-              updateSTT();
+              setTimeout(() => {
+                location.reload();
+              }, 1000);
             } else {
               showTimedAlert("Error!", response.message, "error", 1000);
             }

@@ -16,7 +16,7 @@
                 @{
                     var breadcrumbs = ViewData["Breadcrumb"] as List<BreadcrumbItem>;
                 }
-                @if (breadcrumbs != null)
+                @if (breadcrumbs != null && breadcrumbs.Any())
                 {
                     @await Html.PartialAsync("_Breadcrumb", breadcrumbs)
                 }

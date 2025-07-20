@@ -1,5 +1,4 @@
 $(document).ready(function () {
-  /* ========== DATATABLES ========== */
   const table = $("#project-status").DataTable({
     paging: true,
     ordering: true,
@@ -7,160 +6,159 @@ $(document).ready(function () {
     searching: true,
     columnDefs: [
       {
-        // Column Status
+        targets: 0,
+        searchable: false,
+        orderable: false,
+      },
+      {
+        // Cột Status
         targets: 4,
         render: (data, type) => {
           if (type === "filter" || type === "sort") {
-            return $("<div>").html(data).text().trim(); // return text for filtering/sorting
+            return $("<div>").html(data).text().trim();
           }
-          return data; // No change for display
+          return data;
         },
       },
     ],
   });
 
-   /* ========== Draw Order ========== */
-    table.on('order.dt search.dt draw.dt', function () {
-    let i = 1;
-    table
-      .cells(null, 0, { search: 'applied', order: 'applied' })
-      .every(function () {
-        this.data(i++);
-      });
-  }).draw();
+  // Vẽ lại số thứ tự
+  table
+    .on("order.dt search.dt draw.dt", function () {
+      let i = 1;
+      table
+        .cells(null, 0, { search: "applied", order: "applied" })
+        .every(function () {
+          this.data(i++);
+        });
+    })
+    .draw();
 
-  /* ========== FILLTER COMBOBOX ========== */
+  // BỘ LỌC COMBOBOX
   $("#statusFilter").on("change", () => table.draw());
 
-  // method filter
-  $.fn.dataTable.ext.search.push((settings, data) => {
-    const filter = $("#statusFilter").val(); // all | inactive
-    const status = data[4]; // text content of the Status column
+    $.fn.dataTable.ext.search.push((settings, data) => {
+        const filter = $("#statusFilter").val(); // all | inactive | active
+        const status = (data[4] || "").trim();
 
-    if (filter === "inactive") return status === "Inactive";
-    return status === "Active"; // "all" just show active
-  });
+        if (filter === "inactive") {
+            return status === "Inactive" || status === "Không hoạt động";
+        }
+        if (filter === "active") {
+            return status === "Active" || status === "Hoạt động";
+        }
+        return true; // all
+    });
 
-  $("#statusFilter").val("all").trigger("change"); // default "all"
+  $("#statusFilter").val("active").trigger("change");
 
-  /* ========== Update Row ========== */
-  function updateRow(row, isActive) {
-    const statusSpan = row.find("td:eq(4) span");
-    if (isActive) {
-      statusSpan
-        .text("Active")
-        .removeClass("badge-light-danger")
-        .addClass("badge-light-primary");
+    // Hàm cập nhật lại giao diện hàng
+    function updateRow(row, isActive, id) {
+        const statusSpan = row.find("td:eq(4) span");
+        const actionCell = row.find("td:last-child ul.action");
+
+        // Lấy text hiện tại để xác định ngôn ngữ (Anh/Việt)
+        let currentText = statusSpan.text().toLowerCase().trim();
+        let statusText;
+
+        if (currentText === "hoạt động" || currentText === "không hoạt động") {
+            statusText = isActive ? "Hoạt động" : "Không hoạt động";
+        } else {
+            statusText = isActive ? "Active" : "Inactive";
+        }
+
+        statusSpan.text(statusText)
+            .removeClass("badge-light-danger badge-light-primary")
+            .addClass(isActive ? "badge-light-primary" : "badge-light-danger");
+
+        if (isActive) {
+            actionCell.find(".unban-user").replaceWith(`
+                <a class="delete ban-user" href="javascript:void(0)" data-id="${id}" title="Ban">
+                    <i class="fa fa-ban"></i>
+                </a>
+            `);
     } else {
       statusSpan
         .text("Inactive")
         .removeClass("badge-light-primary")
         .addClass("badge-light-danger");
+
+      actionCell.find(".ban-user").replaceWith(`
+                <a class="restore unban-user" href="javascript:void(0)" data-id="${id}" title="Unban">
+                    <i class="fa fa-unlock"></i>
+                </a>
+            `);
     }
-    table.row(row).invalidate().draw(false); // No change row order
+
+    table.row(row).invalidate().draw(false);
   }
 
-  /* ========== 4. AJAX BAN ========== */
+  // Delete
   $(document).on("click", ".ban-user", function (e) {
     e.preventDefault();
-    const userId = $(this).data("id");
+    const id = $(this).data("id");
     const token = $('input[name="__RequestVerificationToken"]').val();
+    const row = $(this).closest("tr");
 
     showConfirmAlert(
       "Confirmation",
       "Are you sure you want to ban this user?",
       "Ban",
       "Cancel"
-    ).then((ok) => {
-      if (!ok) return;
+    ).then((confirmed) => {
+      if (!confirmed) return;
+
       $.ajax({
         url: "/Admin/UserManagement/Delete",
         method: "POST",
-        data: { id: userId },
+        data: { id },
         headers: { RequestVerificationToken: token },
-        success: ({ success, message }) => {
-          if (success) {
-            const row = $(this).closest("tr"); // get the row containing the ban button
-            // updaete  the button from Ban to Unban
-            const banBtn = row.find(".ban-user");
-            banBtn
-              .removeClass("ban-user delete")
-              .addClass("unban-user restore")
-              .attr("title", "Unban");
-
-            banBtn.find("i").removeClass("fa-ban").addClass("fa-unlock");
-
-            if (banBtn.find("i").length === 0) {
-              banBtn.html('<i class="fa fa-unlock"></i>');
-            }
-
-            // updateRow(row, false); 
-            updateRow(row, false);
-            showTimedAlert("Success!", message, "success", 1000);
+        success: function (response) {
+          if (response.success) {
+            updateRow(row, false, id);
+            showTimedAlert("Success!", response.message, "success", 1000);
           } else {
-            showTimedAlert("Failed!", message, "error", 1000);
+            showTimedAlert("Error!", response.message, "error", 1000);
           }
         },
-        error: (xhr) => {
-          showErrorAlert(
-            "Error",
-            "An error occurred while banning the user: " +
-              (xhr.responseJSON?.message || "Unknown error")
-          );
+        error: function (xhr) {
+          showErrorAlert("Error", xhr.responseJSON?.message || "Unknown error");
         },
       });
     });
   });
 
-  /* ========== 5. AJAX UNBAN ========== */
+  // Restore
   $(document).on("click", ".unban-user", function (e) {
     e.preventDefault();
-    const userId = $(this).data("id");
+    const id = $(this).data("id");
     const token = $('input[name="__RequestVerificationToken"]').val();
+    const row = $(this).closest("tr");
 
     showConfirmAlert(
       "Confirmation",
       "Are you sure you want to unban this user?",
       "Unban",
       "Cancel"
-    ).then((ok) => {
-      if (!ok) return;
+    ).then((confirmed) => {
+      if (!confirmed) return;
+
       $.ajax({
         url: "/Admin/UserManagement/Restore",
         method: "POST",
-        data: { id: userId },
+        data: { id },
         headers: { RequestVerificationToken: token },
-        success: ({ success, message }) => {
-          if (success) {
-            const row = $(this).closest("tr"); // get the row containing the unban button
-            // update the button from Unban to Ban
-            const unbanBtn = row.find(".unban-user");
-            unbanBtn
-              .removeClass("unban-user restore")
-              .addClass("ban-user delete")
-              .attr("title", "Ban");
-
-            // pdate icon from unlock to ban
-            unbanBtn.find("i").removeClass("fa-unlock").addClass("fa-ban");
-
-            // if (unbanBtn.find("i").length === 0) {
-            if (unbanBtn.find("i").length === 0) {
-              unbanBtn.html('<i class="fa fa-ban"></i>');
-            }
-
-            // updateRow(row, true);
-            updateRow(row, true);
-            showTimedAlert("Success!", message, "success", 1000);
+        success: function (response) {
+          if (response.success) {
+            updateRow(row, true, id);
+            showTimedAlert("Success!", response.message, "success", 1000);
           } else {
-            showTimedAlert("Failed!", message, "error", 1000);
+            showTimedAlert("Error!", response.message, "error", 1000);
           }
         },
-        error: (xhr) => {
-          showErrorAlert(
-            "Error",
-            "An error occurred while unbanning the user: " +
-              (xhr.responseJSON?.message || "Unknown error")
-          );
+        error: function (xhr) {
+          showErrorAlert("Error", xhr.responseJSON?.message || "Unknown error");
         },
       });
     });
