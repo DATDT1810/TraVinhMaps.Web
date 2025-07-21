@@ -558,3 +558,82 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+/************************************************************
+ *  SignalR Real-time Integration for OCOP Analytics
+ ************************************************************/
+
+(function () {
+    // Kiểm tra xem thư viện SignalR đã tồn tại chưa
+    if (typeof signalR === 'undefined') {
+        console.error("SignalR client library not found. Real-time updates will be disabled for OCOP page.");
+        return;
+    }
+
+    /**
+     * Hàm này sẽ làm mới tất cả các biểu đồ trên trang OCOP.
+     * Nó không hiển thị thông báo "Success" để tránh làm phiền người dùng khi cập nhật tự động.
+     */
+    function refreshAllOcopChartsForRealtime() {
+        console.log("[Real-time] Refreshing all OCOP charts...");
+
+        // Gọi các hàm refresh bạn đã viết, nhưng với showAlert = false
+        refreshAnalyticsChart(false);
+        refreshDemographicsChart(false);
+        refreshTopInteractionChart(false);
+        refreshTopFavoriteChart(false);
+
+        // Đối với biểu đồ so sánh, chỉ refresh nếu người dùng đã chọn sản phẩm
+        const compareSelect = document.getElementById("compareProductsSelect");
+        if (compareSelect && compareSelect.selectedOptions.length > 0) {
+            const productIds = Array.from(compareSelect.selectedOptions).map(option => option.value);
+            refreshCompareProductsChart(productIds, false);
+        }
+    }
+
+    // Gán hàm vào biến toàn cục để có thể gọi từ nơi khác nếu cần
+    window.refreshAllOcopCharts = refreshAllOcopChartsForRealtime;
+
+
+    // --- LOGIC KẾT NỐI VÀ XỬ LÝ SIGNALR ---
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("https://localhost:7162/dashboardHub") // Cùng một Hub với trang Dashboard
+        .withAutomaticReconnect()
+        .build();
+
+    // Định nghĩa hành động khi nhận được tín hiệu "ChartAnalytics"
+    connection.on("ChartAnalytics", function () {
+        console.log("[SignalR] Received 'ChartAnalytics' signal on OCOP page. Updating OCOP charts...");
+
+        // Gọi hàm tổng để cập nhật mọi thứ trên trang này
+        if (typeof window.refreshAllOcopCharts === 'function') {
+            window.refreshAllOcopCharts();
+        } else {
+            console.error("Function 'refreshAllOcopCharts' is not available to update OCOP charts.");
+        }
+    });
+
+    // Hàm để khởi động kết nối
+    async function startSignalRConnection() {
+        try {
+            await connection.start();
+            console.log("[SignalR] OCOP page connected successfully.");
+
+            // Lấy vai trò từ thuộc tính data-user-role của thẻ body
+            // (Cần đảm bảo file _Layout.cshtml đã có thẻ này)
+            const userRole = document.body.dataset.userRole?.toLowerCase();
+            
+            if (userRole === "super-admin" || userRole === "admin") {
+                connection.invoke("JoinAdminGroup", userRole).catch(function (err) {
+                    console.error("[SignalR] OCOP page failed to join group:", err.toString());
+                });
+            }
+        } catch (err) {
+            console.error("[SignalR] OCOP page connection failed: ", err);
+        }
+    }
+
+    // Khởi động kết nối SignalR
+    startSignalRConnection();
+
+})();

@@ -91,7 +91,7 @@ namespace TraVinhMaps.Web.Admin.Services.EventAndFestivalFeature
             var content = await response.Content.ReadAsStringAsync();
             System.Console.WriteLine("_______________________________________________________");
             System.Console.WriteLine(content);
-            if (response.StatusCode == System.Net.HttpStatusCode.Created)
+            if (response.IsSuccessStatusCode)
             {
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 var data = JsonSerializer.Deserialize<ResponseEventAndFestivalBase<EventAndFestivalResponse>>(content, options);

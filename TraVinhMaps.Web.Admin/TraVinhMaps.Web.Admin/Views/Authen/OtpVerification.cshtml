@@ -1,548 +1,533 @@
 ﻿@model TraVinhMaps.Web.Admin.Models.Auth.OtpVerificationViewModel
 @{
-    ViewData["Title"] = "OTP Verification";
-    Layout = "";
+  ViewData["Title"] = "OTP Verification";
+  Layout = "";
 }
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Riho admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
-    <meta name="keywords" content="admin template, Riho admin template, dashboard template, flat admin template, responsive admin template, web app">
-    <meta name="author" content="pixelstrap">
-    <link rel="icon" href="../assets/images/favicon.png" type="image/x-icon">
-    <link rel="shortcut icon" href="../assets/images/favicon.png" type="image/x-icon">
-    <title>TraVinhGo - OTP Verification</title>
-    <!-- Google font-->
-    <link rel="preconnect" href="https://fonts.googleapis.com/">
-    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="../assets/css/font-awesome.css">
-    <!-- ico-font-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/icofont.css">
-    <!-- Themify icon-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/themify.css">
-    <!-- Flag icon-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/flag-icon.css">
-    <!-- Feather icon-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/feather-icon.css">
-    <!-- Plugins css start-->
-    <!-- Plugins css Ends-->
-    <!-- Bootstrap css-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/vendors/bootstrap.css">
-    <!-- App css-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
-    <link id="color" rel="stylesheet" href="../assets/css/color-1.css" media="screen">
-    <!-- Responsive css-->
-    <link rel="stylesheet" type="text/css" href="../assets/css/responsive.css">
-    
-    <style>
-    .login-card img.for-dark,
-    .login-card img.for-light {
-        max-width: 150px;
-        height: auto;
-        margin-left: 130px;
-    }
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="~/assets/images/favicon.png" type="image/x-icon">
+<link rel="shortcut icon" href="~/assets/images/favicon.png" type="image/x-icon">
+<meta name="description"
+  content="Riho admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
+<meta name="keywords"
+  content="admin template, Riho admin template, dashboard template, flat admin template, responsive admin template, web app">
+<meta name="author" content="pixelstrap">
+<title>TraVinhGo - OTP Verification</title>
+<!-- Google font-->
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&amp;display=swap"
+  rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="~/assets/css/font-awesome.css">
+<!-- ico-font-->
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/icofont.css">
+<!-- Themify icon-->
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/themify.css">
+<!-- Flag icon-->
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/flag-icon.css">
+<!-- Feather icon-->
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/feather-icon.css">
+<!-- Plugins css start-->
+<!-- Plugins css Ends-->
+<!-- Bootstrap css-->
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/bootstrap.css">
+<!-- App css-->
+<link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+<link id="color" rel="stylesheet" href="~/assets/css/color-1.css" media="screen">
+<!-- Responsive css-->
+<link rel="stylesheet" type="text/css" href="~/assets/css/responsive.css">
 
-    .login-left-img {
-        padding-top: 40px;
-    }
+<style>
+  .digit-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
 
-        .login-left-img img {
-            width: 100%;
-            height: auto;
-        }
-      .digit-group {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-bottom: 15px;
-      }
-      
-      .digit-input {
-        width: 50px;
-        height: 50px;
-        border-radius: 5px;
-        font-size: 24px;
-        text-align: center;
-        border: 1px solid #ccc;
-        transition: all 0.2s ease;
-      }
-      
-      .digit-input:focus {
-        border-color: #7366ff;
-        box-shadow: 0 0 0 0.2rem rgba(115, 102, 255, 0.25);
-        outline: none;
-      }
-      
-      .digit-input.error {
-        border-color: #ff5370;
-        box-shadow: 0 0 0 0.2rem rgba(255, 83, 112, 0.25);
-        animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
-      }
-      
-      .otp-error-message {
-        color: #ff5370;
-        font-size: 14px;
-        margin-top: 5px;
-        display: none;
-        border-radius: 0.25rem;
-        padding: 0.5rem;
-        margin-bottom: 0.5rem;
-        background-color: rgba(255, 83, 112, 0.1);
-        border-left: 4px solid #ff5370;
-        animation: slideIn 0.3s ease-in-out;
-      }
-      
-      .countdown-container {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-      }
-      
-      .countdown-timer {
-        font-size: 16px;
-        font-weight: 500;
-        color: #7366ff;
-        margin-left: 5px;
-      }
-      
-      .btn-disabled {
-        opacity: 0.65;
-        cursor: not-allowed;
-        background-color: #6c757d;
-        border-color: #6c757d;
-      }
-      
-      .btn-active {
-        background-color: #7366ff;
-        border-color: #7366ff;
-      }
-      
-      .validation-summary-errors {
-        border-radius: 0.25rem;
-        padding: 0.75rem 1rem;
-        margin-bottom: 1rem;
-        background-color: rgba(255, 83, 112, 0.1);
-        border-left: 4px solid #ff5370;
-        animation: slideIn 0.3s ease-in-out;
-      }
-      
-      .validation-summary-errors ul {
-        margin-bottom: 0;
-        padding-left: 1.5rem;
-        list-style-type: disc;
-      }
-      
-      .field-validation-error {
-        display: block;
-        width: 100%;
-        margin-top: 0.25rem;
-        font-size: 0.875em;
-        color: #ff5370;
-        animation: fadeIn 0.3s ease-in-out;
-      }
-      
-    
-    </style>
+  .digit-input {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    font-size: 24px;
+    text-align: center;
+    border: 1px solid #ccc;
+    transition: all 0.2s ease;
+  }
+
+  .digit-input:focus {
+    border-color: #7366ff;
+    box-shadow: 0 0 0 0.2rem rgba(115, 102, 255, 0.25);
+    outline: none;
+  }
+
+  .digit-input.error {
+    border-color: #ff5370;
+    box-shadow: 0 0 0 0.2rem rgba(255, 83, 112, 0.25);
+    animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+  }
+
+  .otp-error-message {
+    color: #ff5370;
+    font-size: 14px;
+    margin-top: 5px;
+    display: none;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: rgba(255, 83, 112, 0.1);
+    border-left: 4px solid #ff5370;
+    animation: slideIn 0.3s ease-in-out;
+  }
+
+  .countdown-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .countdown-timer {
+    font-size: 16px;
+    font-weight: 500;
+    color: #7366ff;
+    margin-left: 5px;
+  }
+
+  .btn-disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    background-color: #6c757d;
+    border-color: #6c757d;
+  }
+
+  @* .btn-active {
+    background-color: #7366ff;
+    border-color: #7366ff;
+  } *@
+
+  .validation-summary-errors {
+    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    background-color: rgba(255, 83, 112, 0.1);
+    border-left: 4px solid #ff5370;
+    animation: slideIn 0.3s ease-in-out;
+  }
+
+  .validation-summary-errors ul {
+    margin-bottom: 0;
+    padding-left: 1.5rem;
+    list-style-type: disc;
+  }
+
+  .field-validation-error {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #ff5370;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+</style>
 
 
-    <!-- OTP verification page start-->
-    <div class="container-fluid">
-    <div class="row">
-        <div class="col-xl-5">
-            <div class="login-left-img">
-                <img class="bg-img-cover bg-center" src="@(Url.Content("~/assets/images/login/login.png"))" alt="loginpage">
-            </div>
-        </div>
-        <div class="col-xl-7 p-0">
-            <div class="login-card login-dark">
-                <div>
-                    <div>
-                        <img class="img-fluid for-dark"
-                             src="~/assets/images/logo/logo.png" alt="looginpage">
-                        <img class="img-fluid for-light"
-                             src="~/assets/images/logo/logo.png" alt="looginpage">
-                    </div>
-              <div class="login-main"> 
-                <form asp-controller="Authen" asp-action="VerifyOtp" method="post" class="theme-form" id="otpForm">
-                  @Html.AntiForgeryToken()
-                  @if (TempData["IsPasswordReset"] != null && (bool)TempData["IsPasswordReset"])
-                  {
-                    <h4>Password Reset Verification</h4>
-                    <p>Enter the verification code sent to reset your password</p>
-                  }
-                  else
-                  {
-                    <h4>Two-Factor Authentication</h4>
-                    <p>Enter the verification code sent to your device</p>
-                  }
-                  
-                  <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-                  
-                  @* Removed standard bootstrap alerts *@
-                  
-                  <div class="form-group">
-                    <label asp-for="OtpCode" class="col-form-label"></label>
-                    
-                    <div class="digit-group" data-group-name="digits">
-                      <input type="text" class="digit-input" id="digit-1" name="digit-1" data-next="digit-2" maxlength="1" autocomplete="off">
-                      <input type="text" class="digit-input" id="digit-2" name="digit-2" data-next="digit-3" data-previous="digit-1" maxlength="1" autocomplete="off">
-                      <input type="text" class="digit-input" id="digit-3" name="digit-3" data-next="digit-4" data-previous="digit-2" maxlength="1" autocomplete="off">
-                      <input type="text" class="digit-input" id="digit-4" name="digit-4" data-next="digit-5" data-previous="digit-3" maxlength="1" autocomplete="off">
-                      <input type="text" class="digit-input" id="digit-5" name="digit-5" data-next="digit-6" data-previous="digit-4" maxlength="1" autocomplete="off">
-                      <input type="text" class="digit-input" id="digit-6" name="digit-6" data-previous="digit-5" maxlength="1" autocomplete="off">
-                    </div>
-                    <div class="otp-error-message" id="otp-error">Please enter numbers only</div>
-                    
-                    <!-- Hidden input to store the combined OTP value -->
-                    <input asp-for="OtpCode" type="hidden" id="otpCodeHidden">
-                    <span asp-validation-for="OtpCode" class="text-danger"></span>
-                    <input asp-for="Token" type="hidden">
-                    <input asp-for="UserIdentifier" type="hidden" id="userIdentifier">
-                    
-                    <div class="mt-3">
-                      <div class="countdown-container mb-2">
-                        <span>Resend available in: </span>
-                        <span id="countdown-timer" class="countdown-timer">--:--</span>
-                      </div>
-                      <div class="d-flex justify-content-end">
-                        <button id="resendBtn" type="button" class="btn btn-disabled" disabled>
-                          Resend Code
-                        </button>
-                      </div>
-                      <div id="resend-message" class="mt-2 text-success"></div>
-                    </div>
-                  </div>
-                  <div class="form-group mb-0">
-                    <div class="text-end mt-3">
-                      <button class="btn btn-primary btn-block w-100" type="submit">Verify</button>
-                    </div>
-                  </div>
-                </form>
+<!-- OTP verification page start-->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xl-6 p-0">
+      <div class="login-left-img">
+        <img class="bg-img-cover bg-center" src="@(Url.Content("~/assets/images/login/bg_login.png"))" alt="loginpage">
+      </div>
+    </div>
+    <div class="col-xl-6 p-0">
+      <div class="login-card login-dark">
+        <div class="login-main">
+          <form asp-controller="Authen" asp-action="VerifyOtp" method="post" class="theme-form" id="otpForm">
+            @Html.AntiForgeryToken()
+            @if (TempData["IsPasswordReset"] != null && (bool)TempData["IsPasswordReset"])
+            {
+              <h4>Password Reset Verification</h4>
+              <p>Enter the verification code sent to reset your password</p>
+            }
+            else
+            {
+              <h4>Two-Factor Authentication</h4>
+              <p>Enter the verification code sent to your device</p>
+            }
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            @* Removed standard bootstrap alerts *@
+
+            <div class="form-group">
+              <label asp-for="OtpCode" class="col-form-label"></label>
+
+              <div class="digit-group" data-group-name="digits">
+                <input type="text" class="digit-input" id="digit-1" name="digit-1" data-next="digit-2" maxlength="1"
+                  autocomplete="off">
+                <input type="text" class="digit-input" id="digit-2" name="digit-2" data-next="digit-3"
+                  data-previous="digit-1" maxlength="1" autocomplete="off">
+                <input type="text" class="digit-input" id="digit-3" name="digit-3" data-next="digit-4"
+                  data-previous="digit-2" maxlength="1" autocomplete="off">
+                <input type="text" class="digit-input" id="digit-4" name="digit-4" data-next="digit-5"
+                  data-previous="digit-3" maxlength="1" autocomplete="off">
+                <input type="text" class="digit-input" id="digit-5" name="digit-5" data-next="digit-6"
+                  data-previous="digit-4" maxlength="1" autocomplete="off">
+                <input type="text" class="digit-input" id="digit-6" name="digit-6" data-previous="digit-5" maxlength="1"
+                  autocomplete="off">
+              </div>
+              <div class="otp-error-message" id="otp-error">Please enter numbers only</div>
+
+              <!-- Hidden input to store the combined OTP value -->
+              <input asp-for="OtpCode" type="hidden" id="otpCodeHidden">
+              <span asp-validation-for="OtpCode" class="text-danger"></span>
+              <input asp-for="Token" type="hidden">
+              <input asp-for="UserIdentifier" type="hidden" id="userIdentifier">
+
+              <div class="mt-3">
+                <div class="countdown-container mb-2">
+                  <span>Resend available in: </span>
+                  <span id="countdown-timer" class="countdown-timer">--:--</span>
+                </div>
+                <div class="d-flex justify-content-end">
+                  <button id="resendBtn" type="button" class="btn btn-outline-danger btn-disabled" disabled>
+                    Resend Code
+                  </button>
+                </div>
+                <div id="resend-message" class="mt-2 text-success"></div>
               </div>
             </div>
-          </div>
+            <div class="form-group mb-0">
+              <div class="text-end mt-3">
+                <button class="btn btn-success btn-block w-100" type="submit">Verify</button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
-      <!-- latest jquery-->
-      <script src="../assets/js/jquery.min.js"></script>
-      <!-- Bootstrap js-->
-      <script src="../assets/js/bootstrap/bootstrap.bundle.min.js"></script>
-      <!-- feather icon js-->
-      <script src="../assets/js/icons/feather-icon/feather.min.js"></script>
-      <script src="../assets/js/icons/feather-icon/feather-icon.js"></script>
-      <!-- scrollbar js-->
-      <!-- Sidebar jquery-->
-      <script src="../assets/js/config.js"></script>
-      <!-- Plugins JS start-->
-      <!-- Plugins JS Ends-->
-      <!-- Theme js-->
-      <script src="../assets/js/script.js"></script>
-      <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-      <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-      <!-- SweetAlert2 -->
-      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-      <script src="../assets/js/sweetalert-custom.js"></script>
-      
-      <script>
-        $(document).ready(function() {
-          // Display errors with SweetAlert if present
-          @if (TempData["ErrorMessage"] != null)
-          {
-            <text>
-            showErrorAlert("Verification Failed", "@TempData["ErrorMessage"]");
-            </text>
-          }
-          
-          @if (ViewData.ModelState[""] != null && ViewData.ModelState[""].Errors.Count > 0)
-          {
-            <text>
-            showErrorAlert("Verification Failed", "@Html.Raw(ViewData.ModelState[""].Errors[0].ErrorMessage)");
-            </text>
-          }
-        
-          // Store the remaining time in localStorage to persist across page loads
-          let timerKey = 'otpCountdownEndTime';
+    </div>
+  </div>
+</div>
+<!-- latest jquery-->
+<script src="~/assets/js/jquery.min.js"></script>
+<!-- Bootstrap js-->
+<script src="~/assets/js/bootstrap/bootstrap.bundle.min.js"></script>
+<!-- feather icon js-->
+<script src="~/assets/js/icons/feather-icon/feather.min.js"></script>
+<script src="~/assets/js/icons/feather-icon/feather-icon.js"></script>
+<!-- scrollbar js-->
+<!-- Sidebar jquery-->
+<script src="~/assets/js/config.js"></script>
+<!-- Plugins JS start-->
+<!-- Plugins JS Ends-->
+<!-- Theme js-->
+<script src="~/assets/js/script.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/assets/js/sweetalert-custom.js"></script>
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const isNewRequest = urlParams.get("new") === "true";
-        if (isNewRequest) {
-            localStorage.removeItem(timerKey);
-            // Xoá query để tránh reset lại khi reload sau này
-            const newUrl = window.location.origin + window.location.pathname;
-            window.history.replaceState({}, document.title, newUrl);
+<script>
+  $(document).ready(function () {
+    // Display errors with SweetAlert if present
+    @if (TempData["ErrorMessage"] != null)
+      {
+        <text>
+          showErrorAlert("Verification Failed", "@TempData["ErrorMessage"]");
+        </text>
+    }
+
+      @if (ViewData.ModelState[""] != null && ViewData.ModelState[""].Errors.Count > 0)
+      {
+        <text>
+          showErrorAlert("Verification Failed", "@Html.Raw(ViewData.ModelState[""].Errors[0].ErrorMessage)");
+        </text>
+    }
+
+      // Store the remaining time in localStorage to persist across page loads
+      let timerKey = 'otpCountdownEndTime';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const isNewRequest = urlParams.get("new") === "true";
+    if (isNewRequest) {
+      localStorage.removeItem(timerKey);
+      // Xoá query để tránh reset lại khi reload sau này
+      const newUrl = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+    }
+
+    // Handle digit input focus and validation
+    $('.digit-input').on('keyup', function (e) {
+      // Get current input details
+      const $this = $(this);
+      const digit = $this.val();
+
+      // Clear error state
+      $this.removeClass('error');
+      $('#otp-error').hide();
+
+      // Only allow numbers
+      if (!/^[0-9]$/.test(digit) && digit !== '') {
+        //  $this.addClass('error');
+        $('#otp-error').show();
+        $this.val('');
+        return;
+      }
+
+      // Auto-focus to next input if a digit was entered
+      if (digit !== '') {
+        const nextInput = $this.data('next');
+        if (nextInput) {
+          $('#' + nextInput).focus();
         }
+      }
 
-          // Handle digit input focus and validation
-          $('.digit-input').on('keyup', function(e) {
-            // Get current input details
-            const $this = $(this);
-            const digit = $this.val();
-            
-            // Clear error state
-            $this.removeClass('error');
-            $('#otp-error').hide();
-            
-            // Only allow numbers
-            if (!/^[0-9]$/.test(digit) && digit !== '') {
-            //  $this.addClass('error');
-              $('#otp-error').show();
-              $this.val('');
-              return;
-            }
-            
-            // Auto-focus to next input if a digit was entered
-            if (digit !== '') {
-              const nextInput = $this.data('next');
-              if (nextInput) {
-                $('#' + nextInput).focus();
-              }
-            }
-            
-            // Handle backspace to go to previous input
-            if (e.key === 'Backspace' && digit === '') {
-              const prevInput = $this.data('previous');
-              if (prevInput) {
-                $('#' + prevInput).focus();
-              }
-            }
-            
-            // Combine all digits into the hidden input
-            combineOtpValue();
-          });
-          
-          // Handle paste event for OTP
-          $('.digit-input').on('paste', function(e) {
-            e.preventDefault();
-            
-            // Get pasted data
-            const pastedData = (e.originalEvent.clipboardData || window.clipboardData).getData('text');
-            
-            // If pasted data is numeric and has 6 digits
-            if (/^\d{6}$/.test(pastedData)) {
-              // Fill each input box with respective digit
-              $('.digit-input').each(function(index) {
-                $(this).val(pastedData.charAt(index));
-              });
-              
-              // Set focus to the last box
-              $('#digit-6').focus();
-              
-              // Update hidden input
-              combineOtpValue();
-            }
-          });
-          
-          // Function to combine all digit inputs into hidden OTP field
-          function combineOtpValue() {
-            let otpValue = '';
-            $('.digit-input').each(function() {
-              otpValue += $(this).val();
-            });
-            $('#otpCodeHidden').val(otpValue);
-          }
-          
-          // Handle form submission
-          $('#otpForm').on('submit', function(e) {
-            combineOtpValue();
-            
-            // Check if OTP is complete
-            const otpValue = $('#otpCodeHidden').val();
-            if (otpValue.length !== 6 || !/^\d{6}$/.test(otpValue)) {
-              e.preventDefault();
-             // $('.digit-input').addClass('error');
-              $('#otp-error').text('Please enter a valid 6-digit code').show();
-            }
-          });
-          
-          // Get the current timestamp to calculate end time
-          function getCurrentTimeInSeconds() {
-            return Math.floor(Date.now() / 1000);
-          }
-          
-          // Save end time to localStorage
-          function saveEndTime(endTime) {
-            localStorage.setItem(timerKey, endTime.toString());
-          }
-          
-          // Get saved end time from localStorage
-          function getSavedEndTime() {
-            const saved = localStorage.getItem(timerKey);
-            return saved ? parseInt(saved, 10) : null;
-          }
-          
-          // Simple 5-minute countdown timer
-          function startCountdown() {
-            const countdownTimer = $('#countdown-timer');
-            const resendBtn = $('#resendBtn');
-            
-            // Check if there's a saved end time
-            let endTime = getSavedEndTime();
-            let currentTime = getCurrentTimeInSeconds();
-            
-            // If no saved time or time already expired, set a new end time (5 minutes from now)
-            if (!endTime || endTime <= currentTime) {
-              endTime = currentTime + 300; // 5 minutes = 300 seconds
-              saveEndTime(endTime);
-            }
-            
-            // Calculate and display initial time immediately to prevent flashing
-            let initialRemainingSeconds = Math.max(0, endTime - currentTime);
-            updateTimerDisplay(initialRemainingSeconds);
-            
-            // Disable the button initially if time remains
-            if (initialRemainingSeconds > 0) {
-              resendBtn.prop('disabled', true).addClass('btn-disabled').removeClass('btn-active');
-            } else {
-              resendBtn.prop('disabled', false).removeClass('btn-disabled').addClass('btn-active');
-            }
-            
-            const interval = setInterval(function() {
-              currentTime = getCurrentTimeInSeconds();
-              let remainingSeconds = Math.max(0, endTime - currentTime);
-              
-              updateTimerDisplay(remainingSeconds);
-              
-              if (remainingSeconds <= 0) {
-                clearInterval(interval);
-                resendBtn.prop('disabled', false).removeClass('btn-disabled').addClass('btn-active');
-                
-                // Clear the saved end time since it expired
-                localStorage.removeItem(timerKey);
-              }
-            }, 1000);
-            
-            return interval;
-          }
-          
-          // Helper function to update timer display
-          function updateTimerDisplay(remainingSeconds) {
-            const countdownTimer = $('#countdown-timer');
-            const minutes = Math.floor(remainingSeconds / 60);
-            const seconds = remainingSeconds % 60;
-            
-            const displayMinutes = minutes < 10 ? "0" + minutes : minutes;
-            const displaySeconds = seconds < 10 ? "0" + seconds : seconds;
-            
-            countdownTimer.text(displayMinutes + ":" + displaySeconds);
-          }
-          
-          // Initialize the countdown timer
-          let countdownInterval = startCountdown();
-          
-          // Handle resend button click
-          $('#resendBtn').on('click', function() {
-            if ($(this).prop('disabled')) {
-              return; // Do nothing if button is disabled
-            }
-            
-            // Get the user identifier directly from the hidden field
-            var userIdentifier = $('#userIdentifier').val();
-            
-            // Disable the button during API call
-            $(this).prop('disabled', true).addClass('btn-disabled').removeClass('btn-active');
-            $('#resend-message').text('Sending new code...');
-            
-            // Call the API directly to refresh OTP
-            $.ajax({
-              url: 'https://localhost:7162/api/auth/refresh-otp?item=' + userIdentifier,
-              type: 'POST',           
-              success: function(response) {
-                // Parse the response to get the token
-                try {
-                  console.log('Full response:', response);
-                  
-                  // Handle different response formats
-                  var responseObj = typeof response === 'string' ? JSON.parse(response) : response;
-                  console.log('Parsed response:', responseObj);
-                  
-                  // Check if the response contains a data property (various formats possible)
-                  if (responseObj) {
-                    var token = null;
-                    
-                    // Try different paths to find the token
-                    if (responseObj.data && typeof responseObj.data === 'string') {
-                      // If data is directly the token string
-                      token = responseObj.data;
-                      console.log('Found token in responseObj.data (string):', token);
-                      
-                      // Check if the token is a JSON string containing the actual token
-                      if (token.includes('"token"')) {
-                        try {
-                          // Parse it again if it's a JSON string
-                          var tokenObj = JSON.parse(token);
-                          if (tokenObj.token) {
-                            token = tokenObj.token;
-                            console.log('Extracted token from JSON string:', token);
-                          }
-                        } catch (e) {
-                          // If parsing fails, try regex extraction
-                          var match = token.match(/"token":"([^"]+)"/);
-                          if (match && match[1]) {
-                            token = match[1];
-                            console.log('Extracted token using regex:', token);
-                          }
-                        }
-                      }
-                    } 
-                    else if (responseObj.data && responseObj.data.token) {
-                      // If data contains a token property
-                      token = responseObj.data.token;
-                      console.log('Found token in responseObj.data.token:', token);
+      // Handle backspace to go to previous input
+      if (e.key === 'Backspace' && digit === '') {
+        const prevInput = $this.data('previous');
+        if (prevInput) {
+          $('#' + prevInput).focus();
+        }
+      }
+
+      // Combine all digits into the hidden input
+      combineOtpValue();
+    });
+
+    // Handle paste event for OTP
+    $('.digit-input').on('paste', function (e) {
+      e.preventDefault();
+
+      // Get pasted data
+      const pastedData = (e.originalEvent.clipboardData || window.clipboardData).getData('text');
+
+      // If pasted data is numeric and has 6 digits
+      if (/^\d{6}$/.test(pastedData)) {
+        // Fill each input box with respective digit
+        $('.digit-input').each(function (index) {
+          $(this).val(pastedData.charAt(index));
+        });
+
+        // Set focus to the last box
+        $('#digit-6').focus();
+
+        // Update hidden input
+        combineOtpValue();
+      }
+    });
+
+    // Function to combine all digit inputs into hidden OTP field
+    function combineOtpValue() {
+      let otpValue = '';
+      $('.digit-input').each(function () {
+        otpValue += $(this).val();
+      });
+      $('#otpCodeHidden').val(otpValue);
+    }
+
+    // Handle form submission
+    $('#otpForm').on('submit', function (e) {
+      combineOtpValue();
+
+      // Check if OTP is complete
+      const otpValue = $('#otpCodeHidden').val();
+      if (otpValue.length !== 6 || !/^\d{6}$/.test(otpValue)) {
+        e.preventDefault();
+        // $('.digit-input').addClass('error');
+        $('#otp-error').text('Please enter a valid 6-digit code').show();
+      }
+    });
+
+    // Get the current timestamp to calculate end time
+    function getCurrentTimeInSeconds() {
+      return Math.floor(Date.now() / 1000);
+    }
+
+    // Save end time to localStorage
+    function saveEndTime(endTime) {
+      localStorage.setItem(timerKey, endTime.toString());
+    }
+
+    // Get saved end time from localStorage
+    function getSavedEndTime() {
+      const saved = localStorage.getItem(timerKey);
+      return saved ? parseInt(saved, 10) : null;
+    }
+
+    // Simple 5-minute countdown timer
+    function startCountdown() {
+      const countdownTimer = $('#countdown-timer');
+      const resendBtn = $('#resendBtn');
+
+      // Check if there's a saved end time
+      let endTime = getSavedEndTime();
+      let currentTime = getCurrentTimeInSeconds();
+
+      // If no saved time or time already expired, set a new end time (5 minutes from now)
+      if (!endTime || endTime <= currentTime) {
+        endTime = currentTime + 300; // 5 minutes = 300 seconds
+        saveEndTime(endTime);
+      }
+
+      // Calculate and display initial time immediately to prevent flashing
+      let initialRemainingSeconds = Math.max(0, endTime - currentTime);
+      updateTimerDisplay(initialRemainingSeconds);
+
+      // Disable the button initially if time remains
+      if (initialRemainingSeconds > 0) {
+        resendBtn.prop('disabled', true).addClass('btn-disabled').removeClass('btn-active');
+      } else {
+        resendBtn.prop('disabled', false).removeClass('btn-disabled').addClass('btn-active');
+      }
+
+      const interval = setInterval(function () {
+        currentTime = getCurrentTimeInSeconds();
+        let remainingSeconds = Math.max(0, endTime - currentTime);
+
+        updateTimerDisplay(remainingSeconds);
+
+        if (remainingSeconds <= 0) {
+          clearInterval(interval);
+          resendBtn.prop('disabled', false).removeClass('btn-disabled').addClass('btn-active');
+
+          // Clear the saved end time since it expired
+          localStorage.removeItem(timerKey);
+        }
+      }, 1000);
+
+      return interval;
+    }
+
+    // Helper function to update timer display
+    function updateTimerDisplay(remainingSeconds) {
+      const countdownTimer = $('#countdown-timer');
+      const minutes = Math.floor(remainingSeconds / 60);
+      const seconds = remainingSeconds % 60;
+
+      const displayMinutes = minutes < 10 ? "0" + minutes : minutes;
+      const displaySeconds = seconds < 10 ? "0" + seconds : seconds;
+
+      countdownTimer.text(displayMinutes + ":" + displaySeconds);
+    }
+
+    // Initialize the countdown timer
+    let countdownInterval = startCountdown();
+
+    // Handle resend button click
+    $('#resendBtn').on('click', function () {
+      if ($(this).prop('disabled')) {
+        return; // Do nothing if button is disabled
+      }
+
+      // Get the user identifier directly from the hidden field
+      var userIdentifier = $('#userIdentifier').val();
+
+      // Disable the button during API call
+      $(this).prop('disabled', true).addClass('btn-disabled').removeClass('btn-active');
+      $('#resend-message').text('Sending new code...');
+
+      // Call the API directly to refresh OTP
+      $.ajax({
+        url: 'https://localhost:7162/api/auth/refresh-otp?item=' + userIdentifier,
+        type: 'POST',
+        success: function (response) {
+          // Parse the response to get the token
+          try {
+            console.log('Full response:', response);
+
+            // Handle different response formats
+            var responseObj = typeof response === 'string' ? JSON.parse(response) : response;
+            console.log('Parsed response:', responseObj);
+
+            // Check if the response contains a data property (various formats possible)
+            if (responseObj) {
+              var token = null;
+
+              // Try different paths to find the token
+              if (responseObj.data && typeof responseObj.data === 'string') {
+                // If data is directly the token string
+                token = responseObj.data;
+                console.log('Found token in responseObj.data (string):', token);
+
+                // Check if the token is a JSON string containing the actual token
+                if (token.includes('"token"')) {
+                  try {
+                    // Parse it again if it's a JSON string
+                    var tokenObj = JSON.parse(token);
+                    if (tokenObj.token) {
+                      token = tokenObj.token;
+                      console.log('Extracted token from JSON string:', token);
                     }
-                    else if (responseObj.token) {
-                      // If token is directly in the response
-                      token = responseObj.token;
-                      console.log('Found token in responseObj.token:', token);
-                    }
-                    
-                    // If we found a token, update all possible token fields
-                    if (token) {
-                      // Try multiple selectors to ensure we find the field
-                      $('#Token').val(token);
-                      $('input[name="Token"]').val(token);
-                      $('input[id="Token"]').val(token);
-                      document.getElementById('Token').value = token;
-                      
-                      console.log('Token updated to:', token);
-                      console.log('Current token field value:', $('input[name="Token"]').val());
-                    } else {
-                      console.error('Could not find token in response:', responseObj);
+                  } catch (e) {
+                    // If parsing fails, try regex extraction
+                    var match = token.match(/"token":"([^"]+)"/);
+                    if (match && match[1]) {
+                      token = match[1];
+                      console.log('Extracted token using regex:', token);
                     }
                   }
-                } catch (e) {
-                  console.error('Error processing response:', e);
                 }
-               
-                $('#resend-message').removeClass('text-danger').addClass('text-success').text('Verification code has been resent successfully');
-                
-                // Clear any existing digits in the input boxes
-                $('.digit-input').val('').removeClass('error');
-                $('#otp-error').hide();
-                $('#otpCodeHidden').val('');
-                $('#digit-1').focus();
-                
-                // Reset the countdown timer
-                if (countdownInterval) {
-                  clearInterval(countdownInterval);
-                }
-                
-                // Set a new end time (5 minutes from now)
-                const newEndTime = getCurrentTimeInSeconds() + 300;
-                saveEndTime(newEndTime);
-                
-                // Start a new 5-minute countdown
-                updateTimerDisplay(300); // Show exactly 5 minutes initially
-                countdownInterval = startCountdown();
-              },
-              error: function() {
-                $('#resend-message').removeClass('text-success').addClass('text-danger').text('Failed to resend verification code. Please try again.');
-                $('#resendBtn').prop('disabled', false).removeClass('btn-disabled').addClass('btn-active');
               }
-            });
-          });
-        });
-      </script>
-    </div> 
+              else if (responseObj.data && responseObj.data.token) {
+                // If data contains a token property
+                token = responseObj.data.token;
+                console.log('Found token in responseObj.data.token:', token);
+              }
+              else if (responseObj.token) {
+                // If token is directly in the response
+                token = responseObj.token;
+                console.log('Found token in responseObj.token:', token);
+              }
+
+              // If we found a token, update all possible token fields
+              if (token) {
+                // Try multiple selectors to ensure we find the field
+                $('#Token').val(token);
+                $('input[name="Token"]').val(token);
+                $('input[id="Token"]').val(token);
+                document.getElementById('Token').value = token;
+
+                console.log('Token updated to:', token);
+                console.log('Current token field value:', $('input[name="Token"]').val());
+              } else {
+                console.error('Could not find token in response:', responseObj);
+              }
+            }
+          } catch (e) {
+            console.error('Error processing response:', e);
+          }
+
+          $('#resend-message').removeClass('text-danger').addClass('text-success').text('Verification code has been resent successfully');
+
+          // Clear any existing digits in the input boxes
+          $('.digit-input').val('').removeClass('error');
+          $('#otp-error').hide();
+          $('#otpCodeHidden').val('');
+          $('#digit-1').focus();
+
+          // Reset the countdown timer
+          if (countdownInterval) {
+            clearInterval(countdownInterval);
+          }
+
+          // Set a new end time (5 minutes from now)
+          const newEndTime = getCurrentTimeInSeconds() + 300;
+          saveEndTime(newEndTime);
+
+          // Start a new 5-minute countdown
+          updateTimerDisplay(300); // Show exactly 5 minutes initially
+          countdownInterval = startCountdown();
+        },
+        error: function () {
+          $('#resend-message').removeClass('text-success').addClass('text-danger').text('Failed to resend verification code. Please try again.');
+          $('#resendBtn').prop('disabled', false).removeClass('btn-disabled').addClass('btn-active');
+        }
+      });
+    });
+  });
+</script>
+</div>

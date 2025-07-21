@@ -592,3 +592,78 @@ document.addEventListener("DOMContentLoaded", () => {
     chartsHaveBeenInitialized = true;
   }
 });
+
+/************************************************************
+ *  SignalR Real-time Integration (Final Version)
+ ************************************************************/
+
+(function () {
+    // Kiểm tra xem thư viện SignalR đã được tải chưa
+    if (typeof signalR === 'undefined') {
+        console.error("SignalR client library not found. Real-time updates will be disabled.");
+        return;
+    }
+
+    /**
+     * Lấy vai trò của người dùng từ thuộc tính data-user-role trên thẻ body.
+     * @returns {string|null} Vai trò của người dùng (ví dụ: 'admin', 'super-admin') hoặc null nếu không tìm thấy.
+     */
+    function getUserRoleFromYourSystem() {
+        // Giả sử vai trò được lưu trong <body data-user-role="admin">
+        const role = document.body.dataset.userRole;
+        if (role) {
+            return role.toLowerCase();
+        }
+        return null; // Trả về null nếu không tìm thấy vai trò
+    }
+
+    // --- LOGIC KẾT NỐI VÀ XỬ LÝ SIGNALR ---
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("https://localhost:7162/dashboardHub")
+        .configureLogging(signalR.LogLevel.Warning) // Chỉ log các cảnh báo và lỗi
+        .withAutomaticReconnect()
+        .build();
+
+    // Định nghĩa hành động khi nhận được tín hiệu "ChartAnalytics"
+    connection.on("ChartAnalytics", function () {
+        console.log("[SignalR] Received 'ChartAnalytics' signal. Fetching new chart data...");
+
+        // Chỉ gọi hàm để tải lại dữ liệu.
+        if (typeof window.reRenderAllCharts === 'function') {
+            window.reRenderAllCharts();
+        } else {
+            console.error("Function 'reRenderAllCharts' is not available to update charts.");
+        }
+    });
+
+    // Hàm để khởi động kết nối
+    async function startSignalRConnection() {
+        try {
+            await connection.start();
+            console.log("[SignalR] Connected successfully.");
+
+            // Lấy vai trò từ hệ thống (từ thẻ body)
+            const userRole = getUserRoleFromYourSystem();
+
+            // Kiểm tra xem vai trò có hợp lệ không (admin hoặc super-admin)
+            if (userRole === "super-admin" || userRole === "admin") {
+                console.log(`[SignalR] User role is '${userRole}'. Joining group.`);
+                // Gửi vai trò CỦA CHÍNH MÌNH lên Hub
+                connection.invoke("JoinAdminGroup", userRole).catch(function (err) {
+                    console.error("[SignalR] Error joining group:", err.toString());
+                });
+            } else {
+                console.warn(`[SignalR] User role is '${userRole || "not defined"}'. Not joining admin groups.`);
+            }
+
+        } catch (err) {
+            console.error("[SignalR] Connection failed: ", err);
+        }
+    }
+
+    // Khởi động kết nối SignalR
+    startSignalRConnection();
+
+})();
+
+

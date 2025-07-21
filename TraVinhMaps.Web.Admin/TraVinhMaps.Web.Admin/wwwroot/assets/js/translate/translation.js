@@ -1,7 +1,7 @@
 /* =========================================================================
  * translation.js - Optimized Version
  * Description: Handles multilingual translation, optimized cache, accurate text comparison and replacement,
- *               and integration with dynamic location addition.
+ *              integration with dynamic location addition, and popup translation synchronization.
  * ========================================================================= */
 
 /* ----------------- Configuration & Globals ------------------ */
@@ -150,9 +150,9 @@ const jsStrings = [
   "User Count: ",
   "N/A",
   "Local Specialty",
-  "local specialty",
   "Tips",
   "Festivals",
+  "Local specialty",
 
   // =======================================================================
   // 5. THÔNG BÁO TƯƠNG TÁC BIỂU ĐỒ (Chart Interaction Messages)
@@ -181,6 +181,8 @@ const jsStrings = [
   "No chart data available to download!",
   "Please select products to compare",
   "Please choose at least one destination",
+  "Please enter a valid 6-digit code",
+  "Sending new code...",
 
   // =======================================================================
   // 6. XÁC THỰC DỮ LIỆU & LỖI FORM (Frontend Validation & Form Errors)
@@ -368,6 +370,17 @@ const jsStrings = [
   "An error occurred",
   "Unknown error",
   "Something went wrong, please try again",
+  "Or Sign in with",
+  "Forgot password?",
+  "Sign in to account",
+  "Enter your email & password to login",
+  "Remember password",
+  "Or Sign in with",
+  "Sign in",
+  "show",
+  "hide",
+  "entries",
+  "Submit",
 
   // =======================================================================
   // 10. THƯ VIỆN BÊN THỨ BA (3rd Party Libraries)
@@ -399,7 +412,17 @@ const jsStrings = [
   "Destination title",
   "Description",
   "Address of destination",
+  "Create New Password",
+  "Enter your new password below",
+  "Reset Password",
+  "The password and confirmation password do not match.",
   // --- Các lỗi xác thực CỤ THỂ đã được định nghĩa trong code C# ---
+  "Password Reset Verification",
+  "Enter the verification code sent to reset your password",
+  "Verification Code",
+  "Resend available in:",
+  "Resend Code",
+  "Verify",
   "Email or phone number is required",
   "Email or Phonenumber is required",
   "Password is required",
@@ -461,6 +484,10 @@ const jsStrings = [
   "Latitude of destination is required",
   "At least one image file is required.",
   "Only JPG, JPEG, PNG, and GIF files are allowed.",
+  "New password is required",
+  "Confirm password is required",
+  "Verification code has been resent successfully",
+
   // --- Mẫu lỗi MẶC ĐỊNH của .NET (quan trọng nhất) ---
   "The %s field is required.",
   "The field %s must be a string with a maximum length of %s.",
@@ -484,7 +511,7 @@ const jsStrings = [
 
 const apiBase = "https://localhost:7162/api/Translation";
 const minTranslationInterval = 5000;
-const BATCH_SIZE_FRONTEND = 40;
+const BATCH_SIZE_FRONTEND = 100; // Tăng kích thước batch để giảm số lượng yêu cầu API
 
 let lastTranslationTime = 0;
 let lastAppliedLang = null;
@@ -494,7 +521,11 @@ window.translationMapForCharts = {};
 
 /* ----------------- Helpers ------------------ */
 
-// Định nghĩa hàm translateText trước tất cả các hàm khác
+/**
+ * Translates text using cache or fallback to original text.
+ * @param {string} text - Text to translate.
+ * @returns {string} Translated text or original text if no translation found.
+ */
 function translateText(text) {
   if (!text) return text;
   return window.translationMapForCharts?.[text] || text;
@@ -527,7 +558,7 @@ const isLongToken = (str) =>
   /^[0-9a-fA-F]{16,}$/.test(str) || (str.length > 50 && !str.includes(" "));
 
 /**
- * Collects all translatable text from the DOM or a specific element (for DataTable or location updates).
+ * Collects all translatable text from the DOM or a specific element.
  * Filters out numbers and long tokens.
  * @param {HTMLElement} [element=null] - Optional element to limit text collection.
  * @returns {string[]} Array of unique translatable strings.
@@ -728,6 +759,30 @@ async function loadTranslationCache() {
 }
 
 /**
+ * Displays a SweetAlert popup with translated content.
+ * Ensures the popup content is translated immediately after being rendered.
+ * @param {object} options - Options to pass to Swal.fire().
+ * @returns {Promise} - Promise returned from Swal.fire().
+ */
+function showTranslatedSwal(options) {
+  const savedLang = localStorage.getItem("selectedLanguage") || "en";
+  const langName = savedLang === "vi" ? "Vietnamese" : "English";
+
+  const newOptions = { ...options };
+
+  newOptions.didOpen = async (popup) => {
+    if (savedLang !== "en") {
+      await changeLanguage(savedLang, langName, popup);
+    }
+    if (options.didOpen) {
+      options.didOpen(popup);
+    }
+  };
+
+  return Swal.fire(newOptions);
+}
+
+/**
  * Main function to change the display language on the page.
  * Fetches translations from cache or API and updates the DOM silently.
  * @param {string} targetLang - The target language code (e.g., "en", "vi").
@@ -735,26 +790,27 @@ async function loadTranslationCache() {
  * @param {HTMLElement} [element=null] - Optional element to limit translation.
  */
 async function changeLanguage(targetLang, targetName, element = null) {
-  const now = Date.now();
-  if (now - lastTranslationTime < minTranslationInterval) {
-    const remainingTime = (
-      (minTranslationInterval - (now - lastTranslationTime)) /
-      1000
-    ).toFixed(1);
-    console.log(`⏳ Please wait ${remainingTime}s to translate again.`);
-    Swal.fire({
-      icon: "info",
-      title: translateText("Too fast!"),
-      text: translateText(`Please wait ${remainingTime} seconds before translating again.`),
-      showConfirmButton: false,
-      timer: 2000,
-    });
-    return;
+  if (!element) {
+    const now = Date.now();
+    if (now - lastTranslationTime < minTranslationInterval) {
+      const remainingTime = (
+        (minTranslationInterval - (now - lastTranslationTime)) / 1000
+      ).toFixed(1);
+      console.log(`⏳ Please wait ${remainingTime}s to translate again.`);
+      await showTranslatedSwal({
+        icon: "info",
+        title: "Too fast!",
+        text: `Please wait ${remainingTime} seconds before translating again.`,
+        showConfirmButton: false,
+        timer: 2000,
+      });
+      return;
+    }
   }
 
   localStorage.setItem("selectedLanguage", targetLang);
   const currentLangElement = document.getElementById("currentLanguage");
-  if (currentLangElement) currentLangElement.innerText = targetName;
+  if (currentLangElement && !element) currentLangElement.innerText = targetName;
 
   try {
     const sourceLang = "en";
@@ -771,12 +827,14 @@ async function changeLanguage(targetLang, targetName, element = null) {
 
     const allTexts = getAllPlainTexts(element);
     if (allTexts.length === 0) {
-      console.log("⚠️ No translatable content found.");
+      console.log("⚠️ No translatable content found in the specified element.");
       return;
     }
 
     const textsToTranslateViaApi = [];
-    window.translationMapForCharts = {};
+    if (!element) {
+      window.translationMapForCharts = {};
+    }
 
     if (lastAppliedLang && lastAppliedLang !== "en" && !element) {
       console.log(
@@ -810,12 +868,20 @@ async function changeLanguage(targetLang, targetName, element = null) {
       }
     });
 
-    lastAppliedLang = targetLang;
+    if (!element) {
+      lastAppliedLang = targetLang;
+    }
 
     if (textsToTranslateViaApi.length === 0) {
-      console.log(`✅ All strings processed from cache. No API call needed.`);
-      window.dispatchEvent(new CustomEvent("languageChanged"));
-      lastTranslationTime = Date.now();
+      if (!element) {
+        console.log(
+          `✅ All strings processed from cache for the whole page. No API call needed.`
+        );
+        window.dispatchEvent(new CustomEvent("languageChanged"));
+        lastTranslationTime = Date.now();
+      } else {
+        console.log(`✅ All strings for the element processed from cache.`);
+      }
       return;
     }
 
@@ -881,20 +947,22 @@ async function changeLanguage(targetLang, targetName, element = null) {
       totalSuccess += Object.keys(translations).length;
     }
 
-    window.dispatchEvent(new CustomEvent("languageChanged"));
+    console.log(
+      `Translation completed. Successfully translated ${totalSuccess} strings.`
+    );
+    if (!element) {
+      window.dispatchEvent(new CustomEvent("languageChanged"));
+      lastTranslationTime = Date.now();
+    }
   } catch (err) {
     console.error("Critical error during translation:", err);
-    Swal.fire({
+    await showTranslatedSwal({
       icon: "warning",
-      title: translateText("Partial translation"),
-      text: translateText(
-        "Some texts could not be translated due to server limits. Please try again later."
-      ),
+      title: "Partial translation",
+      text: "Some texts could not be translated due to server limits. Please try again later.",
       showConfirmButton: false,
       timer: 2500,
     });
-  } finally {
-    lastTranslationTime = Date.now();
   }
 }
 
@@ -913,13 +981,11 @@ async function initialize() {
 
   lastAppliedLang = "en";
 
+  await loadTranslationCache();
   if (savedLang !== "en") {
     await changeLanguage(savedLang, langName);
-  } else {
-    await loadTranslationCache();
   }
 
-  // Thêm sự kiện draw cho DataTable
   let isTranslating = false;
   $('table.dataTable').on('draw.dt', async function () {
     if (isTranslating) return;
@@ -932,14 +998,23 @@ async function initialize() {
     }
     isTranslating = false;
   });
+
+  window.addEventListener("languageChanged", async () => {
+    const savedLang = localStorage.getItem("selectedLanguage") || "en";
+    const langName = savedLang === "vi" ? "Vietnamese" : "English";
+    document.querySelectorAll(".swal2-popup").forEach(async (popup) => {
+      await changeLanguage(savedLang, langName, popup);
+    });
+  });
 }
 
 /* ----------------- Location and Image Handling ------------------ */
 
-// Định nghĩa các định dạng ảnh được phép
 const allowedExtensions = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"];
 
-// Function để thêm địa điểm mới
+/**
+ * Adds a new location input group to the form and translates it.
+ */
 async function addLocation() {
   console.log("addLocation called, locationIndex:", window.locationIndex);
   const container = document.getElementById("locations-container");
@@ -982,7 +1057,6 @@ async function addLocation() {
   container.insertAdjacentHTML("beforeend", locationHtml);
   window.locationIndex++;
 
-  // Dịch lại nội dung vừa thêm
   const savedLang = localStorage.getItem("selectedLanguage") || "en";
   const langName = savedLang === "vi" ? "Vietnamese" : "English";
   if (savedLang !== "en") {
@@ -991,26 +1065,25 @@ async function addLocation() {
   }
 }
 
-// Remove location
+/**
+ * Removes a location input group.
+ */
 document.addEventListener("click", function (e) {
   if (e.target.classList.contains("remove-location")) {
     e.target.parentElement.remove();
   }
 });
 
-// Image upload and preview
+/**
+ * Handles image upload and preview with translated validation messages.
+ */
 document.addEventListener("DOMContentLoaded", function () {
-  initialize(); // Gọi hàm initialize từ translation.js
+  initialize();
 
   const addBox = document.getElementById("addImageBox");
   const uploadInput = document.getElementById("uploadImageInput");
   const imagePreview = document.getElementById("imagePreview");
   const validationMessage = document.getElementById("imageValidationMessage");
-
-  console.log("addBox:", addBox);
-  console.log("uploadInput:", uploadInput);
-  console.log("imagePreview:", imagePreview);
-  console.log("validationMessage:", validationMessage);
 
   if (!addBox || !uploadInput || !imagePreview || !validationMessage) {
     console.error(
@@ -1028,7 +1101,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  uploadInput.addEventListener("change", function (e) {
+  uploadInput.addEventListener("change", async function (e) {
     console.log("uploadImageInput changed");
     validationMessage.textContent = "";
     imagePreview.innerHTML = "";
@@ -1040,7 +1113,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (files.length > 5) {
-      validationMessage.textContent = translateText("You can upload a maximum of %s images.").replace("%s", "5");
+      validationMessage.textContent = translateText(
+        "You can upload a maximum of %s images."
+      ).replace("%s", "5");
       uploadInput.value = "";
       console.log("Too many files selected");
       return;
@@ -1056,7 +1131,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (hasInvalidFormat) {
       validationMessage.textContent = translateText(
-        `Unsupported file format. Allowed formats are: ${allowedExtensions.join(", ")}.`
+        "Please upload valid image files only (e.g., JPG, PNG, GIF)."
       );
       uploadInput.value = "";
       console.log("Invalid file format");
@@ -1087,9 +1162,11 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-// Form validation
+/**
+ * Form validation for createLocalSpecialtyForm with translated error messages.
+ */
 $(document).ready(function () {
-  $("#createLocalSpecialtyForm").on("submit", function (e) {
+  $("#createLocalSpecialtyForm").on("submit", async function (e) {
     const longInputs = document.querySelectorAll('input[name$="Longitude"]');
     const latInputs = document.querySelectorAll('input[name$="Latitude"]');
     const uploadInput = document.getElementById("uploadImageInput");
@@ -1099,7 +1176,9 @@ $(document).ready(function () {
     longInputs.forEach((input) => {
       const value = parseFloat(input.value);
       if (value < -180 || value > 180) {
-        $(input).next("span").text(translateText("Longitude must be between -180 and 180."));
+        $(input)
+          .next("span")
+          .text(translateText("Longitude must be between -180 and 180."));
         isValid = false;
       } else {
         $(input).next("span").text("");
@@ -1109,7 +1188,9 @@ $(document).ready(function () {
     latInputs.forEach((input) => {
       const value = parseFloat(input.value);
       if (value < -90 || value > 90) {
-        $(input).next("span").text(translateText("Latitude must be between -90 and 90."));
+        $(input)
+          .next("span")
+          .text(translateText("Latitude must be between -90 and 90."));
         isValid = false;
       } else {
         $(input).next("span").text("");
@@ -1119,7 +1200,9 @@ $(document).ready(function () {
     if (uploadInput && uploadInput.files && uploadInput.files.length > 0) {
       const files = uploadInput.files;
       if (files.length > 5) {
-        validationMessage.textContent = translateText("You can upload a maximum of %s images.").replace("%s", "5");
+        validationMessage.textContent = translateText(
+          "You can upload a maximum of %s images."
+        ).replace("%s", "5");
         isValid = false;
       }
 
@@ -1133,14 +1216,25 @@ $(document).ready(function () {
 
       if (hasInvalidFormat) {
         validationMessage.textContent = translateText(
-          `Unsupported file format. Allowed formats are: ${allowedExtensions.join(", ")}.`
+          "Please upload valid image files only (e.g., JPG, PNG, GIF)."
         );
         isValid = false;
       }
+    } else {
+      validationMessage.textContent = translateText(
+        "At least one image is required"
+      );
+      isValid = false;
     }
 
     if (!isValid) {
       e.preventDefault();
+      await showTranslatedSwal({
+        icon: "error",
+        title: "Invalid Input",
+        text: "Please correct the validation errors before submitting.",
+        showConfirmButton: true,
+      });
     }
   });
 });

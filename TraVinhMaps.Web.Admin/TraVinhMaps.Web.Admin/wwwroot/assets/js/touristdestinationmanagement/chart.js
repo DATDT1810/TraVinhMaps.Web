@@ -434,7 +434,6 @@ async function refreshTopViewsChart(showAlert = true) {
         topViews = views;
         drawTopInteractionChart(views);
         if (views.length && showAlert) showTimedAlert(t("Success!"), t("Top Views refreshed"), "success", 1000);
- EQUAL
     } catch (error) {
         drawTopInteractionChart([]);
         logDebug("Top Views refresh error", error);
@@ -627,3 +626,92 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+/************************************************************
+ *  SignalR Real-time Integration for Destination Analytics
+ ************************************************************/
+
+(function () {
+    // Kiểm tra xem thư viện SignalR đã tồn tại chưa
+    if (typeof signalR === 'undefined') {
+        console.error("SignalR client library not found. Real-time updates will be disabled for Destination page.");
+        return;
+    }
+
+    /**
+     * Hàm này sẽ làm mới tất cả các biểu đồ trên trang Destination.
+     * Nó không hiển thị thông báo "Success" để tránh làm phiền người dùng khi cập nhật tự động.
+     * Nó cũng sẽ xóa cache để đảm bảo dữ liệu mới nhất được lấy từ server.
+     */
+    function refreshAllDestinationChartsForRealtime() {
+        console.log("[Real-time] Refreshing all Destination charts...");
+
+        // Xóa cache trước khi gọi lại API để đảm bảo lấy dữ liệu mới nhất
+        if (typeof chartDataCache !== 'undefined') {
+            chartDataCache.clear();
+            logDebug("Cache cleared for real-time update.");
+        }
+
+        // Gọi các hàm refresh bạn đã viết, nhưng với showAlert = false
+        if (typeof refreshAnalyticsChart === 'function') refreshAnalyticsChart(false);
+        if (typeof refreshDemographicsChart === 'function') refreshDemographicsChart(false);
+        
+        // Sửa lỗi: Gọi đúng hàm refreshTopViewsChart
+        if (typeof refreshTopViewsChart === 'function') refreshTopViewsChart(false);
+        
+        if (typeof refreshTopFavoritesChart === 'function') refreshTopFavoritesChart(false);
+
+        // Đối với biểu đồ so sánh, chỉ refresh nếu người dùng đã chọn sản phẩm
+        const compareSelect = document.getElementById("compareDestinationsSelect");
+        if (compareSelect && compareSelect.selectedOptions.length > 0) {
+            const destinationIds = Array.from(compareSelect.selectedOptions).map(option => option.value);
+            if (typeof refreshCompareDestinationsChart === 'function') refreshCompareDestinationsChart(destinationIds, false);
+        }
+    }
+
+    // Gán hàm vào biến toàn cục để có thể gọi từ nơi khác nếu cần
+    window.refreshAllDestinationCharts = refreshAllDestinationChartsForRealtime;
+
+
+    // --- LOGIC KẾT NỐI VÀ XỬ LÝ SIGNALR ---
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("https://localhost:7162/dashboardHub") // Cùng một Hub với các trang khác
+        .withAutomaticReconnect()
+        .build();
+
+    // Định nghĩa hành động khi nhận được tín hiệu "ChartAnalytics"
+    connection.on("ChartAnalytics", function () {
+        console.log("[SignalR] Received 'ChartAnalytics' signal on Destination page. Updating Destination charts...");
+
+        // Gọi hàm tổng để cập nhật mọi thứ trên trang này
+        if (typeof window.refreshAllDestinationCharts === 'function') {
+            window.refreshAllDestinationCharts();
+        } else {
+            console.error("Function 'refreshAllDestinationCharts' is not available to update Destination charts.");
+        }
+    });
+
+    // Hàm để khởi động kết nối
+    async function startSignalRConnection() {
+        try {
+            await connection.start();
+            console.log("[SignalR] Destination page connected successfully.");
+
+            // Lấy vai trò từ thuộc tính data-user-role của thẻ body
+            // (Cần đảm bảo file _Layout.cshtml đã có thẻ này)
+            const userRole = document.body.dataset.userRole?.toLowerCase();
+            
+            if (userRole === "super-admin" || userRole === "admin") {
+                connection.invoke("JoinAdminGroup", userRole).catch(function (err) {
+                    console.error("[SignalR] Destination page failed to join group:", err.toString());
+                });
+            }
+        } catch (err) {
+            console.error("[SignalR] Destination page connection failed: ", err);
+        }
+    }
+
+    // Khởi động kết nối SignalR
+    startSignalRConnection();
+
+})();

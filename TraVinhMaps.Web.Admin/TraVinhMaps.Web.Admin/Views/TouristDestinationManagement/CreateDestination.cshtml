@@ -107,11 +107,11 @@
                         <div class="form theme-form">
                             <form asp-action="CreateDestination" method="post" enctype="multipart/form-data">
                                 <div class="row">
-                                    <div class="col-lg-5">
+                                    <div class="col-lg-7">
                                         <div id="map" class="here-map-container"
                                              data-latitude="9.9513"
                                              data-longitude="106.3346"
-                                             style="width: 100%; height: 400px; background-color: #f0f0f0; border-radius: 10px; position: relative;">
+                                             style="width: 100%; height: 510px; background-color: #f0f0f0; border-radius: 10px; position: relative;">
                                         </div>
                                         <br />
                                         <div class="mb-3">
@@ -148,7 +148,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-7">
+                                    <div class="col-lg-5">
                                         <div class="mb-3">
                                             <label>Destination Title</label>
                                             <input asp-for="Name" class="form-control" type="text" placeholder="Destination title">
@@ -174,7 +174,7 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-4">
                                                 <div class="mb-3">
                                                     <label>Opent Time</label>
                                                     <select asp-for="OpeningHours.OpenTime" id="openTime" class="form-select">
@@ -187,7 +187,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-4">
                                                 <div class="mb-3">
                                                     <label>Close Time</label>
                                                     <select asp-for="OpeningHours.CloseTime" id="closeTime" class="form-select">
@@ -201,7 +201,7 @@
                                                     <span id="timeValidationError" class="text-danger d-block"></span>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-4">
                                                 <div class="mb-3">
                                                     <label>Ticket</label>
                                                     <select asp-for="Ticket" class="form-select">
