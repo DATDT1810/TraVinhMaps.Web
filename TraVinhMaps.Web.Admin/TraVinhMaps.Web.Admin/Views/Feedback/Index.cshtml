@@ -71,7 +71,7 @@
                                                             <i class="fa fa-eye"></i>
                                                         </a>
                                                     </li>
-                                                    
+
                                                 </ul>
                                             </td>
                                         </tr>
@@ -87,23 +87,8 @@
     </div>
 </div>
 
-@section Scripts{
+@section Scripts {
     <script src="~/assets/js/sweetalert-custom.js"></script>
     <script src="~/assets/js/feedback/export-excel.js"></script>
-<script>
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl("https://localhost:7162/dashboardHub")
-        .withAutomaticReconnect()
-        .build();
-
-    connection.on("ReceiveFeedback", function(feedbackId) {
-        alert("Có feedback mới với ID: " + feedbackId);
-        // location.reload();
-    });
-
-    connection.start().then(function() {
-        connection.invoke("JoinAdminGroup", "admin");
-        connection.invoke("JoinAdminGroup", "super-admin");
-    });
-</script>
+    <script src="~/assets/js/feedback/signalR.js"></script>
 }

@@ -120,7 +120,7 @@
                         <div class="form theme-form">
                             <form asp-action="CreateEventFestival" method="post" enctype="multipart/form-data">
                                 <div class="row">
-                                    <div class="col-lg-5">
+                                    <div class="col-lg-7">
                                         <div id="map" class="here-map-container" data-latitude="9.9513"
                                             data-longitude="106.3346"
                                             style="width: 100%; height: 400px; background-color: #f0f0f0; border-radius: 10px; position: relative;">
@@ -163,14 +163,14 @@
                                         </div>
                                         <div class="mb-3">
                                             <label>Type Location</label>
-                                            <select asp-for="Type" class="form-select" disabled>
+                                            <select asp-for="Type" class="form-select">
                                                 <option selected value="Point">Point</option>
                                                 <option value="Unknow">Unknow</option>
                                             </select>
                                             <input type="hidden" asp-for="Type" value="Point" />
                                         </div>
                                     </div>
-                                    <div class="col-lg-7">
+                                    <div class="col-lg-5">
                                         <div class="mb-3">
                                             <label>Event And Festival Title</label>
                                             <input asp-for="NameEvent" class="form-control" type="text"
@@ -187,7 +187,6 @@
                                             <div class="col-md-4">
                                                 <div class="mb-3">
                                                     <label>Starting date</label>
-                                                    @* <input asp-for="StartDate" class="datepicker-here form-control" type="text" data-language="en"> *@
                                                     <input asp-for="StartDate" class="datepicker-here form-control"
                                                         type="text" data-val="true" placeholder="MM/dd/yyyy"
                                                         data-val-datenotinpast="The date must not be in the past."
@@ -199,8 +198,6 @@
                                             <div class="col-md-4">
                                                 <div class="mb-3">
                                                     <label>Ending date</label>
-                                                    @* <input asp-for="EndDate" class="datepicker-here form-control"
-                                                        type="text" data-language="en"> *@
                                                     <input asp-for="EndDate" class="datepicker-here form-control"
                                                         type="text" data-val="true" placeholder="MM/dd/yyyy"
                                                         data-val-dategreaterthan="The ending date must be after the starting date."
@@ -264,8 +261,6 @@
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
-    <!-- CKEditor 5 -->
-    @* <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script> *@
 
     <!-- HERE Maps API references -->
     <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
@@ -279,6 +274,7 @@
         window.HERE_API_KEY = '@Configuration["HEREMAP_API_KEY"]';  
     </script>
 
+
     <script src="~/assets/js/EventAndFestival/heremap-edit-event.js"></script>
     <script src="~/assets/js/EventAndFestival/event-form-validation.js"></script>
     <script src="~/assets/js/ckeditor5.js"></script>
@@ -288,30 +284,40 @@
         $.validator.addMethod("datenotinpast", function (value, element, param) {
             if (!value) return false;
 
+
             const parts = value.split('/');
             if (parts.length !== 3) return false;
+
 
             const month = parseInt(parts[0], 10) - 1;
             const day = parseInt(parts[1], 10);
             const year = parseInt(parts[2], 10);
 
+
             const inputDate = new Date(year, month, day);
             const today = new Date();
             today.setHours(0, 0, 0, 0); // Remove time for comparison
 
-            return inputDate >= today;
+
+            return inputDate > today;
         }, "The date must not be in the past.");
 
-        // Adapter để lấy giá trị định dạng từ attribute
+
+        // Adapter to get the format attribute
         $.validator.unobtrusive.adapters.addSingleVal("datenotinpast", "format");
 
 
+
+
+        // Custom validator for date greater than
         $.validator.addMethod("dategreaterthan", function (value, element, params) {
             const startDateId = params.other;
             const format = params.format || "mm/dd/yyyy";
             const startValue = $(startDateId).val();
 
+
             if (!value || !startValue) return false;
+
 
             const parseDate = function (val) {
                 const parts = val.split('/');
@@ -319,13 +325,17 @@
                 return new Date(parts[2], parts[0] - 1, parts[1]); // yyyy, mm, dd
             };
 
+
             const endDate = parseDate(value);
             const startDate = parseDate(startValue);
 
+
             if (!startDate || !endDate) return false;
+
 
             return endDate > startDate;
         }, "The ending date must be after the starting date.");
+
 
         // Adapter to pass data-val attributes
         $.validator.unobtrusive.adapters.add("dategreaterthan", ["other", "format"], function (options) {
@@ -337,26 +347,51 @@
         });
     </script>
 
+
     <script>
+        // Gộp tất cả các tác vụ cần thực hiện khi trang tải xong vào một chỗ
         document.addEventListener("DOMContentLoaded", function () {
-            // File upload preview
+           
+            // --- BƯỚC 1: Đặt ngày bắt đầu mặc định là ngày mai ---
+            const startDateInput = document.getElementById('StartDate');
+           
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+
+            // Định dạng ngày thành chuỗi "mm/dd/yyyy"
+            const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+            const day = String(tomorrow.getDate()).padStart(2, '0');
+            const year = tomorrow.getFullYear();
+            const formattedTomorrow = `${month}/${day}/${year}`;
+
+
+            // Gán giá trị vào ô input
+            if (startDateInput) {
+                startDateInput.value = formattedTomorrow;
+            }
+
+
+            // --- BƯỚC 2: Thiết lập chức năng xem trước ảnh upload ---
             const setupUploadBox = (boxId, inputId) => {
                 const addBox = document.getElementById(boxId);
                 const uploadInput = document.getElementById(inputId);
 
+
                 if (!addBox || !uploadInput) return;
 
-                // Click to open file dialog
+
                 addBox.addEventListener("click", () => uploadInput.click());
 
-                // Preview container
+
                 let previewContainer = document.createElement("div");
                 previewContainer.classList.add("row", "mt-3", "g-3");
                 addBox.parentElement.appendChild(previewContainer);
 
-                // Handle file preview
+
                 uploadInput.addEventListener("change", function () {
                     previewContainer.innerHTML = "";
+
 
                     Array.from(uploadInput.files).forEach(file => {
                         if (file.type.startsWith("image/")) {
@@ -365,12 +400,15 @@
                                 const col = document.createElement("div");
                                 col.classList.add("col-sm-3");
 
+
                                 const itemDiv = document.createElement("div");
                                 itemDiv.classList.add("item", "position-relative");
+
 
                                 const img = document.createElement("img");
                                 img.src = e.target.result;
                                 img.classList.add("w-100", "rounded");
+
 
                                 itemDiv.appendChild(img);
                                 col.appendChild(itemDiv);
@@ -381,7 +419,9 @@
                     });
                 });
             };
+           
             setupUploadBox("addImageBox", "uploadImageInput");
         });
     </script>
 }
+

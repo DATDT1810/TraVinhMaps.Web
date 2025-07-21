@@ -159,7 +159,7 @@
                 <div class="logo-wrapper">
                     <a asp-controller="Home" asp-action="Index">
                         <img class="img-fluid" src="~/assets/images/logo/logo.png" alt="Logo"
-                            style="width: 100px; margin-left: 50px; margin-top: -20px;">
+                            style="width: 100px; margin-left: 50px; margin-top: -35px;">
                     </a>
                     <div class="back-btn"><i class="fa fa-angle-left"></i></div>
                     <div class="toggle-sidebar">
@@ -176,14 +176,9 @@
                     <div id="sidebar-menu">
                         <ul class="sidebar-links" id="simple-bar">
                             <li class="back-btn">
-                                <a href="index-2.html">
-                                    <img class="img-fluid" src="~/assets/images/logo/logo-icon.png" alt="logo-icon">
-                                </a>
                                 <div class="mobile-back text-end">
                                     <span>Back</span><i class="fa fa-angle-right ps-2" aria-hidden="true"></i>
                                 </div>
-                            </li>
-                            <li class="sidebar-main-title">
                             </li>
                             <!-- Dashboard -->
                             <li class="sidebar-list">
@@ -385,6 +380,7 @@
     <script src="~/assets/js/translate/translation.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@7.0.5/dist/browser/signalr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

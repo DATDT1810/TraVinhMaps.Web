@@ -112,7 +112,7 @@
           error: function (xhr) {
             showTimedAlert(
               "Error!",
-              "An error occurred while banning the destination: " +
+              "An error occurred while banning the event and festival: " +
                 (xhr.responseJSON?.message || "Unknown error"),
               "error",
               1000
@@ -172,7 +172,7 @@
           error: function (xhr) {
             showTimedAlert(
               "Error!",
-              "An error occurred while banning the destination: " +
+              "An error occurred while banning the event and festival: " +
                 (xhr.responseJSON?.message || "Unknown error"),
               "error",
               1000

@@ -30,14 +30,21 @@ namespace TraVinhMaps.Web.Admin.Services.Users
 
         public async Task<IEnumerable<UserResponse>> ListAsync(Func<UserResponse, bool> predicate, CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync(userApi + "inActive", cancellationToken);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var content = await response.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return JsonSerializer.Deserialize<IEnumerable<UserResponse>>(content, options) ?? new List<UserResponse>();
+                var response = await _httpClient.GetAsync(userApi + "inActive", cancellationToken);
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    return JsonSerializer.Deserialize<IEnumerable<UserResponse>>(content, options) ?? new List<UserResponse>();
+                }
             }
-            throw new HttpRequestException("Unable to fetch get all users.");
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching user list: {ex.Message}");
+            }
+            return new List<UserResponse>();
         }
 
 
@@ -69,42 +76,61 @@ namespace TraVinhMaps.Web.Admin.Services.Users
 
         public async Task<long> CountAsync(Func<UserResponse, bool> predicate = null, CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync(userApi + "all", cancellationToken);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var content = await response.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var users = JsonSerializer.Deserialize<IEnumerable<UserResponse>>(content, options) ?? new List<UserResponse>();
-
-                if (predicate != null)
+                var response = await _httpClient.GetAsync(userApi + "all", cancellationToken);
+                if (response.IsSuccessStatusCode)
                 {
-                    return users.LongCount(predicate);
+                    var content = await response.Content.ReadAsStringAsync();
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var users = JsonSerializer.Deserialize<IEnumerable<UserResponse>>(content, options) ?? new List<UserResponse>();
+
+                    return predicate != null ? users.LongCount(predicate) : users.LongCount();
                 }
-                return users.LongCount();
+
+                return 0;
             }
-            throw new HttpRequestException("Unable to fetch users for counting.");
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching user list: {ex.Message}");
+                return 0;
+            }
         }
 
         public async Task<long> CountAllUsersAsync(CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync(userApi + "count", cancellationToken);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var content = await response.Content.ReadAsStringAsync();
-                return long.Parse(content);
+                var response = await _httpClient.GetAsync(userApi + "count", cancellationToken);
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    return long.Parse(content);
+                }
             }
-            throw new HttpRequestException("Unable to fetch user count.");
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[CountAllUsersAsync] Error: {ex.Message}");
+            }
+            return 0;
         }
 
         public async Task<long> CountActiveUsersAsync(CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync(userApi + "count-active", cancellationToken);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var content = await response.Content.ReadAsStringAsync();
-                return long.Parse(content);
+                var response = await _httpClient.GetAsync(userApi + "count-active", cancellationToken);
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    return long.Parse(content);
+                }
             }
-            throw new HttpRequestException("Unable to fetch user count.");
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[CountActiveUsersAsync] Error: {ex.Message}");
+            }
+            return 0;
         }
 
         public async Task DeleteAsync(UserResponse entity, CancellationToken cancellationToken = default)
