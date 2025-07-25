@@ -2,6 +2,9 @@
  * translation.js - Optimized Version
  * Description: Handles multilingual translation, optimized cache, accurate text comparison and replacement,
  *              integration with dynamic location addition, and popup translation synchronization.
+ *
+ * IMPROVEMENT: Includes a global patch for Swal.fire() to ensure all popups
+ *              are automatically translated, regardless of how they are called.
  * ========================================================================= */
 
 /* ----------------- Configuration & Globals ------------------ */
@@ -637,7 +640,7 @@ function getAllPlainTexts(element = null) {
     });
   }
 
-  console.log("Collected strings:", Array.from(texts));
+  // console.log("Collected strings:", Array.from(texts)); // Uncomment for debugging
   return Array.from(texts);
 }
 
@@ -768,17 +771,28 @@ function showTranslatedSwal(options) {
   const savedLang = localStorage.getItem("selectedLanguage") || "en";
   const langName = savedLang === "vi" ? "Vietnamese" : "English";
 
+  // Create a copy to avoid modifying the original object
   const newOptions = { ...options };
 
+  // Store the original didOpen to be called later
+  const originalDidOpen = options.didOpen;
+
   newOptions.didOpen = async (popup) => {
+    // Apply translation first
     if (savedLang !== "en") {
       await changeLanguage(savedLang, langName, popup);
     }
-    if (options.didOpen) {
-      options.didOpen(popup);
+    // Then, if the original options had a didOpen, call it.
+    if (originalDidOpen) {
+      originalDidOpen(popup);
     }
   };
 
+  // Use the original Swal.fire method to avoid infinite loops
+  if (window.Swal && window.Swal.originalFire) {
+      return window.Swal.originalFire(newOptions);
+  }
+  // Fallback for safety
   return Swal.fire(newOptions);
 }
 
@@ -797,7 +811,7 @@ async function changeLanguage(targetLang, targetName, element = null) {
         (minTranslationInterval - (now - lastTranslationTime)) / 1000
       ).toFixed(1);
       console.log(`⏳ Please wait ${remainingTime}s to translate again.`);
-      await showTranslatedSwal({
+      showTranslatedSwal({ // Use the wrapper here as well for consistency
         icon: "info",
         title: "Too fast!",
         text: `Please wait ${remainingTime} seconds before translating again.`,
@@ -827,7 +841,9 @@ async function changeLanguage(targetLang, targetName, element = null) {
 
     const allTexts = getAllPlainTexts(element);
     if (allTexts.length === 0) {
-      console.log("⚠️ No translatable content found in the specified element.");
+      if (element) {
+          console.log("⚠️ No translatable content found in the specified element.");
+      }
       return;
     }
 
@@ -855,9 +871,12 @@ async function changeLanguage(targetLang, targetName, element = null) {
       let translatedText = translationCache[normTxt];
 
       if (targetLang === "en") {
-        translatedText = txt;
+        // When switching back to English, we should use the original text.
+        // The original text might have been overwritten, so we look it up from the reverting cache.
+        const revertingCacheEn = allTranslationsCache[getSourceTargetKey(lastAppliedLang, "en")] || {};
+        translatedText = revertingCacheEn[normTxt] || txt;
       }
-
+      
       if (translatedText) {
         replaceText(txt, translatedText);
         window.translationMapForCharts[txt] = translatedText;
@@ -903,8 +922,7 @@ async function changeLanguage(targetLang, targetName, element = null) {
       const batchIndex = Math.floor(i / BATCH_SIZE_FRONTEND) + 1;
 
       console.log(
-        `Sending batch ${batchIndex}/${totalBatches} for translation:`,
-        batch
+        `Sending batch ${batchIndex}/${totalBatches} for translation...`
       );
 
       const payload = { texts: batch, sourceLang, targetLang };
@@ -956,7 +974,7 @@ async function changeLanguage(targetLang, targetName, element = null) {
     }
   } catch (err) {
     console.error("Critical error during translation:", err);
-    await showTranslatedSwal({
+    showTranslatedSwal({ // Use the wrapper here too
       icon: "warning",
       title: "Partial translation",
       text: "Some texts could not be translated due to server limits. Please try again later.",
@@ -991,22 +1009,54 @@ async function initialize() {
     if (isTranslating) return;
     isTranslating = true;
     const table = this;
-    const savedLang = localStorage.getItem("selectedLanguage") || "en";
-    const langName = savedLang === "vi" ? "Vietnamese" : "English";
-    if (savedLang !== "en") {
-      await changeLanguage(savedLang, langName, table);
+    const currentSavedLang = localStorage.getItem("selectedLanguage") || "en";
+    const currentLangName = currentSavedLang === "vi" ? "Vietnamese" : "English";
+    if (currentSavedLang !== "en") {
+      await changeLanguage(currentSavedLang, currentLangName, table);
     }
     isTranslating = false;
   });
 
   window.addEventListener("languageChanged", async () => {
-    const savedLang = localStorage.getItem("selectedLanguage") || "en";
-    const langName = savedLang === "vi" ? "Vietnamese" : "English";
+    const currentSavedLang = localStorage.getItem("selectedLanguage") || "en";
+    const currentLangName = currentSavedLang === "vi" ? "Vietnamese" : "English";
     document.querySelectorAll(".swal2-popup").forEach(async (popup) => {
-      await changeLanguage(savedLang, langName, popup);
+      await changeLanguage(currentSavedLang, currentLangName, popup);
     });
   });
 }
+
+/**
+ * NEW: Patches the global Swal.fire() function to ensure all popups are translated.
+ * This makes the translation system more robust.
+ */
+function patchSwal() {
+    if (window.Swal) {
+        // Keep a reference to the original function to be called inside our wrapper
+        window.Swal.originalFire = window.Swal.fire;
+
+        // Override the global Swal.fire
+        window.Swal.fire = function(...args) {
+            let options = {};
+            // Case 1: Swal.fire({ title: '...', text: '...' })
+            if (args.length === 1 && typeof args[0] === 'object') {
+                options = args[0];
+            } 
+            // Case 2: Swal.fire('Title', 'Text', 'icon')
+            else {
+                const [title, html, icon] = args;
+                options = { title, html, icon };
+            }
+
+            // Call our custom translated Swal function instead of the original
+            return showTranslatedSwal(options);
+        };
+        console.log("✅ Swal.fire has been patched for automatic translation.");
+    } else {
+        console.warn("⚠️ Swal was not found on the window object. Patching failed.");
+    }
+}
+
 
 /* ----------------- Location and Image Handling ------------------ */
 
@@ -1075,135 +1125,39 @@ document.addEventListener("click", function (e) {
 });
 
 /**
- * Handles image upload and preview with translated validation messages.
+ * Handles initialization, event listeners, and form validation.
  */
 document.addEventListener("DOMContentLoaded", function () {
   initialize();
+  patchSwal(); // <<-- KÍCH HOẠT BẢN VÁ TỰ ĐỘNG DỊCH
 
   const addBox = document.getElementById("addImageBox");
   const uploadInput = document.getElementById("uploadImageInput");
   const imagePreview = document.getElementById("imagePreview");
   const validationMessage = document.getElementById("imageValidationMessage");
 
-  if (!addBox || !uploadInput || !imagePreview || !validationMessage) {
-    console.error(
-      "One or more elements not found: addImageBox, uploadInput, imagePreview, validationMessage"
-    );
-    return;
+  if (addBox) {
+    addBox.addEventListener("click", () => {
+        if (uploadInput) {
+            uploadInput.click();
+        }
+    });
   }
 
-  addBox.addEventListener("click", () => {
-    console.log("addImageBox clicked");
-    if (uploadInput) {
-      uploadInput.click();
-    } else {
-      console.error("uploadInput not found during click");
-    }
-  });
-
-  uploadInput.addEventListener("change", async function (e) {
-    console.log("uploadImageInput changed");
-    validationMessage.textContent = "";
-    imagePreview.innerHTML = "";
-    const files = uploadInput.files;
-
-    if (!files || files.length === 0) {
-      console.log("No files selected");
-      return;
-    }
-
-    if (files.length > 5) {
-      validationMessage.textContent = translateText(
-        "You can upload a maximum of %s images."
-      ).replace("%s", "5");
-      uploadInput.value = "";
-      console.log("Too many files selected");
-      return;
-    }
-
-    let hasInvalidFormat = false;
-    Array.from(files).forEach((file) => {
-      const ext = `.${file.name.split(".").pop().toLowerCase()}`;
-      if (!allowedExtensions.includes(ext)) {
-        hasInvalidFormat = true;
-      }
-    });
-
-    if (hasInvalidFormat) {
-      validationMessage.textContent = translateText(
-        "Please upload valid image files only (e.g., JPG, PNG, GIF)."
-      );
-      uploadInput.value = "";
-      console.log("Invalid file format");
-      return;
-    }
-
-    Array.from(files).forEach((file) => {
-      if (file.type.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const col = document.createElement("div");
-          col.classList.add("col-sm-3");
-
-          const itemDiv = document.createElement("div");
-          itemDiv.classList.add("item", "position-relative");
-
-          const img = document.createElement("img");
-          img.src = e.target.result;
-          img.classList.add("w-100", "rounded");
-
-          itemDiv.appendChild(img);
-          col.appendChild(itemDiv);
-          imagePreview.appendChild(col);
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-  });
-});
-
-/**
- * Form validation for createLocalSpecialtyForm with translated error messages.
- */
-$(document).ready(function () {
-  $("#createLocalSpecialtyForm").on("submit", async function (e) {
-    const longInputs = document.querySelectorAll('input[name$="Longitude"]');
-    const latInputs = document.querySelectorAll('input[name$="Latitude"]');
-    const uploadInput = document.getElementById("uploadImageInput");
-    const validationMessage = document.getElementById("imageValidationMessage");
-    let isValid = true;
-
-    longInputs.forEach((input) => {
-      const value = parseFloat(input.value);
-      if (value < -180 || value > 180) {
-        $(input)
-          .next("span")
-          .text(translateText("Longitude must be between -180 and 180."));
-        isValid = false;
-      } else {
-        $(input).next("span").text("");
-      }
-    });
-
-    latInputs.forEach((input) => {
-      const value = parseFloat(input.value);
-      if (value < -90 || value > 90) {
-        $(input)
-          .next("span")
-          .text(translateText("Latitude must be between -90 and 90."));
-        isValid = false;
-      } else {
-        $(input).next("span").text("");
-      }
-    });
-
-    if (uploadInput && uploadInput.files && uploadInput.files.length > 0) {
+  if(uploadInput) {
+    uploadInput.addEventListener("change", async function (e) {
+      validationMessage.textContent = "";
+      if (imagePreview) imagePreview.innerHTML = "";
       const files = uploadInput.files;
+
+      if (!files || files.length === 0) return;
+      
       if (files.length > 5) {
         validationMessage.textContent = translateText(
           "You can upload a maximum of %s images."
         ).replace("%s", "5");
-        isValid = false;
+        uploadInput.value = "";
+        return;
       }
 
       let hasInvalidFormat = false;
@@ -1218,23 +1172,92 @@ $(document).ready(function () {
         validationMessage.textContent = translateText(
           "Please upload valid image files only (e.g., JPG, PNG, GIF)."
         );
-        isValid = false;
+        uploadInput.value = "";
+        return;
       }
-    } else {
-      validationMessage.textContent = translateText(
-        "At least one image is required"
-      );
-      isValid = false;
-    }
 
-    if (!isValid) {
-      e.preventDefault();
-      await showTranslatedSwal({
-        icon: "error",
-        title: "Invalid Input",
-        text: "Please correct the validation errors before submitting.",
-        showConfirmButton: true,
+      Array.from(files).forEach((file) => {
+        if (file.type.startsWith("image/")) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const col = document.createElement("div");
+            col.classList.add("col-sm-3");
+            const itemDiv = document.createElement("div");
+            itemDiv.classList.add("item", "position-relative");
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.classList.add("w-100", "rounded");
+            itemDiv.appendChild(img);
+            col.appendChild(itemDiv);
+            if(imagePreview) imagePreview.appendChild(col);
+          };
+          reader.readAsDataURL(file);
+        }
       });
-    }
-  });
+    });
+  }
+
+  // Form validation for createLocalSpecialtyForm
+  const form = $("#createLocalSpecialtyForm");
+  if (form.length) {
+    form.on("submit", async function (e) {
+      const longInputs = document.querySelectorAll('input[name$="Longitude"]');
+      const latInputs = document.querySelectorAll('input[name$="Latitude"]');
+      let isValid = true;
+
+      longInputs.forEach((input) => {
+        const value = parseFloat(input.value);
+        if (input.value && (value < -180 || value > 180)) {
+          $(input).next(".text-danger").text(translateText("Longitude must be between -180 and 180."));
+          isValid = false;
+        } else {
+          $(input).next(".text-danger").text("");
+        }
+      });
+
+      latInputs.forEach((input) => {
+        const value = parseFloat(input.value);
+        if (input.value && (value < -90 || value > 90)) {
+          $(input).next(".text-danger").text(translateText("Latitude must be between -90 and 90."));
+          isValid = false;
+        } else {
+          $(input).next(".text-danger").text("");
+        }
+      });
+
+      if (uploadInput && validationMessage) {
+        const files = uploadInput.files;
+        if (!files || files.length === 0) {
+            validationMessage.textContent = translateText("At least one image is required");
+            isValid = false;
+        } else if (files.length > 5) {
+            validationMessage.textContent = translateText("You can upload a maximum of %s images.").replace("%s", "5");
+            isValid = false;
+        } else {
+            let hasInvalidFormat = false;
+            Array.from(files).forEach((file) => {
+                const ext = `.${file.name.split(".").pop().toLowerCase()}`;
+                if (!allowedExtensions.includes(ext)) {
+                    hasInvalidFormat = true;
+                }
+            });
+            if (hasInvalidFormat) {
+                validationMessage.textContent = translateText("Please upload valid image files only (e.g., JPG, PNG, GIF).");
+                isValid = false;
+            }
+        }
+      }
+
+      if (!isValid) {
+        e.preventDefault();
+        // This will now be automatically translated
+        Swal.fire({
+          icon: "error",
+          title: "Invalid Input",
+          text: "Please correct the validation errors before submitting.",
+          showConfirmButton: true,
+        });
+      }
+    });
+  }
 });

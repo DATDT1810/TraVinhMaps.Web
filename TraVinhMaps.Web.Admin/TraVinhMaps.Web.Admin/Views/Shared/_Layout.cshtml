@@ -73,21 +73,18 @@
         <!-- Page Header Start-->
         <div class="page-header">
             <div class="header-wrapper row m-0">
-                <div class="left-header col-xxl-5 col-xl-6 col-lg-5 col-md-4 col-sm-3 p-0">
-                    <div>
-                        <a class="toggle-sidebar" href="#"> <i class="iconly-Category icli"> </i></a>
-                        <div class="d-flex align-items-center gap-2 ">
-                            <h4 class="f-w-600">Welcome Admin</h4>
-                        </div>
+                <!-- Logo và nút Toggle Sidebar cho di động -->
+                <div class="header-logo-wrapper col-auto p-0">
+                    <div class="logo-wrapper">
+                        <a asp-controller="Home" asp-action="Index">
+                            <img class="img-fluid" src="~/assets/images/logo/logo.png" alt="Logo">
+                        </a>
                     </div>
-                    <div class="welcome-content d-xl-block d-none">
-                        <span class="text-truncate col-12">
-                            Here's what's
-                            happening with
-                            your App today.
-                        </span>
+                    <div class="toggle-sidebar">
+                        <i class="status_toggle middle sidebar-toggle" data-feather="grid"></i>
                     </div>
                 </div>
+
                 <div class="nav-right col-xxl-7 col-xl-6 col-md-7 col-8 pull-right right-header p-0 ms-auto">
                     <ul class="nav-menus">
                         <li>
@@ -97,27 +94,31 @@
                             @await Component.InvokeAsync("Notification")
                         </li>
                         <li class="onhover-dropdown language-dropdown">
-                            <div class="media profile-media">
-                                <div class="media-body d-xl-block d-none box-col-none">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <span id="currentLanguage">English</span>
-                                        <i class="middle fa fa-angle-down"></i>
-                                    </div>
+                            <a class="nav-link" href="javascript:void(0);" style="padding: 0 10px;">
+                                <div class="d-none d-md-flex align-items-center gap-2">
+                                    <span id="currentLanguage">English</span>
+                                    <i class="middle fa fa-angle-down"></i>
                                 </div>
-                            </div>
+
+                                <div class="d-md-none">
+                                    <i data-feather="globe"></i>
+                                </div>
+                            </a>
+
                             <ul class="profile-dropdown onhover-show-div">
-                                <li><button type="button" class="dropdown-item"
-                                        onclick="changeLanguage('en','English')">English</button></li>
-                                <li><button type="button" class="dropdown-item"
-                                        onclick="changeLanguage('vi','Vietnamese')">Vietnamese</button></li>
+                                <li>
+                                    <button type="button" class="dropdown-item"
+                                        onclick="changeLanguage('en','English')">English</button>
+                                </li>
+                                <li>
+                                    <button type="button" class="dropdown-item"
+                                        onclick="changeLanguage('vi','Vietnamese')">Vietnamese</button>
+                                </li>
                             </ul>
                         </li>
-
-                        </li>
-
                         <li class="profile-nav onhover-dropdown">
                             <div class="media profile-media">
-                                <img class="b-r-10" src="../assets/images/dashboard/profile.png" alt="">
+                                <img class="b-r-10" src="~/assets/images/dashboard/profile.png" alt="avt">
                                 <div class="media-body d-xxl-block d-none box-col-none">
                                     <div class="d-flex align-items-center gap-2">
                                         <span>@User.Identity.Name </span><i class="middle fa fa-angle-down"> </i>
@@ -137,11 +138,12 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <form asp-controller="Authen" asp-action="Logout" method="post">
+                                    <form asp-controller="Authen" asp-action="Logout" method="post" class="m-0">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-pill btn-outline-primary btn-sm">
-                                            Log
-                                            Out
+                                        <button type="submit" class="btn btn-link d-flex align-items-center p-0"
+                                            style="color: inherit; text-decoration: none;">
+                                            <i data-feather="log-out"></i><span style="padding-left: 15px;">Log
+                                                Out</span>
                                         </button>
                                     </form>
                                 </li>

@@ -72,15 +72,15 @@
                                             <td>
                                                 @item.OcopTypeName
                                             </td>
-                                        <td>
-                                            @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
-                                        </td>
+                                            <td>
+                                                @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
+                                            </td>
 
                                             <td class="text-center align-middle">
                                                 <ul>
                                                     <li>
-                                                        <a class="edit" asp-controller="OcopType" asp-action="UpdateOcopType"
-                                                            asp-route-id="@item.Id"><i class="fa fa-pencil"></i> </a>
+                                                        <a asp-controller="OcopType" asp-action="UpdateOcopType"
+                                                            asp-route-id="@item.Id"><i class="fa fa-pencil edit"></i> </a>
                                                     </li>
                                                 </ul>
                                             </td>

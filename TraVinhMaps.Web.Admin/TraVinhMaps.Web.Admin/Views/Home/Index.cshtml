@@ -313,12 +313,15 @@
                                     </div>
 
                                     <div class="card-body">
-                                        <div class="chart-hometown-container" style="height: 600px; overflow-y: auto;">
-                                            <div class="no-data-message text-center" id="hometownChart-no-data">No user
-                                                data
-                                                available
-                                            </div>
+                                        <!-- Container cho biểu đồ Quê quán -->
+                                        <div class="chart-container" id="hometownChart-container"
+                                            style="position: relative; height: 400px; width: 100%;">
                                             <canvas id="hometownChart"></canvas>
+                                        </div>
+                                        <div id="hometownChart-no-data" class="text-center" style="display: none;">
+                                            <p>No user
+                                                data
+                                                available</p>
                                         </div>
                                     </div>
                                 </div>
@@ -421,7 +424,7 @@
             hometown: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Hometown ?? new Dictionary<string, int>())),
             time: @Html.Raw(Json.Serialize(Model.UserStatistics.FirstOrDefault()?.Time ?? new Dictionary<string, int>())),
             performance: @Html.Raw(Json.Serialize(Model.PerformanceByTag ?? new Dictionary<string, Dictionary<string, int>>()))
-                    };
+                        };
         console.log("Initial data:", window.initialData);
 
         // Khởi tạo biểu đồ khi DOM đã tải xong

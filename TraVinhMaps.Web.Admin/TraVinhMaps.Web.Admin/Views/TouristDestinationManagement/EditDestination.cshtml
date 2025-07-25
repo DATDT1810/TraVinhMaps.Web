@@ -59,7 +59,7 @@
                         <div class="form theme-form">
                             <form asp-action="EditDestination" method="post" enctype="multipart/form-data">
                                 <div class="row">
-                                    <div class="col-lg-5">
+                                    <div class="col-lg-7">
                                         <div id="map" class="here-map-container"
                                              data-latitude="@Model.latitude.ToString(System.Globalization.CultureInfo.InvariantCulture)"
                                              data-longitude="@Model.longitude.ToString(System.Globalization.CultureInfo.InvariantCulture)"
@@ -103,7 +103,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-7">
+                                    <div class="col-lg-5">
                                         <div class="mb-3">
                                             <label>Destination Title</label>
                                             <input asp-for="Name" class="form-control" type="text"
@@ -140,7 +140,7 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-4">
                                                 <div class="mb-3">
                                                     <label>Opent Time</label>
                                                     <select asp-for="OpeningHours.OpenTime" id="openTime" class="form-select">
@@ -158,7 +158,7 @@
                                                           class="text-danger"></span>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-4">
                                                 <div class="mb-3">
                                                     <label>Close Time</label>
                                                     <select asp-for="OpeningHours.CloseTime" id="closeTime" class="form-select">
@@ -177,7 +177,7 @@
                                                     <span id="timeValidationError" class="text-danger d-block"></span>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-4">
                                                 <div class="mb-3">
                                                     <label>Ticket</label>
                                                     <select asp-for="Ticket" class="form-select">
@@ -207,7 +207,9 @@
                                             <span asp-validation-for="Contact.Website"
                                                     class="text-danger"></span>
                                         </div>
-                                        <div class="mb-3">
+                                        
+                                    </div>
+                                    <div class="mb-3">
                                             <label>Description</label>
                                             <textarea asp-for="Description" id="descriptionEditor" class="form-control"
                                                       placeholder="Description of destination"
@@ -221,9 +223,7 @@
                                                       placeholder="History content of destination"
                                                       rows="10"></textarea>
                                             <span asp-validation-for="HistoryStory.Content" class="text-danger"></span>
-
                                         </div>
-                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">

@@ -63,7 +63,6 @@ function validateFilterInputs(startDateStr, endDateStr) {
 }
 
 // Download chart
-// Download chart
 function downloadChart(chart, filename, type) {
     if (!chart || !chart.canvas) {
         showTimedAlert(t("Error"), t("No chart available for download"), "error", 1000);
@@ -161,7 +160,15 @@ function drawAnalyticsChart(data) {
                 y: {
                     beginAtZero: true,
                     title: { display: true, text: t("Count") },
-                    ticks: { callback: (value) => (value >= 1000 ? value / 1000 + "k" : value) },
+                    ticks: {
+                        callback: (value) => {
+                            if (!Number.isInteger(value)) return '';
+                            if (value >= 1_000_000_000) return (value / 1_000_000_000) + 'B';
+                            if (value >= 1_000_000) return (value / 1_000_000) + 'M';
+                            if (value >= 1_000) return (value / 1_000) + 'k';
+                            return value;
+                        }
+                    },
                 },
                 x: {
                     title: { display: true, text: t("Destinations") },
@@ -198,7 +205,16 @@ function drawDemographicsChart(data) {
             },
             scales: {
                 x: { stacked: true, title: { display: true, text: t("Location") }, ticks: { autoSkip: false, maxRotation: 60, minRotation: 30 } },
-                y: { stacked: true, beginAtZero: true, title: { display: true, text: t("User Count") }, ticks: { callback: (value) => (value >= 1000 ? value / 1000 + "k" : value) } },
+                y: { stacked: true, beginAtZero: true, title: { display: true, text: t("User Count") }, ticks: {
+                callback: (value) => {
+                    if (!Number.isInteger(value)) return '';
+                    if (value >= 1_000_000_000) return (value / 1_000_000_000) + 'B';
+                    if (value >= 1_000_000) return (value / 1_000_000) + 'M';
+                    if (value >= 1_000) return (value / 1_000) + 'k';
+                    return value;
+                }
+            }
+},
             },
         },
     });
@@ -288,7 +304,7 @@ function drawTopFavoritesChart(data) {
                 title: { display: true, text: t("Top Favorited Destinations") },
             },
             scales: {
-                y: { beginAtZero: true, title: { display: true, text: t("Favorites") }, ticks: { callback: (value) => (value >= 1000 ? value / 1000 + "k" : value) } },
+                y: { beginAtZero: true, title: { display: true, text: t("Favorites") }, ticks: { stepSize: 1, callback: (value) => (value >= 1000 ? value / 1000 + "k" : value) } },
                 x: { title: { display: true, text: t("Top Destinations") }, ticks: { autoSkip: false, maxRotation: 60, minRotation: 30 } },
             }
         }
@@ -335,7 +351,7 @@ function drawCompareDestinationsChart(data) {
                 title: { display: true, text: t("Destination Comparison") }
             },
             scales: {
-                y: { beginAtZero: true, title: { display: true, text: t("Count") } },
+                y: { beginAtZero: true, title: { display: true, text: t("Count") }, ticks: {stepSize: 1, callback: (value) => (value >= 1000 ? value / 1000 + "k" : value) } },
                 x: { title: { display: true, text: t("Compared Destinations") }, ticks: { autoSkip: false, maxRotation: 60, minRotation: 30 } },
             }
         }
