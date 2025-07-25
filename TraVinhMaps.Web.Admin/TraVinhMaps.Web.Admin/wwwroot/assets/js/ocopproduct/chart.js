@@ -142,7 +142,12 @@ function drawAnalyticsChart(data) {
                 title: { display: true, text: t("OCOP Product Analytics") },
             },
             scales: {
-                y: { beginAtZero: true, title: { display: true, text: t("Count") } },
+                y: { beginAtZero: true, title: { display: true, text: t("Count") }, ticks: {
+                stepSize: 1,
+                callback: function (value) {
+                    return Number.isInteger(value) ? value : null;
+                }
+            } },
                 x: { title: { display: true, text: t("Product Name") }, ticks: { autoSkip: false, maxRotation: 90, minRotation: 45 } },
             },
         },
@@ -180,7 +185,12 @@ function drawDemographicsChart(data) {
             },
             scales: {
                 x: { stacked: true, title: { display: true, text: t("Product") }, ticks: { autoSkip: false, maxRotation: 60, minRotation: 30 } },
-                y: { stacked: true, beginAtZero: true, title: { display: true, text: t("User Count") } },
+                y: { stacked: true, beginAtZero: true, title: { display: true, text: t("User Count") }, ticks: {
+                    stepSize: 1,
+                    callback: function (value) {
+                        return Number.isInteger(value) ? value : null;
+                    }
+                } },
             },
         }
     });
@@ -218,7 +228,12 @@ function drawTopInteractionChart(data) {
             maintainAspectRatio: false,
             plugins: { legend: { position: "top" }, title: { display: true, text: t("Top Interacted OCOP Products") } },
             scales: {
-                y: { beginAtZero: true, title: { display: true, text: t("Interaction Count") } },
+                y: { beginAtZero: true, title: { display: true, text: t("Interaction Count") }, ticks: {
+                stepSize: 1,
+                callback: function (value) {
+                    return Number.isInteger(value) ? value : null;
+                }
+            } },
                 x: { title: { display: true, text: t("Product Name") }, ticks: { autoSkip: false, maxRotation: 60, minRotation: 30 } }
             }
         }
@@ -241,7 +256,12 @@ function drawTopFavoriteChart(data) {
             maintainAspectRatio: false,
             plugins: { legend: { position: "top" }, title: { display: true, text: t("Top Favorited OCOP Products") } },
             scales: {
-                y: { beginAtZero: true, title: { display: true, text: t("Favorite Count") } },
+                y: { beginAtZero: true, title: { display: true, text: t("Favorite Count") }, ticks: {
+                stepSize: 1,
+                callback: function (value) {
+                    return Number.isInteger(value) ? value : null;
+                }
+            } },
                 x: { title: { display: true, text: t("Product Name") }, ticks: { autoSkip: false, maxRotation: 60, minRotation: 30 } }
             }
         }
@@ -268,7 +288,13 @@ function drawCompareProductsChart(data) {
             maintainAspectRatio: false,
             plugins: { legend: { position: "top" }, title: { display: true, text: t("OCOP Product Comparison") } },
             scales: {
-                y: { beginAtZero: true, title: { display: true, text: t("Count") } },
+                y: { beginAtZero: true, title: { display: true, text: t("Count") },
+            ticks: {
+                stepSize: 1,
+                callback: function (value) {
+                    return Number.isInteger(value) ? value : null;
+                }
+            } },
                 x: { title: { display: true, text: t("Product Name") }, ticks: { autoSkip: false, maxRotation: 90, minRotation: 45 } }
             }
         }
@@ -619,8 +645,6 @@ document.addEventListener("DOMContentLoaded", function () {
             await connection.start();
             console.log("[SignalR] OCOP page connected successfully.");
 
-            // Lấy vai trò từ thuộc tính data-user-role của thẻ body
-            // (Cần đảm bảo file _Layout.cshtml đã có thẻ này)
             const userRole = document.body.dataset.userRole?.toLowerCase();
             
             if (userRole === "super-admin" || userRole === "admin") {

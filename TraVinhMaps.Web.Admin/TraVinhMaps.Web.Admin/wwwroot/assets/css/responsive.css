@@ -1,5 +1,5 @@
 /**=====================
-     62. Responsive CSS Start
+    62. Responsive CSS Start
 ==========================**/
 /* ========= min and max scss for 1200 to 1366 screen ========= */
 @media (max-width: 1800px) {
@@ -3444,6 +3444,10 @@
   .page-wrapper.compact-wrapper .page-body-wrapper div.sidebar-wrapper .sidebar-main .sidebar-links {
     height: calc(100vh - 210px);
   }
+}
+
+.nav-menus .language-dropdown .d-md-none i[data-feather="globe"] {
+    color: #52526C;
 }
 /**=====================
      62. Responsive CSS Ends
