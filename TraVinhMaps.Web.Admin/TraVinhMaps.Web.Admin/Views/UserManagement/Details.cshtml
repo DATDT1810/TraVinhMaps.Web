@@ -78,15 +78,15 @@
                     <div class="card">
                     <div class="card-header">
                         <h4 class="card-title mb-0">Review</h4>
-                            <div class="card-body">
+                            <div class="card-body" style="max-height: 542px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
                                 @if (ViewBag.Reviews is List<TraVinhMaps.Web.Admin.Models.Review.ReviewResponse> reviews && reviews.Any())
                                 {
                                     foreach (var review in reviews)
                                     {
                                         
                                         var destinationName = destinationNames != null && destinationNames.ContainsKey(review.DestinationId)
-            ? destinationNames[review.DestinationId]
-            : "Unknown destination";
+                                        ? destinationNames[review.DestinationId]
+                                        : "Unknown destination";
                                         <div class="mb-4 border-bottom pb-3">
                                             <p><strong>Tourist Destination Name:</strong> @destinationName</p>
                                             <p><strong>Rating:</strong> @review.Rating</p>
