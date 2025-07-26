@@ -140,6 +140,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 touristDestinationData.longitude = destination.Location.Coordinates[0];
                 touristDestinationData.latitude = destination.Location.Coordinates[1];
                 touristDestinationData.Type = destination.Location.Type;
+                touristDestinationData.Images = destination.Images;
 
                 ViewBag.DestinationTypes = await GetDestinationTypeList();
 
@@ -380,6 +381,138 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return Json(new { success = false, message = $"Error deleting image: {ex.Message}" });
             }
         }
+
+        // Start Add image for update destination
+
+        [HttpPost("AddDestinationImageUpdate")]
+        public async Task<IActionResult> AddDestinationImageUpdate(string id, List<IFormFile> imageDestinationFileList)
+        {
+            try
+            {
+                if (!IsImageListFile(imageDestinationFileList))
+                {
+                    TempData["error"] = "Invalid file type. Please upload a valid image file.";
+                    return RedirectToAction("DetailDestination", new { id = id });
+                }
+                AddDestinationImageRequest addDestinationImageRequest = new AddDestinationImageRequest()
+                {
+                    id = id,
+                    imageFile = imageDestinationFileList
+                };
+                var result = await _destinationService.AddDestinationImage(addDestinationImageRequest);
+                if (result == null)
+                {
+                    TempData["error"] = "Adding photos to this tourist attraction failed, please try again later";
+                    return RedirectToAction("DetailDestination", new { id = id });
+                }
+                return RedirectToAction("EditDestination", new { id = id });
+            }
+            catch (System.Exception ex)
+            {
+                return Json(new { success = false, message = $"Error deleting image: {ex.Message}" });
+            }
+        }
+
+        // POST: TouristDestinationManagement/AddDestinationHistoryImage
+        [HttpPost("AddDestinationHistoryImageUpdate")]
+        public async Task<IActionResult> AddDestinationHistoryImageUpdate(string id, List<IFormFile> imageDestinationFileList)
+        {
+            try
+            {
+                if (!IsImageListFile(imageDestinationFileList))
+                {
+                    TempData["error"] = "Invalid file type. Please upload a valid image file.";
+                    return RedirectToAction("DetailDestination", new { id = id });
+                }
+                AddDestinationImageRequest addDestinationImageRequest = new AddDestinationImageRequest()
+                {
+                    id = id,
+                    imageFile = imageDestinationFileList
+                };
+                var result = await _destinationService.AddDestinationHistoryImage(addDestinationImageRequest);
+                if (result == null)
+                {
+                    TempData["errorHistory"] = "adding history photos to this tourist attraction failed, please try again later";
+                    return RedirectToAction("DetailDestination", new { id = id });
+                }
+                return RedirectToAction("EditDestination", new { id = id });
+            }
+            catch (System.Exception ex)
+            {
+                return Json(new { success = false, message = $"Error deleting image: {ex.Message}" });
+            }
+        }
+
+         [HttpPost("DeleteDestinationImageUpdate")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteDestinationImageUpdate(string id, string urlImage)
+        {
+            try
+            {
+                if (id == null)
+                {
+                    return NotFound();
+                }
+                var destinationDetail = await _destinationService.GetDestinationById(id);
+                if (destinationDetail == null)
+                {
+                    return NotFound();
+                }
+
+                // Kiểm tra số lượng ảnh hiện tại
+                var currentImages = destinationDetail.Images;
+                if (currentImages == null || currentImages.Count <= 1)
+                {
+                    TempData["error"] = "You cannot delete the last remaining image.";
+                    return RedirectToAction("EditDestination", new { id = id });
+                }
+
+                DeleteDestinationImageRequest deleteDestinationImageRequest = new DeleteDestinationImageRequest()
+                {
+                    id = id,
+                    imageUrl = urlImage
+                };
+                var result = await _destinationService.DeleteDestinationImage(deleteDestinationImageRequest);
+                if (result)
+                {
+                    return RedirectToAction("EditDestination", new { id = id });
+                }
+                TempData["error"] = "Something went wrong with delete image, please try again";
+                return RedirectToAction("EditDestination", new { id = id });
+            }
+            catch (System.Exception ex)
+            {
+                return Json(new { success = false, message = $"Error deleting image: {ex.Message}" });
+            }
+        }
+
+       
+        [HttpPost("DeleteHistoryDestinationImageUpdate")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteHistoryDestinationImageUpdate(string id, string urlImage)
+        {
+            try
+            {
+                DeleteDestinationImageRequest deleteDestinationImageRequest = new DeleteDestinationImageRequest()
+                {
+                    id = id,
+                    imageUrl = urlImage
+                };
+                var result = await _destinationService.DeleteDestinationHistoryImage(deleteDestinationImageRequest);
+                if (result)
+                {
+                    return RedirectToAction("EditDestination", new { id = id });
+                }
+                TempData["errorHistory"] = "Something went wrong with delete history image, please try again";
+                return RedirectToAction("EditDestination", new { id = id });
+            }
+            catch (System.Exception ex)
+            {
+                return Json(new { success = false, message = $"Error deleting image: {ex.Message}" });
+            }
+        }
+
+        // End : Add image for update destination
 
         // GET: TouristDestinationManagement/RestoreDestination
         private bool IsImageFile(IFormFile file)

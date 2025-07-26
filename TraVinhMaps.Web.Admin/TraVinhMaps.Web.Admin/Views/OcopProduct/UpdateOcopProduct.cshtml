@@ -35,7 +35,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="form theme-form">
-                            <form asp-action="UpdateOcopProductPost" method="post" enctype="multipart/form-data">
+                            <form id="updateOcopProductForm" asp-action="UpdateOcopProductPost" method="post" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
@@ -54,25 +54,28 @@
                                             <label>Product Description</label>
                                             <textarea asp-for="ProductDescription" id="Description" class="form-control"
                                                 placeholder="Description of product"
-                                                id="exampleFormControlTextarea4" rows="10"></textarea>
+                                                 rows="15"></textarea>
                                             <span asp-validation-for="ProductDescription" class="text-danger"></span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-6">
                                         <div class="mb-3">
-                                            <label>Reference Price</label>
-                                            <input asp-for="ProductPrice" class="form-control" type="text"
-                                                placeholder="Price of product">
+                                            <label>Giá tham khảo</label>
+                                            <div class="input-group">
+                                                <input asp-for="ProductPrice" class="form-control" type="text"
+                                                    placeholder="Price of product">
+                                                <span class="input-group-text">VNĐ</span>
+                                            </div>
                                             <span asp-validation-for="ProductPrice" class="text-danger"></span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-6">
                                         <div class="mb-3">
-                                            <label>Ocop Type</label>
+                                            <label>Loại Ocop</label>
                                             <select asp-for="OcopTypeId" class="form-select">
                                                 <option value="">-- Select Ocop Type --</option>
                                                 @foreach (var type in (IEnumerable<TraVinhMaps.Web.Admin.Models.OcopType.OcopTypeResponse>)ViewBag.OcopTypes)
@@ -87,7 +90,7 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="mb-3">
-                                            <label>Company Name</label>
+                                            <label>Công ty</label>
                                             <select asp-for="CompanyId" class="form-select">
                                                 <option value="">-- Select Ocop Type --</option>
                                                 @foreach (var company in (IEnumerable<TraVinhMaps.Web.Admin.Models.Company.CompanyResponse>)ViewBag.Companies )
@@ -102,32 +105,33 @@
                                     
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-6">
                                         <div class="mb-3">
-                                            <label>Ocop Point</label>
+                                            <label>Điểm Ocop</label>
                                             <select asp-for="OcopPoint" class="form-select">
-                                                <option selected value="1">1
-                                                </option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
-                                                <option value="4">4</option>
-                                                <option value="5">5</option>
+                                                <option value="1">1 sao</option>
+                                                <option value="2">2 sao</option>
+                                                <option value="3">3 sao</option>
+                                                <option value="4">4 sao</option>
+                                                <option value="5">5 sao</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-6">
                                         <div class="mb-3">
-                                            <label>Ocop Year Release</label>
+                                            <label>Năm công nhận Ocop</label>
                                             <select asp-for="OcopYearRelease" class="form-control" data-language="en">
-                                                @for(int year = DateTime.Now.Year; year >= 1900; year--){
+                                                @for(int year = DateTime.Now.Year; year >= 2018; year--){
                                                     <option value="@year">@year</option>
                                                 }
                                             </select>
                                             <span asp-validation-for="OcopYearRelease" class="text-danger"></span>
                                         </div>
                                     </div>
-                                    <div class="col-sm-3">
-                                         <div class="mb-3">
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3" style="display: none;">
+                                        <div class="mb-3">
                                             <label>Ocop Product Tag</label>
                                             <select asp-for="TagId" class="form-select">
                                                 @foreach (var tag in (IEnumerable<TraVinhMaps.Web.Admin.Models.Tags.TagsResponse>)ViewBag.Tags)
@@ -141,12 +145,11 @@
                                             </select>
                                         </div>
                                     </div>
-                                
                                 </div>
                                 <div class="row">
                                     <div class="col">
                                         <div class="text-end">
-                                            <button type="submit" class="btn btn-success me-3">Edit Destination</button>
+                                            <button type="button" id="submitBtn" class="btn btn-success me-3">Update Product</button>
                                             <a asp-action="DetailOcopProduct" asp-route-id = "@Model.Id"
                                                 class="btn btn-danger">Back</a>
                                         </div>
@@ -163,18 +166,122 @@
 </div>
 
 @section Scripts {
+    <style>
+        .ck-editor__editable {
+            min-height: 250px; /* Corresponds roughly to rows="15" */
+        }
+        .ck-editor__editable_inline {
+            padding: 5px 10px !important;
+        }
+    </style>
     @Html.AntiForgeryToken()
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="~/assets/js/sweetalert-custom.js"></script>
     <script src="~/assets/js/ocopproduct/crud.js"></script>
     <script src="~/assets/js/ocopproduct/formModal.js"></script>
-    <script src="~/assets/js/ckeditor5.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/classic/ckeditor.js"></script>
     <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editorConfig = {
+            toolbar: {
+                items: [
+                    'heading',
+                    '|',
+                    'bold',
+                    'italic',
+                    'bulletedList',
+                    'numberedList',
+                    '|',
+                    'outdent',
+                    'indent',
+                    '|',
+                    'blockQuote',
+                    'undo',
+                    'redo'
+                ]
+            },
+            language: 'en'
+        };
+
+        let editor;
+        ClassicEditor
+            .create(document.querySelector('#Description'), editorConfig)
+            .then(newEditor => {
+                editor = newEditor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        document.getElementById('submitBtn').addEventListener('click', function () {
+            const form = document.getElementById('updateOcopProductForm');
+            const descriptionTextarea = document.querySelector('#Description');
+
+            // Update textarea with CKEditor data before validation/submission
+            if (editor) {
+                descriptionTextarea.value = editor.getData();
+            }
+
+            let isValid = true;
+            let errorMessages = [];
+
+            const productName = document.getElementById('ProductName').value;
+            if (!productName || productName.trim() === '') {
+                isValid = false;
+                errorMessages.push('Product Name is required.');
+            }
+
+            const productPriceInput = document.getElementById('ProductPrice');
+            const productPrice = parseFloat(productPriceInput.value);
+            if (isNaN(productPrice)) {
+                isValid = false;
+                errorMessages.push('Price must be a valid number.');
+            } else if (productPrice < 0) {
+                isValid = false;
+                errorMessages.push('Price cannot be negative.');
+            }
+
+            const ocopTypeId = document.getElementById('OcopTypeId').value;
+            if (!ocopTypeId || ocopTypeId === '') {
+                isValid = false;
+                errorMessages.push('Ocop Type is required.');
+            }
+
+            const companyId = document.getElementById('CompanyId').value;
+            if (!companyId || companyId === '') {
+                isValid = false;
+                errorMessages.push('Company is required.');
+            }
+
+            const ocopPoint = document.getElementById('OcopPoint').value;
+            if (!ocopPoint || ocopPoint === '') {
+                isValid = false;
+                errorMessages.push('Ocop Point is required.');
+            }
+
+            const ocopYearRelease = document.getElementById('OcopYearRelease').value;
+            if (!ocopYearRelease || ocopYearRelease === '') {
+                isValid = false;
+                errorMessages.push('Ocop Year Release is required.');
+            }
+
+            if (isValid) {
+                form.submit();
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    html: errorMessages.join('<br>')
+                });
+            }
+        });
+
         setTimeout(function () {
             var alert = document.getElementById("alert-message");
             if (alert) {
                 alert.style.display = "none";
             }
-        }, 1000); 
+        }, 1000);
+    });
     </script>
 }

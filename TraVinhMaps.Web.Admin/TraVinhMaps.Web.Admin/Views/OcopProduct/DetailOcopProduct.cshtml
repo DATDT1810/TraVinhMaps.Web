@@ -10,12 +10,19 @@
 }
 @{
     var sellingLinks = ViewBag.SellingLinks as List<SellingLinkResponse>;
+    var platformDetails = new Dictionary<string, (string cssClass, string iconClass, string platformType)>
+    {
+        { "Shopee", ("shopee", "fa fa-shopping-cart", "E-commerce Platform") },
+        { "Facebook", ("facebook", "fa fa-facebook-square", "Social Media Platform") },
+        { "Lazada", ("lazada", "fa fa-tags", "E-commerce Platform") },
+        { "Tiki", ("tiki", "fa fa-bolt", "E-commerce Platform") },
+        { "Website", ("website", "fa fa-globe", "Official Website") }
+    };
 }
 <style>
     .btn-showcase {
         margin-top: 0;
         padding-top: 7px; 
-        border-top: 1px solid #eee;
     }
 
     .d-inline {
@@ -84,6 +91,194 @@
     #locations-container .location-group:nth-child(n+2) {
         display: none;
     }
+    .detail-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        font-size: 16px;
+    }
+    .detail-item i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+    }
+    .detail-item strong {
+        width: 170px;
+        flex-shrink: 0;
+    }
+    .location-card {
+        background: #f0f2f3;
+        padding: 16px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    .map-wrapper {
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #333;
+        height: 300px;
+        margin-top: auto;
+    }
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .pagination {
+        display: flex;
+        list-style: none;
+        padding: 0;
+    }
+    .pagination li {
+        margin: 0 5px;
+    }
+    .pagination a {
+        display: block;
+        padding: 8px 16px;
+        text-decoration: none;
+        color: #007bff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    .pagination a.active {
+        background-color: #007bff;
+        color: white;
+        border: 1px solid #007bff;
+    }
+
+    .selling-link-card {
+        background-color: #fff;
+        border-radius: 8px;
+        border-left: 4px solid;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 1rem;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .selling-link-card.shopee { border-color: #EE4D2D; }
+    .selling-link-card.facebook { border-color: #1877F2; }
+    .selling-link-card.lazada { border-color: #0F146D; }
+    .selling-link-card.tiki { border-color: #1A94FF; }
+    .selling-link-card.website { border-color: #34A853; }
+    .selling-link-card.default { border-color: #6c757d; }
+
+    .selling-link-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .selling-link-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .selling-link-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #fff;
+    }
+
+    .selling-link-icon.shopee { background-color: #EE4D2D; }
+    .selling-link-icon.facebook { background-color: #1877F2; }
+    .selling-link-icon.lazada { background-color: #0F146D; }
+    .selling-link-icon.tiki { background-color: #1A94FF; }
+    .selling-link-icon.website { background-color: #34A853; }
+    .selling-link-icon.default { background-color: #6c757d; }
+
+
+    .selling-link-title h6 {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .selling-link-title p {
+        margin: 0;
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+
+    .selling-link-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .selling-link-actions .btn {
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .selling-link-body {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        margin-top: 1rem;
+    }
+
+    .selling-link-body p {
+        margin: 0;
+        font-size: 0.8rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        margin-bottom: 0.25rem;
+    }
+
+    .selling-link-body a {
+        word-break: break-all;
+        color: #007bff;
+        text-decoration: none;
+    }
+    .selling-link-body a:hover {
+        text-decoration: underline;
+    }
+
+    .selling-link-summary {
+        background-color: #fffbe6;
+        border-left: 4px solid #f59e0b;
+        border-radius: 8px;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 1.5rem;
+    }
+
+    .summary-item {
+        text-align: center;
+    }
+
+    .summary-item h4 {
+        margin: 0 0 0.25rem 0;
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #92400e;
+    }
+
+    .summary-item p {
+        margin: 0;
+        font-size: 0.8rem;
+        color: #92400e;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
 </style>
 <div class="page-body">
     <div class="container-fluid">
@@ -120,7 +315,7 @@
         </div>
     </div>
     <!-- Container-fluid starts-->
-    <div class="container-fluid">
+  <div class="container-fluid">
         <div>
             <div class="row product-page-main p-0">
                 <div class="col-xxl-4 col-md-6 box-col-12">
@@ -132,7 +327,7 @@
                                     @foreach (var item in Model.ProductImage)
                                     {
                                         <div class="item" style="height: 400px;">
-                                            <img src="@item" alt="image ocop product" style="width: 100%; height: 400px;" />
+                                            <img src="@item" alt="image ocop product" style="width: 100%; height: 400px; object-fit: cover;" />
                                         </div>
                                     }
                                 }
@@ -186,112 +381,100 @@
                     </div>
                 </div>
                 <div class="col-xxl-8 box-col-6 order-xxl-0 order-1">
-                <div class="card">
-                    <div class="card-body" style="height: 650px;">
-                        <div class="product-page-details ocop-margin">
-                            <h3>@Model.ProductName</h3>
-                        </div>
-                        <div class="ocop-margin" style="display: flex; align-items: center; margin-bottom: 5px;">
-                            <span style="flex: 0 0 150px; padding-right: 10px;"><b>Reference Price:</b></span>
-                            <span style="flex-grow: 1;">@(decimal.Parse(Model.ProductPrice!).ToString("N0", new
-                                                        System.Globalization.CultureInfo("vi-VN")) + "₫")</span>
-                        </div>
+                    <div class="card" style="background-color: #00AC46 ; color: white; padding: 20px; text-align: center; border-radius: 15px;">
+                        <h2 style="margin: 0; font-weight: bold;">
+                            <i class="fa fa-leaf" style="color: white;"></i><span style="color: white;"> @Model.ProductName</span>
+                        </h2>
+                        <p style="margin: 5px 0 0;">High-quality OCOP product from the Mekong Delta</p>
+                    </div>
 
-                        <div style="max-height: 160px; overflow-y: auto;">
-                            <div class="ocop-margin" style="display: flex; align-items: center; margin-bottom: 5px;">
-                                <span style="flex: 0 0 150px; padding-right: 10px;"><b>Ocop Type:</b></span>
-                                <span style="flex-grow: 1;">@ViewBag.OcopTypeName</span>
-                            </div>
-                            <div class="ocop-margin" style="display: flex; align-items: center; margin-bottom: 5px;">
-                                <span style="flex: 0 0 150px; padding-right: 10px;"><b>Company:</b></span>
-                                <span style="flex-grow: 1;"><span>@ViewBag.CompanyName</span></span>
-                            </div>
-                            <div class="ocop-margin" style="display: flex; align-items: center; margin-bottom: 5px;">
-                                <span style="flex: 0 0 150px; padding-right: 10px;"><b>Ocop Year Release:</b></span>
-                                <span style="flex-grow: 1;"><span>@Model.OcopYearRelease</span></span>
-                            </div>
-                            <div class="ocop-margin" style="display: flex; align-items: center; margin-bottom: 5px;">
-                                <span style="flex: 0 0 150px; padding-right: 10px;"><b>Tag:</b></span>
-                                <span style="flex-grow: 1;"><span>@ViewBag.TagName</span></span>
-                            </div>
-                        </div>
-                        <div class="ocop-margin">
-                            <div class="ocop-margin" style="display: flex; align-items: center; margin-bottom: 5px;">
-                                <span style="flex: 0 0 150px; padding-right: 10px;"><b>Created At:</b></span>
-                                <span style="flex-grow: 1;">@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span>
-                            </div>
-                            <div class="ocop-margin" style="display: flex; align-items: center; margin-bottom: 5px;">
-                                <span style="flex: 0 0 150px; padding-right: 10px;"><b>Update At:</b></span>
-                                <span class="txt-success" style="flex-grow: 1;">
-                                    @(
-                                    Model.UpdateAt.HasValue
-                                    ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy, HH:mm")
-                                    : "No update"
-                                    )
-                                </span>
+                    <div class="row">
+                        <div class="col-md-6 d-flex">
+                            <div class="card flex-fill">
+                                <div class="card-body" style="min-height: 235px;">
+                                    <div class="detail-item"><i class="fa fa-tag"></i> <strong>Reference Price:</strong> <span>@(decimal.Parse(Model.ProductPrice!).ToString("N0", new System.Globalization.CultureInfo("vi-VN")) + "₫")</span></div>
+                                    <div class="detail-item"><i class="fa fa-leaf"></i> <strong>OCOP Type:</strong> <span class="badge bg-success">@ViewBag.OcopTypeName</span></div>
+                                    <div class="detail-item"><i class="fa fa-building"></i> <strong>Company:</strong> <span>@ViewBag.CompanyName</span></div>
+                                    <div class="detail-item">
+                                        <i class="fa fa-star"></i> <strong>OCOP Rating:</strong>
+                                        <span>
+                                            @{
+                                                int starCount = (int)Math.Floor((double)Model.OcopPoint);
+                                                for (int i = 0; i < starCount; i++) { <i class="fa fa-star font-warning" style="margin-right: 0;"></i> }
+                                                for (int i = starCount; i < 5; i++) { <i class="fa fa-star" style="color: #ccc; margin-right: 0;"></i> }
+                                            }
+                                        </span>
+                           
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="ocop-margin">
-                            <div>
-                                <span class="product-title"><b>Ocop Star</b></span>
-                                @{
-                                    int starCount = (int)Math.Floor((double)Model.OcopPoint);
-                                    int totalStars = 5;
-                                }
-                                @for (int i = 1; i <= totalStars; i++)
-                                {
-                                    if (i <= starCount)
-                                    {
-                                        <i class="fa fa-star font-warning"></i>
-                                    }
-                                    else
-                                    {
-                                        <i class="fa fa-star" style="color: #ccc;"></i>
-                                    }
-                                }
-                                <span>(@Model.OcopPoint)</span>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="text-justify">
-                            <span>
-                                <h6 style="padding-bottom: 10px">Description </h6>
-                            </span>
-                            @Html.Raw(Model.ProductDescription)
-                        </div>
-                        <div class="m-t-15 btn-showcase">
-                            <div class="d-inline">
-                                <a class="btn btn-success" asp-action="UpdateOcopProduct" asp-route-id="@Model.Id">
-                                    <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit Ocop Product
-                                </a>
-                            </div>
-                            <div class="d-inline">
-                                <a class="btn btn-danger" asp-action="Index">
-                                    Back
-                                </a>
+                        <div class="col-md-6 d-flex">
+                            <div class="card flex-fill">
+                                <div class="card-body" style="min-height: 235px;">
+                                    <div class="detail-item"><i class="fa fa-calendar"></i> <strong>Year of Recognition:</strong> <span>@Model.OcopYearRelease</span></div>
+                                    <div class="detail-item"><i class="fa fa-check-circle"></i> <strong>Status:</strong> <span class="text-success" style="font-weight: bold;">● Active</span></div>
+                                    <div class="detail-item"><i class="fa fa-clock-o"></i> <strong>Created At:</strong> <span>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span></div>
+                                    <div class="detail-item"><i class="fa fa-refresh"></i> <strong>Updated At:</strong> <span>@(Model.UpdateAt.HasValue ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy, HH:mm") : "No updates yet")</span></div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+
+                    <div class="card" style="min-height: 250px;">
+                        <div class="card-body">
+                            <h5 class="card-title" style="font-weight: bold"><i class="fa fa-file-text-o" style="margin-right: 2px; color: black;"></i> Product Description</h5>
+                            <hr>
+                            <div>
+                                @Html.Raw(Model.ProductDescription)
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="m-t-15 btn-showcase" style="padding-bottom: 20px; display: flex; justify-content: end">
+                        <div class="d-inline">
+                            <a class="btn btn-success" asp-action="UpdateOcopProduct" asp-route-id="@Model.Id">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit Ocop Product
+                            </a>
+                        </div>
+                        <div class="d-inline">
+                            <a class="btn btn-danger" asp-action="Index">
+                                Back
+                            </a>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-xxl-12 box-col-12 order-xxl-0 order-1">
                     <div class="card">
                         <div class="card-body"
-                            style="max-height: 700px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
-                            <div class="d-flex justify-content-between">
-                                <h5 style="font-weight: bold;">Store of sell</h5>
-                                <a class="btn btn-success btn-sm px-2 py-1" title="Create Point of Sell"
-                                    data-bs-toggle="modal" data-bs-target="#addLocationModal"><i
-                                        class="fa fa-plus"></i></a>
-
+                            style="display: flex; flex-direction: column; gap: 12px;">
+                            <div class="d-flex align-items-center p-3 mb-3" style="background-color: #f8f9fa; border-radius: 12px;">
+                                <div class="me-3">
+                                    <i class="fa fa-store" style="color: black;"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h4 style="font-weight: 700; margin-bottom: 0;"><i class="fa fa-store" style="color: #6366f1;"></i>Selling Points of the Product</h4>
+                                    <p style="color: #6c757d; margin-bottom: 0;">@Model.ProductName</p>
+                                </div>
+                                <div class="d-flex align-items-center gap-4 mx-5">
+                                    <div class="text-center">
+                                        <h3 style="font-weight: 700; color: #6366f1; margin-bottom: 0;">@(Model.Sellocations?.Count ?? 0)</h3>
+                                        <p style="font-size: 0.8rem; color: #6c757d; margin-bottom: 0; text-transform: uppercase;">Selling Points</p>
+                                    </div>
+                   
+                                </div>
+                                <div>
+                                    <a class="btn btn-success" style="border-radius: 50px; padding: 10px 20px;"
+                                        title="Create Point of Sell" data-bs-toggle="modal" data-bs-target="#addLocationModal">
+                                        <i class="fa fa-plus"></i> Add Selling Point
+                                    </a>
+                                </div>
                             </div>
-                            <hr style="margin : 0px">
 
                             <div>
                                 @if (Model.Sellocations == null || !Model.Sellocations.Any())
                                 {
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div  style="display: flex; justify-content: space-between; align-items: center; padding-left: 12px">
                                         <div>
                                             <b>No Location Name.</b><br />
                                             <span>No Location Address.</span>
@@ -300,84 +483,81 @@
                                 }
                                 else
                                 {
-                                    <div id="sellocation-list"
-                                        style="max-height: 750px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
-                                        @{
-                                            bool showOnlyFirst = true;
-                                        }
+                                    <div id="sellocation-list" class="row">
                                         @for (int i = 0; i < Model.Sellocations.Count; i++)
                                         {
                                             var item = Model.Sellocations[i];
-                                            var isLast = i == Model.Sellocations.Count - 1;
 
-                                            <div class="location-card"
-                                                style="background: #f0f2f3; padding: 16px; border-radius: 8px; border: 1px solid #ddd;">
-                                                <div
-                                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
-                                                    <div>
-                                                        <h3 style="margin: 0; font-weight: 600;">
-                                                            @(item?.LocationName ?? "No Location Name.")
-                                                        </h3>
-                                                        <div style="font-size: 0.9rem;">
-                                                            @(item?.LocationAddress ?? "No Location Address.")
+                                            <div class="col-md-6 mb-4 d-flex">
+                                                <div class="location-card">
+                                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                                                        <div>
+                                                            <h3 style="margin: 0; font-weight: 600; max-width: 430px; min-height: 60px">
+                                                                @(item?.LocationName ?? "No Location Name.")
+                                                            </h3>
+                                                            <div style="font-size: 0.9rem; max-width: 430px; min-height: 42px ; padding-top: 5px">
+                                                                @(item?.LocationAddress ?? "No Location Address.")
+                                                            </div>
+                                                        </div>
+                                                        <div style="display: flex; gap: 6px; padding-bottom : 50px">
+                                                            <button type="button" title="Edit"
+                                                                    style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 18px;"
+                                                                    class="edit-location-btn" data-bs-toggle="modal"
+                                                                    data-bs-target="#editLocationModal" data-id="@Model.Id"
+                                                                    data-name="@item.LocationName" data-address="@item.LocationAddress"
+                                                                    data-marker="@item.MarkerId"
+                                                                    data-type="@(item.Location?.Type ?? "Point")"
+                                                                    data-longitude="@(item?.Location?.Longitude ?? 0)"
+                                                                    data-latitude="@(item?.Location?.Latitude ?? 0)">
+                                                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                            </button>
+
+                                                            <button type="button" title="Delete"
+                                                                    style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 18px;"
+                                                                    class="delete-sell-location" data-product-id="@Model.Id"
+                                                                    data-location-name="@item.LocationName">
+                                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                                            </button>
                                                         </div>
                                                     </div>
-                                                    <div style="display: flex; gap: 6px;">
-                                                        <button type="button" title="Edit"
-                                                            style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 18px;"
-                                                            class="edit-location-btn" data-bs-toggle="modal"
-                                                            data-bs-target="#editLocationModal" data-id="@Model.Id"
-                                                            data-name="@item.LocationName" data-address="@item.LocationAddress"
-                                                            data-marker="@item.MarkerId"
-                                                            data-type="@(item.Location?.Type ?? "Point")"
-                                                            data-longitude="@(item?.Location?.Longitude ?? 0)"
-                                                            data-latitude="@(item?.Location?.Latitude ?? 0)">
-                                                            <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                        </button>
+                                                    <div
+                                                        style="display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; align-items: center;">
+                                                        <label
+                                                            style="font-size: 0.8rem; min-width: 70px; margin: 0;">Longitude</label>
+                                                        <input type="text" class="form-control" readonly
+                                                               style="flex: 1; min-width: 150px; border-radius: 10px;"
+                                                               value="@(item?.Location?.Longitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")" />
 
-                                                        <button type="button" title="Delete"
-                                                            style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 18px;"
-                                                            class="delete-sell-location" data-product-id="@Model.Id"
-                                                            data-location-name="@item.LocationName">
-                                                            <i class="fa fa-trash" aria-hidden="true"></i>
-                                                        </button>
+                                                        <label
+                                                            style="font-size: 0.8rem; min-width: 70px; margin: 0;">Latitude</label>
+                                                        <input type="text" class="form-control" readonly
+                                                               style="flex: 1; min-width: 150px; border-radius: 10px;"
+                                                               value="@(item?.Location?.Latitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")" />
                                                     </div>
-                                                </div>
-                                                <div
-                                                    style="display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; align-items: center;">
-                                                    <label
-                                                        style="font-size: 0.8rem; min-width: 70px; margin: 0;">Longitude</label>
-                                                    <input type="text" class="form-control" readonly
-                                                        style="flex: 1; min-width: 150px; border-radius: 10px;"
-                                                        value="@(item?.Location?.Longitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")" />
-
-                                                    <label
-                                                        style="font-size: 0.8rem; min-width: 70px; margin: 0;">Latitude</label>
-                                                    <input type="text" class="form-control" readonly
-                                                        style="flex: 1; min-width: 150px; border-radius: 10px;"
-                                                        value="@(item?.Location?.Latitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")" />
-                                                </div>
-                                                <div
-                                                    style="position: relative; border-radius: 8px; overflow: hidden; border: 1px solid #333; height: 300px;">
-                                                    <div class="here-map-container" id="map-container-@(i)"
-                                                        style="height: 100%; width: 100%;"
-                                                        data-latitude="@(item?.Location?.Latitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")"
-                                                        data-longitude="@(item?.Location?.Longitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")">
-                                                        <!-- The map will be initialized here by JavaScript -->
-                                                    </div>
-                                                    <div class="map-overlay edit-location-btn" title="Edit"
-                                                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; cursor: pointer;"
-                                                        data-bs-toggle="modal" data-bs-target="#editLocationModal"
-                                                        data-id="@Model.Id" data-name="@item.LocationName"
-                                                        data-address="@item.LocationAddress" data-marker="@item.MarkerId"
-                                                        data-type="@(item.Location?.Type ?? "Point")"
-                                                        data-longitude="@(item?.Location?.Longitude ?? 0)"
-                                                        data-latitude="@(item?.Location?.Latitude ?? 0)">
+                                                    <div class="map-wrapper">
+                                                        <div class="here-map-container" id="map-container-@(i)"
+                                                             style="height: 100%; width: 100%;"
+                                                             data-latitude="@(item?.Location?.Latitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")"
+                                                             data-longitude="@(item?.Location?.Longitude?.ToString("F6", CultureInfo.InvariantCulture) ?? "0")">
+                                                            <!-- The map will be initialized here by JavaScript -->
+                                                        </div>
+                                                        <div class="map-overlay edit-location-btn" title="Edit"
+                                                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; cursor: pointer;"
+                                                             data-bs-toggle="modal" data-bs-target="#editLocationModal"
+                                                             data-id="@Model.Id" data-name="@item.LocationName"
+                                                             data-address="@item.LocationAddress" data-marker="@item.MarkerId"
+                                                             data-type="@(item.Location?.Type ?? "Point")"
+                                                             data-longitude="@(item?.Location?.Longitude ?? 0)"
+                                                             data-latitude="@(item?.Location?.Latitude ?? 0)">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-
                                         }
+                                    </div>
+                                    <div class="pagination-container">
+                                        <ul class="pagination" id="pagination">
+                                        </ul>
                                     </div>
                                 }
                             </div>
@@ -391,73 +571,78 @@
                         <div class="tab-content" id="top-tabContent">
                             <div class="tab-pane fade active show" id="top-home" role="tabpanel"
                                 aria-labelledby="top-home-tab">
-                                <div style="height: 250px; margin-top: 10px;">
+                                <div style="margin-top: 10px;">
                                     <div class="filter-block">
-                                        <div class="d-flex justify-content-between">
-                                            <h5 style="font-weight: bold;">📌 Store of selling link</h5>
-                                            <a class="btn btn-success btn-sm px-2 py-1"
+                                        <div class="d-flex justify-content-between align-items-center mb-3 p-3" style="background-color: #f8f9fa; border-radius: 12px;">
+                                            <h5 style="font-weight: bold; margin: 0;"><i class="fa fa-link" style="color: #6366f1;"></i> Store of selling link</h5>
+                                            <a class="btn btn-success" style="border-radius: 20px;"
                                                 title="Create Point of Selling Link" data-bs-toggle="modal"
-                                                data-bs-target="#addSellingLinkModal"><i class="fa fa-plus"></i></a>
+                                                data-bs-target="#addSellingLinkModal"><i class="fa fa-plus"></i> Add New Link</a>
                                         </div>
-                                        <hr>
+
+                                        @if (sellingLinks != null && sellingLinks.Any())
+                                        {
+                                            <div class="selling-link-summary">
+                                                <div class="summary-item">
+                                                    <h4>@sellingLinks.Count</h4>
+                                                    <p>Total Links</p>
+                                                </div>
+                                                <div class="summary-item">
+                                                    <h4>@sellingLinks.Count</h4>
+                                                    <p>Active</p>
+                                                </div>
+                                                <div class="summary-item">
+                                                    <h4>@sellingLinks.Select(l => l.Title).Distinct().Count()</h4>
+                                                    <p>Platforms</p>
+                                                </div>
+                                            </div>
+                                        }
+                                        
                                         <div id="sellinglink-list"
-                                            style="max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 10px;">
+                                            style="max-height: 400px; overflow-y: auto; padding: 5px;">
                                             @if (sellingLinks != null && sellingLinks.Any())
                                             {
-                                                @for (int i = 0; i < sellingLinks.Count; i++)
+                                                foreach (var item in sellingLinks)
                                                 {
-                                                    var item = sellingLinks[i];
-                                                    var isLast = i == sellingLinks.Count - 1;
+                                                    var (cssClass, iconClass, platformType) = platformDetails.GetValueOrDefault(item.Title, ("default", "fa fa-link", "Other Platform"));
 
-                                                    <div class="sellinglink-item"
-                                                        style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; @(isLast ? "" : "border-bottom: 1px solid #ddd;")">
-                                                        <div style="min-width: 0; flex: 1;">
-                                                            <ul style="list-style-type: disc; padding-left: 20px;">
-                                                                <li style="padding: 0px;">
-                                                                    <div style="padding-bottom: 10px;">
-                                                                        <b>Title Name: </b>
-                                                                        <span>@(item?.Title ?? "No Title")</span><br>
-                                                                    </div>
-                                                                </li>
-                                                            </ul>
-                                                            <span style="padding-left: 5px;">
-                                                                <i class="fa fa-link"></i>
-                                                                Link:
-                                                                <a href="@(item?.Link ?? "#")" target="_blank"
-                                                                    style="color: #007bff;">
-                                                                    @(item?.Link ?? "")
-                                                                </a>
-                                                            </span>
+                                                    <div class="selling-link-card @cssClass">
+                                                        <div class="selling-link-header">
+                                                            <div class="selling-link-info">
+                                                                <div class="selling-link-icon @cssClass">
+                                                                    <i class="@iconClass"></i>
+                                                                </div>
+                                                                <div class="selling-link-title">
+                                                                    <h6>@item.Title</h6>
+                                                                    <p>@platformType</p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="selling-link-actions">
+                                                                <a href="@(item?.Link ?? "#")" target="_blank" class="btn btn-info" title="Go to link"><i class="fa fa-link"></i></a>
+                                                                <button type="button" class="btn btn-warning edit-selling-link-btn" title="Edit" 
+                                                                        data-bs-toggle="modal" data-bs-target="#editSellingLinkModal"
+                                                                        data-product-id="@Model.Id" data-id="@item.Id"
+                                                                        data-title="@item.Title" data-link="@item.Link">
+                                                                    <i class="fa fa-pencil"></i>
+                                                                </button>
+                                                                <button type="button" class="btn btn-danger delete-selling-link" title="Delete Selling Link" 
+                                                                        data-bs-toggle="modal" data-bs-target="#deleteSellingLinkModal"
+                                                                        data-product-id="@Model.Id" data-id="@item.Id">
+                                                                    <i class="fa fa-trash"></i>
+                                                                </button>
+                                                            </div>
                                                         </div>
-                                                        <div
-                                                            style="display: flex; gap: 6px; margin-left: 10px; align-self: flex-start;">
-                                                            <button type="button" title="Edit"
-                                                                style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 14px; line-height: 1;"
-                                                                class="edit-selling-link-btn" data-bs-toggle="modal"
-                                                                data-bs-target="#editSellingLinkModal"
-                                                                data-product-id="@Model.Id" data-id="@item.Id"
-                                                                data-title="@item.Title" data-link="@item.Link">
-                                                                <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                            </button>
-
-                                                            <button type="button" title="Delete Selling Link"
-                                                                style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 14px; line-height: 1;"
-                                                                class="delete-selling-link" data-bs-toggle="modal"
-                                                                data-bs-target="#deleteSellingLinkModal"
-                                                                data-product-id="@Model.Id" data-id="@item.Id">
-                                                                <i class="fa fa-trash" aria-hidden="true"></i>
-                                                            </button>
+                                                        <div class="selling-link-body">
+                                                            <p><i class="fa fa-globe"></i> SELLING LINK URL</p>
+                                                            <a href="@(item?.Link ?? "#")" target="_blank">@item.Link</a>
                                                         </div>
                                                     </div>
                                                 }
                                             }
                                             else
                                             {
-                                                <div
-                                                    style="display: flex; justify-content: space-between; align-items: center;">
-                                                    <div>
-                                                        <span>No Selling Link.</span><br />
-                                                    </div>
+                                                <div class="text-center p-5">
+                                                    <p>No selling links available.</p>
                                                 </div>
                                             }
                                         </div>
@@ -640,7 +825,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addSellingLinkLabel">Add New Location</h5>
+                    <h5 class="modal-title" id="addSellingLinkLabel">Add New Selling Link</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="addSellingLinkForm" method="post">
@@ -670,7 +855,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save Location</button>
+                        <button type="submit" class="btn btn-primary">Save Link</button>
                     </div>
                 </form>
             </div>
@@ -714,7 +899,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save Location</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
                     </div>
                 </form>
             </div>
@@ -752,6 +937,54 @@
             document.querySelector('.upload-placeholder').addEventListener('click', function () {
                 document.querySelector('input[name="imageFile"]').click();
             });
+
+            // Pagination logic
+            const itemsPerPage = 2;
+            const sellocationList = document.getElementById('sellocation-list');
+            const paginationContainer = document.getElementById('pagination');
+            const items = Array.from(sellocationList.getElementsByClassName('col-md-6'));
+            const pageCount = Math.ceil(items.length / itemsPerPage);
+
+            function showPage(page) {
+                const start = (page - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+
+                items.forEach((item, index) => {
+                    if (index >= start && index < end) {
+                        item.classList.remove('d-none');
+                    } else {
+                        item.classList.add('d-none');
+                    }
+                });
+
+                updatePaginationUI(page);
+            }
+
+            function updatePaginationUI(currentPage) {
+                paginationContainer.innerHTML = '';
+
+                for (let i = 1; i <= pageCount; i++) {
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.href = '#';
+                    a.innerText = i;
+                    if (i === currentPage) {
+                        a.classList.add('active');
+                    }
+                    a.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        showPage(i);
+                    });
+                    li.appendChild(a);
+                    paginationContainer.appendChild(li);
+                }
+            }
+
+            if (items.length > 0) {
+                showPage(1);
+            }
+
+
             setTimeout(function () {
                 var alert = document.getElementById("alert-message");
                 if (alert) {

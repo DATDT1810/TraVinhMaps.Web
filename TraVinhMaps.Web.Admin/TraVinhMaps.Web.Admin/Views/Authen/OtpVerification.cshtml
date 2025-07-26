@@ -8,10 +8,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="~/assets/images/favicon.png" type="image/x-icon">
-<link rel="shortcut icon" href="~/assets/images/favicon.png" type="image/x-icon">
+<link rel="icon" href="~/assets/images/faticon.png" type="image/x-icon">
+<link rel="shortcut icon" href="~/assets/images/faticon.png" type="image/x-icon">
 <meta name="description"
-  content="Riho admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
+  content="Riho admin is super flexible, powerful, clean & modern responsive bootstrap 5 admin template with unlimited possibilities.">
 <meta name="keywords"
   content="admin template, Riho admin template, dashboard template, flat admin template, responsive admin template, web app">
 <meta name="author" content="pixelstrap">
@@ -19,7 +19,7 @@
 <!-- Google font-->
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&amp;display=swap"
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&display=swap"
   rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="~/assets/css/font-awesome.css">
 <!-- ico-font-->
@@ -30,8 +30,6 @@
 <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/flag-icon.css">
 <!-- Feather icon-->
 <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/feather-icon.css">
-<!-- Plugins css start-->
-<!-- Plugins css Ends-->
 <!-- Bootstrap css-->
 <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/bootstrap.css">
 <!-- App css-->
@@ -41,6 +39,83 @@
 <link rel="stylesheet" type="text/css" href="~/assets/css/responsive.css">
 
 <style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Montserrat', sans-serif;
+        background-image: url('@(Url.Content("~/assets/images/login/bg_2.png"))');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 100vh;
+    }
+
+    .login-section {
+        display: flex;
+        height: 100%;
+        width: 100%;
+        align-items: center;
+        justify-content: flex-end;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-card {     
+        padding: 30px;
+        border-radius: 20px;
+        width: 100%;
+        max-width: 450px;
+        margin-right: 10%;
+        margin-left: 10%;
+      
+    }
+
+    .login-main h4 {
+        font-weight: 700;
+        font-size: 24px;
+        margin-bottom: 5px;
+        
+    }
+
+    .login-main p {
+        color: #888;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .form-group {
+        margin-bottom: 0.9rem;
+    }
+
+    .form-group .col-form-label {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        padding: 10px 15px;
+        background-color: #f7f7f7;
+    }
+
+    .form-control:focus {
+        background-color: #fff;
+        border-color: #80bdff;
+        box-shadow: none;
+    }
+
+    .btn-success {
+        background-color: #2c3e50;
+        border-color: #2c3e50;
+        border-radius: 8px;
+        padding: 10px;
+        font-weight: 600;
+    }
+
+    .btn-success:hover {
+        background-color: #34495e;
+        border-color: #34495e;
+    }
   .digit-group {
     display: flex;
     justify-content: center;
@@ -103,11 +178,6 @@
     border-color: #6c757d;
   }
 
-  @* .btn-active {
-    background-color: #7366ff;
-    border-color: #7366ff;
-  } *@
-
   .validation-summary-errors {
     border-radius: 0.25rem;
     padding: 0.75rem 1rem;
@@ -135,15 +205,8 @@
 
 
 <!-- OTP verification page start-->
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-xl-6 p-0">
-      <div class="login-left-img">
-        <img class="bg-img-cover bg-center" src="@(Url.Content("~/assets/images/login/bg_login.png"))" alt="loginpage">
-      </div>
-    </div>
-    <div class="col-xl-6 p-0">
-      <div class="login-card login-dark">
+<section class="login-section">
+    <div class="login-card">
         <div class="login-main">
           <form asp-controller="Authen" asp-action="VerifyOtp" method="post" class="theme-form" id="otpForm">
             @Html.AntiForgeryToken()
@@ -159,8 +222,6 @@
             }
 
             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-
-            @* Removed standard bootstrap alerts *@
 
             <div class="form-group">
               <label asp-for="OtpCode" class="col-form-label"></label>
@@ -207,10 +268,8 @@
             </div>
           </form>
         </div>
-      </div>
     </div>
-  </div>
-</div>
+</section>
 <!-- latest jquery-->
 <script src="~/assets/js/jquery.min.js"></script>
 <!-- Bootstrap js-->
@@ -530,4 +589,3 @@
     });
   });
 </script>
-</div>

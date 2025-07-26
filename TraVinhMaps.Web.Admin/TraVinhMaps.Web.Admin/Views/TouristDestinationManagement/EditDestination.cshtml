@@ -26,6 +26,88 @@
     .form-select.text-truncate {
         padding-right: 2.25rem; 
     }
+
+    .price-options {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .price-option {
+        flex: 1;
+        padding: 0.7rem;
+        border: 1px solid #ced4da;
+        border-radius: 0.375rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .price-option.active {
+        background-color: #28A745;
+        color: white;
+        border-color: #28A745;
+    }
+
+    .price-option i {
+        font-size: 1.5rem;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .ck-editor__editable {
+        padding: 0.5rem 1.5rem !important;
+    }
+
+    .image-gallery-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 1rem;
+    }
+
+    .gallery-item {
+        position: relative;
+        width: 120px;
+        height: 120px;
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .delete-button {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .add-image-box {
+        width: 120px;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #ced4da;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 2rem;
+        color: #ced4da;
+    }
 </style>
 
 <div class="page-body">
@@ -57,13 +139,14 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="form theme-form">
-                            <form asp-action="EditDestination" method="post" enctype="multipart/form-data">
+                            <form asp-action="EditDestination" method="post" enctype="multipart/form-data" id="mainEditForm">
+                                @Html.AntiForgeryToken()
                                 <div class="row">
-                                    <div class="col-lg-5">
+                                    <div class="col-lg-8">
                                         <div id="map" class="here-map-container"
                                              data-latitude="@Model.latitude.ToString(System.Globalization.CultureInfo.InvariantCulture)"
                                              data-longitude="@Model.longitude.ToString(System.Globalization.CultureInfo.InvariantCulture)"
-                                             style="width: 100%; height: 400px; background-color: #f0f0f0; border-radius: 10px; position: relative;">
+                                             style="width: 100%; height: 500px; background-color: #f0f0f0; border-radius: 10px; position: relative;">
                                         </div>
                                         <br />
                                         <div class="mb-3">
@@ -83,7 +166,7 @@
                                                 <div class="mb-3">
                                                     <label>Latitude</label>
                                                     <input asp-for="latitude" id="latitude" class="form-control" type="number" step="any"
-                                                           placeholder="Latitude of destination" data-language="en">
+                                                           placeholder="Latitude of destination" data-language="en" readonly>
                                                     <span asp-validation-for="latitude" class="text-danger"></span>
                                                 </div>
                                             </div>
@@ -91,19 +174,19 @@
                                                 <div class="mb-3">
                                                     <label>Longitude</label>
                                                     <input asp-for="longitude" id="longitude" class="form-control" type="number" step="any"
-                                                           placeholder="Longitude of destination" data-language="en">
+                                                           placeholder="Longitude of destination" data-language="en" readonly>
                                                     <span asp-validation-for="longitude" class="text-danger"></span>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="mb-3">
+                                        <div class="mb-3" style="display:none">
                                             <label>Type Location</label>
                                             <select asp-for="Type" class="form-select" disabled>
                                                 <option selected value="Point">Point</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-7">
+                                    <div class="col-lg-4">
                                         <div class="mb-3">
                                             <label>Destination Title</label>
                                             <input asp-for="Name" class="form-control" type="text"
@@ -140,7 +223,7 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-6">
                                                 <div class="mb-3">
                                                     <label>Opent Time</label>
                                                     <select asp-for="OpeningHours.OpenTime" id="openTime" class="form-select">
@@ -158,7 +241,7 @@
                                                           class="text-danger"></span>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-6">
                                                 <div class="mb-3">
                                                     <label>Close Time</label>
                                                     <select asp-for="OpeningHours.CloseTime" id="closeTime" class="form-select">
@@ -177,15 +260,25 @@
                                                     <span id="timeValidationError" class="text-danger d-block"></span>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-3">
-                                                <div class="mb-3">
-                                                    <label>Ticket</label>
-                                                    <select asp-for="Ticket" class="form-select">
-                                                        <option value="Free">Free</option>
-                                                        <option value="Chargeable">Chargeable</option>
-                                                    </select>
-                                                    <span asp-validation-for="Ticket" class="text-danger"></span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Price</label>
+                                            <input asp-for="Ticket" type="hidden" id="ticket-hidden-input" />
+                                            <div class="price-options">
+                                                <div class="price-option" data-value="Free">
+                                                    <i class="fa fa-tag"></i>
+                                                    <span>Free Ticket</span>
                                                 </div>
+                                                <div class="price-option" data-value="Chargeable">
+                                                      <i class="fa fa-tag"></i>
+                                                    <span>Chargeable</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3" id="price-input-container" style="display: none;">
+                                            <div class="input-group">
+                                                <span class="input-group-text">đ</span>
+                                                <input id="price" class="form-control" type="number" placeholder="100000">
                                             </div>
                                         </div>
                                         <div class="mb-3">
@@ -207,21 +300,62 @@
                                             <span asp-validation-for="Contact.Website"
                                                     class="text-danger"></span>
                                         </div>
-                                        <div class="mb-3">
-                                            <label>Description</label>
-                                            <textarea asp-for="Description" id="descriptionEditor" class="form-control"
-                                                      placeholder="Description of destination"
-                                                      rows="10"></textarea>
-                                            <span asp-validation-for="Description" class="text-danger"></span>
-                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-4">
+                                    <div class="col-12">
+                                        <ul class="nav nav-tabs" id="descriptionTab" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="description-tab-button" data-bs-toggle="tab" data-bs-target="#description-pane" type="button" role="tab" aria-controls="description-pane" aria-selected="true">Description</button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="history-tab-button" data-bs-toggle="tab" data-bs-target="#history-pane" type="button" role="tab" aria-controls="history-pane" aria-selected="false">History Story</button>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content" id="descriptionTabContent">
+                                            <div class="tab-pane fade show active p-3" id="description-pane" role="tabpanel" aria-labelledby="description-tab-button">
+                                                <textarea asp-for="Description" id="descriptionEditor" class="form-control"
+                                                          placeholder="Description of destination"
+                                                          rows="10"></textarea>
+                                                <span asp-validation-for="Description" class="text-danger"></span>
+                                                <div class="image-gallery-container">
+                                                    @if (Model.Images != null)
+                                                    {
+                                                        foreach (var imageUrl in Model.Images)
+                                                        {
+                                                            <div class="gallery-item">
+                                                                <img src="@imageUrl" alt="Destination Image" />
+                                                                <button type="button" class="delete-button" data-url="@imageUrl" data-action="@Url.Action("DeleteDestinationImageUpdate")">&times;</button>
+                                                            </div>
+                                                        }
+                                                    }
+                                                    <div class="add-image-box" id="addImageBox">
+                                                        +
+                                                    </div>
+                                                </div>
 
-                                        <div class="mb-3">
-                                            <label>History Story</label>
-                                            <textarea asp-for="HistoryStory.Content" id="historyEditor" class="form-control"
-                                                      placeholder="History content of destination"
-                                                      rows="10"></textarea>
-                                            <span asp-validation-for="HistoryStory.Content" class="text-danger"></span>
-
+                                            </div>
+                                            <div class="tab-pane fade p-3" id="history-pane" role="tabpanel" aria-labelledby="history-tab-button">
+                                                <textarea asp-for="HistoryStory.Content" id="historyEditor" class="form-control"
+                                                          placeholder="History content of destination"
+                                                          rows="10"></textarea>
+                                                <span asp-validation-for="HistoryStory.Content" class="text-danger"></span>
+                                                <div class="image-gallery-container">
+                                                    @if (Model.HistoryStory.Images != null)
+                                                    {
+                                                        foreach (var imageUrl in Model.HistoryStory.Images)
+                                                        {
+                                                            <div class="gallery-item">
+                                                                <img src="@imageUrl" alt="History Image" />
+                                                                <button type="button" class="delete-button" data-url="@imageUrl" data-action="@Url.Action("DeleteHistoryDestinationImageUpdate")">&times;</button>
+                                                            </div>
+                                                        }
+                                                    }
+                                                    <div class="add-image-box" id="addHistoryImageBox">
+                                                        +
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -235,6 +369,14 @@
                                     </div>
                                 </div>
                             </form>
+                            <form asp-action="AddDestinationImageUpdate" method="post" enctype="multipart/form-data" id="addImageForm" class="d-none">
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                <input type="file" name="imageDestinationFileList" id="imageUploadInput" multiple onchange="document.getElementById('addImageForm').submit();" />
+                            </form>
+                            <form asp-action="AddDestinationHistoryImageUpdate" method="post" enctype="multipart/form-data" id="addHistoryImageForm" class="d-none">
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                <input type="file" name="imageDestinationFileList" id="historyImageUploadInput" multiple onchange="document.getElementById('addHistoryImageForm').submit();" />
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -245,7 +387,6 @@
 </div>
 
 @section Scripts {
-    @Html.AntiForgeryToken()
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     
@@ -309,16 +450,115 @@
             openTimeSelect.addEventListener('change', validateTime);
             closeTimeSelect.addEventListener('change', validateTime);
             validateTime();
+
+            const priceOptions = document.querySelectorAll('.price-option');
+            const hiddenTicketInput = document.getElementById('ticket-hidden-input');
+            const priceInputContainer = document.getElementById('price-input-container');
+            const priceInput = document.getElementById('price');
+
+            function setTicketState(selectedValue) {
+                priceOptions.forEach(opt => {
+                    opt.classList.toggle('active', opt.dataset.value === selectedValue);
+                });
+
+                if (selectedValue === 'Chargeable') {
+                    priceInputContainer.style.display = 'block';
+                    hiddenTicketInput.value = priceInput.value;
+                } else {
+                    priceInputContainer.style.display = 'none';
+                    hiddenTicketInput.value = 'Free Ticket';
+                    priceInput.value = '';
+                }
+            }
+
+            priceInput.addEventListener('input', () => {
+                if (hiddenTicketInput.value !== 'Free Ticket') {
+                    hiddenTicketInput.value = priceInput.value;
+                }
+            });
+
+            // Add click listeners to the price options
+            priceOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    setTicketState(option.dataset.value);
+                });
+            });
+
+            // Set initial state on page load
+            const initialTicketValue = hiddenTicketInput.value;
+            if (initialTicketValue && initialTicketValue !== 'Free Ticket' && !isNaN(initialTicketValue)) {
+                priceInput.value = initialTicketValue;
+                setTicketState('Chargeable');
+            } else {
+                setTicketState('Free');
+            }
             
+            document.getElementById('addImageBox').addEventListener('click', function() {
+                document.getElementById('imageUploadInput').click();
+            });
+
+            document.getElementById('addHistoryImageBox').addEventListener('click', function() {
+                document.getElementById('historyImageUploadInput').click();
+            });
+
+            document.querySelectorAll('.delete-button').forEach(button => {
+                button.addEventListener('click', function () {
+                    const form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = this.dataset.action;
+
+                    const idInput = document.createElement('input');
+                    idInput.type = 'hidden';
+                    idInput.name = 'id';
+                    idInput.value = '@Model.Id';
+                    form.appendChild(idInput);
+
+                    const urlInput = document.createElement('input');
+                    urlInput.type = 'hidden';
+                    urlInput.name = 'urlImage';
+                    urlInput.value = this.dataset.url;
+                    form.appendChild(urlInput);
+
+                    const token = document.querySelector('#mainEditForm input[name="__RequestVerificationToken"]');
+                    if (token) {
+                        form.appendChild(token.cloneNode(true));
+                    }
+
+                    document.body.appendChild(form);
+                    form.submit();
+                });
+            });
+
             // Initialize CKEditor
+            const editorConfig = {
+                toolbar: {
+                    items: [
+                        'heading',
+                        '|',
+                        'bold',
+                        'italic',
+                        'bulletedList',
+                        'numberedList',
+                        '|',
+                        'outdent',
+                        'indent',
+                        '|',
+                        'blockQuote',
+                        'undo',
+                        'redo'
+                    ]
+                },
+                language: 'en'
+            };
+
             ClassicEditor
-                .create( document.querySelector( '#descriptionEditor' ) )
+                .create( document.querySelector( '#descriptionEditor' ), editorConfig)
                 .catch( error => {
                     console.error( 'Error initializing CKEditor for Description:', error );
                 } );
 
             ClassicEditor
-                .create( document.querySelector( '#historyEditor' ) )
+                .create( document.querySelector( '#historyEditor' ), editorConfig)
                 .catch( error => {
                     console.error( 'Error initializing CKEditor for History Story:', error );
                 } );

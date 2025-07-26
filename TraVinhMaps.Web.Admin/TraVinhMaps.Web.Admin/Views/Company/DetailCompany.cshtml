@@ -3,107 +3,324 @@
 @model CompanyResponse
 @{
     ViewData["Title"] = "Company Details";
+    var breadcrumbs = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem { Title = "Company", Url = "/Admin/Company" },
+        new BreadcrumbItem { Title = "Details", Url = "#" }
+    };
+    ViewData["Breadcrumb"] = breadcrumbs;
 }
 
-<div class="page-body">
+<style>
+    .main-panel {
+        background-color: #f4f7fe;
+        padding: 2rem;
+    }
+
+    .company-header {
+        background: linear-gradient(135deg, #4a557e, #3b4468);
+        color: white;
+        padding: 40px 20px;
+        border-radius: 12px;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .company-header .logo {
+        width: 80px;
+        height: 80px;
+        background-color: #4caf50;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+        font-size: 2rem;
+    }
+
+    .company-header h1 {
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .company-header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .info-card {
+        background-color: white;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border-left: 5px solid;
+    }
+    
+    .info-card-orange { border-color: #ffc107; }
+    .info-card-blue { border-color: #0d6efd; }
+    .info-card-green { border-color: #198754; }
+    .info-card-red { border-color: #dc3545; }
+
+    .info-card .card-body {
+        padding: 25px;
+    }
+
+    .info-card .card-title-section {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .info-card .card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        color: white;
+        font-size: 1.5rem;
+    }
+    
+    .icon-bg-orange { background-color: #ffc107; }
+    .icon-bg-blue { background-color: #0d6efd; }
+    .icon-bg-green { background-color: #198754; }
+    .icon-bg-red { background-color: #dc3545; }
+
+    .info-card h4 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-item .item-label {
+        display: flex;
+        align-items: center;
+        color: #555;
+    }
+    
+    .info-item .item-label i {
+        margin-right: 10px;
+        color: #888;
+    }
+
+    .info-item .item-value {
+        font-weight: 500;
+        color: #333;
+        background-color: #f8f9fa;
+        padding: 5px 12px;
+        border-radius: 6px;
+    }
+    
+    .item-value.not-updated {
+        color: #888;
+        font-style: italic;
+    }
+
+    .status-badge {
+        background-color: #e0f2f1;
+        color: #00796b;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: 500;
+        display: inline-block;
+    }
+    
+    .map-placeholder {
+        background-color: #e9ecef;
+        border-radius: 8px;
+        padding: 40px 20px;
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .map-placeholder i {
+        font-size: 3rem;
+        color: #adb5bd;
+    }
+    
+    .map-placeholder p {
+        margin: 10px 0 0;
+        font-weight: 500;
+        color: #6c757d;
+    }
+    
+    .alert-warning {
+        background-color: #fff3cd;
+        border-color: #ffeeba;
+        color: #856404;
+    }
+
+</style>
+
+<div class="page-body main-panel">
     <div class="container-fluid">
+        <!-- Breadcrumb -->
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
                     <h4>@ViewData["Title"]</h4>
-                    @if (TempData["ErrorMessage"] != null)
-                    {
-                        <div id="alert-message" class="alert alert-danger">
-                            @TempData["ErrorMessage"]
-                        </div>
-                    }
-
-                    @if (TempData["SuccessMessage"] != null)
-                    {
-                        <div id="alert-message" class="alert alert-success">
-                            @TempData["SuccessMessage"]
-                        </div>
-                    }
                 </div>
-                @{
-                    var breadcrumbs = ViewData["Breadcrumb"] as List<BreadcrumbItem>;
-                }
                 @if (breadcrumbs != null)
                 {
                     @await Html.PartialAsync("_Breadcrumb", breadcrumbs)
                 }
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-12 col-xl-12">
-            <div class="card">
-                <div class="card-header">
-                    <h4>@Model.Name</h4>
-                </div>
-                <div class="card-body">
-                    <ul class="simple-wrapper nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item"><a class="nav-link txt-primary" id="home-tab" data-bs-toggle="tab"
-                                href="#home" role="tab" aria-controls="home" aria-selected="true">Address</a></li>
-                        <li class="nav-item"><a class="nav-link active txt-primary" id="location-tabs"
-                                data-bs-toggle="tab" href="#location" role="tab" aria-controls="location"
-                                aria-selected="false">Location</a></li>
-                        <li class="nav-item"><a class="nav-link txt-primary" id="contact-tab" data-bs-toggle="tab"
-                                href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content" id="myTabContent">
-                        <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
-                            <p class="pt-3">@Model.Address</p>
+
+        <!-- Company Header -->
+        <div class="company-header">
+            <div class="logo">
+                <i class="fa fa-leaf"></i>
+            </div>
+            <h1>@Model.Name</h1>
+            <p>Chuyên sản xuất và kinh doanh trà chất lượng cao</p>
+        </div>
+
+        <div class="row">
+            <!-- General Info -->
+            <div class="col-xl-12">
+                <div class="card info-card info-card-orange">
+                    <div class="card-body">
+                        <div class="card-title-section">
+                            <div class="card-icon icon-bg-orange"><i class="fa fa-building"></i></div>
+                            <h4>Tổng quan công ty</h4>
                         </div>
-                        <div class="tab-pane fade show active" id="location" role="tabpanel"
-                            aria-labelledby="location-tabs">
-                            <div class="pt-3 mb-0">
-                                <div class="flex-space flex-wrap align-items-center">
-                                    <ul class="d-flex flex-column gap-1">
-                                        @foreach (var loc in Model.Locations)
-                                        {
-                                            <li> <strong>Type: </strong>
-                                                <td> @loc.Type</td>
-                                            </li>
-                                            <li>Longitude:<td> @loc.Longitude</td>
-                                            </li>
-                                            <li>Latitude:<td> @loc.Latitude</td>
-                                            </li>
-                                        }
-                                        <br>
-                                    </ul>
-                                </div>
-                            </div>
+                        <p>
+                            <strong>@Model.Name</strong> - Thông tin công ty hiện đang được cập nhật và hoàn thiện. Vui lòng liên hệ trực tiếp để biết thêm chi tiết về hoạt động kinh doanh.
+                        </p>
+                        <div class="info-item">
+                             <span class="item-label">Trạng thái:</span>
+                             <span class="status-badge">ĐANG CẬP NHẬT THÔNG TIN</span>
                         </div>
-                        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                            <ul class="pt-3 d-flex flex-column gap-1">
-                                @if (Model.Contact != null)
-                                {
-                                    <li> <strong>Website:</strong> @Model.Contact.Website</li>
-                                    <li><strong>Mail Us: </strong> @Model.Contact.Email</li>
-                                    <li><strong>Contact Number: </strong> @Model.Contact.Phone</li>
-                                }
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <a asp-controller="Company" asp-action="Index"
-                            class="btn btn-danger">
-                            Back
-                        </a>
                     </div>
                 </div>
             </div>
+
+            <!-- Address Info -->
+            <div class="col-xl-12">
+                <div class="card info-card info-card-blue">
+                    <div class="card-body">
+                        <div class="card-title-section">
+                            <div class="card-icon icon-bg-blue"><i class="fa fa-map-marker-alt"></i></div>
+                            <h4>Địa chỉ công ty</h4>
+                        </div>
+                        <div class="info-item">
+                            <div class="item-label"><i class="fa fa-map-pin"></i> Địa chỉ trụ sở</div>
+                            <div class="item-value">@Model.Address</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="item-label"><i class="fa fa-city"></i> Thành phố</div>
+                            <div class="item-value">Trà Vinh</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="item-label"><i class="fa fa-globe"></i> VN Quốc gia</div>
+                            <div class="item-value">Việt Nam</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="col-xl-12">
+                <div class="card info-card info-card-green">
+                    <div class="card-body">
+                        <div class="card-title-section">
+                            <div class="card-icon icon-bg-green"><i class="fa fa-phone"></i></div>
+                            <h4>Thông tin liên hệ</h4>
+                        </div>
+                        <div class="info-item">
+                            <div class="item-label"><i class="fa fa-globe-asia"></i> Website</div>
+                            <div class="item-value @(string.IsNullOrEmpty(Model.Contact?.Website) ? "not-updated" : "")">
+                                @(string.IsNullOrEmpty(Model.Contact?.Website) ? "Đang cập nhật" : Model.Contact.Website)
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="item-label"><i class="fa fa-envelope"></i> Email</div>
+                            <div class="item-value @(string.IsNullOrEmpty(Model.Contact?.Email) ? "not-updated" : "")">
+                                @(string.IsNullOrEmpty(Model.Contact?.Email) ? "Đang cập nhật" : Model.Contact.Email)
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="item-label"><i class="fa fa-mobile-alt"></i> Số điện thoại</div>
+                            <div class="item-value @(string.IsNullOrEmpty(Model.Contact?.Phone) ? "not-updated" : "")">
+                                @(string.IsNullOrEmpty(Model.Contact?.Phone) ? "Đang cập nhật" : Model.Contact.Phone)
+                            </div>
+                        </div>
+                         <div class="info-item">
+                            <div class="item-label"><i class="fa fa-fax"></i> Fax</div>
+                            <div class="item-value not-updated">Đang cập nhật</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location Info -->
+            @if (Model.Locations != null && Model.Locations.Any())
+            {
+                var loc = Model.Locations.First(); // Assuming one location for simplicity as per design
+                <div class="col-xl-12">
+                    <div class="card info-card info-card-red">
+                        <div class="card-body">
+                            <div class="card-title-section">
+                                <div class="card-icon icon-bg-red"><i class="fa fa-compass"></i></div>
+                                <h4>Vị trí địa lý</h4>
+                            </div>
+                            <div class="info-item">
+                                <div class="item-label"><i class="fa fa-rocket"></i> Loại điểm</div>
+                                <div class="item-value">@loc.Type</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="item-label"><i class="fa fa-globe"></i> Kinh độ</div>
+                                <div class="item-value">@loc.Longitude</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="item-label"><i class="fa fa-map-marked-alt"></i> Vĩ độ</div>
+                                <div class="item-value">@loc.Latitude</div>
+                            </div>
+                            
+                          
+
+                            <div id="mapContainer" style="width: 100%; height: 400px; border-radius: 8px;"></div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        
+        <div class="mt-3">
+            <a asp-controller="Company" asp-action="Index" class="btn btn-secondary">
+                <i class="fa fa-arrow-left"></i> Quay Lại
+            </a>
         </div>
     </div>
 </div>
-
 
 @section Scripts {
     @Html.AntiForgeryToken()
     <script src="~/assets/js/company/index.js"></script>
     <script src="~/assets/js/sweetalert-custom.js"></script>
+
+    <!-- HERE Maps API -->
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js" type="text/javascript" charset="utf-8"></script>
 
     <script>
         (function () {
@@ -112,14 +329,41 @@
             if (success) showSuccessAlert("Success!", success);
             if (error) showErrorAlert("Error!", error);
         })();
-        document.querySelector('.upload-placeholder').addEventListener('click', function () {
-            document.querySelector('input[name="imageFile"]').click();
-        });
-        setTimeout(function () {
-            var alert = document.getElementById("alert-message");
-            if (alert) {
-                alert.style.display = "none";
-            }
-        }, 1000);
+
+        // Initialize Here Map
+        @if (Model.Locations != null && Model.Locations.Any())
+        {
+            var loc = Model.Locations.First();
+            <text>
+            (function() {
+                const platform = new H.service.Platform({
+                    'apikey': '@Configuration["HEREMAP_API_KEY"]'
+                });
+
+                const defaultLayers = platform.createDefaultLayers();
+
+                const map = new H.Map(
+                    document.getElementById('mapContainer'),
+                    defaultLayers.vector.normal.map,
+                    {
+                        zoom: 15,
+                        center: { lat: @loc.Latitude, lng: @loc.Longitude }
+                    }
+                );
+
+                // Add map events listener
+                const mapEvents = new H.mapevents.MapEvents(map);
+                const behavior = new H.mapevents.Behavior(mapEvents);
+
+                // Add UI components
+                const ui = H.ui.UI.createDefault(map, defaultLayers);
+
+                // Add a marker
+                const marker = new H.map.Marker({ lat: @loc.Latitude, lng: @loc.Longitude });
+                map.addObject(marker);
+            })();
+            </text>
+        }
     </script>
 }
+@inject IConfiguration Configuration
