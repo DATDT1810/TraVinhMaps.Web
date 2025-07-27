@@ -42,8 +42,8 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="table-responsive custom-scrollbar">
-                            <table class="display" id="basic-9">
+                        <div class="table-responsive signal-table custom-scrollbar">
+                            <table class="display table-hover table-lg" id="project-status">
                                 <thead class="bg-primary">
                                     <tr>
                                         <th>No.</th>
@@ -88,14 +88,20 @@
                                                     <li>
                                                         <ul class="action">
                                                             <li>
-                                                                <a class="delete" href="javascript:void(0)"
+                                                                @if (item.Status)
+                                                                {
+                                                                <a class="delete delete-admin" href="javascript:void(0)"
                                                                     data-id="@item.Id" title="Delete">
                                                                     <i class="fa fa-trash"></i>
                                                                 </a>
-                                                                <a class="restore" href="javascript:void(0)"
+                                                                }
+                                                                else
+                                                                {
+                                                                <a class="restore restore-admin" href="javascript:void(0)"
                                                                     data-id="@item.Id" title="Restore">
                                                                     <i class="fa fa-undo"></i>
                                                                 </a>
+                                                                }
                                                             </li>
                                                         </ul>
                                                     </li>
