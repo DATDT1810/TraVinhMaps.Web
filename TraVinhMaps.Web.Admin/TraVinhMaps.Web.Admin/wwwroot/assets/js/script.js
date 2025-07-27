@@ -278,3 +278,34 @@
     $(".flip-card-inner").addClass("flipped");
   });
 })(jQuery);
+
+
+// Sử dụng window.onload để đảm bảo script này chạy sau tất cả các script khác
+$(window).on('load', function () {
+  
+  // Danh sách các ID của bảng bạn muốn khởi tạo
+  const tableSelectors = ['#basic-9', '#project-status'];
+
+  tableSelectors.forEach(function (selector) {
+    const table = $(selector);
+
+    // BƯỚC 1: Chỉ thực hiện nếu tìm thấy bảng trên trang
+    // Bằng cách này, sẽ không có cảnh báo "Table not found" nữa
+    if (table.length) {
+      
+      // BƯỚC 2: Luôn dùng "destroy: true"
+      // Nó sẽ phá hủy bất kỳ DataTable nào đã được script khác khởi tạo trước đó
+      table.DataTable({
+        "destroy": true, 
+        "columnDefs": [{
+          "targets": 'no-sort',
+          "orderable": false
+        }]
+      });
+      
+      console.log(`DataTable has been successfully initialized for: ${selector}`);
+    }
+  });
+
+});
+

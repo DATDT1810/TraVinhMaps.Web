@@ -31,10 +31,10 @@
                         <div class="d-flex justify-content-between mb-3">
                             <div class="d-flex gap-2 mb-3">
                                 <a asp-controller="CommunityTips" asp-action="Create" class="btn btn-success">
-                                    <i class="fa fa-plus me-1"></i>Add Tips
+                                    <i class="fa fa-plus me-1"></i>Create Tips
                                 </a>
 
-                                <button class="btn btn-primary" title="Export Tips List" id="tipsExportBtn">
+                                <button class="btn btn-export" title="Export Tips List" id="tipsExportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
                             </div>
@@ -56,9 +56,9 @@
                                         <th>No.</th>
                                         <th>Title</th>
                                         <th>Content</th>
-                                        <th>Status</th>
+                                        <th class="no-sort">Status</th>
                                         <th>Create At</th>
-                                        <th>Action</th>
+                                        <th class="no-sort">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>

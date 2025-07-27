@@ -384,6 +384,8 @@ const jsStrings = [
   "hide",
   "entries",
   "Submit",
+  "Female",
+  "Male",
 
   // =======================================================================
   // 10. THƯ VIỆN BÊN THỨ BA (3rd Party Libraries)
@@ -804,23 +806,8 @@ function showTranslatedSwal(options) {
  * @param {HTMLElement} [element=null] - Optional element to limit translation.
  */
 async function changeLanguage(targetLang, targetName, element = null) {
-  if (!element) {
-    const now = Date.now();
-    if (now - lastTranslationTime < minTranslationInterval) {
-      const remainingTime = (
-        (minTranslationInterval - (now - lastTranslationTime)) / 1000
-      ).toFixed(1);
-      console.log(`⏳ Please wait ${remainingTime}s to translate again.`);
-      showTranslatedSwal({ // Use the wrapper here as well for consistency
-        icon: "info",
-        title: "Too fast!",
-        text: `Please wait ${remainingTime} seconds before translating again.`,
-        showConfirmButton: false,
-        timer: 2000,
-      });
-      return;
-    }
-  }
+  
+  // ============================== END: MODIFICATION ===============================
 
   localStorage.setItem("selectedLanguage", targetLang);
   const currentLangElement = document.getElementById("currentLanguage");

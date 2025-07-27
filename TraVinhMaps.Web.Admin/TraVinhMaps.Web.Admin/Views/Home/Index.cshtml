@@ -32,7 +32,6 @@
         left: 50%;
         transform: translate(-50%, -50%);
         color: #146c43;
-        background: rgba(255, 255, 255, 0.8);
         padding: 10px 20px;
         border-radius: 5px;
         display: none;
@@ -66,7 +65,7 @@
                     <div class="col-xl-4 col-sm-6">
                         <div class="card o-hidden small-widget">
                             <div class="card-body total-project border-b-primary border-2"><span
-                                    class="f-light f-w-500 f-14">Total Users</span>
+                                    class="f-blue f-w-600 f-14">Total Users</span>
                                 <div class="project-details">
                                     <div class="project-counter">
                                         <h2 class="f-w-600">@Model.TotalUsers</h2>
@@ -93,7 +92,7 @@
                     <div class="col-xl-4 col-sm-6">
                         <div class="card o-hidden small-widget">
                             <div class="card-body total-Progress border-b-warning border-2"> <span
-                                    class="f-light f-w-500 f-14">Active Users</span>
+                                    class="f-orange f-w-600 f-14">Active Users</span>
                                 <div class="project-details">
                                     <div class="project-counter">
                                         <h2 class="f-w-600">@Model.TotalUserActive</h2>
@@ -120,7 +119,7 @@
                     <div class="col-xl-4 col-sm-6">
                         <div class="card o-hidden small-widget">
                             <div class="card-body total-Complete border-b-secondary border-2"><span
-                                    class="f-light f-w-500 f-14">Total Reviews</span>
+                                    class="f-red f-w-600 f-14">Total Reviews</span>
                                 <div class="project-details">
                                     <div class="project-counter">
                                         <h2 class="f-w-600">@Model.TotalReviews</h2><span class="f-12 f-w-400">
@@ -150,7 +149,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
-                        <h5 class="me-3">Performance by Tag</h5>
+                        <h5 class="me-3 f-green">Performance by Tag</h5>
                         <div class="d-flex flex-wrap gap-2 align-items-center">
                             <select class="form-select" id="tagSelect" multiple multiselect-search="true"
                                 multiselect-select-all="true" multiselect-max-items="5" placeholder="Select tags">
@@ -186,7 +185,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5>New Users Over Time</h5>
+                        <h5 class="f-green">New Users Over Time</h5>
                         <select class="form-select w-auto" id="timeChartSelect">
                             <option value="day">Today</option>
                             <option value="week">Last Week</option>
@@ -207,7 +206,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
-                        <h5 class="me-2 mb-2">User Demographics Overview</h5>
+                        <h5 class="me-2 mb-2 f-green">User Demographics Overview</h5>
                         <div class="d-flex flex-wrap gap-2 align-items-center">
                             <div class="d-flex flex-wrap gap-2 align-items-center">
                                 <select class="form-select w-auto" id="downloadUserStatSelect">
@@ -297,7 +296,7 @@
                                 <div class="card mt-4">
                                     <div
                                         class="card-header d-flex justify-content-between align-items-center flex-wrap">
-                                        <h5 class="mb-2 mb-sm-0">User Hometown Distribution</h5>
+                                        <h5 class="mb-2 mb-sm-0 f-green">User Hometown Distribution</h5>
                                         <div class="d-flex flex-wrap gap-2 align-items-center">
                                             <select class="form-select w-auto" id="hometownChartSelect">
                                                 <option value="day">Today</option>
@@ -318,10 +317,8 @@
                                             style="position: relative; height: 400px; width: 100%;">
                                             <canvas id="hometownChart"></canvas>
                                         </div>
-                                        <div id="hometownChart-no-data" class="text-center" style="display: none;">
-                                            <p>No user
-                                                data
-                                                available</p>
+                                        <div id="hometownChart-no-data" class="no-data-message text-center" style="display: none;">
+                                            No user data available
                                         </div>
                                     </div>
                                 </div>

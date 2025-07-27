@@ -192,6 +192,23 @@ body.dark-only.box-layout {
   color: #86909C;
 }
 
+.f-blue{
+  color: #76b5e7;
+}
+
+.f-orange {
+  color: #ffae1a;
+}
+
+.f-red{
+  color: #fe6a49;
+}
+
+.f-green{
+  color: #169350;
+  font-weight: 700;
+}
+
 svg.f-light {
   fill: #FFFFFF;
   opacity: 0.8;
@@ -1642,15 +1659,15 @@ svg.f-light {
 }
 
 .btn-secondary {
-  background-color: #FE6A49 !important;
-  border-color: #FE6A49 !important;
+  background-color: #e53935 !important;
+  border-color: #e53935 !important;
   -webkit-tap-highlight-color: transparent;
   -webkit-transform: translateZ(0);
           transform: translateZ(0);
 }
 .btn-secondary.disabled, .btn-secondary:disabled {
-  background-color: #FE6A49 !important;
-  border-color: #FE6A49 !important;
+  background-color: #e53935 !important;
+  border-color: #e53935 !important;
 }
 .btn-secondary:focus {
   -webkit-box-shadow: unset !important;
@@ -1688,6 +1705,67 @@ svg.f-light {
   -webkit-box-shadow: unset !important;
           box-shadow: unset !important;
 }
+
+.btn-back {
+  background-color: #6c757d !important;
+  border-color: #6c757d !important;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-transform: translateZ(0);
+          transform: translateZ(0);
+          color: #fff;
+}
+.btn-back.disabled, .btn-back:disabled {
+  background-color: #6c757d !important;
+  border-color: #6c757d !important;
+}
+.btn-back:focus {
+  -webkit-box-shadow: unset !important;
+          box-shadow: unset !important;
+}
+.btn-back:hover {
+  color: #fff !important;
+}
+
+.btn-edit {
+  background-color: #1976d2 !important;
+  border-color: #1976d2 !important;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-transform: translateZ(0);
+          transform: translateZ(0);
+          color: #fff;
+}
+.btn-edit.disabled, .btn-edit:disabled {
+  background-color: #1976d2 !important;
+  border-color: #1976d2 !important;
+}
+.btn-edit:focus {
+  -webkit-box-shadow: unset !important;
+          box-shadow: unset !important;
+}
+.btn-edit:hover {
+  color: #fff !important;
+}
+
+.btn-export {
+  background-color: #1f3b57 !important;
+  border-color: #1f3b57 !important;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-transform: translateZ(0);
+          transform: translateZ(0);
+          color: #fff;
+}
+.btn-export.disabled, .btn-export:disabled {
+  background-color: #1f3b57 !important;
+  border-color: #1f3b57 !important;
+}
+.btn-export:focus {
+  -webkit-box-shadow: unset !important;
+          box-shadow: unset !important;
+}
+.btn-export:hover {
+  color: #fff !important;
+}
+
 
 .btn-info {
   background-color: #173878 !important;
@@ -6597,13 +6675,13 @@ div .action .edit {
   margin-right: 5px;
 }
 div .action .edit i {
-  color: #158247;
+  color: #158247 !important; 
 }
 [dir=rtl] div .action .edit {
   margin-left: 5px;
 }
 div .action .delete i {
-  color: #FE6A49;
+  color: #e53935;
 }
 
 div .action .details {
@@ -6721,6 +6799,9 @@ div .action .restore i {
   margin-left: 10px;
   height: 37px;
   border-radius: 0;
+}
+.dataTables_wrapper .dataTables_filter input[type=search]:focus {
+  border: 1px solid #000;
 }
 
 .dataTables_scrollHeadInner {
@@ -21389,6 +21470,9 @@ body.dark-only {
   color: rgba(255, 255, 255, 0.6);
   background-color: #1A1C23;
 }
+body.dark-only a {
+  color: #00CCCC; 
+}
 body.dark-only.modal-open {
   color: rgba(255, 255, 255, 0.6);
   background-color: #1A1C23;
@@ -21404,11 +21488,12 @@ body.dark-only.modal-open h6 {
 body.dark-only.modal-open span {
   color: rgba(255, 255, 255, 0.7);
 }
+
 body.dark-only.modal-open p {
   color: rgba(255, 255, 255, 0.7);
 }
 body.dark-only span {
-  color: rgba(255, 255, 255, 0.7);
+  /* color: rgba(255, 255, 255, 0.7); */
 }
 body.dark-only .txt-primary {
   color: #006666 !important;
@@ -21584,7 +21669,7 @@ body.dark-only .nav-right > ul > li:nth-child(n+3):not(:last-child body.dark-onl
   background-color: #22242B !important;
 } */
 body.dark-only .nav-right .nav-menus li.profile-nav ul li {
-  background-color: #1A1C23 !important;
+  /* background-color: #1A1C23 !important; */
 }
 body.dark-only .nav-right .nav-menus li .bookmark-flip .flip-card .bookmark-dropdown li:nth-child(2) {
   background-color: #1A1C23 !important;
@@ -23274,7 +23359,7 @@ body.dark-only .page-wrapper .page-header .translate_wrapper.active .lang {
   background-color: #22242B;
 }
 body.dark-only .page-wrapper .page-header form {
-  background-color: #1A1C23;
+  /* background-color: #1A1C23; */
 }
 body.dark-only .page-wrapper .page-header .header-wrapper {
   background-color: #1A1C23;
@@ -23539,13 +23624,21 @@ body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body
 body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header > span {
   color: rgba(255, 255, 255, 0.6);
 }
-body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h1,
+/* body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h1,
 body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h2,
 body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h3,
 body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h4,
 body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h5,
 body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h6 {
   color: #fff;
+} */
+body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h1,
+body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h2,
+body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h3,
+body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h4,
+/* body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h5, */
+body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h6 {
+  color: #158247;
 }
 body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header .card-header-right {
   background-color: #22242B;
@@ -29136,10 +29229,10 @@ table.table-bordered thead tr th p {
   left: unset !important;
 }
 .page-wrapper .page-header .header-wrapper .nav-right .profile-dropdown {
-  width: 160px;
+  width: 165px;
   top: 57px;
   left: -12px;
-  padding: 0 10px;
+  /* padding: 0 10px; */
 }
 .page-wrapper .page-header .header-wrapper .nav-right .profile-dropdown li {
   padding: 10px !important;
@@ -29152,7 +29245,7 @@ table.table-bordered thead tr th p {
   text-decoration: unset;
 }
 .page-wrapper .page-header .header-wrapper .nav-right .profile-dropdown li:hover a span {
-  color: var(--theme-deafult);
+  /* color: var(--theme-deafult); */
   -webkit-transition: color 0.3s ease;
   transition: color 0.3s ease;
 }
@@ -29162,6 +29255,11 @@ table.table-bordered thead tr th p {
   transition: stroke 0.3s ease;
 }
 .page-wrapper .page-header .header-wrapper .nav-right .profile-dropdown li:hover a svg path {
+  stroke: var(--theme-deafult);
+  -webkit-transition: stroke 0.3s ease;
+  transition: stroke 0.3s ease;
+}
+.page-wrapper .page-header .header-wrapper .nav-right .profile-dropdown li:hover button svg {
   stroke: var(--theme-deafult);
   -webkit-transition: stroke 0.3s ease;
   transition: stroke 0.3s ease;
@@ -31433,3 +31531,29 @@ table.table-bordered thead tr th p {
 /**=====================
   5.7 Sidebar CSS Ends
 ==========================**/
+
+/* Show dropdown when li is hovered */
+.language-dropdown:hover .profile-dropdown {
+    display: block;
+}
+
+/* Ensure buttons fill the width */
+.profile-dropdown .dropdown-item {
+    width: 100%;
+    text-align: left;
+    padding: 0; /* Remove padding to fill width */
+    margin: 0; /* Ensure no margin */
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: block; /* Ensure it takes full width */
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+/* Optional: item hover style */
+.profile-dropdown li:hover,
+.profile-dropdown .dropdown-item:hover,
+.profile-dropdown a:hover {
+    background-color: #aaa9a9;
+}
+

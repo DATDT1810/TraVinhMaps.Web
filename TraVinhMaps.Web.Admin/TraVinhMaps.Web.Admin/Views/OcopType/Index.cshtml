@@ -46,7 +46,7 @@
                                 <a asp-controller="OcopType" asp-action="CreateOcopType" class="btn btn-success">
                                     <i class="fa fa-plus me-1"></i>Create Ocop Type
                                 </a>
-                                <button class="btn btn-primary" id="exportOcopTypeBtn">
+                                <button class="btn btn-export" id="exportOcopTypeBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
                             </div>
@@ -58,7 +58,7 @@
                                         <th>No.</th>
                                         <th>Ocop Type Name</th>
                                         <th>Created At</th>
-                                        <th>Action</th>
+                                        <th class="no-sort text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -79,8 +79,8 @@
                                             <td class="text-center align-middle">
                                                 <ul>
                                                     <li>
-                                                        <a asp-controller="OcopType" asp-action="UpdateOcopType"
-                                                            asp-route-id="@item.Id"><i class="fa fa-pencil edit"></i> </a>
+                                                        <a style="color: #158247 !important;" class="edit" asp-controller="OcopType" asp-action="UpdateOcopType"
+                                                            asp-route-id="@item.Id"><i class="fa fa-pencil"></i> </a>
                                                     </li>
                                                 </ul>
                                             </td>
