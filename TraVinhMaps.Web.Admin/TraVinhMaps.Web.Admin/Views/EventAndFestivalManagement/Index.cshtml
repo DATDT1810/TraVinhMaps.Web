@@ -34,7 +34,7 @@
                                 <a asp-controller="EventAndFestivalManagement" asp-action="CreateEventAndFestival" class="btn btn-success">
                                     <i class="fa fa-plus me-1"></i>Create Event And Festival
                                 </a>
-                                <button class="btn btn-primary" title="Export Event And Festival" id="festivalExportBtn">
+                                <button class="btn btn-export" title="Export Event And Festival" id="festivalExportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
                                 @if(ViewBag.error != null) {
@@ -56,9 +56,9 @@
                                         <th>Name Of Event And Festival</th>
                                         <th>Type</th>
                                         <th>Start date to end date</th>
-                                        <th>Status</th>
+                                        <th class="no-sort">Status</th>
                                         <th>Created At</th>
-                                        <th>Action</th>
+                                        <th class="no-sort text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -88,7 +88,7 @@
                                             @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                         </td>
                                         <td>
-                                            <ul class="action">
+                                            <ul class="action d-flex justify-content-center text-center">
                                                 <li>
                                                     <a class="details" asp-controller="EventAndFestivalManagement" asp-action="DetailEventFestival"
                                                         asp-route-id="@item.Id" title="Details">

@@ -34,7 +34,7 @@
                                 <a asp-controller="TouristDestinationManagement" asp-action="CreateDestination" class="btn btn-success">
                                     <i class="fa fa-plus me-1"></i>Create Destination
                                 </a>
-                                <button class="btn btn-primary" title="Export Destinations List" id="destinationExportBtn">
+                                <button class="btn btn-export" title="Export Destinations List" id="destinationExportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
                                 @if(ViewBag.error != null) {
@@ -56,9 +56,9 @@
                                         <th>Name Of Destination</th>
                                         <th>AvarageRating</th>
                                         <th>Favorite</th>
-                                        <th>Status</th>
+                                        <th class="no-sort">Status</th>
                                         <th>Created At</th>
-                                        <th>Action</th>
+                                        <th class="no-sort text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -86,7 +86,7 @@
                                             @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                         </td>
                                         <td>
-                                            <ul class="action">
+                                            <ul class="action d-flex justify-content-center text-center">
                                                 <li>
                                                     <a class="details" asp-controller="TouristDestinationManagement" asp-action="DetailDestination"
                                                         asp-route-id="@item.Id" title="Details">

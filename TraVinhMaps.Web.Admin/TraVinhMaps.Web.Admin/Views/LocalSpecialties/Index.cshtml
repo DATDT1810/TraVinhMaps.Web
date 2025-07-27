@@ -31,10 +31,10 @@
                         <div class="d-flex justify-content-between mb-3">
                             <div class="d-flex gap-2 mb-3">
                                 <a asp-controller="LocalSpecialties" asp-action="Create" class="btn btn-success">
-                                    <i class="fa fa-plus me-1"></i>Add Local Specialties
+                                    <i class="fa fa-plus me-1"></i>Create Local Specialties
                                 </a>
 
-                                <button class="btn btn-primary" title="Export Local Specialties List"
+                                <button class="btn btn-export" title="Export Local Specialties List"
                                     id="localSpecialtiesExportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
@@ -53,9 +53,9 @@
                                         <th>No.</th>
                                         <th>Name of LocalSpecialties</th>
                                         <th>Description</th>
-                                        <th>Status</th>
+                                        <th class="no-sort">Status</th>
                                         <th>Create At</th>
-                                        <th>Action</th>
+                                        <th class="no-sort text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -84,7 +84,7 @@
                                                 @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                             </td>
                                             <td>
-                                                <ul class="action">
+                                                <ul class="action d-flex justify-content-center text-center">
                                                     <li>
                                                         <a class="details" asp-controller="LocalSpecialties"
                                                             asp-action="Details" asp-route-id="@item.Id" title="Details">

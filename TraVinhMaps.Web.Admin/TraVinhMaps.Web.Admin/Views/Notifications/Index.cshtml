@@ -31,7 +31,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
-                            <button class="btn btn-primary" title="Export Notifications List" id="notificationExportBtn">
+                            <button class="btn btn-export" title="Export Notifications List" id="notificationExportBtn">
                                 <i class="fa fa-file-excel-o me-1"></i>Export
                             </button>
                             <a asp-controller="Notifications" asp-action="SendNotification" class="btn btn-success">
@@ -46,7 +46,7 @@
                                     <th>Title</th>
                                     <th>Content</th>
                                     <th>Create At</th>
-                                    <th>Action</th>
+                                    <th class="no-sort text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -61,8 +61,8 @@
                                         <td>@Html.TruncateWords(item.Content, 12)</td>
                                         <td>@item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</td>
                                     <td>
-                                        <ul class="action">
-                                            <li class="edit"> <a asp-controller="Notifications" asp-action="Details"
+                                        <ul class="action d-flex justify-content-center align-items-center">
+                                            <li class="details"> <a asp-controller="Notifications" asp-action="Details"
                                                     asp-route-id="@item.Id" title="Details"><i class="fa fa-eye"
                                                         aria-hidden="true"></i></a></li>
                                         </ul>

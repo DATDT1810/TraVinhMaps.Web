@@ -235,26 +235,9 @@
                                 @{
                                     var isPastStartDate = DateTime.Now > Model.StartDate;
                                 }
-                                <a class="btn btn-success @(isPastStartDate ? "disabled" : "")"  asp-action="EditEventAndFestival" asp-route-id="@Model.Id"><i
+                                <a class="btn btn-edit @(isPastStartDate ? "disabled" : "")"  asp-action="EditEventAndFestival" asp-route-id="@Model.Id"><i
                                         class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit Event And Festival</a>
-                                @if (Model.Status)
-                                {
-                                    <form asp-action="DeleteEventAndFestivalByForm" asp-route-id="@Model.Id" method="post"
-                                        class="d-inline">
-                                        <button type="submit" class="btn btn-secondary">
-                                            <i class="fa fa-trash" aria-hidden="true"></i>&nbsp; Delete Event And Festival
-                                        </button>
-                                    </form>
-                                }
-                                else
-                                {
-                                    <form asp-action="RestoreEventAndFestivalByForm" asp-route-id="@Model.Id" method="post"
-                                        class="d-inline">
-                                        <button type="submit" class="btn btn-success">
-                                            <i class="fa fa-trash" aria-hidden="true"></i>&nbsp; Restore Event And Festival
-                                        </button>
-                                    </form>
-                                }
+                                <a class="btn btn-back" asp-action="Index">Back</a>
                             </div>
                         </div>
                     </div>
