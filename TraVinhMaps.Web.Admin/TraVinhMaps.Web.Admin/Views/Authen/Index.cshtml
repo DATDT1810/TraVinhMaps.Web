@@ -74,9 +74,9 @@
                                     <input asp-for="RememberMe" id="checkbox1" type="checkbox">
                                     <label asp-for="RememberMe" class="text-muted" for="checkbox1">Remember password</label>
                                 </div>
-                                <a class="link" asp-action="ForgotPassword">Forgot password?</a>
+                                <a class="link text-decoration-underline" asp-action="ForgotPassword">Forgot password?</a>
                                 <div class="text-end mt-3">
-                                    <button class="btn btn-success btn-block w-100" type="submit">Sign in</button>
+                                    <button  id="btnSubmit"  class="btn btn-success btn-block w-100" type="submit">Sign in</button>
                                 </div>
                             </div>
 
@@ -171,6 +171,20 @@
                     </text>
             }
         });
+
+        const form = document.querySelector('.theme-form');
+        const btnSubmit = document.getElementById('btnSubmit');
+
+        form.addEventListener('submit', function (e) {
+            if (btnSubmit.disabled) {
+                e.preventDefault(); // Ngăn submit lại
+                return;
+            }
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = 'Signing in... <span class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>';
+});
+
     </script>
 
     <style> 

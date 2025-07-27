@@ -29,9 +29,9 @@
                         <div class="d-flex justify-content-between mb-3">
                             <div class="d-flex gap-2 mb-3">
                                 <a asp-controller="Admin" asp-action="Create" class="btn btn-success">
-                                    <i class="fa fa-plus me-1"></i>Add Administrator
+                                    <i class="fa fa-plus me-1"></i>Create Administrator
                                 </a>
-                                <button class="btn btn-primary" title="Export Admin List" id="adminExportBtn">
+                                <button class="btn btn-export" title="Export Admin List" id="adminExportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
                             </div>
@@ -49,9 +49,9 @@
                                         <th>No.</th>
                                         <th>Username</th>
                                         <th>Email</th>
-                                        <th>Status</th>
+                                        <th class="no-sort">Status</th>
                                         <th>Create At</th>
-                                        <th>Action</th>
+                                        <th class="no-sort text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -78,7 +78,7 @@
                                                 @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                             </td>
                                             <td>
-                                                <ul class="action">
+                                                <ul class="action d-flex justify-content-center text-center">
                                                     <li>
                                                         <a class="details" asp-controller="Admin" asp-action="Details"
                                                             asp-route-id="@item.Id" title="Details">

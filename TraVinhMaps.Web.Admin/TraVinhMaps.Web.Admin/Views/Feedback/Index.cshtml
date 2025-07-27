@@ -28,7 +28,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
                             <div class="d-flex gap-2 mb-3">
-                                <button class="btn btn-primary" title="Export Feedback" id="feedbackExportBtn">
+                                <button class="btn btn-export" title="Export Feedback" id="feedbackExportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
                             </div>
@@ -41,7 +41,7 @@
                                         <th>Username</th>
                                         <th>Content</th>
                                         <th>Create At</th>
-                                        <th>Action</th>
+                                        <th class="no-sort text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -64,7 +64,7 @@
                                                 @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                             </td>
                                             <td>
-                                                <ul class="action">
+                                                <ul class="action d-flex justify-content-center align-items-center">
                                                     <li>
                                                         <a class="details" asp-controller="Feedback" asp-action="Details"
                                                             asp-route-id="@item.Id" title="Details">

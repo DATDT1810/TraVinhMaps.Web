@@ -34,7 +34,7 @@
                                 <a asp-controller="ItineraryPlanManagement" asp-action="CreateItineratyPlan" class="btn btn-success">
                                     <i class="fa fa-plus me-1"></i>Create Itinerary Plan
                                 </a>
-                                <button class="btn btn-primary" title="Export Itinerary Plans" id="itineraryExportBtn">
+                                <button class="btn btn-export" title="Export Itinerary Plans" id="itineraryExportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
                             </div>
@@ -53,9 +53,9 @@
                                         <th>Name Of Itinerary</th>
                                         <th>Duration &nbsp</th>
                                         <th>Estimate Cost</th>
-                                        <th>Status</th>
+                                        <th class="no-sort">Status</th>
                                         <th>Created At</th>
-                                        <th>Action</th>
+                                        <th class="no-sort text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -78,9 +78,9 @@
                                                                                                     ? "Active" : "Inactive")</span></td>
                                         <td>@item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</td>
                                         <td>
-                                            <ul class="action">
+                                            <ul class="action d-flex justify-content-center text-center">
                                                 <li>
-                                                    <a class="edit" asp-controller="ItineraryPlanManagement" asp-action="DetailItineraryPlan"
+                                                    <a class="details" asp-controller="ItineraryPlanManagement" asp-action="DetailItineraryPlan"
                                                         asp-route-id="@item.Id" title="Details">
                                                         <i class="fa fa-eye"></i>
                                                     </a>

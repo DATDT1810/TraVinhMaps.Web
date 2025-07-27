@@ -1,3 +1,4 @@
+@using TraVinhMaps.Web.Admin.Helper
 @using TraVinhMaps.Web.Admin.Models.Review;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model IEnumerable<ReviewResponse>;
@@ -144,7 +145,7 @@
                     <div class="card-body">
                         <div method="get" class="d-flex justify-content-between mb-3">
                             <div style="margin-top: 25px;">
-                                <button class="btn btn-primary" id="exportBtn">
+                                <button class="btn btn-export" id="reviewExportBtn">
                                     <i class="fa fa-file-excel-o me-1"></i>Export
                                 </button>
                             </div>
@@ -214,13 +215,13 @@
                             <table class="display" id="project-status">
                                 <thead class="bg-primary">
                                     <tr>
-                                        <th>No. &nbsp</th>
+                                        <th>No.</th>
                                         <th>User Name</th>
                                         <th>Destination</th>
                                         <th style="width: 80px;">Rating <span style="color: #ffc107;">&#9733;</span></th>
                                         <th>Comment</th>
                                         <th>Created At</th>
-                                        <th>Action</th>
+                                        <th class="no-sort text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -241,7 +242,7 @@
                                                 @item.Rating
                                             </td>
                                             <td>
-                                                @item.Comment
+                                                @Html.TruncateWords(item.Comment, 8)
                                             </td>
                                             <td>
                                                 @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
@@ -276,7 +277,8 @@
 @section Scripts {
     @Html.AntiForgeryToken()
     <script src="~/assets/js/sweetalert-custom.js"></script>
-    <script src="~/assets/js/ocoptype/index.js"></script>
+    @* <script src="~/assets/js/ocoptype/index.js"></script> *@
+    <script src="~/assets/js/reviews/export.js"></script>
     <script>
         (function () {
             const success = @Html.Raw(Json.Serialize(TempData["Success"]));

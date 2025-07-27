@@ -71,26 +71,9 @@
                             </div>
                             <hr>
                             <div class="m-t-15 btn-showcase">
-                                <a class="btn btn-success" asp-action="EditItineraryPlan" asp-route-id="@Model.Id"><i
+                                <a class="btn btn-edit" asp-action="EditItineraryPlan" asp-route-id="@Model.Id"><i
                                         class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit Itinerary Plan</a>
-                                @if (Model.Status)
-                                {
-                                    <form asp-action="DeleteItineraryPlanByForm" asp-route-id="@Model.Id" method="post"
-                                        class="d-inline">
-                                        <button type="submit" class="btn btn-secondary">
-                                            <i class="fa fa-trash" aria-hidden="true"></i>&nbsp; Delete Itinerary Plan
-                                        </button>
-                                    </form>
-                                }
-                                else
-                                {
-                                    <form asp-action="RestoreItineraryPlanlByForm" asp-route-id="@Model.Id" method="post"
-                                        class="d-inline">
-                                        <button type="submit" class="btn btn-info">
-                                            <i class="fa fa-trash" aria-hidden="true"></i>&nbsp; Restore Itinerary Plan
-                                        </button>
-                                    </form>
-                                }
+                                <a class="btn btn-back" asp-action="Index">Back</a>
                             </div>
                         </div>
                     </div>
