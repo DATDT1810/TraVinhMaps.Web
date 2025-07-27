@@ -137,22 +137,9 @@ $(document).ready(function () {
                     showTimedAlert("Success!", response.message || "Location updated successfully!", "success", 1000);
                     $("#editLocationModal").modal("hide");
 
-                    // Reload location list dynamically
-                    var ocopProductId = $("#id").val();
-                    $.ajax({
-                        url: `/Admin/OcopProduct/Detail/${ocopProductId}`, 
-                        type: "GET",
-                        success: function (data) {
-                            var editLocationList = $(data).find("#sellocation-list").html();
-                            $("#sellocation-list").html(editLocationList);
-                        },
-                        error: function (xhr) {
-                            showTimedAlert("Error!", "Failed to reload location data.", "error", 1000);
-                        }
-                    });
-                } else {
-                    showTimedAlert("Error!", response.message || "Failed to update location.", "error", 1000);
-                }
+                    window.location.reload(); // Reload the page to reflect changes
+                    
+                } 
             },
             error: function (xhr) {
                 var errorMessage = xhr.responseJSON?.message || "An error occurred while updating the location.";
