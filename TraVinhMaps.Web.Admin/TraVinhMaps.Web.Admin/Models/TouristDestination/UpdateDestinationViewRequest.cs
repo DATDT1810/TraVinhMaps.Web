@@ -35,5 +35,6 @@ namespace TraVinhMaps.Web.Admin.Models.TouristDestination
         public ContactDestination? Contact { get; set; }
         public required string TagId { get; set; }
         public string? Ticket { get; set; }
+         public List<string>? Images { get; set; }
     }
 }

@@ -1,9 +1,116 @@
 @using TraVinhMaps.Web.Admin.Models.LocalSpecialties
+@using System.Globalization
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IConfiguration Configuration
 @model LocalSpecialtiesResponse
 @{
     ViewData["Title"] = "Local Specialties Details";
 }
+
+<style>
+    .delete-button-image {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        background-color: rgba(169, 169, 169, 0.6);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        padding: 0;
+    }
+
+    .add-image-box {
+        margin-top: 10px;
+        width: 100%;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #aaa;
+        position: relative;
+        cursor: pointer;
+        border-radius: 9px;
+        background-color: #f8f9fa;
+    }
+
+    .upload-placeholder {
+        font-size: 48px;
+        color: #aaa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        font-size: 16px;
+    }
+    .detail-item i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+    }
+    .detail-item strong {
+        width: 170px;
+        flex-shrink: 0;
+    }
+    .location-card {
+        background: #f0f2f3;
+        padding: 16px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    .map-wrapper {
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #333;
+        height: 300px;
+        margin-top: auto;
+    }
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .pagination {
+        display: flex;
+        list-style: none;
+        padding: 0;
+    }
+    .pagination li {
+        margin: 0 5px;
+    }
+    .pagination a {
+        display: block;
+        padding: 8px 16px;
+        text-decoration: none;
+        color: #007bff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    .pagination a.active {
+        background-color: #007bff;
+        color: white;
+        border: 1px solid #007bff;
+    }
+</style>
 
 <div class="page-body">
     <div class="container-fluid">
@@ -52,7 +159,7 @@
                                     {
                                         @foreach (var item in Model.Images.Where(i => !string.IsNullOrWhiteSpace(i)))
                                         {
-                                            <div class="item" style="height: 90px; width: 70px;">
+                                            <div class="item position-relative" style="height: 90px; width: 70px;">
                                                 <img src="@item" alt="image ocop product"
                                                     style="width: 100%; height: 100%; object-fit: cover; display: block;">
                                                 <button type="button" class="delete-button-image delete-image-btn"
@@ -83,117 +190,144 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xxl-8 box-col-5 order-xxl-0 order-1">
+                <div class="col-xxl-8 box-col-6 order-xxl-0 order-1">
+                     <div class="card" style="background-color: #00AC46 ; color: white; padding: 20px; text-align: center; border-radius: 15px;">
+                        <h2 style="margin: 0; font-weight: bold;">
+                            <i class="fa fa-cutlery" style="color: white;"></i><span style="color: white;"> @Model.FoodName</span>
+                        </h2>
+                        <p style="margin: 5px 0 0;">A delicious specialty from Tra Vinh</p>
+                    </div>
+
+                    
+
                     <div class="card">
-                        <div class="card-body" style="height: 650px;">
-                            <div class="product-page-details">
-                                <h3 title="Food Name">@Model.FoodName</h3>
-                            </div>
+                        <div class="card-body">
+                            <h5 class="card-title" style="font-weight: bold"><i class="fa fa-file-text-o" style="margin-right: 2px; color: black;"></i> Description</h5>
                             <hr>
-                            <!-- Point of Sell -->
-                            <div class="filter-block">
-                                <div class="d-flex justify-content-between">
-                                    <h3>Point of sell</h3>
-                                        <a class="btn btn-success btn-sm px-2 py-1" title="Create Point of Sell" data-bs-toggle="modal" data-bs-target="#addLocationModal"><i class="fa fa-plus"></i></a>
-                                    </a>
-                                </div>
-                                <hr>
-                                <div id="locationList" style="display: flex; flex-direction: column; gap: 12px;">
-                                    @if (Model.Locations == null || !Model.Locations.Any())
-                                    {
-                                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                                            <div>
-                                                <b>No Location Name.</b><br />
-                                                <span>No Location Address.</span>
-                                            </div>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        @for (int i = 0; i < Model.Locations.Count; i++)
-                                        {
-                                            var item = Model.Locations[i];
-                                            var isLast = i == Model.Locations.Count - 1;
-                                            <div data-location-id="@item.LocationId" style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; @(isLast ? "" : "border-bottom: 1px solid #ddd;")">
-                                                <div style="flex: 1;">
-                                                    <b>@(item.Name ?? "No Location Name.")</b><br />
-                                                    <span style="display: inline-block; margin-bottom: 10px; margin-top: 10px;"><b>Address:</b></span>
-                                                    <span style="margin-bottom: 10px;">@(item.Address ?? "No Location Address.")</span><br />
-                                                    <span style="display: inline-block;margin-bottom: 10px;"><b>Location Type:</b></span>
-                                                    <span style="margin-bottom: 10px;">@(item.Location?.Type ?? "No Location Type.")</span><br />
-                                                    <span style="display: inline-block;margin-bottom: 8x;"><b>Longitude/Latitude:</b></span>
-                                                    <span>@(item.Location?.Coordinates != null && item.Location.Coordinates.Any() ? string.Join(", ", item.Location.Coordinates) : "No Location Coordinates.")</span>
-                                                </div>
-                                                <div style="display: flex; gap: 6px;">
-                                                    <button type="button" class="btn btn-success btn-sm px-2 py-1 edit-location-btn"
-                                                            title="Edit" style="font-size: 14px; line-height: 1;"
-                                                            data-bs-toggle="modal" data-bs-target="#editLocationModal"
-                                                            data-id="@Model.Id"
-                                                            data-location-id="@item.LocationId"
-                                                            data-name="@item.Name"
-                                                            data-address="@item.Address"
-                                                            data-type="@(item.Location?.Type ?? "Point")"
-                                                            data-longitude="@(item.Location?.Coordinates?.FirstOrDefault() ?? 0)"
-                                                            data-latitude="@(item.Location?.Coordinates?.Skip(1).FirstOrDefault() ?? 0)">
-                                                        <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                    </button>
-                                                    <button type="button" class="delete-sell-location btn btn-danger btn-sm px-2 py-1"
-                                                            title="Delete" style="font-size: 14px; line-height: 1;"
-                                                            data-product-id="@Model.Id" data-location-id="@item.LocationId" data-location-name="@item.Name">
-                                                        <i class="fa fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        }
-                                    }
-                                </div>
-                                <div>
-                                    <table class="product-page-width">
-                                        <tbody>
-                                            <tr>
-                                                <td style="padding-bottom: 10px;"><b>Create At:</b></td>
-                                                <td style="padding-bottom: 10px;">@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="padding-bottom: 10px;"><b>Update At:</b></td>
-                                                <td style="padding-bottom: 10px;" class="txt-success">
-                                                    @(Model.UpdateAt?.ToLocalTime().ToString("dd/MM/yy, HH:mm") ?? "No update")
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <div>
+                               @Html.Raw(Model.Description ?? "<p>No description available.</p>")
                             </div>
-                            <div class="m-t-15 btn-showcase">
-                                <div class="d-inline">
-                                    <a class="btn btn-edit" asp-action="EditLocalSpecialty" asp-route-id="@Model.Id">
-                                        <i class="fa fa-pencil" aria-hidden="true"></i> Edit Local Specialties
-                                    </a>
-                                </div>
-                                <div class="d-inline">
-                                    <a class="btn btn-back" asp-action="Index">
-                                        Back
-                                    </a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 d-flex">
+                             <div class="card flex-fill">
+                                <div class="card-body">
+                                    <div class="detail-item"><i class="fa fa-clock-o"></i> <strong>Created At:</strong> <span>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span></div>
+                                    <div class="detail-item"><i class="fa fa-refresh"></i> <strong>Updated At:</strong> <span>@(Model.UpdateAt.HasValue ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy, HH:mm") : "No updates yet")</span></div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="m-t-15 btn-showcase" style="padding-bottom: 20px; display: flex; justify-content: end">
+                        <div class="d-inline">
+                            <a class="btn btn-success" asp-action="EditLocalSpecialty" asp-route-id="@Model.Id">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit Local Specialty
+                            </a>
+                        </div>
+                        <div class="d-inline">
+                            <a class="btn btn-danger" asp-action="Index">
+                                Back
+                            </a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="card">
-                <div class="row product-page-main">
-                    <div class="col-sm-12">
-                        <ul class="nav nav-tabs border-tab nav-primary mb-0" id="top-tab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="top-home-tab" data-bs-toggle="tab" href="#top-home"
-                                    role="tab" aria-controls="top-home" aria-selected="false">Description</a>
-                                <div class="material-border"></div>
-                            </li>
-                        </ul>
-                        <div class="tab-content" id="top-tabContent">
-                            <div class="tab-pane fade active show text-justify" id="top-home" role="tabpanel"
-                                aria-labelledby="top-home-tab">
-                                <p class="mb-0 m-t-20"> @Html.Raw(Model.Description ?? "<p>No description available.</p>")</p>
+                <div class="col-xxl-12 box-col-12 order-xxl-0 order-1">
+                    <div class="card">
+                        <div class="card-body" style="display: flex; flex-direction: column; gap: 12px;">
+                             <div class="d-flex align-items-center p-3 mb-3" style="background-color: #f8f9fa; border-radius: 12px;">
+                                <div class="flex-grow-1">
+                                    <h4 style="font-weight: 700; margin-bottom: 0;"><i class="fa fa-map-marker" style="color: #6366f1;"></i> Point of Sell</h4>
+                                    <p style="color: #6c757d; margin-bottom: 0;">Locations where you can find @Model.FoodName</p>
+                                </div>
+                                <div class="d-flex align-items-center gap-4 mx-5">
+                                    <div class="text-center">
+                                        <h3 style="font-weight: 700; color: #6366f1; margin-bottom: 0;">@(Model.Locations?.Count ?? 0)</h3>
+                                        <p style="font-size: 0.8rem; color: #6c757d; margin-bottom: 0; text-transform: uppercase;">Locations</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <a class="btn btn-success" style="border-radius: 50px; padding: 10px 20px;"
+                                        title="Create Point of Sell" data-bs-toggle="modal" data-bs-target="#addLocationModal">
+                                        <i class="fa fa-plus"></i> Add Location
+                                    </a>
+                                </div>
+                            </div>
+                            <div>
+                                @if (Model.Locations == null || !Model.Locations.Any())
+                                {
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding-left: 12px">
+                                        <div>
+                                            <b>No Location Name.</b><br />
+                                            <span>No Location Address.</span>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div id="locationList" class="row">
+                                        @for (int i = 0; i < Model.Locations.Count; i++)
+                                        {
+                                            var item = Model.Locations[i];
+                                            <div class="col-md-6 mb-4 d-flex">
+                                                <div class="location-card">
+                                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                                                        <div>
+                                                            <h5 style="margin: 0; font-weight: 600; max-width: 430px; min-height: 60px">
+                                                                @(item.Name ?? "No Location Name.")
+                                                            </h5>
+                                                            <div style="font-size: 0.9rem; max-width: 430px; min-height: 42px ; padding-top: 5px">
+                                                                @(item.Address ?? "No Location Address.")
+                                                            </div>
+                                                        </div>
+                                                        <div style="display: flex; gap: 6px; padding-bottom : 50px">
+                                                            <button type="button" class="btn btn-success btn-sm px-2 py-1 edit-location-btn"
+                                                                    title="Edit" style="font-size: 14px; line-height: 1;"
+                                                                    data-bs-toggle="modal" data-bs-target="#editLocationModal"
+                                                                    data-id="@Model.Id"
+                                                                    data-location-id="@item.LocationId"
+                                                                    data-name="@item.Name"
+                                                                    data-address="@item.Address"
+                                                                    data-type="@(item.Location?.Type ?? "Point")"
+                                                                    data-longitude="@(item.Location?.Coordinates?.FirstOrDefault() ?? 0)"
+                                                                    data-latitude="@(item.Location?.Coordinates?.Skip(1).FirstOrDefault() ?? 0)">
+                                                                <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                            </button>
+                                                            <button type="button" class="delete-sell-location btn btn-danger btn-sm px-2 py-1"
+                                                                    title="Delete" style="font-size: 14px; line-height: 1;"
+                                                                    data-product-id="@Model.Id" data-location-id="@item.LocationId" data-location-name="@item.Name">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="map-wrapper">
+                                                        <div class="here-map-container"
+                                                             style="height: 100%; width: 100%;"
+                                                             data-latitude="@(item.Location?.Coordinates?.Skip(1).FirstOrDefault().ToString(CultureInfo.InvariantCulture) ?? "0")"
+                                                             data-longitude="@(item.Location?.Coordinates?.FirstOrDefault().ToString(CultureInfo.InvariantCulture) ?? "0")">
+                                                        </div>
+                                                        <div class="map-overlay edit-location-btn" title="Edit"
+                                                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; cursor: pointer;"
+                                                             data-bs-toggle="modal" data-bs-target="#editLocationModal"
+                                                             data-id="@Model.Id"
+                                                             data-location-id="@item.LocationId"
+                                                             data-name="@item.Name"
+                                                             data-address="@item.Address"
+                                                             data-type="@(item.Location?.Type ?? "Point")"
+                                                             data-longitude="@(item.Location?.Coordinates?.FirstOrDefault() ?? 0)"
+                                                             data-latitude="@(item.Location?.Coordinates?.Skip(1).FirstOrDefault() ?? 0)">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="pagination-container">
+                                        <ul class="pagination" id="pagination">
+                                        </ul>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
@@ -206,7 +340,7 @@
 
 <!-- Modal for Adding Location -->
 <div class="modal fade" id="addLocationModal" tabindex="-1" aria-labelledby="addLocationModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addLocationModalLabel">Add New Location</h5>
@@ -216,34 +350,37 @@
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="Id" value="@Model.Id" />
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Name of Location</label>
-                        <input type="text" name="Name" class="form-control" placeholder="Enter location name" required />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="Name" data-valmsg-replace="true"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Address</label>
-                        <input type="text" name="Address" class="form-control" placeholder="Enter address" required />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="Address" data-valmsg-replace="true"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Marker Type</label>
-                        <input type="text" class="form-control" value="@(ViewBag.SellLocationMarker?.Name ?? "Sell Location")" readonly />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Location Type</label>
-                        <input type="text" name="Location.Type" class="form-control" value="Point" readonly />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="Location.Type" data-valmsg-replace="true"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Longitude</label>
-                        <input type="number" name="Location.Coordinates[0]" class="form-control" step="any" placeholder="Enter longitude" required min="-180" max="180" />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="Location.Coordinates[0]" data-valmsg-replace="true"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Latitude</label>
-                        <input type="number" name="Location.Coordinates[1]" class="form-control" step="any" placeholder="Enter latitude" required min="-90" max="90" />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="Location.Coordinates[1]" data-valmsg-replace="true"></span>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="mb-3">
+                                <label class="form-label">Name of Location</label>
+                                <input type="text" name="Name" id="addName" class="form-control" placeholder="Enter location name" required />
+                                <span class="text-danger field-validation-valid" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Address</label>
+                                <div class="input-group">
+                                    <input type="text" name="Address" id="addAddress" class="form-control" placeholder="Enter address" required autocomplete="off" />
+                                    <button class="btn btn-outline-secondary" type="button" id="searchAddressBtnAdd">Search</button>
+                                </div>
+                                <div id="addressSuggestionsAdd" class="list-group" style="position: absolute; z-index: 1056; width: 100%; max-height: 220px; overflow-y: auto;"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Location Type</label>
+                                <input type="text" name="Location.Type" class="form-control" value="Point" readonly />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Longitude</label>
+                                <input type="number" name="Location.Coordinates[0]" id="addLongitude" class="form-control" step="any" placeholder="Enter longitude" required min="-180" max="180" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Latitude</label>
+                                <input type="number" name="Location.Coordinates[1]" id="addLatitude" class="form-control" step="any" placeholder="Enter latitude" required min="-90" max="90" />
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div id="addMapContainer" style="width: 100%; height: 450px; border-radius: 8px; border: 1px solid #ddd; background-color: #e9ecef;"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -257,7 +394,7 @@
 
 <!-- Modal for Editing Location -->
 <div class="modal fade" id="editLocationModal" tabindex="-1" aria-labelledby="editLocationModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editLocationModalLabel">Edit Location</h5>
@@ -268,34 +405,36 @@
                 <input type="hidden" name="Id" id="editId" value="@Model.Id" />
                 <input type="hidden" name="LocationId" id="editLocationId" />
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Name of Location</label>
-                        <input type="text" name="Name" id="editName" class="form-control" placeholder="Enter location name" required />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="Name" data-valmsg-replace="true"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Address</label>
-                        <input type="text" name="Address" id="editAddress" class="form-control" placeholder="Enter address" required />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="Address" data-valmsg-replace="true"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Marker Type</label>
-                        <input type="text" class="form-control" value="@(ViewBag.SellLocationMarker?.Name ?? "Sell Location")" readonly />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Location Type</label>
-                        <input type="text" name="Type" id="editType" class="form-control" value="Point" readonly />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="Type" data-valmsg-replace="true"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Longitude</label>
-                        <input type="number" name="Longitude" id="editLongitude" class="form-control" step="any" placeholder="Enter longitude" required min="-180" max="180" />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="Longitude" data-valmsg-replace="true"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Latitude</label>
-                        <input type="number" name="Latitude" id="editLatitude" class="form-control" step="any" placeholder="Enter latitude" required min="-90" max="90" />
-                        <span class="text-danger field-validation-valid" data-valmsg-for="Latitude" data-valmsg-replace="true"></span>
+                     <div class="row">
+                        <div class="col-md-5">
+                            <div class="mb-3">
+                                <label class="form-label">Name of Location</label>
+                                <input type="text" name="Name" id="editName" class="form-control" placeholder="Enter location name" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Address</label>
+                                <div class="input-group">
+                                    <input type="text" name="Address" id="editAddress" class="form-control" placeholder="Enter address" required autocomplete="off" />
+                                    <button class="btn btn-outline-secondary" type="button" id="searchAddressBtnEdit">Search</button>
+                                </div>
+                                <div id="addressSuggestionsEdit" class="list-group" style="position: absolute; z-index: 1056; width: 100%; max-height: 220px; overflow-y: auto;"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Location Type</label>
+                                <input type="text" name="Type" id="editType" class="form-control" value="Point" readonly />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Longitude</label>
+                                <input type="number" name="Longitude" id="editLongitude" class="form-control" step="any" placeholder="Enter longitude" required min="-180" max="180" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Latitude</label>
+                                <input type="number" name="Latitude" id="editLatitude" class="form-control" step="any" placeholder="Enter latitude" required min="-90" max="90" />
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                             <div id="editMapContainer" style="width: 100%; height: 450px; border-radius: 8px; border: 1px solid #ddd; background-color: #e9ecef;"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -312,4 +451,91 @@
     <link rel="stylesheet" href="~/assets/css/LocalSpecialties/details.css">
     <script src="~/assets/js/sweetalert-custom.js"></script>
     <script src="~/assets/js/local-specialties/add-image.js"></script>
+    
+    <!-- HERE Maps API Scripts -->
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+
+    <script>
+        window.HERE_API_KEY = '@Configuration["HEREMAP_API_KEY"]';
+    </script>
+    
+    <script src="~/assets/js/local-specialties/heremap-loader.js"></script>
+    <script src="~/assets/js/local-specialties/edit-location-map.js"></script>
+    <script src="~/assets/js/local-specialties/form-handler.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Pagination logic
+            const itemsPerPage = 2;
+            const locationList = document.getElementById('locationList');
+            if (locationList) {
+                const paginationContainer = document.getElementById('pagination');
+                const items = Array.from(locationList.getElementsByClassName('col-md-6'));
+                const pageCount = Math.ceil(items.length / itemsPerPage);
+
+                function showPage(page) {
+                    const start = (page - 1) * itemsPerPage;
+                    const end = start + itemsPerPage;
+
+                    items.forEach((item, index) => {
+                        if (index >= start && index < end) {
+                            item.classList.remove('d-none');
+                        } else {
+                            item.classList.add('d-none');
+                        }
+                    });
+                    updatePaginationUI(page);
+                }
+
+                function updatePaginationUI(currentPage) {
+                    if (!paginationContainer) return;
+                    paginationContainer.innerHTML = '';
+                    for (let i = 1; i <= pageCount; i++) {
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.href = '#';
+                        a.innerText = i;
+                        if (i === currentPage) a.classList.add('active');
+                        a.addEventListener('click', (e) => { e.preventDefault(); showPage(i); });
+                        li.appendChild(a);
+                        paginationContainer.appendChild(li);
+                    }
+                }
+
+                if (items.length > itemsPerPage) {
+                    showPage(1);
+                } else {
+                    items.forEach(item => item.classList.remove('d-none'));
+                }
+            }
+        });
+
+        // Populate edit modal with data
+        const editLocationModal = document.getElementById('editLocationModal');
+        if (editLocationModal) {
+            editLocationModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const id = button.getAttribute('data-id');
+                const locationId = button.getAttribute('data-location-id');
+                const name = button.getAttribute('data-name');
+                const address = button.getAttribute('data-address');
+                const type = button.getAttribute('data-type');
+                const longitude = button.getAttribute('data-longitude');
+                const latitude = button.getAttribute('data-latitude');
+
+                const modal = this;
+                modal.querySelector('#editId').value = id;
+                modal.querySelector('#editLocationId').value = locationId;
+                modal.querySelector('#editName').value = name;
+                modal.querySelector('#editAddress').value = address;
+                modal.querySelector('#editType').value = type;
+                modal.querySelector('#editLongitude').value = longitude;
+                modal.querySelector('#editLatitude').value = latitude;
+            });
+        }
+    </script>
 }

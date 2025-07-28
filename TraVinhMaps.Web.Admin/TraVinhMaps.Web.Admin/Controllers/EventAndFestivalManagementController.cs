@@ -129,7 +129,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             ViewBag.marker = await _markerService.GetMarkerById(eventAndFestivalDetail.Location.MarkerId);
             return View(eventAndFestivalDetail);
         }
-        
+
         // GET: EventAndFestivalManagement/EditEventAndFestival
         [HttpGet("EditEventAndFestival")]
         public async Task<IActionResult> EditEventAndFestival(string id)
@@ -363,7 +363,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
         {
             return View("Error!");
         }
-        
+
         // Helper methods to validate image files
         private bool IsImageFile(IFormFile file)
         {

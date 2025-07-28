@@ -11,5 +11,6 @@ namespace TraVinhMaps.Web.Admin.Models.TouristDestination
         [MinLength(10, ErrorMessage = "Address must be at least 10 characters")]
         [MaxLength(1000, ErrorMessage = "Address must be less than or equal to 1000 characters")]
         public string? Content { get; set; }
+        public List<string>? Images { get; set; }
     }
 }

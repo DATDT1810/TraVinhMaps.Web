@@ -4,6 +4,8 @@
 @{
     ViewData["Title"] = "Create Company";
 }
+
+
 <div class="page-body">
     <div class="container-fluid">
         <div class="page-title">
@@ -18,7 +20,7 @@
                     }
                 </div>
                 <div class="col-6">
-                    <ol class="breadcrumb">
+                    <ol class="breadcrumb justify-content-end">
                         <li class="breadcrumb-item">
                             <a asp-controller="Home" asp-action="Index">
                                 <i class="fa fa-home" style="font-size: 20px;"></i>
@@ -33,132 +35,94 @@
     </div>
     <!-- Container-fluid starts-->
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="form theme-form">
-                            <form asp-action="CreateCompanyPost" method="post" enctype="multipart/form-data">
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="mb-3">
-                                            <label>Company Name</label>
-                                            <input asp-for="Name" class="form-control" type="text"
-                                                placeholder="Name of company">
-                                            <span asp-validation-for="Name" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="mb-3">
-                                            <label>Company Address</label>
-                                            <input asp-for="Address" class="form-control" type="text"
-                                                placeholder="Name of company">
-                                            <span asp-validation-for="Address" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <label>Company Locations</label>
-                                        <div id="locationsContainer">
-                                            @for (int i = 0; i < Model.Locations.Count; i++)
-                                            {
-                                                var currentType = Model.Locations[i].Type;
-                                                <div class="location-item border p-3 mb-2 rounded" data-index="@i">
-                                                    <div class="mb-2">
-                                                        <label>Type</label>
-                                                        <select name="Locations[@i].Type" class="form-select" required>
-                                                            <option value="">-- Select Type --</option>
-                                                            <option value="Point" selected="@(currentType == "Point")">Point
-                                                            </option>
-                                                            <option value="Branch" selected="@(currentType == "Branch")">
-                                                                Branch</option>
-                                                            <option value="Office" selected="@(currentType == "Office")">
-                                                                Office</option>
-                                                        </select>
-                                                        <span class="text-danger"
-                                                            asp-validation-for="Locations[@i].Type"></span>
-                                                    </div>
-                                                    <div class="mb-2">
-                                                        <label>Latitude</label>
-                                                        <input name="Locations[@i].Latitude" class="form-control"
-                                                            value="@Model.Locations[i].Latitude" />
-                                                        <span class="text-danger"
-                                                            asp-validation-for="Locations[@i].Latitude"></span>
-                                                    </div>
-                                                    <div class="mb-2">
-                                                        <label>Longitude</label>
-                                                        <input name="Locations[@i].Longitude" class="form-control"
-                                                            value="@Model.Locations[i].Longitude" />
-                                                        <span class="text-danger"
-                                                            asp-validation-for="Locations[@i].Longitude"></span>
-                                                    </div>
-                                                </div>
-                                            }
-                                        </div>
-                                        <button type="button" id="addLocationBtn"
-                                            class="btn btn-primary btn-sm mt-2">Add Location</button>
-                                    </div>
-                                </div>
-                                <div id="locationTemplate" class="d-none">
-                                    <div class="location-item border p-3 mb-2 rounded" data-index="__index__">
-                                        <div class="mb-2">
-                                            <label>Type</label>
-                                            <input name="Locations[__index__].Type" class="form-control" />
-                                        </div>
-                                        <div class="mb-2">
-                                            <label>Latitude</label>
-                                            <input name="Locations[__index__].Latitude" class="form-control" />
-                                        </div>
-                                        <div class="mb-2">
-                                            <label>Longitude</label>
-                                            <input name="Locations[__index__].Longitude" class="form-control" />
-                                        </div>
-                                        <button type="button"
-                                            class="btn btn-danger btn-sm remove-location">Remove</button>
-                                    </div>
-                                </div>
+        <form asp-action="CreateCompanyPost" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <!-- Left Column Card -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Basic Information</h5>
+                        </div>
+                        <div class="card-body">
+                              <div class="mb-3" style="width: 100%;">
+                                <label>Company Name</label>
+                                <input asp-for="Name" class="form-control" type="text"
+                                    placeholder="Name of company">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                             <div class="mb-3" style="width: 100%;">
+                                <label>Phone</label>
+                                <input asp-for="Contact.Phone" class="form-control"
+                                    placeholder="Phone number" />
+                                <span asp-validation-for="Contact.Phone" class="text-danger"></span>
+                            </div>
+                             <div class="mb-3" style="width: 100%;">
+                                <label>Email</label>
+                                <input asp-for="Contact.Email" class="form-control"
+                                    placeholder="Email address" />
+                                <span asp-validation-for="Contact.Email" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3" style="width: 100%;">
+                                <label>Website</label>
+                                <input asp-for="Contact.Website" class="form-control"
+                                    placeholder="Website URL" />
+                                <span asp-validation-for="Contact.Website" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right Column Card -->
+                <div class="col-md-8">
+                    <div class="card">
+                         <div class="card-header">
+                            <h5>Address & Location</h5>
+                        </div>
+                        <div class="card-body">
+                             <div id="mapContainer" style="height: 400px; width: 100%; margin-bottom: 20px; border-radius: 8px;"></div>
+                            <div class="mb-3">
+                                <label>Company Address</label>
+                                <input id="Address" asp-for="Address" class="form-control" type="text" placeholder="Start typing an address..." autocomplete="off">
+                                <div id="suggestionsContainer" class="list-group" style="position: absolute; z-index: 1000; width: 95%;"></div>
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
 
-
-                                <div class="row">
-                                    <div class="col">
-                                        <label>Contact Information</label>
-                                        <div class="mb-3">
-                                            <label>Phone</label>
-                                            <input asp-for="Contact.Phone" class="form-control"
-                                                placeholder="Phone number" />
-                                            <span asp-validation-for="Contact.Phone" class="text-danger"></span>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label>Email</label>
-                                            <input asp-for="Contact.Email" class="form-control"
-                                                placeholder="Email address" />
-                                            <span asp-validation-for="Contact.Email" class="text-danger"></span>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label>Website</label>
-                                            <input asp-for="Contact.Website" class="form-control"
-                                                placeholder="Website URL" />
-                                            <span asp-validation-for="Contact.Website" class="text-danger"></span>
+                                <div id="locationsContainer">
+                                    <div class="location-item" data-index="0">
+                                        <input type="hidden" name="Locations[0].Type" value="Point" />
+                                        <div class="row">
+                                            <div class="col-md-6 mb-2">
+                                                <label>Latitude</label>
+                                                <input id="latitude" name="Locations[0].Latitude" class="form-control"
+                                                    value="@(Model.Locations.Any() ? Model.Locations[0].Latitude : "0")" readonly/>
+                                                <span class="text-danger"
+                                                    asp-validation-for="Locations[0].Latitude"></span>
+                                            </div>
+                                            <div class="col-md-6 mb-2">
+                                                <label>Longitude</label>
+                                                <input id="longitude" name="Locations[0].Longitude" class="form-control"
+                                                    value="@(Model.Locations.Any() ? Model.Locations[0].Longitude : "0")" readonly/>
+                                                <span class="text-danger"
+                                                    asp-validation-for="Locations[0].Longitude"></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="text-end">
-                                            <a asp-action="Index" class="btn btn-danger">Cancel</a>
-                                            <button type="submit" class="btn btn-success me-3">Create Company</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="text-end mt-3">
+                        <button type="submit" class="btn btn-success me-3">Create Company</button>
+                        <a asp-action="Index" class="btn btn-danger">Back</a>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
     <!-- Container-fluid Ends-->
 </div>
@@ -167,7 +131,14 @@
     @Html.AntiForgeryToken()
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/assets/js/company/index.js"></script>
+    
+    <!-- HERE Maps API -->
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js" type="text/javascript" charset="utf-8"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js" type="text/javascript" charset="utf-8"></script>
+
     <script>
         setTimeout(function () {
             var alert = document.getElementById("alert-message");
@@ -175,24 +146,194 @@
                 alert.style.display = "none";
             }
         }, 2000);
-        let locationIndex = @Model.Locations.Count;
 
-        document.getElementById('addLocationBtn').addEventListener('click', function () {
-            const template = document.getElementById('locationTemplate').innerHTML;
-            const html = template.replace(/__index__/g, locationIndex);
-            const container = document.getElementById('locationsContainer');
+        // --- HERE Maps Integration based on heremap-edit.js ---
+        let map;
+        let marker;
+        let behavior;
+        let platform;
 
-            const wrapper = document.createElement('div');
-            wrapper.innerHTML = html;
-            container.appendChild(wrapper.firstElementChild);
-
-            locationIndex++;
-        });
-
-        document.getElementById('locationsContainer').addEventListener('click', function (e) {
-            if (e.target && e.target.classList.contains('remove-location')) {
-                e.target.closest('.location-item').remove();
+        function initMap(latitude, longitude) {
+            const apiKey = '@Configuration["HEREMAP_API_KEY"]';
+            if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
+                document.getElementById('mapContainer').innerHTML = '<div class="alert alert-danger">Map API Key is missing.</div>';
+                return;
             }
+
+            platform = new H.service.Platform({ 'apikey': apiKey });
+            const defaultLayers = platform.createDefaultLayers();
+
+            map = new H.Map(
+                document.getElementById('mapContainer'),
+                defaultLayers.vector.normal.map,
+                {
+                    pixelRatio: window.devicePixelRatio || 1,
+                    zoom: 15,
+                    center: { lat: latitude, lng: longitude }
+                }
+            );
+
+            behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+            const ui = H.ui.UI.createDefault(map, defaultLayers);
+            window.addEventListener('resize', () => map.getViewPort().resize());
+
+            addMarkerToMap(latitude, longitude);
+            
+            map.addEventListener('tap', function(evt) {
+                const coord = map.screenToGeo(evt.currentPointer.viewportX, evt.currentPointer.viewportY);
+                updateMarker(coord.lat, coord.lng);
+                reverseGeocode(coord);
+            });
+        }
+
+        function addMarkerToMap(lat, lng) {
+            const svgMarkup = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="26" viewBox="0 0 28 36"><path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22C28 6.268 21.732 0 14 0z" fill="#28a745"/><circle cx="14" cy="14" r="6" fill="white"/></svg>';
+            const icon = new H.map.Icon(svgMarkup, { anchor: { x: 10, y: 26 } });
+
+            marker = new H.map.Marker({ lat: lat, lng: lng }, { icon: icon, volatility: true });
+            marker.draggable = true;
+            map.addObject(marker);
+            enableMarkerDrag();
+            updateFormFields(lat, lng);
+        }
+
+        function updateMarker(lat, lng) {
+            marker.setGeometry({ lat: lat, lng: lng });
+            updateFormFields(lat, lng);
+        }
+
+        function enableMarkerDrag() {
+            map.addEventListener('dragstart', (ev) => {
+                if (ev.target === marker) behavior.disable();
+            }, false);
+
+            map.addEventListener('dragend', (ev) => {
+                if (ev.target === marker) {
+                    behavior.enable();
+                    const coord = ev.target.getGeometry();
+                    updateFormFields(coord.lat, coord.lng);
+                    // No reverse geocode on drag end, as per reference
+                }
+            }, false);
+
+            map.addEventListener('drag', (ev) => {
+                if (ev.target === marker) {
+                    ev.target.setGeometry(map.screenToGeo(ev.currentPointer.viewportX, ev.currentPointer.viewportY));
+                }
+            }, false);
+        }
+
+        function updateFormFields(lat, lng) {
+            document.getElementById('latitude').value = lat.toFixed(6);
+            document.getElementById('longitude').value = lng.toFixed(6);
+        }
+
+        function reverseGeocode(coord) {
+            const geocoder = platform.getSearchService();
+            geocoder.reverseGeocode({ at: `${coord.lat},${coord.lng}` }, (result) => {
+                if (result.items.length > 0) {
+                    document.getElementById('Address').value = result.items[0].address.label;
+                } else {
+                    document.getElementById('Address').value = 'Address not found';
+                }
+            }, (error) => {
+                console.error('Reverse geocoding failed:', error);
+                document.getElementById('Address').value = 'Error finding address';
+            });
+        }
+
+        function setupAutocomplete() {
+            const addressInput = document.getElementById('Address');
+            const suggestionsContainer = document.getElementById('suggestionsContainer');
+            const apiKey = '@Configuration["HEREMAP_API_KEY"]';
+
+            addressInput.addEventListener('input', function () {
+                const query = this.value;
+                if (query.length < 3) {
+                    suggestionsContainer.innerHTML = '';
+                    return;
+                }
+
+                const url = `https://autosuggest.search.hereapi.com/v1/autosuggest?apiKey=${apiKey}&q=${encodeURIComponent(query)}&at=9.9503,106.3415`; // Centered on Tra Vinh for better results
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        suggestionsContainer.innerHTML = '';
+                        if (data.items) {
+                            data.items.forEach(item => {
+                                const suggestionDiv = document.createElement('a');
+                                suggestionDiv.href = '#';
+                                suggestionDiv.className = 'list-group-item list-group-item-action';
+                                suggestionDiv.innerHTML = item.title;
+                                suggestionDiv.dataset.id = item.id;
+                                suggestionDiv.addEventListener('click', function (e) {
+                                    e.preventDefault();
+                                    selectSuggestion(item.id, item.title);
+                                });
+                                suggestionsContainer.appendChild(suggestionDiv);
+                            });
+                        }
+                    });
+            });
+
+             document.addEventListener('click', function(e) {
+                if (e.target.id !== 'Address') {
+                    suggestionsContainer.innerHTML = '';
+                }
+            });
+        }
+
+        function selectSuggestion(id, title) {
+            const suggestionsContainer = document.getElementById('suggestionsContainer');
+            const addressInput = document.getElementById('Address');
+            const apiKey = '@Configuration["HEREMAP_API_KEY"]';
+            const url = `https://lookup.search.hereapi.com/v1/lookup?apiKey=${apiKey}&id=${id}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.position) {
+                        const { lat, lng } = data.position;
+                        addressInput.value = data.address.label;
+                        updateMarker(lat, lng);
+                        map.setCenter({ lat, lng });
+                        map.setZoom(17);
+                    }
+                    suggestionsContainer.innerHTML = '';
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const initialLat = parseFloat(document.getElementById('latitude').value) || 9.9503;
+            const initialLng = parseFloat(document.getElementById('longitude').value) || 106.3415;
+            initMap(initialLat, initialLng);
+            setupAutocomplete();
+            
+            if (document.getElementById('latitude').value !== "0" && document.getElementById('longitude').value !== "0") {
+                 reverseGeocode({lat: initialLat, lng: initialLng});
+            }
+
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(event) {
+                const address = document.getElementById('Address').value;
+                const latitude = document.getElementById('latitude').value;
+                const longitude = document.getElementById('longitude').value;
+
+                let isValid = true;
+                if (!address || address.trim() === '' || address === 'Address not found' || address === 'Error finding address') {
+                    isValid = false;
+                    alert('Please select a valid location on the map to get the address.');
+                } else if (parseFloat(latitude) === 0 || parseFloat(longitude) === 0) {
+                    isValid = false;
+                    alert('Please select a location on the map.');
+                }
+
+                if (!isValid) {
+                    event.preventDefault();
+                }
+            });
         });
     </script>
 }
+@inject IConfiguration Configuration

@@ -1,9 +1,43 @@
-@using TraVinhMaps.Web.Admin.Models.TouristDestination;
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
+@using TraVinhMaps.Web.Admin.Models.TouristDestination
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model TouristDestinationResponse
+@inject IConfiguration Configuration
 @{
     ViewData["Title"] = "DetailDestination";
+    var (isOpen, totalHours) = GetOperatingStatus(Model.OpeningHours?.OpenTime, Model.OpeningHours?.CloseTime);
 }
+
+@functions {
+    public static (bool, double) GetOperatingStatus(string openTimeStr, string closeTimeStr)
+    {
+        if (string.IsNullOrEmpty(openTimeStr) || string.IsNullOrEmpty(closeTimeStr))
+        {
+            return (false, 0);
+        }
+
+        try
+        {
+            var now = DateTime.Now.TimeOfDay;
+            var openTime = DateTime.Parse(openTimeStr).TimeOfDay;
+            var closeTime = DateTime.Parse(closeTimeStr).TimeOfDay;
+            
+            if (closeTime < openTime) // Handles overnight opening
+            {
+                closeTime = closeTime.Add(TimeSpan.FromDays(1));
+            }
+
+            bool isOpen = (now >= openTime && now < closeTime);
+            var totalDurationHours = (closeTime - openTime).TotalHours;
+
+            return (isOpen, totalDurationHours);
+        }
+        catch (Exception)
+        {
+            return (false, 0);
+        }
+    }
+}
+
 
 <style>
     .Delete-button-image {
@@ -111,10 +145,250 @@
         padding: 15px;
         text-align: center;
     }
-
-    .location-info-table td {
-        padding-bottom: 2px;
+    
+    .tab-content {
+        margin-top: 20px;
     }
+
+    /* New Styles for Redesign */
+    .info-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .info-header i {
+        margin-right: 0.75rem;
+        color: #007bff;
+    }
+
+    .info-block {
+        background-color: #f0f2f5;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .rating-block {
+        background-color: #f0f2f5;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .rating-main {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .rating-main .stars i {
+        color: #ffc107;
+    }
+
+    .rating-main .score {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .rating-reviews {
+        font-size: 0.9rem;
+        color: #6c757d;
+        text-align: right;
+    }
+
+    .tag {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        background-color: #e0e7ff;
+        color: #4338ca;
+        font-weight: 500;
+    }
+
+    .tag img {
+        width: 20px;
+        height: 20px;
+        margin-right: 0.5rem;
+    }
+
+    /* Operating Time New Styles */
+    .operating-time-card .info-header {
+        justify-content: space-between;
+    }
+    .current-time {
+        text-align: right;
+    }
+    .current-time span {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    .current-time div {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+    .timeline {
+        padding: 1rem 0;
+    }
+    .timeline-bar {
+        width: 100%;
+        height: 8px;
+        background-color: #e9ecef;
+        border-radius: 4px;
+    }
+    .timeline-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+    .timeline-labels i {
+        margin-right: 0.3rem;
+    }
+    .time-cards {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    .time-card {
+        flex: 1;
+        padding: 1rem;
+        border-radius: 12px;
+        text-align: center;
+    }
+    .time-card.open {
+        background-color: #e6f7f2;
+        color: #00875a;
+    }
+    .time-card.close {
+        background-color: #fff0f0;
+        color: #de350b;
+    }
+    .time-card .label {
+        font-size: 0.9rem;
+    }
+    .time-card .time {
+        font-size: 1.8rem;
+        font-weight: bold;
+        line-height: 1.2;
+    }
+    .time-card .ampm {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+    .time-card i {
+        font-size: 1.5rem;
+        margin-top: 0.5rem;
+    }
+    .status-bar {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+    }
+    .status-bar .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 0.75rem;
+    }
+    .status-bar.open .dot {
+        background-color: #28a745;
+    }
+    .status-bar.closed .dot {
+        background-color: #dc3545;
+    }
+    .total-duration {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1rem;
+        color: black;
+    }
+
+    /* Destination Type & Contact Info Styles */
+    .styled-info-box {
+        background-color: #faf5ff;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1.5rem;
+    }
+    .styled-info-box .info-label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    .styled-info-box .info-value {
+        display: flex;
+        align-items: center;
+        color: #9333ea;
+        font-weight: 500;
+    }
+    .styled-info-box .info-value i {
+        margin-right: 0.5rem;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    .contact-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1.2rem;
+    }
+    .contact-icon.phone { background-color: #e0f2fe; color: #0284c7; }
+    .contact-icon.email { background-color: #dcfce7; color: #16a34a; }
+    .contact-icon.website { background-color: #f3e8ff; color: #9333ea; }
+    .contact-details .label {
+        font-size: 0.8rem;
+        color: black;
+    }
+    .contact-details .value {
+        font-weight: 600;
+    }
+
+    .address-container {
+        position: relative;
+        padding: 0 1rem;
+    }
+
+    .address-content {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        margin-bottom: 0;
+    }
+
+    .address-content.expanded {
+        -webkit-line-clamp: unset;
+    }
+
+    .expand-btn {
+        color: #007bff;
+        cursor: pointer;
+        font-weight: bold;
+        display: none;
+        text-align: right;
+        margin-top: 5px;
+    }
+
 </style>
 
 <div class="page-body">
@@ -140,7 +414,7 @@
         <div>
             <div class="row product-page-main p-0">
                 <div class="col-xxl-4 col-md-6 box-col-12">
-                    <div class="card">
+                    <div class="card h-100">
                         <div class="card-body">
                             <div class="product-slider owl-carousel owl-theme" id="sync1">
                                 @foreach (var item in @Model.Images)
@@ -185,172 +459,167 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xxl-5 box-col-6 order-xxl-0 order-1">
-                    <div class="card">
+                <div class="col-xxl-5 col-md-6 box-col-12 order-xxl-0 order-1">
+                    <div class="card h-100">
                         <div class="card-body">
-                            <div class="product-page-details">
-                                <h3>@Model.Name</h3>
+                            <div class="tag">
+                                <img src="@ViewBag.DestinationTag.Image" alt="tag" />
+                                <span>@ViewBag.DestinationTag.Name</span>
                             </div>
-                            <div style="margin-top: 10px;">
-                                <img class="activity-log-img rounded-circle img-fluid me-2" src="@ViewBag.DestinationTag.Image" alt="user" style="width: 24px; height: 24px;" />
-                                    @ViewBag.DestinationTag.Name
+                            <h2 class="mt-3">@Model.Name</h2>
+                            
+                            <div class="info-header mt-4">
+                                <i class="fa fa-map-marker"></i>
+                                <span>Address</span>
                             </div>
-                            <hr>
-                            <p>@Model.Address</p>
-                            <hr>
-                            <div>
-                                <table class="product-page-width location-info-table">
-                                    <tbody>
-                                        <tr>
-                                            <td> <b>Create At:</b></td>
-                                            <td>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</td>
-                                        </tr>
-                                        <tr>
-                                            <td> <b>Update At: &nbsp;&nbsp;&nbsp;</b></td>
-                                            <td class="txt-success">@(
-                                                Model.UpdateAt.HasValue
-                                                    ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy HH:mm")
-                                                    : "No update"
-                                            )</ td >
-                                        </tr>
-                                        <tr>
-                                            <td> <b>Longitude/latitude: &nbsp;&nbsp;&nbsp;</b></td>
-                                            <td>@Model.Location.Coordinates[0] ,&nbsp @Model.Location.Coordinates[1]
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                            <div class="address-container">
+                                <p class="address-content" id="addressContent">@Model.Address</p>
+                                <a href="#" class="expand-btn" id="expandBtn">mở rộng</a>
                             </div>
-                            <hr>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <h6 class="product-title">Avarage Rating</h6>
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="d-flex gap-2">
-                                        <div>
+
+                            <div class="info-block mt-4">
+                                <span>Create At:</span>
+                                <span><i class="fa fa-calendar"></i> @Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span>
+                            </div>
+                            <div class="info-block">
+                                <span>Update At:</span>
+                                <span class="txt-success"><i class="fa fa-calendar"></i> @(Model.UpdateAt.HasValue ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy HH:mm") : "No update")</span>
+                            </div>
+
+                            <div class="rating-block mt-4">
+                                <h6>Average Rating</h6>
+                                <div class="d-flex justify-content-between align-items-center" style="margin-top:5px">
+                                    <div class="rating-main">
+                                        <div class="stars">
                                             @{
-                                                int starCount = Model.AvarageRating.HasValue
-                                                ? (int)Math.Floor(Model.AvarageRating.Value)
-                                                : 0;
-                                                int totalStars = 5;
-                                            }
-
-                                            @for (int i = 1; i <= totalStars; i++)
-                                            {
-                                                if (i <= starCount)
+                                                double avgRating = Model.AvarageRating ?? 0;
+                                                for (int i = 1; i <= 5; i++)
                                                 {
-                                                    <i class="fa fa-star font-warning"></i>
-                                                }
-                                                else
-                                                {
-                                                    <i class="fa fa-star" style="color: #ccc;"></i> 
+                                                    if (i <= avgRating) {
+                                                        <i class="fa fa-star"></i>
+                                                    } else if (i - 0.5 <= avgRating) {
+                                                        <i class="fa fa-star-half-o"></i>
+                                                    } else {
+                                                        <i class="fa fa-star-o"></i>
+                                                    }
                                                 }
                                             }
-
                                         </div>
-                                        <span>( @Model.AvarageRating )</span>
+                                        <div class="score">@avgRating.ToString("0.0")</div>
                                     </div>
+                                  
                                 </div>
                             </div>
-                            <hr>
-                            <div>
-                                <table class="product-page-width">
-                                    <tbody>
-                                        <tr>
-                                            <td> <b>Destination Type:</b></td>
-                                            <td>
-                                                <img class="activity-log-img rounded-circle img-fluid me-2" src="@ViewBag.marker.Image" alt="user" style="width: 24px; height: 24px; margin-left: 10px;" />
-                                                @ViewBag.DestinationType.Name
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td> <b>Ticket:</b></td>
-                                            <td>@(Model.Ticket ?? "")</td>
-                                        </tr>
-                                        <tr>
-                                            <td> <b>Capacity:</b></td>
-                                            <td>@(Model.Capacity ?? "")</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+
+                            <div class="styled-info-box">
+                                <div class="info-label">Destination Type:</div>
+                                <div class="info-value">
+                                    <i class="fa fa-institution"></i>
+                                    <span>@ViewBag.DestinationType.Name</span>
+                                </div>
                             </div>
-                            <hr>
-                            <div class="m-t-15 btn-showcase">
-                                <a class="btn btn-edit" asp-action="EditDestination" asp-route-id="@Model.Id"><i
-                                        class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit Destination</a>
-                                <a class="btn btn-back" asp-action="Index">Back</a>
+
+                            <div class="styled-info-box">
+                                <div class="info-label">Ticket Price:</div>
+                                <div class="info-value">
+                                    <i class="fa fa-ticket"></i>
+                                
+                                    <span>@Model.Ticket</span>
+                                    <span>đ</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-auto pt-4">
+                                <div class="m-t-15 btn-showcase">
+                                    <a class="btn btn-success" asp-action="EditDestination" asp-route-id="@Model.Id"><i
+                                            class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit Destination</a>
+                                    @if (Model.status)
+                                    {
+                                        <form asp-action="DeleteDestinationByForm" asp-route-id="@Model.Id" method="post"
+                                            class="d-inline">
+                                            <button type="submit" class="btn btn-secondary">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>&nbsp; Delete Destination
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="RestoreDestinationByForm" asp-route-id="@Model.Id" method="post"
+                                            class="d-inline">
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>&nbsp; Restore Destination
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-xxl-3 col-md-6 box-col-6">
-                    <div class="card">
+                <div class="col-xxl-3 col-md-6 box-col-12">
+                    <div class="card operating-time-card">
                         <div class="card-body">
-                            <!-- side-bar colleps block stat-->
-                            <div class="filter-block">
-                                <h4>Operating time</h4>
-                                <ul>
-                                    <li>
-                                        <div class="media-body">
-                                            <p>@(Model.OpeningHours?.OpenTime ?? "")</p>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="media-body">
-                                            <p>@(Model.OpeningHours?.CloseTime ?? "")</p>
-                                        </div>
-                                    </li>
-                                </ul>
+                            <div class="info-header">
+                                <div>
+                                    <i class="fa fa-clock-o" style="margin-right:0"></i>
+                                    <span>Operating time</span>
+                                </div>
+                                <div class="current-time">
+                                    <span>Now</span>
+                                    <div id="current-clock"></div>
+                                </div>
+                            </div>
+                          
+                            <div class="time-cards">
+                                <div class="time-card open">
+                                  
+                                    <div class="time">@DateTime.Parse(Model.OpeningHours?.OpenTime ?? "0:00").ToString("h:mm")</div>
+                                    <div class="ampm">@DateTime.Parse(Model.OpeningHours?.OpenTime ?? "0:00").ToString("tt")</div>
+                                    <i class="fa fa-sun-o"></i>
+                                </div>
+                                <div class="time-card close">
+                                   
+                                    <div class="time">@DateTime.Parse(Model.OpeningHours?.CloseTime ?? "0:00").ToString("h:mm")</div>
+                                    <div class="ampm">@DateTime.Parse(Model.OpeningHours?.CloseTime ?? "0:00").ToString("tt")</div>
+                                    <i class="fa fa-moon-o"></i>
+                                </div>
+                            </div>
+                            <div class="status-bar @(isOpen ? "open" : "closed")">
+                               
+                                <span class="dot"></span>
+                                <span>@(isOpen ? "Open now" : "Currently closed")</span>
+                            </div>
+                            <div class="total-duration">
+                                <span>Total Duration</span>
+                                <span>@totalHours.ToString("0.#") hours/day</span>
                             </div>
                         </div>
                     </div>
                     <div class="card">
                         <div class="card-body">
-                            <div class="collection-filter-block">
-                                <h4>Contract</h4>
-                                <div style="height: 20px;"></div>
-                                <ul class="pro-services">
-                                    <li>
-                                        <div class="media"><i style="font-size: 25px;" class="fa fa-phone"
-                                                aria-hidden="true"></i> &nbsp&nbsp&nbsp
-                                            <div class="media-body">
-                                                <h5>Phone </h5>
-                                                <div style="width: 200px; cursor: pointer;"
-                                                    onclick="copyWebsiteToClipboard(this)">
-                                                    <p>@(Model.Contact?.Phone ?? "")</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="media"><i style="font-size: 25px;" class="fa fa-envelope-o"
-                                                aria-hidden="true"></i> &nbsp&nbsp&nbsp
-                                            <div class="media-body">
-                                                <h5>Email</h5>
-                                                <div style="width: 200px; cursor: pointer;"
-                                                    onclick="copyWebsiteToClipboard(this)">
-                                                    <p>@(Model.Contact?.Email ?? "")</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="media"><i style="font-size: 25px;" class="fa fa-link"
-                                                aria-hidden="true"></i> &nbsp&nbsp&nbsp
-                                            <div class="media-body">
-                                                <h5>Website </h5>
-                                                <div style="width: 200px; cursor: pointer;"
-                                                    onclick="copyWebsiteToClipboard(this)">
-                                                    <p>@(Model.Contact?.Website ?? "")</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
+                            <h5 class="mb-4">Contact Information</h5>
+                            <div class="contact-item">
+                                <div class="contact-icon phone"><i class="fa fa-phone"></i></div>
+                                <div class="contact-details">
+                                    <div class="label">Điện thoại</div>
+                                    <div class="value">@(Model.Contact?.Phone ?? "")</div>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon email"><i class="fa fa-envelope-o"></i></div>
+                                <div class="contact-details">
+                                    <div class="label">Email</div>
+                                    <div class="value">@(Model.Contact?.Email ?? "")</div>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon website"><i class="fa fa-link"></i></div>
+                                <div class="contact-details">
+                                    <div class="label">Website</div>
+                                    <div class="value"><a href="@Model.Contact?.Website" target="_blank">@Model.Contact?.Website</a></div>
+                                </div>
                             </div>
                         </div>
-                        <!-- silde-bar colleps block end here-->
                     </div>
                 </div>
             </div>
@@ -359,7 +628,12 @@
             <div class="row product-page-main">
                 <div class="col-sm-12">
                     <ul class="nav nav-tabs border-tab nav-primary" id="top-tab" role="tablist">
-                        <li class="nav-item"><a class="nav-link active" id="top-home-tab" data-bs-toggle="tab"
+                        <li class="nav-item"><a class="nav-link active" id="map-top-tab" data-bs-toggle="tab"
+                                href="#top-map" role="tab" aria-controls="top-map"
+                                aria-selected="true">Map</a>
+                            <div class="material-border"></div>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" id="top-home-tab" data-bs-toggle="tab"
                                 href="#top-home" role="tab" aria-controls="top-home"
                                 aria-selected="false">Description</a>
                             <div class="material-border"></div>
@@ -369,15 +643,16 @@
                                 Description</a>
                             <div class="material-border"></div>
                         </li>
-                        <li class="nav-item"><a class="nav-link" id="contact-top-tab" data-bs-toggle="tab"
-                                href="#top-contact" role="tab" aria-controls="top-contact" aria-selected="true">More @if(TempData["errorHistory"] != null) {
-                                    <span class="text-danger">@TempData["errorHistory"]</span>
-                                } </a>
-                            <div class="material-border"></div>
-                        </li>
                     </ul>
                     <div class="tab-content" id="top-tabContent">
-                        <div class="tab-pane fade active show" id="top-home" role="tabpanel"
+                        <div class="tab-pane fade active show" id="top-map" role="tabpanel" aria-labelledby="map-top-tab">
+                            <div id="map" class="here-map-container"
+                                 data-latitude="@Model.Location.Coordinates[1].ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                 data-longitude="@Model.Location.Coordinates[0].ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                 style="width: 100%; height: 500px; background-color: #f0f0f0; border-radius: 10px; position: relative;">
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="top-home" role="tabpanel"
                             aria-labelledby="top-home-tab">
                             <div class="mb-0 mt-2 text-justify">
                                 @Html.Raw(Model.Description ?? "<p>No description available.</p>")
@@ -387,8 +662,7 @@
                             <div class="mb-0 mt-2 text-justify">
                                 @Html.Raw(Model.HistoryStory != null ? Model.HistoryStory.Content??"No history description available." : "No history description available.")
                             </div>
-                        </div>
-                        <div class="tab-pane fade" id="top-contact" role="tabpanel" aria-labelledby="contact-top-tab">
+                            <hr />
                             @if(Model.HistoryStory != null && Model.HistoryStory.Images != null && Model.HistoryStory.Images.Any()) {
                                 @foreach(var item in Model.HistoryStory.Images) {
                                 <div class="gallery position-relative">
@@ -433,6 +707,16 @@
 </div>
 
 <script>
+    function updateClock() {
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        document.getElementById('current-clock').textContent = `${hours}:${minutes}`;
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock(); // Initial call
+
     function copyWebsiteToClipboard(element) {
         const text = element.innerText.trim();
         if (text) {
@@ -463,4 +747,42 @@
             });
         }
     });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const addressContent = document.getElementById("addressContent");
+        const expandBtn = document.getElementById("expandBtn");
+
+        // Use a small timeout to ensure the browser has rendered and calculated the element's height
+        setTimeout(function() {
+            if (addressContent.scrollHeight > addressContent.clientHeight) {
+                expandBtn.style.display = "block";
+            }
+        }, 100);
+
+        expandBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            addressContent.classList.toggle("expanded");
+            if (addressContent.classList.contains("expanded")) {
+                expandBtn.textContent = "thu gọn";
+            } else {
+                expandBtn.textContent = "mở rộng";
+            }
+        });
+    });
 </script>
+
+@section Scripts {
+    <!-- HERE Maps API references -->
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+    
+    <script>
+        // Set the API key for all subsequent scripts to use
+        window.HERE_API_KEY = '@Configuration["HEREMAP_API_KEY"]';
+    </script>
+
+    <script src="~/assets/js/touristdestination/heremap-detail.js"></script>
+}
