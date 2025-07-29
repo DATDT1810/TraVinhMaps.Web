@@ -83,9 +83,9 @@
                                 <div class="row">
                                     <div class="col-sm-4">
                                         <div class="mb-3">
-                                            <label asp-for="OcopTypeId">Ocop Type</label>
+                                            <label asp-for="OcopTypeId">OCOP Type</label>
                                             <select asp-for="OcopTypeId" class="form-select" required>
-                                                <option disabled selected value="">-- Select Ocop Type --</option>
+                                                <option disabled selected value="">-- Select OCOP Type --</option>
                                                 @foreach (var type in ViewBag.OcopTypes)
                                                 {
                                                     <option value="@type.Id">@type.OcopTypeName</option>
@@ -136,7 +136,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <div class="mb-3">
-                                            <label asp-for="TagId">Ocop Product Tag</label>
+                                            <label asp-for="TagId">OCOP Product Tag</label>
                                             <select asp-for="TagId" class="form-select" required>
                                                 @foreach (var tag in ViewBag.Tags)
                                                 {
@@ -165,7 +165,7 @@
                                                 <a asp-action="Index" asp-controller="OcopProduct"
                                                     class="btn btn-danger">Cancel</a>
                                                 <button type="submit" class="btn btn-success me-3">Create
-                                                    Ocop
+                                                    OCOP
                                                     Product</button>
                                             </div>
                                         </div>

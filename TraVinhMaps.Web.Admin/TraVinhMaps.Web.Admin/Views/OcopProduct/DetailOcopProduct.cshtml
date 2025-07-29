@@ -134,7 +134,7 @@
                         <div class="col-md-6 d-flex">
                             <div class="card flex-fill">
                                 <div class="card-body" style="min-height: 235px;">
-                                    <div class="detail-item"><i class="fa fa-tag"></i> <strong>Reference Price:</strong> <span>@(decimal.Parse(Model.ProductPrice!).ToString("N0", new System.Globalization.CultureInfo("vi-VN")) + "₫")</span></div>
+                                    <div class="detail-item"><i class="fa fa-tag"></i> <strong>Reference Price:</strong> <span>@(decimal.Parse(Model.ProductPrice!.Replace("₫", "")).ToString("C0", new System.Globalization.CultureInfo("vi-VN")))</span></div>
                                     <div class="detail-item"><i class="fa fa-leaf"></i> <strong>OCOP Type:</strong> <span class="badge bg-success">@ViewBag.OcopTypeName</span></div>
                                     <div class="detail-item"><i class="fa fa-building"></i> <strong>Company:</strong> <span>@ViewBag.CompanyName</span></div>
                                     <div class="detail-item">
@@ -157,7 +157,7 @@
                                     <div class="detail-item"><i class="fa fa-calendar"></i> <strong>Year of Recognition:</strong> <span>@Model.OcopYearRelease</span></div>
                                     <div class="detail-item"><i class="fa fa-check-circle"></i> <strong>Status:</strong> <span class="text-success" style="font-weight: bold;">● Active</span></div>
                                     <div class="detail-item"><i class="fa fa-clock-o"></i> <strong>Created At:</strong> <span>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span></div>
-                                    <div class="detail-item"><i class="fa fa-refresh"></i> <strong>Updated At:</strong> <span>@(Model.UpdateAt.HasValue ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy, HH:mm") : "No updates yet")</span></div>
+                                    <div class="detail-item txt-success"><i class="fa fa-refresh"></i> <strong>Updated At:</strong> <span>@(Model.UpdateAt.HasValue ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy, HH:mm") : "No updates yet")</span></div>
                                 </div>
                             </div>
                         </div>
@@ -167,7 +167,7 @@
                         <div class="card-body">
                             <h5 class="card-title" style="font-weight: bold"><i class="fa fa-file-text-o" style="margin-right: 2px;"></i> Product Description</h5>
                             <hr>
-                            <div>
+                            <div class="text-justify">
                                 @Html.Raw(Model.ProductDescription)
                             </div>
                         </div>
@@ -175,12 +175,12 @@
                     
                     <div class="m-t-15 btn-showcase" style="padding-bottom: 20px; display: flex; justify-content: end">
                         <div class="d-inline">
-                            <a class="btn btn-success" asp-action="UpdateOcopProduct" asp-route-id="@Model.Id">
-                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit Ocop Product
+                            <a class="btn btn-edit" asp-action="UpdateOcopProduct" asp-route-id="@Model.Id">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>Edit OCOP Product
                             </a>
                         </div>
                         <div class="d-inline">
-                            <a class="btn btn-danger" asp-action="Index">
+                            <a class="btn btn-back" asp-action="Index">
                                 Back
                             </a>
                         </div>
@@ -243,8 +243,8 @@
                                                         </div>
                                                         <div style="display: flex; gap: 6px; padding-bottom : 50px">
                                                             <button type="button" title="Edit"
-                                                                    style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 18px;"
-                                                                    class="edit-location-btn" data-bs-toggle="modal"
+                                                                    style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 14px; line-height: 1;"
+                                                                    class="btn btn-success btn-sm px-2 py-1 edit-location-btn" data-bs-toggle="modal"
                                                                     data-bs-target="#editLocationModal" data-id="@Model.Id"
                                                                     data-name="@item.LocationName" data-address="@item.LocationAddress"
                                                                     data-marker="@item.MarkerId"
@@ -255,8 +255,8 @@
                                                             </button>
 
                                                             <button type="button" title="Delete"
-                                                                    style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 18px;"
-                                                                    class="delete-sell-location" data-product-id="@Model.Id"
+                                                                    style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 14px; line-height: 1;"
+                                                                    class="delete-sell-location btn btn-danger btn-sm px-2 py-1" data-product-id="@Model.Id"
                                                                     data-location-name="@item.LocationName">
                                                                 <i class="fa fa-trash" aria-hidden="true"></i>
                                                             </button>
@@ -472,7 +472,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save Location</button>
+                        <button type="submit" class="btn btn-success">Save Location</button>
                     </div>
                 </form>
             </div>

@@ -1,3 +1,7 @@
+// =========================================================================
+// Destination Dashboard Charts Scripts (Optimized for Light/Dark Mode and Translation)
+// =========================================================================
+
 // Global variables for chart data
 let stats = window.stats || {};
 let demographics = window.demographics || [];
@@ -15,7 +19,45 @@ const chartDataCache = new Map();
 // Base API URL
 const destinationApi = window.DESTINATION_API_URL || "https://localhost:7162/api/TouristDestination/";
 
-// Utility log
+// Theme-based color configuration
+const THEME_COLORS = {
+  light: {
+    blue: 'rgba(54, 162, 235, 0.7)',
+    green: 'rgba(75, 192, 192, 0.7)',
+    red: 'rgba(255, 99, 132, 0.7)',
+    yellow: 'rgba(255, 206, 86, 0.7)',
+    purple: 'rgba(153, 102, 255, 0.7)',
+    orange: 'rgba(255, 159, 64, 0.7)',
+    datalabel: '#1A1A1A',
+    canvasBackground: '#F5F5F5', // Xám nhạt để không quá chói
+    grid: '#CCCCCC',
+    tooltipBg: 'rgba(0, 0, 0, 0.8)',
+    tooltipText: '#FFFFFF',
+  },
+  dark: {
+    blue: 'rgba(54, 162, 235, 0.7)',
+    green: 'rgba(75, 192, 192, 0.7)',
+    red: 'rgba(255, 99, 132, 0.7)',
+    yellow: 'rgba(255, 206, 86, 0.7)',
+    purple: 'rgba(153, 102, 255, 0.7)',
+    orange: 'rgba(255, 159, 64, 0.7)',
+    datalabel: '#E6E6E6', // Chữ sáng để nổi trên nền đen
+    canvasBackground: '#1A1A1A', // Nền đen đậm cho dark mode
+    grid: '#444444',
+    tooltipBg: 'rgba(255, 255, 255, 0.15)', // Tooltip mờ để phù hợp nền đen
+    tooltipText: '#FFFFFF',
+  }
+};
+
+// Utility functions
+function isDarkMode() {
+  return document.documentElement.classList.contains("dark");
+}
+
+function getChartColor(light, dark) {
+  return isDarkMode() ? dark : light;
+}
+
 function logDebug(message, data = null) {
     console.log(`[DestinationDashboard] ${message}`, data ? data : "");
 }
@@ -74,23 +116,17 @@ function downloadChart(chart, filename, type) {
     }
     if (type === "png") {
         const canvas = chart.canvas;
-        const ctx = canvas.getContext('2d');
-        // Save the current canvas state
-        const originalBackground = ctx.fillStyle;
-        // Set white background
-        ctx.save();
-        ctx.globalCompositeOperation = 'destination-over';
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        // Generate image
+        const targetCanvas = document.createElement("canvas");
+        targetCanvas.width = canvas.width;
+        targetCanvas.height = canvas.height;
+        const ctx = targetCanvas.getContext("2d");
+        ctx.fillStyle = getChartColor(THEME_COLORS.light.canvasBackground, THEME_COLORS.dark.canvasBackground);
+        ctx.fillRect(0, 0, targetCanvas.width, targetCanvas.height);
+        ctx.drawImage(canvas, 0, 0);
         const link = document.createElement("a");
-        link.href = chart.toBase64Image();
+        link.href = targetCanvas.toDataURL("image/png");
         link.download = filename;
         link.click();
-        // Restore the original canvas state
-        ctx.restore();
-        ctx.fillStyle = originalBackground;
-        chart.update(); // Ensure chart is redrawn correctly
     } else if (type === "csv") {
         const labels = chart.data.labels;
         const datasets = chart.data.datasets;
@@ -118,6 +154,7 @@ function drawAnalyticsChart(data) {
     if (analyticsChart) analyticsChart.destroy();
     const ctx = document.getElementById("analyticsChart")?.getContext("2d");
     if (!ctx) return;
+    ctx.canvas.style.backgroundColor = getChartColor(THEME_COLORS.light.canvasBackground, THEME_COLORS.dark.canvasBackground);
     analyticsChart = new Chart(ctx, {
         type: "bar",
         data: {
@@ -126,24 +163,24 @@ function drawAnalyticsChart(data) {
                 {
                     label: t("Views"),
                     data: (data || []).map(d => d.viewCount || 0),
-                    backgroundColor: "rgba(54, 162, 235, 0.2)",
-                    borderColor: "rgba(54, 162, 235, 1)",
+                    backgroundColor: getChartColor(THEME_COLORS.light.blue, THEME_COLORS.dark.blue),
+                    borderColor: getChartColor(THEME_COLORS.light.blue, THEME_COLORS.dark.blue).replace("0.7", "1"),
                     borderWidth: 1,
                     barThickness: 20,
                 },
                 {
                     label: t("Interactions"),
                     data: (data || []).map(d => d.interactionCount || 0),
-                    backgroundColor: "rgba(75, 192, 192, 0.2)",
-                    borderColor: "rgba(75, 192, 192, 1)",
+                    backgroundColor: getChartColor(THEME_COLORS.light.green, THEME_COLORS.dark.green),
+                    borderColor: getChartColor(THEME_COLORS.light.green, THEME_COLORS.dark.green).replace("0.7", "1"),
                     borderWidth: 1,
                     barThickness: 20,
                 },
                 {
                     label: t("Favorites"),
                     data: (data || []).map(d => d.favoriteCount || 0),
-                    backgroundColor: "rgba(255, 99, 132, 0.2)",
-                    borderColor: "rgba(255, 99, 132, 1)",
+                    backgroundColor: getChartColor(THEME_COLORS.light.red, THEME_COLORS.dark.red),
+                    borderColor: getChartColor(THEME_COLORS.light.red, THEME_COLORS.dark.red).replace("0.7", "1"),
                     borderWidth: 1,
                     barThickness: 20,
                 },
@@ -153,29 +190,37 @@ function drawAnalyticsChart(data) {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: "top" },
-                title: { display: true, text: t("Destination Analytics") },
+                legend: { position: "top", labels: { color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) } },
+                title: { display: true, text: t("Destination Analytics"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                tooltip: {
+                    backgroundColor: getChartColor(THEME_COLORS.light.tooltipBg, THEME_COLORS.dark.tooltipBg),
+                    titleColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
+                    bodyColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
+                },
             },
             scales: {
                 y: {
                     beginAtZero: true,
-                    title: { display: true, text: t("Count") },
+                    title: { display: true, text: t("Count"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
                     ticks: {
+                        color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel),
                         callback: (value) => {
                             if (!Number.isInteger(value)) return '';
                             if (value >= 1_000_000_000) return (value / 1_000_000_000) + 'B';
                             if (value >= 1_000_000) return (value / 1_000_000) + 'M';
                             if (value >= 1_000) return (value / 1_000) + 'k';
                             return value;
-                        }
+                        },
                     },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
                 },
                 x: {
-                    title: { display: true, text: t("Destinations") },
-                    ticks: { autoSkip: false, maxRotation: 60, minRotation: 30 },
+                    title: { display: true, text: t("Destinations"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: { autoSkip: false, maxRotation: 60, minRotation: 30, color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
                 },
-            }
-        }
+            },
+        },
     });
 }
 
@@ -183,6 +228,7 @@ function drawDemographicsChart(data) {
     if (demographicsChart) demographicsChart.destroy();
     const ctx = document.getElementById("demographicsChart")?.getContext("2d");
     if (!ctx) return;
+    ctx.canvas.style.backgroundColor = getChartColor(THEME_COLORS.light.canvasBackground, THEME_COLORS.dark.canvasBackground);
     demographicsChart = new Chart(ctx, {
         type: "bar",
         data: { labels: [], datasets: [] },
@@ -190,9 +236,12 @@ function drawDemographicsChart(data) {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: "top" },
-                title: { display: true, text: t("User Demographics (Location – Hometown – Age Group)") },
+                legend: { position: "top", labels: { color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) } },
+                title: { display: true, text: t("User Demographics (Location – Hometown – Age Group)"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
                 tooltip: {
+                    backgroundColor: getChartColor(THEME_COLORS.light.tooltipBg, THEME_COLORS.dark.tooltipBg),
+                    titleColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
+                    bodyColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
                     callbacks: {
                         title: (context) => {
                             const location = context[0].label;
@@ -204,17 +253,28 @@ function drawDemographicsChart(data) {
                 },
             },
             scales: {
-                x: { stacked: true, title: { display: true, text: t("Location") }, ticks: { autoSkip: false, maxRotation: 60, minRotation: 30 } },
-                y: { stacked: true, beginAtZero: true, title: { display: true, text: t("User Count") }, ticks: {
-                callback: (value) => {
-                    if (!Number.isInteger(value)) return '';
-                    if (value >= 1_000_000_000) return (value / 1_000_000_000) + 'B';
-                    if (value >= 1_000_000) return (value / 1_000_000) + 'M';
-                    if (value >= 1_000) return (value / 1_000) + 'k';
-                    return value;
-                }
-            }
-},
+                x: {
+                    stacked: true,
+                    title: { display: true, text: t("Location"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: { autoSkip: false, maxRotation: 60, minRotation: 30, color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
+                },
+                y: {
+                    stacked: true,
+                    beginAtZero: true,
+                    title: { display: true, text: t("User Count"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: {
+                        color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel),
+                        callback: (value) => {
+                            if (!Number.isInteger(value)) return '';
+                            if (value >= 1_000_000_000) return (value / 1_000_000_000) + 'B';
+                            if (value >= 1_000_000) return (value / 1_000_000) + 'M';
+                            if (value >= 1_000) return (value / 1_000) + 'k';
+                            return value;
+                        },
+                    },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
+                },
             },
         },
     });
@@ -222,8 +282,12 @@ function drawDemographicsChart(data) {
         const locations = [...new Set(data.map(item => t(item.locationName || "Unknown")))];
         const ageGroups = [...new Set(data.map(item => t(item.ageGroup || "Unknown")))];
         const colorArr = [
-            "rgba(255,99,132,0.7)", "rgba(54,162,235,0.7)", "rgba(255,206,86,0.7)",
-            "rgba(75,192,192,0.7)", "rgba(153,102,255,0.7)", "rgba(255,159,64,0.7)",
+            getChartColor(THEME_COLORS.light.red, THEME_COLORS.dark.red),
+            getChartColor(THEME_COLORS.light.blue, THEME_COLORS.dark.blue),
+            getChartColor(THEME_COLORS.light.yellow, THEME_COLORS.dark.yellow),
+            getChartColor(THEME_COLORS.light.green, THEME_COLORS.dark.green),
+            getChartColor(THEME_COLORS.light.purple, THEME_COLORS.dark.purple),
+            getChartColor(THEME_COLORS.light.orange, THEME_COLORS.dark.orange),
         ];
         const datasets = ageGroups.map((age, idx) => ({
             label: age,
@@ -247,6 +311,7 @@ function drawTopInteractionChart(data) {
     if (topInteractionChart) topInteractionChart.destroy();
     const ctx = document.getElementById("topInteractionChart")?.getContext("2d");
     if (!ctx) return;
+    ctx.canvas.style.backgroundColor = getChartColor(THEME_COLORS.light.canvasBackground, THEME_COLORS.dark.canvasBackground);
     topInteractionChart = new Chart(ctx, {
         type: "bar",
         data: {
@@ -255,8 +320,8 @@ function drawTopInteractionChart(data) {
                 {
                     label: t("Interactions"),
                     data: (data || []).map(d => d.interactionCount || 0),
-                    backgroundColor: "rgba(75, 192, 192, 0.7)",
-                    borderColor: "rgba(75, 192, 192, 1)",
+                    backgroundColor: getChartColor(THEME_COLORS.light.green, THEME_COLORS.dark.green),
+                    borderColor: getChartColor(THEME_COLORS.light.green, THEME_COLORS.dark.green).replace("0.7", "1"),
                     borderWidth: 1,
                     barThickness: 20,
                 },
@@ -266,14 +331,31 @@ function drawTopInteractionChart(data) {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: "top" },
-                title: { display: true, text: t("Top Interacted Destinations") },
+                legend: { position: "top", labels: { color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) } },
+                title: { display: true, text: t("Top Interacted Destinations"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                tooltip: {
+                    backgroundColor: getChartColor(THEME_COLORS.light.tooltipBg, THEME_COLORS.dark.tooltipBg),
+                    titleColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
+                    bodyColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
+                },
             },
             scales: {
-                y: { beginAtZero: true, title: { display: true, text: t("Interactions") }, ticks: { callback: (value) => (value >= 1000 ? value / 1000 + "k" : value) } },
-                x: { title: { display: true, text: t("Top Destinations") }, ticks: { autoSkip: false, maxRotation: 60, minRotation: 30 } },
-            }
-        }
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: t("Interactions"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: {
+                        color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel),
+                        callback: (value) => (value >= 1000 ? value / 1000 + "k" : value),
+                    },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
+                },
+                x: {
+                    title: { display: true, text: t("Top Destinations"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: { autoSkip: false, maxRotation: 60, minRotation: 30, color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
+                },
+            },
+        },
     });
 }
 
@@ -281,6 +363,7 @@ function drawTopFavoritesChart(data) {
     if (topFavoritesChart) topFavoritesChart.destroy();
     const ctx = document.getElementById("topFavoritesChart")?.getContext("2d");
     if (!ctx) return;
+    ctx.canvas.style.backgroundColor = getChartColor(THEME_COLORS.light.canvasBackground, THEME_COLORS.dark.canvasBackground);
     topFavoritesChart = new Chart(ctx, {
         type: "bar",
         data: {
@@ -289,8 +372,8 @@ function drawTopFavoritesChart(data) {
                 {
                     label: t("Favorites"),
                     data: (data || []).map(d => d.favoriteCount || 0),
-                    backgroundColor: "rgba(255, 99, 132, 0.7)",
-                    borderColor: "rgba(255, 99, 132, 1)",
+                    backgroundColor: getChartColor(THEME_COLORS.light.red, THEME_COLORS.dark.red),
+                    borderColor: getChartColor(THEME_COLORS.light.red, THEME_COLORS.dark.red).replace("0.7", "1"),
                     borderWidth: 1,
                     barThickness: 20,
                 },
@@ -300,14 +383,32 @@ function drawTopFavoritesChart(data) {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: "top" },
-                title: { display: true, text: t("Top Favorited Destinations") },
+                legend: { position: "top", labels: { color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) } },
+                title: { display: true, text: t("Top Favorited Destinations"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                tooltip: {
+                    backgroundColor: getChartColor(THEME_COLORS.light.tooltipBg, THEME_COLORS.dark.tooltipBg),
+                    titleColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
+                    bodyColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
+                },
             },
             scales: {
-                y: { beginAtZero: true, title: { display: true, text: t("Favorites") }, ticks: { stepSize: 1, callback: (value) => (value >= 1000 ? value / 1000 + "k" : value) } },
-                x: { title: { display: true, text: t("Top Destinations") }, ticks: { autoSkip: false, maxRotation: 60, minRotation: 30 } },
-            }
-        }
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: t("Favorites"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: {
+                        stepSize: 1,
+                        color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel),
+                        callback: (value) => (value >= 1000 ? value / 1000 + "k" : value),
+                    },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
+                },
+                x: {
+                    title: { display: true, text: t("Top Destinations"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: { autoSkip: false, maxRotation: 60, minRotation: 30, color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
+                },
+            },
+        },
     });
 }
 
@@ -315,6 +416,7 @@ function drawCompareDestinationsChart(data) {
     if (compareDestinationsChart) compareDestinationsChart.destroy();
     const ctx = document.getElementById("compareDestinationsChart")?.getContext("2d");
     if (!ctx) return;
+    ctx.canvas.style.backgroundColor = getChartColor(THEME_COLORS.light.canvasBackground, THEME_COLORS.dark.canvasBackground);
     compareDestinationsChart = new Chart(ctx, {
         type: "bar",
         data: {
@@ -323,38 +425,56 @@ function drawCompareDestinationsChart(data) {
                 {
                     label: t("Views"),
                     data: (data || []).map(d => d.viewCount || 0),
-                    backgroundColor: "rgba(54, 162, 235, 0.2)",
-                    borderColor: "rgba(54, 162, 235, 1)",
-                    borderWidth: 1
+                    backgroundColor: getChartColor(THEME_COLORS.light.blue, THEME_COLORS.dark.blue),
+                    borderColor: getChartColor(THEME_COLORS.light.blue, THEME_COLORS.dark.blue).replace("0.7", "1"),
+                    borderWidth: 1,
                 },
                 {
                     label: t("Interactions"),
                     data: (data || []).map(d => d.interactionCount || 0),
-                    backgroundColor: "rgba(75, 192, 192, 0.2)",
-                    borderColor: "rgba(75, 192, 192, 1)",
-                    borderWidth: 1
+                    backgroundColor: getChartColor(THEME_COLORS.light.green, THEME_COLORS.dark.green),
+                    borderColor: getChartColor(THEME_COLORS.light.green, THEME_COLORS.dark.green).replace("0.7", "1"),
+                    borderWidth: 1,
                 },
                 {
                     label: t("Favorites"),
                     data: (data || []).map(d => d.favoriteCount || 0),
-                    backgroundColor: "rgba(255, 99, 132, 0.2)",
-                    borderColor: "rgba(255, 99, 132, 1)",
-                    borderWidth: 1
-                }
+                    backgroundColor: getChartColor(THEME_COLORS.light.red, THEME_COLORS.dark.red),
+                    borderColor: getChartColor(THEME_COLORS.light.red, THEME_COLORS.dark.red).replace("0.7", "1"),
+                    borderWidth: 1,
+                },
             ],
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: "top" },
-                title: { display: true, text: t("Destination Comparison") }
+                legend: { position: "top", labels: { color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) } },
+                title: { display: true, text: t("Destination Comparison"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                tooltip: {
+                    backgroundColor: getChartColor(THEME_COLORS.light.tooltipBg, THEME_COLORS.dark.tooltipBg),
+                    titleColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
+                    bodyColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
+                },
             },
             scales: {
-                y: { beginAtZero: true, title: { display: true, text: t("Count") }, ticks: {stepSize: 1, callback: (value) => (value >= 1000 ? value / 1000 + "k" : value) } },
-                x: { title: { display: true, text: t("Compared Destinations") }, ticks: { autoSkip: false, maxRotation: 60, minRotation: 30 } },
-            }
-        }
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: t("Count"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: {
+                        stepSize: 1,
+                        color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel),
+                        callback: (value) => (value >= 1000 ? value / 1000 + "k" : value),
+                    },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
+                },
+                x: {
+                    title: { display: true, text: t("Compared Destinations"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: { autoSkip: false, maxRotation: 60, minRotation: 30, color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
+                },
+            },
+        },
     });
 }
 
@@ -607,9 +727,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("compareDestinationsReset")?.addEventListener("click", () => {
         const select = document.getElementById("compareDestinationsSelect");
         if (select) {
-            // Deselect all options
             Array.from(select.options).forEach(option => option.selected = false);
-            // Trigger change event to update multiselect UI
             select.dispatchEvent(new Event('change'));
         }
         document.getElementById("compareTimeRange").value = "month";
@@ -627,7 +745,23 @@ document.addEventListener("DOMContentLoaded", function () {
     // Language Change Event
     window.addEventListener('languageChanged', () => {
         console.log("Destination dashboard: Language changed event detected, refreshing all charts...");
-        // Clear cache on language change to ensure translated labels are updated
+        chartDataCache.clear();
+        refreshAnalyticsChart(false);
+        refreshDemographicsChart(false);
+        refreshTopViewsChart(false);
+        refreshTopFavoritesChart(false);
+        const select = document.getElementById("compareDestinationsSelect");
+        const selectedIds = Array.from(select?.selectedOptions || []).map(option => option.value);
+        if (selectedIds.length > 0) {
+            refreshCompareDestinationsChart(selectedIds, false);
+        } else {
+            drawCompareDestinationsChart([]);
+        }
+    });
+
+    // Theme Change Event
+    window.addEventListener('themeChanged', () => {
+        console.log("Destination dashboard: Theme changed event detected, refreshing all charts...");
         chartDataCache.clear();
         refreshAnalyticsChart(false);
         refreshDemographicsChart(false);
@@ -643,41 +777,21 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-/************************************************************
- *  SignalR Real-time Integration for Destination Analytics
- ************************************************************/
-
+// SignalR Real-time Integration for Destination Analytics
 (function () {
-    // Kiểm tra xem thư viện SignalR đã tồn tại chưa
     if (typeof signalR === 'undefined') {
         console.error("SignalR client library not found. Real-time updates will be disabled for Destination page.");
         return;
     }
 
-    /**
-     * Hàm này sẽ làm mới tất cả các biểu đồ trên trang Destination.
-     * Nó không hiển thị thông báo "Success" để tránh làm phiền người dùng khi cập nhật tự động.
-     * Nó cũng sẽ xóa cache để đảm bảo dữ liệu mới nhất được lấy từ server.
-     */
     function refreshAllDestinationChartsForRealtime() {
         console.log("[Real-time] Refreshing all Destination charts...");
-
-        // Xóa cache trước khi gọi lại API để đảm bảo lấy dữ liệu mới nhất
-        if (typeof chartDataCache !== 'undefined') {
-            chartDataCache.clear();
-            logDebug("Cache cleared for real-time update.");
-        }
-
-        // Gọi các hàm refresh bạn đã viết, nhưng với showAlert = false
+        chartDataCache.clear();
+        logDebug("Cache cleared for real-time update.");
         if (typeof refreshAnalyticsChart === 'function') refreshAnalyticsChart(false);
         if (typeof refreshDemographicsChart === 'function') refreshDemographicsChart(false);
-        
-        // Sửa lỗi: Gọi đúng hàm refreshTopViewsChart
         if (typeof refreshTopViewsChart === 'function') refreshTopViewsChart(false);
-        
         if (typeof refreshTopFavoritesChart === 'function') refreshTopFavoritesChart(false);
-
-        // Đối với biểu đồ so sánh, chỉ refresh nếu người dùng đã chọn sản phẩm
         const compareSelect = document.getElementById("compareDestinationsSelect");
         if (compareSelect && compareSelect.selectedOptions.length > 0) {
             const destinationIds = Array.from(compareSelect.selectedOptions).map(option => option.value);
@@ -685,21 +799,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Gán hàm vào biến toàn cục để có thể gọi từ nơi khác nếu cần
     window.refreshAllDestinationCharts = refreshAllDestinationChartsForRealtime;
 
-
-    // --- LOGIC KẾT NỐI VÀ XỬ LÝ SIGNALR ---
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("https://localhost:7162/dashboardHub") // Cùng một Hub với các trang khác
+        .withUrl("https://localhost:7162/dashboardHub")
         .withAutomaticReconnect()
         .build();
 
-    // Định nghĩa hành động khi nhận được tín hiệu "ChartAnalytics"
     connection.on("ChartAnalytics", function () {
         console.log("[SignalR] Received 'ChartAnalytics' signal on Destination page. Updating Destination charts...");
-
-        // Gọi hàm tổng để cập nhật mọi thứ trên trang này
         if (typeof window.refreshAllDestinationCharts === 'function') {
             window.refreshAllDestinationCharts();
         } else {
@@ -707,16 +815,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Hàm để khởi động kết nối
     async function startSignalRConnection() {
         try {
             await connection.start();
             console.log("[SignalR] Destination page connected successfully.");
-
-            // Lấy vai trò từ thuộc tính data-user-role của thẻ body
-            // (Cần đảm bảo file _Layout.cshtml đã có thẻ này)
             const userRole = document.body.dataset.userRole?.toLowerCase();
-            
             if (userRole === "super-admin" || userRole === "admin") {
                 connection.invoke("JoinAdminGroup", userRole).catch(function (err) {
                     console.error("[SignalR] Destination page failed to join group:", err.toString());
@@ -727,7 +830,5 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Khởi động kết nối SignalR
     startSignalRConnection();
-
 })();

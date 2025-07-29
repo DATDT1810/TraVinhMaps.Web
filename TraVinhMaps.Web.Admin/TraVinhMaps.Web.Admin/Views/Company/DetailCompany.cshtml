@@ -219,8 +219,8 @@ new BreadcrumbItem { Title = "Details", Url = "#" }
             <p>Professional manufacturing and trading company</p>
         </div>
 
-        <div class="row">   
- 
+        <div class="row">
+
             <!-- Contact Info -->
             <div class="col-xl-12">
                 <div class="card info-card info-card-green">
@@ -239,8 +239,8 @@ new BreadcrumbItem { Title = "Details", Url = "#" }
                         </div>
                         <div class="info-item">
                             <div class="item-label"><i class="fa fa-envelope"></i> Email</div>
-                                <div class="item-value @(string.IsNullOrEmpty(Model.Contact?.Email) ? "not-updated" : "")">
-                                    @(string.IsNullOrEmpty(Model.Contact?.Email) ? "Update soon" : Model.Contact.Email)
+                            <div class="item-value @(string.IsNullOrEmpty(Model.Contact?.Email) ? "not-updated" : "")">
+                                @(string.IsNullOrEmpty(Model.Contact?.Email) ? "Update soon" : Model.Contact.Email)
                             </div>
                         </div>
                         <div class="info-item">
@@ -257,33 +257,36 @@ new BreadcrumbItem { Title = "Details", Url = "#" }
             @if (Model.Locations != null && Model.Locations.Any())
             {
                 var loc = Model.Locations.First(); // Assuming one location for simplicity as per design
-                <div class="col-xl-12">
-                    <div class="card info-card info-card-red">
-                        <div class="card-body">
-                            <div class="card-title-section">
-                                <div class="card-icon icon-bg-green"><i class="fa fa-compass"></i></div>
-                                <h4>Company Location</h4>
-                            </div>
+                                                   <div class="col-xl-12">
+                                                       <div class="card info-card info-card-red">
+                                                           <div class="card-body">
+                                                               <div class="card-title-section">
+                                                                   <div class="card-icon icon-bg-green"><i class="fa fa-compass"></i></div>
+                                                                   <h4>Company Location</h4>
+                                                               </div>
 
                             <div class="info-item">
                                 <div class="item-label"><i class="fa fa-map-pin"></i> Company Address</div>
                                 <div class="item-value">@Model.Address</div>
                             </div>
-
                             <div class="info-item" style="display: none;">
                                 <div class="item-label"><i class="fa fa-rocket"></i> Location Type</div>
                                 <div class="item-value">@loc.Type</div>
                             </div>
-                            <div class="info-item">
-                                <div class="item-label"><i class="fa fa-globe"></i> Longitude</div>
-                                <div class="item-value">@loc.Longitude</div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                    <div class="item-label"><i class="fa fa-globe"></i> Longitude</div>
+                                    <div class="item-value">@loc.Longitude</div>
+                                </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                    <div class="item-label"><i class="fa fa-globe"></i> Latitude</div>
+                                    <div class="item-value">@loc.Latitude</div>
+                                </div>
+                                </div>
                             </div>
-                            <div class="info-item">
-                                <div class="item-label"><i class="fa fa-globe"></i> Latitude</div>
-                                <div class="item-value">@loc.Latitude</div>
-                            </div>
-
-
 
                             <div id="mapContainer" style="width: 100%; height: 400px; border-radius: 8px;"></div>
                         </div>
@@ -293,7 +296,8 @@ new BreadcrumbItem { Title = "Details", Url = "#" }
         </div>
 
         <div class="mt-3" style="display: flex; justify-content: flex-end;">
-            <a asp-controller="Company" asp-action="UpdateCompany" asp-route-id="@Model.Id" class="btn btn-primary" style="margin-right: 10px;">
+            <a asp-controller="Company" asp-action="UpdateCompany" asp-route-id="@Model.Id" class="btn btn-primary"
+                style="margin-right: 10px;">
                 <i class="fa fa-edit"></i> Edit
             </a>
             <a asp-controller="Company" asp-action="Index" class="btn btn-secondary">
@@ -329,9 +333,9 @@ new BreadcrumbItem { Title = "Details", Url = "#" }
                 var loc = Model.Locations.First();
                 <text>
                     (function() {
-                        const platform = new H.service.Platform({
+                                        const platform = new H.service.Platform({
                         'apikey': '@Configuration["HEREMAP_API_KEY"]'
-                        });
+                                        });
 
                     const defaultLayers = platform.createDefaultLayers();
 
@@ -341,7 +345,7 @@ new BreadcrumbItem { Title = "Details", Url = "#" }
                     {
                         zoom: 15,
                     center: {lat: @loc.Latitude, lng: @loc.Longitude }
-                            }
+                                            }
                     );
 
                     // Add map events listener
@@ -351,12 +355,12 @@ new BreadcrumbItem { Title = "Details", Url = "#" }
                     // Add UI components
                     const ui = H.ui.UI.createDefault(map, defaultLayers);
 
-                // Add a custom marker
-                const svgMarkup = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="26" viewBox="0 0 28 36"><path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22C28 6.268 21.732 0 14 0z" fill="#28a745"/><circle cx="14" cy="14" r="6" fill="white"/></svg>';
-                const icon = new H.map.Icon(svgMarkup, { anchor: { x: 10, y: 26 } });
-                const marker = new H.map.Marker({ lat: @loc.Latitude, lng: @loc.Longitude }, { icon: icon });
-                map.addObject(marker);
-            })();
+                    // Add a custom marker
+                    const svgMarkup = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="26" viewBox="0 0 28 36"><path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22C28 6.268 21.732 0 14 0z" fill="#28a745" /><circle cx="14" cy="14" r="6" fill="white" /></svg>';
+                    const icon = new H.map.Icon(svgMarkup, {anchor: {x: 10, y: 26 } });
+                    const marker = new H.map.Marker({lat: @loc.Latitude, lng: @loc.Longitude }, {icon: icon });
+                    map.addObject(marker);
+                            })();
                 </text>
         }
     </script>

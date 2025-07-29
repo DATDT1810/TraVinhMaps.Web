@@ -204,7 +204,7 @@
                         <div class="card-body">
                             <h5 class="card-title" style="font-weight: bold"><i class="fa fa-file-text-o" style="margin-right: 2px; color: black;"></i> Description</h5>
                             <hr>
-                            <div>
+                            <div class="text-justify">
                                @Html.Raw(Model.Description ?? "<p>No description available.</p>")
                             </div>
                         </div>
@@ -214,7 +214,7 @@
                              <div class="card flex-fill">
                                 <div class="card-body">
                                     <div class="detail-item"><i class="fa fa-clock-o"></i> <strong>Created At:</strong> <span>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span></div>
-                                    <div class="detail-item"><i class="fa fa-refresh"></i> <strong>Updated At:</strong> <span>@(Model.UpdateAt.HasValue ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy, HH:mm") : "No updates yet")</span></div>
+                                    <div class="detail-item txt-success"><i class="fa fa-refresh"></i> <strong>Updated At:</strong> <span>@(Model.UpdateAt.HasValue ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy, HH:mm") : "No updates yet")</span></div>
                                 </div>
                             </div>
                         </div>
@@ -222,12 +222,12 @@
                     
                     <div class="m-t-15 btn-showcase" style="padding-bottom: 20px; display: flex; justify-content: end">
                         <div class="d-inline">
-                            <a class="btn btn-success" asp-action="EditLocalSpecialty" asp-route-id="@Model.Id">
+                            <a class="btn btn-edit" asp-action="EditLocalSpecialty" asp-route-id="@Model.Id">
                                 <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit Local Specialty
                             </a>
                         </div>
                         <div class="d-inline">
-                            <a class="btn btn-danger" asp-action="Index">
+                            <a class="btn btn-back" asp-action="Index">
                                 Back
                             </a>
                         </div>
@@ -297,7 +297,7 @@
                                                             <button type="button" class="delete-sell-location btn btn-danger btn-sm px-2 py-1"
                                                                     title="Delete" style="font-size: 14px; line-height: 1;"
                                                                     data-product-id="@Model.Id" data-location-id="@item.LocationId" data-location-name="@item.Name">
-                                                                <i class="fa fa-trash"></i>
+                                                                <i class="fa fa-trash" aria-hidden="true"></i>
                                                             </button>
                                                         </div>
                                                     </div>
@@ -343,7 +343,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addLocationModalLabel">Add New Location</h5>
+                <h4 class="modal-title fw-bold text-success" id="addLocationModalLabel">Add New Location</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="addLocationForm" asp-action="CreatePointOfSell" asp-controller="LocalSpecialties" method="post">
@@ -379,7 +379,7 @@
                             </div>
                         </div>
                         <div class="col-md-7">
-                            <div id="addMapContainer" style="width: 100%; height: 450px; border-radius: 8px; border: 1px solid #ddd; background-color: #e9ecef;"></div>
+                            <div id="addMapContainer" style="width: 100%; height: 500px; border-radius: 8px; border: 1px solid #ddd; background-color: #e9ecef;"></div>
                         </div>
                     </div>
                 </div>

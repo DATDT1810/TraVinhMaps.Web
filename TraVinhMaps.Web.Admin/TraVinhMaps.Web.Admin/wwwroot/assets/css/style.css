@@ -23624,21 +23624,13 @@ body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body
 body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header > span {
   color: rgba(255, 255, 255, 0.6);
 }
-/* body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h1,
+body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h1,
 body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h2,
 body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h3,
 body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h4,
 body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h5,
 body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h6 {
   color: #fff;
-} */
-body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h1,
-body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h2,
-body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h3,
-body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h4,
-/* body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h5, */
-body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header h6 {
-  color: #158247;
 }
 body.dark-only .page-wrapper .page-body-wrapper .page-body .card:not(.email-body) .card-header .card-header-right {
   background-color: #22242B;
@@ -31557,3 +31549,66 @@ table.table-bordered thead tr th p {
     background-color: #aaa9a9;
 }
 
+/* Optional: item active style */
+.btn > i:first-child:not(:last-child),
+.btn > svg:first-child:not(:last-child),
+.btn > .fa:first-child:not(:last-child) {
+    margin-right: 8px !important;
+}
+
+/* Optional: item active style */
+.btn > .fa:first-child:not(:last-child),
+.btn > .fas:first-child:not(:last-child),
+.btn > .far:first-child:not(:last-child),
+.btn > .fab:first-child:not(:last-child) {
+    margin-right: 8px;
+}
+
+/* Optional: dropdown arrow */
+.btn.btn-edit > .fa-pencil,
+.btn-edit > i.fa-pencil {
+    margin-right: 6px !important;
+}
+
+/* Ensure column headers do not wrap and have a maximum width */
+.dataTables_wrapper th {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px; 
+    padding: 10px 8px; 
+    line-height: 1.6;
+    text-align: start; 
+}
+
+/* Center the sort icon */
+.dataTables_wrapper th .sorting,
+.dataTables_wrapper th .sorting_asc,
+.dataTables_wrapper th .sorting_desc {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%; 
+}
+
+/* Adjust the position of the sort icon */
+.dataTables_wrapper th .sorting:after,
+.dataTables_wrapper th .sorting_asc:after,
+.dataTables_wrapper th .sorting_desc:after {
+    margin-left: 5px;
+    vertical-align: middle;
+    position: relative;
+    top: 0; 
+}
+
+/* Ensure table body cells do not wrap and align content center */
+.dataTables_wrapper td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 330px;
+    padding: 10px 8px;
+    line-height: 1.6;
+    text-align: start;
+}
