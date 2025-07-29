@@ -195,7 +195,7 @@
     <div class="login-card">
         <div>
             <div class="login-main">
-                <form asp-action="login" asp-controller="Authen" class="theme-form">
+                <form asp-action="login" asp-controller="Authen" class="theme-form" id="loginForm">
                     @Html.AntiForgeryToken()
                     <h4>Sign in to account</h4>
                     <p>Enter your email & password to login</p>
@@ -219,11 +219,11 @@
                                 <input asp-for="RememberMe" id="checkbox1" type="checkbox" style="margin-bottom: 5px;">
                                 <label asp-for="RememberMe" class="text-muted" for="checkbox1">Remember password</label>
                             </div>
-                            <a class="link" asp-action="ForgotPassword">Forgot password?</a>
+                            <a class="link text-decoration-underline" asp-action="ForgotPassword">Forgot password?</a>
                         </div>
                     </div>
                     <div class="form-group mb-0 mt-3">
-                        <button class="btn btn-success btn-block w-100" type="submit">Sign in</button>
+                        <button class="btn btn-success btn-block w-100" type="submit" id="signInButton">Sign in</button>
                     </div>
 
                     <div class="separator">
@@ -315,6 +315,17 @@
                 <text>
                 showTimedAlert("Login Failed", "@Html.Raw(ViewData.ModelState[""].Errors[0].ErrorMessage)", "error", 1000);
                 </text>
+        }
+
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', function () {
+                const signInButton = document.getElementById('signInButton');
+                if (signInButton) {
+                    signInButton.disabled = true;
+                    signInButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Signing in...';
+                }
+            });
         }
     });
 </script>
