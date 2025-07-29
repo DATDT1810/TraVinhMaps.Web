@@ -30,13 +30,13 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between mb-3">
-                            <button class="btn btn-export" title="Export Notifications List" id="notificationExportBtn">
-                                <i class="fa fa-file-excel-o me-1"></i>Export
-                            </button>
+                        <div class="d-flex gap-2 mb-3">
                             <a asp-controller="Notifications" asp-action="SendNotification" class="btn btn-success">
                                 <i class="fa fa-plus me-1"></i>Send Notification
                             </a>
+                            <button class="btn btn-export" title="Export Notifications List" id="notificationExportBtn">
+                                <i class="fa fa-file-excel-o me-1"></i>Export
+                            </button>
                         </div>
                     <div class="table-responsive custom-scrollbar">
                         <table class="display" id="basic-9">

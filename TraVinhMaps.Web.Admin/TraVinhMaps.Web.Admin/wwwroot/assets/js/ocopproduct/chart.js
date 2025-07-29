@@ -1,3 +1,7 @@
+// =========================================================================
+// OCOP Dashboard Charts Scripts (Optimized for Light/Dark Mode and Translation)
+// =========================================================================
+
 // Global variables for chart data
 let myAnalyticsChart = null;
 let myDemographicsChart = null;
@@ -9,14 +13,50 @@ let isInitialLoad = true;
 // OCOP API URL
 const ocopApi = "https://localhost:7162/api/OcopProduct/";
 
-// Log utility for debugging
+// Theme-based color configuration
+const THEME_COLORS = {
+  light: {
+    cyan: 'rgba(75, 192, 192, 0.7)',
+    purple: 'rgba(153, 102, 255, 0.7)',
+    orange: 'rgba(255, 159, 64, 0.7)',
+    red: 'rgba(255, 99, 132, 0.7)',
+    blue: 'rgba(54, 162, 235, 0.7)',
+    yellow: 'rgba(255, 206, 86, 0.7)',
+    datalabel: '#1A1A1A',
+    canvasBackground: '#F5F5F5', // Light gray for less glare
+    grid: '#CCCCCC',
+    tooltipBg: 'rgba(0, 0, 0, 0.8)',
+    tooltipText: '#FFFFFF',
+  },
+  dark: {
+    cyan: 'rgba(75, 192, 192, 0.7)',
+    purple: 'rgba(153, 102, 255, 0.7)',
+    orange: 'rgba(255, 159, 64, 0.7)',
+    red: 'rgba(255, 99, 132, 0.7)',
+    blue: 'rgba(54, 162, 235, 0.7)',
+    yellow: 'rgba(255, 206, 86, 0.7)',
+    datalabel: '#E6E6E6', // Light gray for contrast
+    canvasBackground: '#1A1A1A', // Dark background for dark mode
+    grid: '#444444',
+    tooltipBg: 'rgba(255, 255, 255, 0.15)', // Semi-transparent white
+    tooltipText: '#FFFFFF',
+  }
+};
+
+// Utility functions
+function isDarkMode() {
+  return document.documentElement.classList.contains("dark");
+}
+
+function getChartColor(light, dark) {
+  return isDarkMode() ? dark : light;
+}
+
 function logDebug(message, data = null) {
     console.log(`[OcopDashboard] ${message}`, data ? data : "");
 }
 
-// ========= BẮT ĐẦU ĐOẠN CODE ÁNH XẠ VÀ DỊCH THUẬT =========
-
-// 1. TẠO ĐỐI TƯỢNG ÁNH XẠ (TỪ ĐIỂN)
+// Translation and time range mapping
 const timeRangeMap = {
     'ngày': 'day',
     'tuần': 'week',
@@ -25,25 +65,18 @@ const timeRangeMap = {
     'all': 'all'
 };
 
-// 2. HÀM TRỢ GIÚP LẤY GIÁ TRỊ TIẾNG ANH
 function getApiTimeRange(vietnameseValue) {
-    // Sửa lỗi: Nếu giá trị đầu vào đã là tiếng Anh (vd: 'month'), trả về chính nó
     return timeRangeMap[vietnameseValue] || vietnameseValue;
 }
 
-// 3. HÀM DỊCH THUẬT
 function t(text) {
     return window.translationMapForCharts?.[text] || text;
 }
-// ========= KẾT THÚC ĐOẠN CODE ÁNH XẠ VÀ DỊCH THUẬT =========
-
 
 // Validate filter inputs
 function validateFilterInputs(startDateStr, endDateStr) {
     const now = new Date();
-    // Đặt giờ, phút, giây về cuối ngày để so sánh chính xác
     now.setHours(23, 59, 59, 999);
-
     if (startDateStr) {
         const start = new Date(startDateStr);
         if (start > now) {
@@ -65,7 +98,7 @@ function validateFilterInputs(startDateStr, endDateStr) {
     return true;
 }
 
-// Download chart (as PNG or CSV)
+// Download chart
 function downloadChart(chart, filename, type) {
     if (!chart || !chart.canvas) {
         showTimedAlert(t("Error"), t("No chart available for download"), "error", 1000);
@@ -79,18 +112,17 @@ function downloadChart(chart, filename, type) {
         showTimedAlert(t("Warning"), t("No data available to download."), "warning", 1000);
         return;
     }
-
     if (type === "png") {
         const canvas = chart.canvas;
-        const whiteCanvas = document.createElement("canvas");
-        whiteCanvas.width = canvas.width;
-        whiteCanvas.height = canvas.height;
-        const ctx = whiteCanvas.getContext("2d");
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, whiteCanvas.width, whiteCanvas.height);
+        const targetCanvas = document.createElement("canvas");
+        targetCanvas.width = canvas.width;
+        targetCanvas.height = canvas.height;
+        const ctx = targetCanvas.getContext("2d");
+        ctx.fillStyle = getChartColor(THEME_COLORS.light.canvasBackground, THEME_COLORS.dark.canvasBackground);
+        ctx.fillRect(0, 0, targetCanvas.width, targetCanvas.height);
         ctx.drawImage(canvas, 0, 0);
         const link = document.createElement("a");
-        link.href = whiteCanvas.toDataURL("image/png");
+        link.href = targetCanvas.toDataURL("image/png");
         link.download = filename;
         link.click();
     } else if (type === "csv") {
@@ -124,31 +156,65 @@ function drawAnalyticsChart(data) {
     if (myAnalyticsChart) myAnalyticsChart.destroy();
     const ctx = document.getElementById("analyticsChart")?.getContext("2d");
     if (!ctx) return;
+    ctx.canvas.style.backgroundColor = getChartColor(THEME_COLORS.light.canvasBackground, THEME_COLORS.dark.canvasBackground);
     myAnalyticsChart = new Chart(ctx, {
         type: "bar",
         data: {
             labels: (data || []).map(item => t(item.productName || "Unknown")),
             datasets: [
-                { label: t("View Count"), data: (data || []).map(item => item.viewCount || 0), backgroundColor: "rgba(75, 192, 192, 0.2)", borderColor: "rgba(75, 192, 192, 1)", borderWidth: 1 },
-                { label: t("Interaction Count"), data: (data || []).map(item => item.interactionCount || 0), backgroundColor: "rgba(153, 102, 255, 0.2)", borderColor: "rgba(153, 102, 255, 1)", borderWidth: 1 },
-                { label: t("Favorite Count"), data: (data || []).map(item => item.favoriteCount || 0), backgroundColor: "rgba(255, 159, 64, 0.2)", borderColor: "rgba(255, 159, 64, 1)", borderWidth: 1 },
+                {
+                    label: t("View Count"),
+                    data: (data || []).map(item => item.viewCount || 0),
+                    backgroundColor: getChartColor(THEME_COLORS.light.cyan, THEME_COLORS.dark.cyan),
+                    borderColor: getChartColor(THEME_COLORS.light.cyan, THEME_COLORS.dark.cyan).replace("0.7", "1"),
+                    borderWidth: 1,
+                },
+                {
+                    label: t("Interaction Count"),
+                    data: (data || []).map(item => item.interactionCount || 0),
+                    backgroundColor: getChartColor(THEME_COLORS.light.purple, THEME_COLORS.dark.purple),
+                    borderColor: getChartColor(THEME_COLORS.light.purple, THEME_COLORS.dark.purple).replace("0.7", "1"),
+                    borderWidth: 1,
+                },
+                {
+                    label: t("Favorite Count"),
+                    data: (data || []).map(item => item.favoriteCount || 0),
+                    backgroundColor: getChartColor(THEME_COLORS.light.orange, THEME_COLORS.dark.orange),
+                    borderColor: getChartColor(THEME_COLORS.light.orange, THEME_COLORS.dark.orange).replace("0.7", "1"),
+                    borderWidth: 1,
+                },
             ],
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: "top" },
-                title: { display: true, text: t("OCOP Product Analytics") },
+                legend: { position: "top", labels: { color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) } },
+                title: { display: true, text: t("OCOP Product Analytics"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                tooltip: {
+                    backgroundColor: getChartColor(THEME_COLORS.light.tooltipBg, THEME_COLORS.dark.tooltipBg),
+                    titleColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
+                    bodyColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
+                },
             },
             scales: {
-                y: { beginAtZero: true, title: { display: true, text: t("Count") }, ticks: {
-                stepSize: 1,
-                callback: function (value) {
-                    return Number.isInteger(value) ? value : null;
-                }
-            } },
-                x: { title: { display: true, text: t("Product Name") }, ticks: { autoSkip: false, maxRotation: 90, minRotation: 45 } },
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: t("Count"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: {
+                        stepSize: 1,
+                        color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel),
+                        callback: function (value) {
+                            return Number.isInteger(value) ? value : null;
+                        },
+                    },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
+                },
+                x: {
+                    title: { display: true, text: t("Product Name"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: { autoSkip: false, maxRotation: 90, minRotation: 45, color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
+                },
             },
         },
     });
@@ -159,6 +225,7 @@ function drawDemographicsChart(data) {
     if (myDemographicsChart) myDemographicsChart.destroy();
     const ctx = document.getElementById("demographicsChart")?.getContext("2d");
     if (!ctx) return;
+    ctx.canvas.style.backgroundColor = getChartColor(THEME_COLORS.light.canvasBackground, THEME_COLORS.dark.canvasBackground);
     myDemographicsChart = new Chart(ctx, {
         type: "bar",
         data: { labels: [], datasets: [] },
@@ -166,9 +233,12 @@ function drawDemographicsChart(data) {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: "top" },
-                title: { display: true, text: t("OCOP User Demographics (Product – Hometown – Age Group)") },
+                legend: { position: "top", labels: { color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) } },
+                title: { display: true, text: t("OCOP User Demographics (Product – Hometown – Age Group)"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
                 tooltip: {
+                    backgroundColor: getChartColor(THEME_COLORS.light.tooltipBg, THEME_COLORS.dark.tooltipBg),
+                    titleColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
+                    bodyColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
                     callbacks: {
                         title: (context) => {
                             const product = context[0].label;
@@ -184,27 +254,46 @@ function drawDemographicsChart(data) {
                 },
             },
             scales: {
-                x: { stacked: true, title: { display: true, text: t("Product") }, ticks: { autoSkip: false, maxRotation: 60, minRotation: 30 } },
-                y: { stacked: true, beginAtZero: true, title: { display: true, text: t("User Count") }, ticks: {
-                    stepSize: 1,
-                    callback: function (value) {
-                        return Number.isInteger(value) ? value : null;
-                    }
-                } },
+                x: {
+                    stacked: true,
+                    title: { display: true, text: t("Product"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: { autoSkip: false, maxRotation: 60, minRotation: 30, color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
+                },
+                y: {
+                    stacked: true,
+                    beginAtZero: true,
+                    title: { display: true, text: t("User Count"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: {
+                        stepSize: 1,
+                        color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel),
+                        callback: function (value) {
+                            return Number.isInteger(value) ? value : null;
+                        },
+                    },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
+                },
             },
-        }
+        },
     });
     if (Array.isArray(data) && data.length) {
         const products = [...new Set(data.map(item => t(item.productName || "Unknown")))];
         const ageGroups = [...new Set(data.map(item => item.ageGroup || "Unknown"))];
-        const colorArr = ["rgba(255,99,132,0.7)", "rgba(54,162,235,0.7)", "rgba(255,206,86,0.7)", "rgba(75,192,192,0.7)", "rgba(153,102,255,0.7)", "rgba(255,159,64,0.7)"];
+        const colorArr = [
+            getChartColor(THEME_COLORS.light.red, THEME_COLORS.dark.red),
+            getChartColor(THEME_COLORS.light.blue, THEME_COLORS.dark.blue),
+            getChartColor(THEME_COLORS.light.yellow, THEME_COLORS.dark.yellow),
+            getChartColor(THEME_COLORS.light.cyan, THEME_COLORS.dark.cyan),
+            getChartColor(THEME_COLORS.light.purple, THEME_COLORS.dark.purple),
+            getChartColor(THEME_COLORS.light.orange, THEME_COLORS.dark.orange),
+        ];
         const datasets = ageGroups.map((age, idx) => ({
             label: t(age),
             data: products.map(product =>
                 data.filter(d => t(d.productName) === product && d.ageGroup === age).reduce((sum, d) => sum + (d.userCount || 0), 0)
             ),
             backgroundColor: colorArr[idx % colorArr.length],
-            stack: "Stack 0"
+            stack: "Stack 0",
         }));
         myDemographicsChart.data.labels = products;
         myDemographicsChart.data.datasets = datasets;
@@ -217,26 +306,49 @@ function drawTopInteractionChart(data) {
     if (myTopInteractionChart) myTopInteractionChart.destroy();
     const ctx = document.getElementById("topInteractionChart")?.getContext("2d");
     if (!ctx) return;
+    ctx.canvas.style.backgroundColor = getChartColor(THEME_COLORS.light.canvasBackground, THEME_COLORS.dark.canvasBackground);
     myTopInteractionChart = new Chart(ctx, {
         type: "bar",
         data: {
             labels: (data || []).map(item => t(item.productName || "Unknown")),
-            datasets: [{ label: t("Interaction Count"), data: (data || []).map(item => item.interactionCount || 0), backgroundColor: "rgba(54, 162, 235, 0.7)" }]
+            datasets: [{
+                label: t("Interaction Count"),
+                data: (data || []).map(item => item.interactionCount || 0),
+                backgroundColor: getChartColor(THEME_COLORS.light.blue, THEME_COLORS.dark.blue),
+            }],
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { position: "top" }, title: { display: true, text: t("Top Interacted OCOP Products") } },
+            plugins: {
+                legend: { position: "top", labels: { color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) } },
+                title: { display: true, text: t("Top Interacted OCOP Products"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                tooltip: {
+                    backgroundColor: getChartColor(THEME_COLORS.light.tooltipBg, THEME_COLORS.dark.tooltipBg),
+                    titleColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
+                    bodyColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
+                },
+            },
             scales: {
-                y: { beginAtZero: true, title: { display: true, text: t("Interaction Count") }, ticks: {
-                stepSize: 1,
-                callback: function (value) {
-                    return Number.isInteger(value) ? value : null;
-                }
-            } },
-                x: { title: { display: true, text: t("Product Name") }, ticks: { autoSkip: false, maxRotation: 60, minRotation: 30 } }
-            }
-        }
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: t("Interaction Count"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: {
+                        stepSize: 1,
+                        color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel),
+                        callback: function (value) {
+                            return Number.isInteger(value) ? value : null;
+                        },
+                    },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
+                },
+                x: {
+                    title: { display: true, text: t("Product Name"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: { autoSkip: false, maxRotation: 60, minRotation: 30, color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
+                },
+            },
+        },
     });
 }
 
@@ -245,26 +357,49 @@ function drawTopFavoriteChart(data) {
     if (myTopFavoriteChart) myTopFavoriteChart.destroy();
     const ctx = document.getElementById("topFavoriteChart")?.getContext("2d");
     if (!ctx) return;
+    ctx.canvas.style.backgroundColor = getChartColor(THEME_COLORS.light.canvasBackground, THEME_COLORS.dark.canvasBackground);
     myTopFavoriteChart = new Chart(ctx, {
         type: "bar",
         data: {
             labels: (data || []).map(item => t(item.productName || "Unknown")),
-            datasets: [{ label: t("Favorite Count"), data: (data || []).map(item => item.favoriteCount || 0), backgroundColor: "rgba(255, 206, 86, 0.7)" }]
+            datasets: [{
+                label: t("Favorite Count"),
+                data: (data || []).map(item => item.favoriteCount || 0),
+                backgroundColor: getChartColor(THEME_COLORS.light.yellow, THEME_COLORS.dark.yellow),
+            }],
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { position: "top" }, title: { display: true, text: t("Top Favorited OCOP Products") } },
+            plugins: {
+                legend: { position: "top", labels: { color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) } },
+                title: { display: true, text: t("Top Favorited OCOP Products"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                tooltip: {
+                    backgroundColor: getChartColor(THEME_COLORS.light.tooltipBg, THEME_COLORS.dark.tooltipBg),
+                    titleColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
+                    bodyColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
+                },
+            },
             scales: {
-                y: { beginAtZero: true, title: { display: true, text: t("Favorite Count") }, ticks: {
-                stepSize: 1,
-                callback: function (value) {
-                    return Number.isInteger(value) ? value : null;
-                }
-            } },
-                x: { title: { display: true, text: t("Product Name") }, ticks: { autoSkip: false, maxRotation: 60, minRotation: 30 } }
-            }
-        }
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: t("Favorite Count"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: {
+                        stepSize: 1,
+                        color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel),
+                        callback: function (value) {
+                            return Number.isInteger(value) ? value : null;
+                        },
+                    },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
+                },
+                x: {
+                    title: { display: true, text: t("Product Name"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: { autoSkip: false, maxRotation: 60, minRotation: 30, color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
+                },
+            },
+        },
     });
 }
 
@@ -273,57 +408,85 @@ function drawCompareProductsChart(data) {
     if (myCompareProductsChart) myCompareProductsChart.destroy();
     const ctx = document.getElementById("compareProductsChart")?.getContext("2d");
     if (!ctx) return;
+    ctx.canvas.style.backgroundColor = getChartColor(THEME_COLORS.light.canvasBackground, THEME_COLORS.dark.canvasBackground);
     myCompareProductsChart = new Chart(ctx, {
         type: "bar",
         data: {
             labels: (data || []).map(item => t(item.productName || "Unknown")),
             datasets: [
-                { label: t("View Count"), data: (data || []).map(item => item.viewCount || 0), backgroundColor: "rgba(75, 192, 192, 0.2)", borderColor: "rgba(75, 192, 192, 1)", borderWidth: 1 },
-                { label: t("Interaction Count"), data: (data || []).map(item => item.interactionCount || 0), backgroundColor: "rgba(153, 102, 255, 0.2)", borderColor: "rgba(153, 102, 255, 1)", borderWidth: 1 },
-                { label: t("Favorite Count"), data: (data || []).map(item => item.favoriteCount || 0), backgroundColor: "rgba(255, 159, 64, 0.2)", borderColor: "rgba(255, 159, 64, 1)", borderWidth: 1 }
-            ]
+                {
+                    label: t("View Count"),
+                    data: (data || []).map(item => item.viewCount || 0),
+                    backgroundColor: getChartColor(THEME_COLORS.light.cyan, THEME_COLORS.dark.cyan),
+                    borderColor: getChartColor(THEME_COLORS.light.cyan, THEME_COLORS.dark.cyan).replace("0.7", "1"),
+                    borderWidth: 1,
+                },
+                {
+                    label: t("Interaction Count"),
+                    data: (data || []).map(item => item.interactionCount || 0),
+                    backgroundColor: getChartColor(THEME_COLORS.light.purple, THEME_COLORS.dark.purple),
+                    borderColor: getChartColor(THEME_COLORS.light.purple, THEME_COLORS.dark.purple).replace("0.7", "1"),
+                    borderWidth: 1,
+                },
+                {
+                    label: t("Favorite Count"),
+                    data: (data || []).map(item => item.favoriteCount || 0),
+                    backgroundColor: getChartColor(THEME_COLORS.light.orange, THEME_COLORS.dark.orange),
+                    borderColor: getChartColor(THEME_COLORS.light.orange, THEME_COLORS.dark.orange).replace("0.7", "1"),
+                    borderWidth: 1,
+                },
+            ],
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { position: "top" }, title: { display: true, text: t("OCOP Product Comparison") } },
+            plugins: {
+                legend: { position: "top", labels: { color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) } },
+                title: { display: true, text: t("OCOP Product Comparison"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                tooltip: {
+                    backgroundColor: getChartColor(THEME_COLORS.light.tooltipBg, THEME_COLORS.dark.tooltipBg),
+                    titleColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
+                    bodyColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
+                },
+            },
             scales: {
-                y: { beginAtZero: true, title: { display: true, text: t("Count") },
-            ticks: {
-                stepSize: 1,
-                callback: function (value) {
-                    return Number.isInteger(value) ? value : null;
-                }
-            } },
-                x: { title: { display: true, text: t("Product Name") }, ticks: { autoSkip: false, maxRotation: 90, minRotation: 45 } }
-            }
-        }
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: t("Count"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: {
+                        stepSize: 1,
+                        color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel),
+                        callback: function (value) {
+                            return Number.isInteger(value) ? value : null;
+                        },
+                    },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
+                },
+                x: {
+                    title: { display: true, text: t("Product Name"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    ticks: { autoSkip: false, maxRotation: 90, minRotation: 45, color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                    grid: { color: getChartColor(THEME_COLORS.light.grid, THEME_COLORS.dark.grid) },
+                },
+            },
+        },
     });
 }
 
-
-// --- CÁC HÀM REFRESH ĐÃ ĐƯỢC CẬP NHẬT TOÀN BỘ ---
-
+// Refresh functions
 async function refreshAnalyticsChart(showAlert = true) {
     const selectedValue = document.getElementById("analyticsTimeRange")?.value || "month";
     const timeRangeForApi = getApiTimeRange(selectedValue);
-
     let startDate = document.getElementById("analyticsStartDate")?.value || "";
     let endDate = document.getElementById("analyticsEndDate")?.value || "";
-    
-    // *** FIX 3: SỬA LỖI LỌC THEO "DAY" - Tự động điền ngày nếu lọc theo 'ngày' ***
     if (timeRangeForApi === 'day' && !startDate && !endDate) {
         const today = new Date().toISOString().split('T')[0];
         startDate = today;
         endDate = today;
     }
-
     if (!validateFilterInputs(startDate, endDate)) return;
-
     let url = `${ocopApi}analytics?timeRange=${encodeURIComponent(timeRangeForApi)}`;
     if (startDate) url += `&startDate=${encodeURIComponent(startDate)}`;
     if (endDate) url += `&endDate=${encodeURIComponent(endDate)}`;
-
     try {
         const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
@@ -340,22 +503,17 @@ async function refreshAnalyticsChart(showAlert = true) {
 async function refreshDemographicsChart(showAlert = true) {
     const selectedValue = document.getElementById("demographicsTimeRange")?.value || "month";
     const timeRangeForApi = getApiTimeRange(selectedValue);
-
     let startDate = document.getElementById("demographicsStartDate")?.value || "";
     let endDate = document.getElementById("demographicsEndDate")?.value || "";
-
     if (timeRangeForApi === 'day' && !startDate && !endDate) {
         const today = new Date().toISOString().split('T')[0];
         startDate = today;
         endDate = today;
     }
-
     if (!validateFilterInputs(startDate, endDate)) return;
-
     let url = `${ocopApi}analytics-userdemographics?timeRange=${encodeURIComponent(timeRangeForApi)}`;
     if (startDate) url += `&startDate=${encodeURIComponent(startDate)}`;
     if (endDate) url += `&endDate=${encodeURIComponent(endDate)}`;
-
     try {
         const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
@@ -372,22 +530,17 @@ async function refreshDemographicsChart(showAlert = true) {
 async function refreshTopInteractionChart(showAlert = true) {
     const selectedValue = document.getElementById("topInteractionTimeRange")?.value || "month";
     const timeRangeForApi = getApiTimeRange(selectedValue);
-
     let startDate = document.getElementById("topInteractionStartDate")?.value || "";
     let endDate = document.getElementById("topInteractionEndDate")?.value || "";
-    
     if (timeRangeForApi === 'day' && !startDate && !endDate) {
         const today = new Date().toISOString().split('T')[0];
         startDate = today;
         endDate = today;
     }
-
     if (!validateFilterInputs(startDate, endDate)) return;
-
     let url = `${ocopApi}analytics-getTopProductsByInteractions?top=5&timeRange=${encodeURIComponent(timeRangeForApi)}`;
     if (startDate) url += `&startDate=${encodeURIComponent(startDate)}`;
     if (endDate) url += `&endDate=${encodeURIComponent(endDate)}`;
-
     try {
         const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
@@ -404,22 +557,17 @@ async function refreshTopInteractionChart(showAlert = true) {
 async function refreshTopFavoriteChart(showAlert = true) {
     const selectedValue = document.getElementById("topFavoriteTimeRange")?.value || "month";
     const timeRangeForApi = getApiTimeRange(selectedValue);
-
     let startDate = document.getElementById("topFavoriteStartDate")?.value || "";
     let endDate = document.getElementById("topFavoriteEndDate")?.value || "";
-
     if (timeRangeForApi === 'day' && !startDate && !endDate) {
         const today = new Date().toISOString().split('T')[0];
         startDate = today;
         endDate = today;
     }
-    
     if (!validateFilterInputs(startDate, endDate)) return;
-
     let url = `${ocopApi}analytics-getTopProductsByFavorites?top=5&timeRange=${encodeURIComponent(timeRangeForApi)}`;
     if (startDate) url += `&startDate=${encodeURIComponent(startDate)}`;
     if (endDate) url += `&endDate=${encodeURIComponent(endDate)}`;
-
     try {
         const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
@@ -436,30 +584,24 @@ async function refreshTopFavoriteChart(showAlert = true) {
 async function refreshCompareProductsChart(productIds, showAlert = true) {
     const selectedValue = document.getElementById("compareTimeRange")?.value || "month";
     const timeRangeForApi = getApiTimeRange(selectedValue);
-
     let startDate = document.getElementById("compareStartDate")?.value || "";
     let endDate = document.getElementById("compareEndDate")?.value || "";
-
     if (timeRangeForApi === 'day' && !startDate && !endDate) {
         const today = new Date().toISOString().split('T')[0];
         startDate = today;
         endDate = today;
     }
-    
     if (!validateFilterInputs(startDate, endDate)) return;
-
     if (!productIds || productIds.length === 0) {
         drawCompareProductsChart([]);
         if (showAlert) showTimedAlert(t("Warning!"), t("Please select products to compare"), "warning", 1000);
         return;
     }
-
     let url = `${ocopApi}analytics-compareproducts?`;
     productIds.forEach((id) => (url += `productIds=${encodeURIComponent(id)}&`));
     url += `timeRange=${encodeURIComponent(timeRangeForApi)}`;
     if (startDate) url += `&startDate=${encodeURIComponent(startDate)}`;
     if (endDate) url += `&endDate=${encodeURIComponent(endDate)}`;
-
     try {
         const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
@@ -473,7 +615,6 @@ async function refreshCompareProductsChart(productIds, showAlert = true) {
     }
 }
 
-
 // Initialize OCOP Dashboard
 function initializeOcopDashboard() {
     console.log("Initializing OCOP Dashboard");
@@ -481,18 +622,14 @@ function initializeOcopDashboard() {
     refreshDemographicsChart(false);
     refreshTopInteractionChart(false);
     refreshTopFavoriteChart(false);
-    drawCompareProductsChart([]); // Initially empty comparison chart
+    drawCompareProductsChart([]);
 }
 
 // Consolidated DOMContentLoaded event listener
 document.addEventListener("DOMContentLoaded", function () {
-    // Initialize dashboard
     initializeOcopDashboard();
 
-    // --- Analytics Chart ---
-    document.getElementById("analyticsRefreshChart")?.addEventListener("click", () => {
-        refreshAnalyticsChart(true);
-    });
+    document.getElementById("analyticsRefreshChart")?.addEventListener("click", () => refreshAnalyticsChart(true));
     document.getElementById("analyticsResetFilter")?.addEventListener("click", () => {
         document.getElementById("analyticsTimeRange").value = "month";
         document.getElementById("analyticsStartDate").value = "";
@@ -504,10 +641,7 @@ document.addEventListener("DOMContentLoaded", function () {
         downloadChart(myAnalyticsChart, "analytics-chart.png", type);
     });
 
-    // --- Demographics Chart ---
-    document.getElementById("demographicsRefreshChart")?.addEventListener("click", () => {
-        refreshDemographicsChart(true);
-    });
+    document.getElementById("demographicsRefreshChart")?.addEventListener("click", () => refreshDemographicsChart(true));
     document.getElementById("demographicsResetFilter")?.addEventListener("click", () => {
         document.getElementById("demographicsTimeRange").value = "month";
         document.getElementById("demographicsStartDate").value = "";
@@ -519,10 +653,7 @@ document.addEventListener("DOMContentLoaded", function () {
         downloadChart(myDemographicsChart, "demographics-chart.png", type);
     });
 
-    // --- Top Interaction Chart ---
-    document.getElementById("topInteractionRefresh")?.addEventListener("click", () => {
-        refreshTopInteractionChart(true);
-    });
+    document.getElementById("topInteractionRefresh")?.addEventListener("click", () => refreshTopInteractionChart(true));
     document.getElementById("topInteractionReset")?.addEventListener("click", () => {
         document.getElementById("topInteractionTimeRange").value = "month";
         document.getElementById("topInteractionStartDate").value = "";
@@ -534,10 +665,7 @@ document.addEventListener("DOMContentLoaded", function () {
         downloadChart(myTopInteractionChart, "top-interactions-chart.png", type);
     });
 
-    // --- Top Favorite Chart ---
-    document.getElementById("topFavoriteRefresh")?.addEventListener("click", () => {
-        refreshTopFavoriteChart(true);
-    });
+    document.getElementById("topFavoriteRefresh")?.addEventListener("click", () => refreshTopFavoriteChart(true));
     document.getElementById("topFavoriteReset")?.addEventListener("click", () => {
         document.getElementById("topFavoriteTimeRange").value = "month";
         document.getElementById("topFavoriteStartDate").value = "";
@@ -549,7 +677,6 @@ document.addEventListener("DOMContentLoaded", function () {
         downloadChart(myTopFavoriteChart, "top-favorites-chart.png", type);
     });
 
-    // --- Compare Products Chart ---
     document.getElementById("compareProductsBtn")?.addEventListener("click", () => {
         const select = document.getElementById("compareProductsSelect");
         const productIds = Array.from(select.selectedOptions).map(option => option.value);
@@ -557,18 +684,17 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     document.getElementById("compareProductsReset")?.addEventListener("click", () => {
         const select = document.getElementById("compareProductsSelect");
-        select.selectedIndex = -1; // Clear all selections
+        select.selectedIndex = -1;
         document.getElementById("compareTimeRange").value = "month";
         document.getElementById("compareStartDate").value = "";
         document.getElementById("compareEndDate").value = "";
-        drawCompareProductsChart([]); // Reset to empty chart
+        drawCompareProductsChart([]);
     });
     document.getElementById("compareProductsDownloadChartBtn")?.addEventListener("click", () => {
         const type = document.getElementById("compareProductsDownloadType").value;
         downloadChart(myCompareProductsChart, "compare-products-chart.png", type);
     });
 
-    // --- Language Change Event ---
     window.addEventListener('languageChanged', () => {
         console.log("Language changed event detected, refreshing charts...");
         refreshAnalyticsChart(false);
@@ -583,33 +709,36 @@ document.addEventListener("DOMContentLoaded", function () {
             drawCompareProductsChart([]);
         }
     });
+
+    window.addEventListener('themeChanged', () => {
+        console.log("Theme changed event detected, refreshing charts...");
+        refreshAnalyticsChart(false);
+        refreshDemographicsChart(false);
+        refreshTopInteractionChart(false);
+        refreshTopFavoriteChart(false);
+        const select = document.getElementById("compareProductsSelect");
+        const productIds = Array.from(select.selectedOptions).map(option => option.value);
+        if (productIds.length > 0) {
+            refreshCompareProductsChart(productIds, false);
+        } else {
+            drawCompareProductsChart([]);
+        }
+    });
 });
 
-/************************************************************
- *  SignalR Real-time Integration for OCOP Analytics
- ************************************************************/
-
+// SignalR Real-time Integration for OCOP Analytics
 (function () {
-    // Kiểm tra xem thư viện SignalR đã tồn tại chưa
     if (typeof signalR === 'undefined') {
         console.error("SignalR client library not found. Real-time updates will be disabled for OCOP page.");
         return;
     }
 
-    /**
-     * Hàm này sẽ làm mới tất cả các biểu đồ trên trang OCOP.
-     * Nó không hiển thị thông báo "Success" để tránh làm phiền người dùng khi cập nhật tự động.
-     */
     function refreshAllOcopChartsForRealtime() {
         console.log("[Real-time] Refreshing all OCOP charts...");
-
-        // Gọi các hàm refresh bạn đã viết, nhưng với showAlert = false
         refreshAnalyticsChart(false);
         refreshDemographicsChart(false);
         refreshTopInteractionChart(false);
         refreshTopFavoriteChart(false);
-
-        // Đối với biểu đồ so sánh, chỉ refresh nếu người dùng đã chọn sản phẩm
         const compareSelect = document.getElementById("compareProductsSelect");
         if (compareSelect && compareSelect.selectedOptions.length > 0) {
             const productIds = Array.from(compareSelect.selectedOptions).map(option => option.value);
@@ -617,21 +746,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Gán hàm vào biến toàn cục để có thể gọi từ nơi khác nếu cần
     window.refreshAllOcopCharts = refreshAllOcopChartsForRealtime;
 
-
-    // --- LOGIC KẾT NỐI VÀ XỬ LÝ SIGNALR ---
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("https://localhost:7162/dashboardHub") // Cùng một Hub với trang Dashboard
+        .withUrl("https://localhost:7162/dashboardHub")
         .withAutomaticReconnect()
         .build();
 
-    // Định nghĩa hành động khi nhận được tín hiệu "ChartAnalytics"
     connection.on("ChartAnalytics", function () {
         console.log("[SignalR] Received 'ChartAnalytics' signal on OCOP page. Updating OCOP charts...");
-
-        // Gọi hàm tổng để cập nhật mọi thứ trên trang này
         if (typeof window.refreshAllOcopCharts === 'function') {
             window.refreshAllOcopCharts();
         } else {
@@ -639,14 +762,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Hàm để khởi động kết nối
     async function startSignalRConnection() {
         try {
             await connection.start();
             console.log("[SignalR] OCOP page connected successfully.");
-
             const userRole = document.body.dataset.userRole?.toLowerCase();
-            
             if (userRole === "super-admin" || userRole === "admin") {
                 connection.invoke("JoinAdminGroup", userRole).catch(function (err) {
                     console.error("[SignalR] OCOP page failed to join group:", err.toString());
@@ -657,7 +777,5 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Khởi động kết nối SignalR
     startSignalRConnection();
-
 })();
