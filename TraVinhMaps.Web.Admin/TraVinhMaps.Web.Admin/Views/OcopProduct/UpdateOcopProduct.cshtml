@@ -59,10 +59,10 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row"> 
                                     <div class="col-sm-6">
                                         <div class="mb-3">
-                                            <label>Giá tham khảo</label>
+                                            <label>Reference Price</label>
                                             <div class="input-group">
                                                 <input asp-for="ProductPrice" class="form-control" type="text"
                                                     placeholder="Price of product">
@@ -75,7 +75,7 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div class="mb-3">
-                                            <label>Loại Ocop</label>
+                                            <label>OCOP Type</label>
                                             <select asp-for="OcopTypeId" class="form-select">
                                                 <option value="">-- Select Ocop Type --</option>
                                                 @foreach (var type in (IEnumerable<TraVinhMaps.Web.Admin.Models.OcopType.OcopTypeResponse>)ViewBag.OcopTypes)
@@ -90,7 +90,7 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="mb-3">
-                                            <label>Công ty</label>
+                                            <label>Company</label>
                                             <select asp-for="CompanyId" class="form-select">
                                                 <option value="">-- Select Ocop Type --</option>
                                                 @foreach (var company in (IEnumerable<TraVinhMaps.Web.Admin.Models.Company.CompanyResponse>)ViewBag.Companies )
@@ -107,19 +107,19 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div class="mb-3">
-                                            <label>Điểm Ocop</label>
+                                            <label>OCOP Point</label>
                                             <select asp-for="OcopPoint" class="form-select">
-                                                <option value="1">1 sao</option>
-                                                <option value="2">2 sao</option>
-                                                <option value="3">3 sao</option>
-                                                <option value="4">4 sao</option>
-                                                <option value="5">5 sao</option>
+                                                <option value="1">1 star</option>
+                                                <option value="2">2 star</option>
+                                                <option value="3">3 star</option>
+                                                <option value="4">4 star</option>
+                                                <option value="5">5 star</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="mb-3">
-                                            <label>Năm công nhận Ocop</label>
+                                            <label>OCOP Certification Year</label>
                                             <select asp-for="OcopYearRelease" class="form-control" data-language="en">
                                                 @for(int year = DateTime.Now.Year; year >= 2018; year--){
                                                     <option value="@year">@year</option>
@@ -132,7 +132,7 @@
                                 <div class="row">
                                     <div class="col-sm-3" style="display: none;">
                                         <div class="mb-3">
-                                            <label>Ocop Product Tag</label>
+                                            <label>OCOP Product Tag</label>
                                             <select asp-for="TagId" class="form-select">
                                                 @foreach (var tag in (IEnumerable<TraVinhMaps.Web.Admin.Models.Tags.TagsResponse>)ViewBag.Tags)
                                                 {
@@ -149,7 +149,6 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="text-end">
-                                            <button type="button" id="submitBtn" class="btn btn-success me-3">Update Product</button>
                                             <a asp-action="DetailOcopProduct" asp-route-id = "@Model.Id"
                                                 class="btn btn-danger">Cancel</a>
                                             <button type="submit" class="btn btn-success me-3">Save Changes</button>

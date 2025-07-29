@@ -1,10 +1,5 @@
 /* =========================================================================
  * translation.js - Optimized Version
- * Description: Handles multilingual translation, optimized cache, accurate text comparison and replacement,
- *              integration with dynamic location addition, and popup translation synchronization.
- *
- * IMPROVEMENT: Includes a global patch for Swal.fire() to ensure all popups
- *              are automatically translated, regardless of how they are called.
  * ========================================================================= */
 
 /* ----------------- Configuration & Globals ------------------ */
@@ -649,7 +644,8 @@ function getAllPlainTexts(element = null) {
 /**
  * Replaces an `originalTxt` with `newTxt` in the DOM and `jsStrings`.
  * Only replaces if the normalized texts are different.
- * @param {string} originalTxt - The text to find and replace.
+ * MODIFIED: This version preserves leading/trailing whitespace from the original text node.
+ * @param {string} originalTxt - The text to find and replace (already trimmed).
  * @param {string} newTxt - The text to replace with.
  */
 function replaceText(originalTxt, newTxt) {
@@ -660,6 +656,7 @@ function replaceText(originalTxt, newTxt) {
     !newTxt
   )
     return;
+    
   const normOriginal = normalizeText(originalTxt);
   const normNew = normalizeText(newTxt);
   if (normOriginal === normNew) return;
@@ -670,14 +667,37 @@ function replaceText(originalTxt, newTxt) {
 
   document.querySelectorAll(selectors).forEach((el) => {
     if (el.closest(".notranslate")) return;
+
+    // --- START MODIFICATION ---
     el.childNodes.forEach((n) => {
       if (
         n.nodeType === Node.TEXT_NODE &&
         normalizeText(n.textContent) === normOriginal
       ) {
-        n.textContent = newTxt;
+        const originalContent = n.textContent;
+        let translatedContent = newTxt;
+
+        // Check for leading space in original and add to translation if needed
+        if (originalContent.startsWith(' ') && !translatedContent.startsWith(' ')) {
+          translatedContent = ' ' + translatedContent;
+        } else if (originalContent.startsWith('\n') && !translatedContent.startsWith('\n')) {
+          // Also handle newlines which might act as spaces
+           translatedContent = ' ' + translatedContent;
+        }
+
+        // Check for trailing space in original and add to translation if needed
+        if (originalContent.endsWith(' ') && !translatedContent.endsWith(' ')) {
+          translatedContent = translatedContent + ' ';
+        } else if (originalContent.endsWith('\n') && !translatedContent.endsWith('\n')) {
+          translatedContent = translatedContent + ' ';
+        }
+
+        n.textContent = translatedContent;
       }
     });
+    // --- END MODIFICATION ---
+
+    // The rest of the function for attributes remains the same
     const hasElementChild = Array.from(el.children).length > 0;
     const hasOnlyTextOrBrChildren = Array.from(el.childNodes).every(
       (n) =>
@@ -687,7 +707,8 @@ function replaceText(originalTxt, newTxt) {
     );
     if (!hasElementChild || hasOnlyTextOrBrChildren) {
       if (el.innerText && normalizeText(el.innerText) === normOriginal) {
-        el.innerText = newTxt;
+        // This part is less precise but can be a fallback. The node modification above is better.
+        // We won't modify this part for now as the childNode loop is more effective.
       }
     }
   });

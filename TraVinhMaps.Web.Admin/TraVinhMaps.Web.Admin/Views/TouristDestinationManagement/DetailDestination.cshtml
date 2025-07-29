@@ -519,38 +519,27 @@
                                 </div>
                             </div>
 
-                            <div class="styled-info-box">
-                                <div class="info-label">Ticket Price:</div>
-                                <div class="info-value">
-                                    <i class="fa fa-ticket"></i>
-                                
-                                    <span>@Model.Ticket</span>
-                                    <span>đ</span>
+                            @if (!string.IsNullOrWhiteSpace(Model.Ticket) && Model.Ticket != "0")
+                            {
+                                <div class="styled-info-box">
+                                    <div class="info-label">Ticket Price:</div>
+                                    <div class="info-value">
+                                        <i class="fa fa-ticket"></i>
+                                        <span>@Model.Ticket</span>
+                                        @if (!Model.Ticket.Trim().ToLower().Equals("free"))
+                                        {
+                                            <span>đ</span>
+                                        }
+                                    </div>
                                 </div>
-                            </div>
-                            
+                            }
+
+
                             <div class="mt-auto pt-4">
                                 <div class="m-t-15 btn-showcase">
-                                    <a class="btn btn-success" asp-action="EditDestination" asp-route-id="@Model.Id"><i
-                                            class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit Destination</a>
-                                    @if (Model.status)
-                                    {
-                                        <form asp-action="DeleteDestinationByForm" asp-route-id="@Model.Id" method="post"
-                                            class="d-inline">
-                                            <button type="submit" class="btn btn-secondary">
-                                                <i class="fa fa-trash" aria-hidden="true"></i>&nbsp; Delete Destination
-                                            </button>
-                                        </form>
-                                    }
-                                    else
-                                    {
-                                        <form asp-action="RestoreDestinationByForm" asp-route-id="@Model.Id" method="post"
-                                            class="d-inline">
-                                            <button type="submit" class="btn btn-success">
-                                                <i class="fa fa-trash" aria-hidden="true"></i>&nbsp; Restore Destination
-                                            </button>
-                                        </form>
-                                    }
+                                    <a class="btn btn-edit" asp-action="EditDestination" asp-route-id="@Model.Id"><i
+                                            class="fa fa-pencil" aria-hidden="true"></i>Edit Destination</a>
+                                    <a class="btn btn-back" action="Index">Back</a>
                                 </div>
                             </div>
                         </div>
@@ -601,7 +590,7 @@
                             <div class="contact-item">
                                 <div class="contact-icon phone"><i class="fa fa-phone"></i></div>
                                 <div class="contact-details">
-                                    <div class="label">Điện thoại</div>
+                                    <div class="label">Phone number</div>
                                     <div class="value">@(Model.Contact?.Phone ?? "")</div>
                                 </div>
                             </div>
@@ -624,7 +613,7 @@
                 </div>
             </div>
         </div>
-        <div class="card">
+        <div class="card mt-3">
             <div class="row product-page-main">
                 <div class="col-sm-12">
                     <ul class="nav nav-tabs border-tab nav-primary" id="top-tab" role="tablist">
