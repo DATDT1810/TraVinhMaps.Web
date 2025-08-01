@@ -136,35 +136,48 @@
                             <form asp-action="CreateDestination" method="post" enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-lg-7">
-                                        <div id="map" class="here-map-container"
-                                             data-latitude="9.9513"
-                                             data-longitude="106.3346"
-                                             style="width: 100%; height: 510px; background-color: #f0f0f0; border-radius: 10px; position: relative;">
+                                        <div id="map" class="here-map-container" data-latitude="9.9513"
+                                            data-longitude="106.3346"
+                                            style="width: 100%; height: 510px; background-color: #f0f0f0; border-radius: 10px; position: relative;">
                                         </div>
                                         <br />
                                         <div class="mb-3">
                                             <label>Address Destination</label>
                                             <div style="position: relative;">
                                                 <div class="input-group">
-                                                    <textarea asp-for="Address" class="form-control" placeholder="Address of destination" autocomplete="off" rows="2"></textarea>
-                                                    <button class="btn btn-outline-secondary" type="button" id="searchAddressBtn"><i class="fa fa-search"></i> Search</button>
+                                                    <textarea asp-for="Address" class="form-control"
+                                                        placeholder="Address of destination" autocomplete="off"
+                                                        rows="2"></textarea>
+                                                    <button class="btn btn-outline-secondary" type="button"
+                                                        id="searchAddressBtn"><i class="fa fa-search"></i>
+                                                        Search</button>
                                                 </div>
-                                                <div id="addressSuggestions" class="list-group" style="position: absolute; z-index: 1056; width: 100%; max-height: 220px; overflow-y: auto;"></div>
+                                                <div id="addressSuggestions" class="list-group"
+                                                    style="position: absolute; z-index: 1056; width: 100%; max-height: 220px; overflow-y: auto;">
+                                                </div>
                                             </div>
                                             <span asp-validation-for="Address" class="text-danger"></span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Type Location</label>
+                                            <input class="form-control" type="text" value="Point" readonly>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label>Latitude</label>
-                                                    <input asp-for="latitude" id="latitude" class="form-control" type="number" step="any" placeholder="Latitude of destination" data-language="en">
+                                                    <input asp-for="latitude" id="latitude" class="form-control"
+                                                        type="number" step="any" placeholder="Latitude of destination"
+                                                        data-language="en">
                                                     <span asp-validation-for="latitude" class="text-danger"></span>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label>Longitude</label>
-                                                    <input asp-for="longitude" id="longitude" class="form-control" type="number" step="any" placeholder="Longitude of destination" data-language="en">
+                                                    <input asp-for="longitude" id="longitude" class="form-control"
+                                                        type="number" step="any" placeholder="Longitude of destination"
+                                                        data-language="en">
                                                     <span asp-validation-for="longitude" class="text-danger"></span>
                                                 </div>
                                             </div>
@@ -179,7 +192,8 @@
                                     <div class="col-lg-5">
                                         <div class="mb-3">
                                             <label>Destination Title</label>
-                                            <input asp-for="Name" class="form-control" type="text" placeholder="Destination title">
+                                            <input asp-for="Name" class="form-control" type="text"
+                                                placeholder="Destination title">
                                             <span asp-validation-for="Name" class="text-danger"></span>
                                         </div>
                                         <div class="row">
@@ -187,8 +201,15 @@
                                                 <div class="mb-3">
                                                     <label>Capacity</label>
                                                     <select asp-for="Capacity" class="form-select">
-                                                        @for (int i = 10; i < 100; i += 10) { <option value="@i people">@i people</option> }
-                                                        @for (int i = 100; i <= 1000; i += 100) { <option value="@i people">@i people</option> }
+                                                        @for (int i = 10; i < 100; i += 10)
+                                                        {
+                                                            <option value="@i people">
+                                                                @i people</option>
+                                                        }
+                                                        @for (int i = 100; i <= 1000; i += 100)
+                                                        {
+                                                            <option value="@i people">@i people</option>
+                                                        }
                                                         <option value="Over 1000 people">Over 1000 people</option>
                                                     </select>
                                                     <span asp-validation-for="Capacity" class="text-danger"></span>
@@ -197,7 +218,9 @@
                                             <div class="col-sm-6">
                                                 <div class="mb-3">
                                                     <label>Destination Type</label>
-                                                    <select asp-for="DestinationTypeId" class="form-select text-truncate" asp-items="ViewBag.DestinationTypes"></select>
+                                                    <select asp-for="DestinationTypeId"
+                                                        class="form-select text-truncate"
+                                                        asp-items="ViewBag.DestinationTypes"></select>
                                                 </div>
                                             </div>
                                         </div>
@@ -205,12 +228,15 @@
                                             <div class="col-sm-6">
                                                 <div class="mb-3">
                                                     <label>Opent Time</label>
-                                                    <select asp-for="OpeningHours.OpenTime" id="openTime" class="form-select">
-                                                        @for (int i = 0; i < 24; i++) {
+                                                    <select asp-for="OpeningHours.OpenTime" id="openTime"
+                                                        class="form-select">
+                                                        @for (int i = 0; i < 24; i++)
+                                                        {
                                                             var ampm = i >= 12 ? "PM" : "AM";
                                                             var hour12 = i % 12;
                                                             if (hour12 == 0) hour12 = 12;
-                                                            <option value="@($"{hour12} {ampm}")">@($"{hour12} {ampm}")</option>
+                                                            <option value="@($"{hour12} {ampm}")">@($"{hour12} {ampm}")
+                                                            </option>
                                                         }
                                                     </select>
                                                 </div>
@@ -218,12 +244,15 @@
                                             <div class="col-sm-6">
                                                 <div class="mb-3">
                                                     <label>Close Time</label>
-                                                    <select asp-for="OpeningHours.CloseTime" id="closeTime" class="form-select">
-                                                        @for (int i = 0; i < 24; i++) {
+                                                    <select asp-for="OpeningHours.CloseTime" id="closeTime"
+                                                        class="form-select">
+                                                        @for (int i = 0; i < 24; i++)
+                                                        {
                                                             var ampm = i >= 12 ? "PM" : "AM";
                                                             var hour12 = i % 12;
                                                             if (hour12 == 0) hour12 = 12;
-                                                            <option value="@($"{hour12} {ampm}")">@($"{hour12} {ampm}")</option>
+                                                            <option value="@($"{hour12} {ampm}")">@($"{hour12} {ampm}")
+                                                            </option>
                                                         }
                                                     </select>
                                                     <span id="timeValidationError" class="text-danger d-block"></span>
@@ -252,29 +281,35 @@
                                         </div>
                                         <div class="mb-3">
                                             <label>Phone</label>
-                                            <input asp-for="Contact.Phone" class="form-control" type="tel" placeholder="Phone number">
+                                            <input asp-for="Contact.Phone" class="form-control" type="tel"
+                                                placeholder="Phone number">
                                             <span asp-validation-for="Contact.Phone" class="text-danger"></span>
                                         </div>
                                         <div class="mb-3">
                                             <label>Email</label>
-                                            <input asp-for="Contact.Email" class="form-control" type="email" placeholder="Mail address">
+                                            <input asp-for="Contact.Email" class="form-control" type="email"
+                                                placeholder="Mail address">
                                             <span asp-validation-for="Contact.Email" class="text-danger"></span>
                                         </div>
                                         <div class="mb-3">
                                             <label>Website</label>
-                                            <input asp-for="Contact.Website" class="form-control" type="text" placeholder="Website">
+                                            <input asp-for="Contact.Website" class="form-control" type="text"
+                                                placeholder="Website">
                                             <span asp-validation-for="Contact.Website" class="text-danger"></span>
                                         </div>
                                         <div class="mb-3">
-                                            <label>Description</label>
-                                            <textarea asp-for="Description" class="form-control wysiwyg-editor" placeholder="Description of destination" rows="10"></textarea>
-                                            <span asp-validation-for="Description" class="text-danger"></span>
-                                        </div>
-                                        <div class="mb-3">
                                             <label>History Story</label>
-                                            <textarea asp-for="HistoryStory.Content" class="form-control wysiwyg-editor" placeholder="History content of destination" rows="10"></textarea>
+                                            <textarea asp-for="HistoryStory.Content" id="historyEditor"
+                                                class="form-control" placeholder="History content of destination"
+                                                rows="10"></textarea>
                                             <span asp-validation-for="HistoryStory.Content" class="text-danger"></span>
                                         </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Description</label>
+                                        <textarea asp-for="Description" id="descriptionEditor" class="form-control"
+                                            placeholder="Description of destination" rows="10"></textarea>
+                                        <span asp-validation-for="Description" class="text-danger"></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -283,7 +318,8 @@
                                         <div class="item add-image-box" id="addImageBox">
                                             <div>
                                                 <div class="upload-placeholder">+</div>
-                                                <input asp-for="ImagesFile" hidden type="file" accept="image/*" multiple id="uploadImageInput" />
+                                                <input asp-for="ImagesFile" hidden type="file" accept="image/*" multiple
+                                                    id="uploadImageInput" />
                                             </div>
                                         </div>
                                     </div>
@@ -294,7 +330,8 @@
                                         <div class="item add-image-box" id="addImageHistoryBox">
                                             <div>
                                                 <div class="upload-placeholder">+</div>
-                                                <input asp-for="HistoryStory.ImagesFile" hidden type="file" accept="image/*" multiple id="uploadImageHistoryInput" />
+                                                <input asp-for="HistoryStory.ImagesFile" hidden type="file"
+                                                    accept="image/*" multiple id="uploadImageHistoryInput" />
                                             </div>
                                         </div>
                                     </div>
@@ -302,8 +339,9 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="text-end">
-                                            <a asp-action="Index" class="btn btn-danger">Cancel</a>
-                                            <button type="submit" class="btn btn-success me-3">Create Destination</button>
+                                            <a asp-action="Index" class="btn btn-cancel">Cancel</a>
+                                            <button type="submit" class="btn btn-success me-3">Create
+                                                Destination</button>
                                         </div>
                                     </div>
                                 </div>
@@ -324,7 +362,7 @@
 
     <!-- CKEditor 5 -->
     <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
-    
+
     <!-- HERE Maps API references -->
     <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
@@ -335,7 +373,7 @@
     <script>
         window.HERE_API_KEY = '@Configuration["HEREMAP_API_KEY"]';  
     </script>
-    
+
     <script src="~/assets/js/touristdestination/heremap-edit.js"></script>
     <script src="~/assets/js/touristdestination/heremaps-search.js"></script>
     <script src="~/assets/js/ckeditor5.js"></script>
@@ -378,7 +416,7 @@
                                 itemDiv.appendChild(img);
                                 col.appendChild(itemDiv);
                                 previewContainer.appendChild(col);
-};
+                            };
                             reader.readAsDataURL(file);
                         }
                     });
@@ -404,7 +442,7 @@
                 const closeHour = convertTo24Hour(closeTimeSelect.value);
                 if (openHour >= closeHour) {
                     timeValidationError.textContent = 'Close time must be later than open time.';
-                    closeTimeSelect.setCustomValidity('Invalid time range.'); 
+                    closeTimeSelect.setCustomValidity('Invalid time range.');
                 } else {
                     timeValidationError.textContent = '';
                     closeTimeSelect.setCustomValidity('');

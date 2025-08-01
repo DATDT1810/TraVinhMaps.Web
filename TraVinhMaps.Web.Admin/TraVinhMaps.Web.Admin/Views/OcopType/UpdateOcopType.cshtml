@@ -2,14 +2,14 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
 @model UpdateOcopTypeRequest;
 @{
-    ViewData["Title"] = "Edit Ocop Type";
+    ViewData["Title"] = "Edit OCOP Type";
 }
 <div class="page-body">
     <div class="container-fluid">
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
-                    <h4>Edit Ocop Type</h4>
+                    <h4>Edit OCOP Type</h4>
                     @if (TempData["ErrorMessage"] != null)
                     {
                         <div id="alert-message" class="alert alert-danger">
@@ -39,7 +39,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
-                                            <label>Ocop Type Name</label>
+                                            <label>OCOP Type Name</label>
                                             <input asp-for="OcopTypeName" class="form-control" type="text"
                                                 placeholder="Name of product" >
                                             <span asp-validation-for="OcopTypeName" class="text-danger"></span>
@@ -49,7 +49,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="text-end">
-                                            <a asp-controller="OcopType" asp-action="Index" class="btn btn-danger">Cancel</a>
+                                            <a asp-controller="OcopType" asp-action="Index" class="btn btn-cancel">Cancel</a>
                                             <button type="submit" class="btn btn-success me-3">Save Changes</button>
                                         </div>
                                     </div>

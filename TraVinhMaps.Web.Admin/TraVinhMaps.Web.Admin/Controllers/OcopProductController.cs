@@ -35,11 +35,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
         // GET: OcopProduct/Index
         public async Task<IActionResult> Index()
         {
-            ViewData["Title"] = "Ocop Product Management";
+            ViewData["Title"] = "OCOP Product Management";
             ViewData["Breadcrumb"] = new List<BreadcrumbItem>
             {
-                new BreadcrumbItem { Title = "Ocop Product Management", Url = Url.Action("Index", "OcopProduct")! },
-                new BreadcrumbItem { Title = "Ocop Product List" } // default URL for the current page
+                new BreadcrumbItem { Title = "OCOP Product Management", Url = Url.Action("Index", "OcopProduct")! },
+                new BreadcrumbItem { Title = "OCOP Product List" } // default URL for the current page
             };
             var listOcopProduct = await _ocopProductService.ListAllAsync();
             return View(listOcopProduct);
@@ -49,11 +49,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [HttpGet("Detail/{id}")]
         public async Task<IActionResult> DetailOcopProduct(string id, CancellationToken cancellationToken = default)
         {
-            ViewData["Title"] = "Ocop Product Management";
+            ViewData["Title"] = "OCOP Product Management";
             ViewData["Breadcrumb"] = new List<BreadcrumbItem>
             {
-                new BreadcrumbItem { Title = "Ocop Product Management", Url = Url.Action("Index", "OcopProduct")! },
-                new BreadcrumbItem { Title = "Ocop Product Details" } // default URL for the current page
+                new BreadcrumbItem { Title = "OCOP Product Management", Url = Url.Action("Index", "OcopProduct")! },
+                new BreadcrumbItem { Title = "OCOP Product Details" } // default URL for the current page
             };
             var ocopProduct = await _ocopProductService.GetByIdAsync(id);
             var sellingLinks = await _sellingLinkService.GetSellingLinkByOcopProductId(id);
@@ -81,8 +81,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     ViewBag.TagName = "Unknown";
                 }
             }
-            ViewData["Title"] = "Ocop Product Detail";
-            ViewData["Breadcrumb"] = new List<string> { "Ocop Product", "Ocop Detail" };
+            ViewData["Title"] = "OCOP Product Detail";
+            ViewData["Breadcrumb"] = new List<string> { "OCOP Product", "OCOP Detail" };
             return View(ocopProduct);
         }
 
@@ -90,11 +90,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [HttpGet("CreateOcopProduct")]
         public async Task<IActionResult> CreateOcopProduct()
         {
-            ViewData["Title"] = "Ocop Product Management";
+            ViewData["Title"] = "OCOP Product Management";
             ViewData["Breadcrumb"] = new List<BreadcrumbItem>
             {
-                new BreadcrumbItem { Title = "Ocop Product Management", Url = Url.Action("Index", "OcopProduct")! },
-                new BreadcrumbItem { Title = "Create Ocop Product" } // default URL for the current page
+                new BreadcrumbItem { Title = "OCOP Product Management", Url = Url.Action("Index", "OcopProduct")! },
+                new BreadcrumbItem { Title = "Create OCOP Product" } // default URL for the current page
             };
             await LoadViewBags();
             return View();
@@ -269,7 +269,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
 
                 if (result == null || result.Status == "error")
                 {
-                    TempData["ErrorMessage"] = "Failed to update ocop product: " + (result?.Message ?? "Unknown error.");
+                    TempData["ErrorMessage"] = "Failed to update OCOP product: " + (result?.Message ?? "Unknown error.");
                     await LoadViewBags();
                     return View("UpdateOcopProduct", updateOcopProductRequest);
                 }
@@ -293,7 +293,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             try
             {
                 await _ocopProductService.DeleteOcopProductAsync(id);
-                return Json(new { success = true, message = "Delete ocop product successfully" });
+                return Json(new { success = true, message = "Delete OCOP product successfully" });
             }
             catch (Exception ex)
             {

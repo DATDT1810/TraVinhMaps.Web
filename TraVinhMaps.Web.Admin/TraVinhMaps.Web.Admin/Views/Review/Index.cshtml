@@ -3,7 +3,7 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model IEnumerable<ReviewResponse>;
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Review Management";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -21,7 +21,7 @@
                                 <i class="fa fa-home" style="font-size: 20px;"></i>
                             </a>
                         </li>
-                        <li class="breadcrumb-item">Review</li>
+                        <li class="breadcrumb-item"><a asp-controller="Review" asp-action="Index">Review Management</a></li>
                         <li class="breadcrumb-item active">Review List</li>
                     </ol>
                 </div>
@@ -155,11 +155,11 @@
                                     <label for="destinationId" class="form-label">Destination</label>
                                     <select name="destinationId" id="destinationId" class="form-select">
                                         <option value="">All Destinations</option>
-                                        @{
+                                        @* @{
                                             var destinations = ViewBag.Destination as IEnumerable<TraVinhMaps.Web.Admin.Models.DestinationTypes.DestinationTypeResponse>;
                                             if (destinations == null || !destinations.Any())
                                             {
-                                                <option disabled>Không có dữ liệu destination</option>
+                                                <option disabled>No data available destination</option>
                                             }
                                             else
                                             {
@@ -170,7 +170,7 @@
                                                     </option>
                                                 }
                                             }
-                                        }
+                                        } *@
                                     </select>
                                 </div>
                                 <!-- Rating Filter -->
