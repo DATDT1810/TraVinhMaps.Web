@@ -34,7 +34,7 @@
                                 <div class="form theme-form">
                                     <div class="row">
                                         <div class="col">
-                                            <div class="mb-3">
+                                            <div class="mb-4">
                                                 <label asp-for="Title" class="control-label">Title</label>
                                                 <input asp-for="Title" class="form-control" placeholder="Title *"
                                                     required />
@@ -44,7 +44,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col">
-                                            <div class="mb-3">
+                                            <div class="mb-4">
                                                 <label asp-for="Content" class="control-label">Enter Content</label>
                                                 <textarea asp-for="Content" id="Description" class="form-control"
                                                     rows="7" required></textarea>
@@ -52,13 +52,12 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row" style="display: none">
                                         <div class="col">
-                                            <div class="mb-3">
+                                            <div class="mb-4">
                                                 <label asp-for="TagId" class="control-label">Tag</label>
                                                 <select asp-for="TagId" class="form-control" asp-items="ViewBag.Tags"
                                                     required>
-                                                    <option value="">-- Select a tag --</option>
                                                 </select>
                                                 <span asp-validation-for="TagId" class="text-danger"></span>
                                             </div>

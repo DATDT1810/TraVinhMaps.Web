@@ -1,10 +1,11 @@
 @using TraVinhMaps.Web.Admin.Models.EventAndFestivalFeature
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
-@model UpdateEventAndFestivalRequestViewModel;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model UpdateEventAndFestivalRequestViewModel
+@inject IConfiguration Configuration
 @{
-    ViewData["Title"] = "EditEventAndFestival";
+    ViewData["Title"] = "Edit Event And Festival";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 
 <style>
     .Delete-button-image {
@@ -27,9 +28,8 @@
     }
 
     .add-image-box {
-        margin-top: 10px;
-        width: 100%;
-        height: 80px;
+        width: 100px;
+        height: 100px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -38,6 +38,7 @@
         cursor: pointer;
         border-radius: 9px;
         background-color: #f8f9fa;
+        margin: 5px;
     }
 
     .upload-placeholder {
@@ -51,8 +52,55 @@
         cursor: pointer;
     }
 
-    .upload-placeholder:hover {
-        background-color: #e0e0e0;
+    .image-gallery-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+
+    .gallery-item {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        margin: 5px;
+    }
+
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .ck-powered-by,
+    .ck.ck-powered-by,
+    .ck-powered-by-balloon,
+    .ck-balloon-panel .ck-powered-by,
+    .ck-balloon-panel.ck-powered-by-balloon {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+    }
+
+    #searchAddressBtn {
+        background-color: #28a745;
+        color: white;
+        border-color: #28a745;
+    }
+
+    #searchAddressBtn:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+
+    .input-group:focus-within #searchAddressBtn {
+        z-index: 4;
+        border-color: #86b7fe;
+    }
+
+    /* CKEditor height fix */
+    .ck-editor__editable_inline {
+        min-height: 240px !important;
     }
 </style>
 
@@ -61,8 +109,7 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
-                    <h4>
-                        Event And Festival Create</h4>
+                    <h4>Edit Event And Festival</h4>
                     @if (ViewBag.error != null)
                     {
                         <span class="text-danger">@ViewBag.error</span>
@@ -70,10 +117,9 @@
                 </div>
                 <div class="col-6">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
-                                    style="font-size: 20px;"></i></a></li>
-                        <li class="breadcrumb-item"><a asp-action="Index">Management Destination</a></li>
-                        <li class="breadcrumb-item active">Destination Create form</li>
+                        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index"><i class="fa fa-home" style="font-size: 20px;"></i></a></li>
+                        <li class="breadcrumb-item"><a asp-action="Index">Event And Festival Management</a></li>
+                        <li class="breadcrumb-item active">Edit Event And Festival</li>
                     </ol>
                 </div>
             </div>
@@ -87,110 +133,151 @@
                     <div class="card-body">
                         <div class="form theme-form">
                             <form asp-action="EditEventAndFestival" method="post">
+                                <input readonly hidden asp-for="Id" type="text">
+                                
                                 <div class="row">
-                                    <div class="row">
-                                        <div class="mb-3">
-                                            <input readonly hidden asp-for="Id" type="text">
-                                            <label>Event And Festival Title</label>
-                                            <input asp-for="NameEvent" class="form-control" type="text"
-                                                placeholder="Event or festival title">
-                                            <span asp-validation-for="NameEvent" class="text-danger"></span>
+                                    <div class="col-12">
+                                        <div id="map" class="here-map-container" data-latitude="@Model.latitude" data-longitude="@Model.longitude" style="width: 100%; height: 400px; background-color: #f0f0f0; border-radius: 10px; position: relative;">
                                         </div>
+                                        <br />
                                     </div>
+                                </div>
 
-                                </div>
                                 <div class="row">
-                                    <div class="col">
-                                        <div class="mb-3">
-                                            <label>Address event and festival</label>
-                                            <input asp-for="Address" class="form-control" type="text"
-                                                placeholder="Address">
-                                            <span asp-validation-for="Address" class="text-danger"></span>
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label>Address</label>
+                                                    <div style="position: relative;">
+                                                        <div class="input-group">
+                                                            <textarea asp-for="Address" class="form-control" placeholder="Address of event or festival" autocomplete="off" rows="2"></textarea>
+                                                            <button class="btn btn-outline-secondary" type="button" id="searchAddressBtn"><i class="fa fa-search"></i> Search</button>
+                                                        </div>
+                                                        <div id="addressSuggestions" class="list-group" style="position: absolute; z-index: 1056; width: 100%; max-height: 220px; overflow-y: auto;">
+                                                        </div>
+                                                    </div>
+                                                    <span asp-validation-for="Address" class="text-danger"></span>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label>Latitude</label>
+                                                            <input asp-for="latitude" id="latitude" class="form-control" type="number" step="any" placeholder="Latitude" data-language="en">
+                                                            <span asp-validation-for="latitude" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label>Longitude</label>
+                                                            <input asp-for="longitude" id="longitude" class="form-control" type="number" step="any" placeholder="Longitude" data-language="en">
+                                                            <span asp-validation-for="longitude" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input asp-for="Type" type="hidden" value="Point" />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <div class="mb-3">
-                                            <label>Name of Location</label>
-                                            <input asp-for="Name" class="form-control" type="text"
-                                                placeholder="Location's name">
-                                            <span asp-validation-for="Name" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="mb-3">
-                                            <label>Category</label>
-                                            <select asp-for="Category" asp-items="ViewBag.Category"
-                                                class="form-select"></select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <div class="mb-3">
-                                            <label>Type Location</label>
-                                            <select asp-for="Type" asp-items="ViewBag.TypeLocation"
-                                                class="form-select"></select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="mb-3">
-                                            <label>Longitude</label>
-                                            <input asp-for="longitude" class="form-control" type="number" step="any"
-                                                placeholder="Longitude of destination" data-language="en">
-                                            <span asp-validation-for="longitude" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="mb-3">
-                                            <label>Latitude</label>
-                                            <input asp-for="latitude" class="form-control" type="number" step="any"
-                                                placeholder="Latitude of destination" data-language="en">
-                                            <span asp-validation-for="latitude" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <div class="mb-3">
-                                            <label>Starting date</label>
-                                            <input asp-for="StartDate" class="datepicker-here form-control" type="text"
-                                                data-val="true" placeholder="MM/dd/yyyy"
-                                                data-val-datenotinpast="The date must not be in the past."
-                                                data-val-datenotinpast-format="MM/dd/yyyy" data-language="en"
-                                                data-date-format="mm/dd/yyyy" />
-
-                                            <span asp-validation-for="StartDate" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="mb-3">
-                                            <label>Ending date</label>
-                                            <input asp-for="EndDate" class="datepicker-here form-control" type="text"
-                                                data-val="true" placeholder="MM/dd/yyyy"
-                                                data-val-dategreaterthan="The ending date must be after the starting date."
-                                                data-val-dategreaterthan-other="StartDate"
-                                                data-val-dategreaterthan-format="mm/dd/yyyy" data-language="en"
-                                                data-date-format="mm/dd/yyyy" />
-
-                                            <span asp-validation-for="EndDate" class="text-danger"></span>
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label>Event And Festival Title</label>
+                                                    <input asp-for="NameEvent" class="form-control" type="text" placeholder="Event or festival title">
+                                                    <span asp-validation-for="NameEvent" class="text-danger"></span>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label>Name of Location</label>
+                                                    <input asp-for="Name" class="form-control" type="text" placeholder="Location name">
+                                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label>Starting date</label>
+                                                            <input asp-for="StartDate" class="datepicker-here form-control" type="text" data-val="true" placeholder="MM/dd/yyyy" data-val-datenotinpast="The date must not be in the past." data-val-datenotinpast-format="MM/dd/yyyy" data-language="en" data-date-format="mm/dd/yyyy" />
+                                                            <span asp-validation-for="StartDate" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label>Ending date</label>
+                                                            <input asp-for="EndDate" class="datepicker-here form-control" type="text" data-val="true" placeholder="MM/dd/yyyy" data-val-dategreaterthan="The ending date must be after the starting date." data-val-dategreaterthan-other="StartDate" data-val-dategreaterthan-format="mm/dd/yyyy" data-language="en" data-date-format="mm/dd/yyyy" />
+                                                            <span asp-validation-for="EndDate" class="text-danger"></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="mb-3">
+                                                            <label>Category</label>
+                                                            <select asp-for="Category" asp-items="ViewBag.Category" class="form-select"></select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col">
-                                        <div class="mb-3">
-                                            <label>Description</label>
-                                            <textarea asp-for="Description" class="form-control"
-                                                placeholder="Description of destination" id="descriptionEditor"
-                                                rows="10"></textarea>
-                                            <span asp-validation-for="Description" class="text-danger"></span>
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5>Description</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <textarea asp-for="Description" id="eventDescriptionEditor" class="form-control" placeholder="Fill your description"></textarea>
+                                                <span asp-validation-for="Description" class="text-danger"></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="row">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5>Image Gallery</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="image-gallery-container">
+                                                    @foreach (var item in @Model.Images)
+                                                    {
+                                                        <div class="gallery-item">
+                                                            <img src="@item" alt="Event Image">
+                                                            <form asp-controller="EventAndFestivalManagement"
+                                                                  asp-action="DeleteEventAndFestivalImageEdit" method="post" class="delete-image-form" style="display: inline;">
+                                                                @Html.AntiForgeryToken()
+                                                                <input hidden name="id" value="@Model.Id" />
+                                                                <input hidden name="urlImage" value="@item" />
+                                                                <button type="submit" class="Delete-button-image">
+                                                                    &times;
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    }
+                                                    <div class="add-image-box" id="addImageBox">
+                                                        <div class="upload-placeholder">+</div>
+                                                        <input hidden type="file" id="imageUploadInput" name="imageDestinationFileList" multiple
+                                                               data-id="@Model.Id"
+                                                               data-url="@Url.Action("AddEventAndFestivalImageEdit", "EventAndFestivalManagement")" />
+                                                    </div>
+                                                </div>
+
+                                                @if (TempData["error"] != null)
+                                                {
+                                                    <div style="margin-top: 20px;">
+                                                        <span class="text-danger">@TempData["error"]</span>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-4">
                                     <div class="col">
                                         <div class="text-end">
                                             <a asp-action="DetailEventFestival" asp-route-id="@Model.Id"
@@ -212,98 +299,200 @@
 @section Scripts {
     @Html.AntiForgeryToken()
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/assets/js/sweetalert-custom.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/assets/js/sweetalert-custom.js"></script>
 
-    <script src="jquery.js"></script>
-    <script src="jquery.validate.js"></script>
-    <script src="jquery.validate.unobtrusive.js"></script>
-    <script src="custom-date-validator.js"></script>
-    <script src="~/assets/js/ckeditor5.js"></script>
-
+    <!-- HERE Maps API references -->
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
 
     <script>
+        window.HERE_API_KEY = '@Configuration["HEREMAP_API_KEY"]';
+    </script>
+
+    <script src="~/assets/js/EventAndFestival/heremap-edit-event.js"></script>
+    <script src="~/assets/js/EventAndFestival/event-form-validation.js"></script>
+    <script src="~/assets/js/ckeditor5.js"></script>
+
+    <script>
+        // Function to parse date in MM/dd/yyyy format
+        function parseDate(dateString) {
+            if (!dateString) return null;
+            const parts = dateString.split('/');
+            if (parts.length !== 3) return null;
+            // Note: new Date() month is 0-indexed
+            return new Date(parts[2], parts[0] - 1, parts[1]);
+        }
+
         // Custom validator for datenotinpast
-        $.validator.addMethod("datenotinpast", function (value, element, param) {
-            if (!value) return false;
+        $.validator.addMethod("datenotinpast", function (value, element) {
+            const inputDate = parseDate(value);
+            if (!inputDate) return false; // Let 'required' validator handle empty fields
 
-            const parts = value.split('/');
-            if (parts.length !== 3) return false;
-
-            const month = parseInt(parts[0], 10) - 1;
-            const day = parseInt(parts[1], 10);
-            const year = parseInt(parts[2], 10);
-
-            const inputDate = new Date(year, month, day);
             const today = new Date();
-            today.setHours(0, 0, 0, 0); // Remove time for comparison
+            today.setHours(0, 0, 0, 0);
 
             return inputDate >= today;
-        }, "The date must not be in the past.");
+        });
 
-        // Adapter để lấy giá trị định dạng từ attribute
-        $.validator.unobtrusive.adapters.addSingleVal("datenotinpast", "format");
+        $.validator.unobtrusive.adapters.addBool("datenotinpast");
 
-
+        // Custom validator for dategreaterthan
         $.validator.addMethod("dategreaterthan", function (value, element, params) {
-            const startDateId = params.other;
-            const format = params.format || "mm/dd/yyyy";
-            const startValue = $(startDateId).val();
+            const startDateValue = $(params).val();
+            const endDateValue = value;
 
-            if (!value || !startValue) return false;
+            const startDate = parseDate(startDateValue);
+            const endDate = parseDate(endDateValue);
 
-            const parseDate = function (val) {
-                const parts = val.split('/');
-                if (parts.length !== 3) return null;
-                return new Date(parts[2], parts[0] - 1, parts[1]); // yyyy, mm, dd
-            };
-
-            const endDate = parseDate(value);
-            const startDate = parseDate(startValue);
-
-            if (!startDate || !endDate) return false;
+            if (!startDate || !endDate) {
+                return true; // Don't validate if either date is invalid or empty
+            }
 
             return endDate > startDate;
-        }, "The ending date must be after the starting date.");
+        });
 
-        // Adapter to pass data-val attributes
-        $.validator.unobtrusive.adapters.add("dategreaterthan", ["other", "format"], function (options) {
-            options.rules["dategreaterthan"] = {
-                other: "#" + options.params.other,
-                format: options.params.format
-            };
+        $.validator.unobtrusive.adapters.add("dategreaterthan", ["other"], function (options) {
+            options.rules["dategreaterthan"] = "#" + options.params.other;
             options.messages["dategreaterthan"] = options.message;
         });
 
         document.addEventListener("DOMContentLoaded", function () {
             ClassicEditor
-                .create(document.querySelector('#descriptionEditor'))
+                .create(document.querySelector('#eventDescriptionEditor'))
                 .catch(error => {
                     console.error(error);
                 });
+        });
+
+        function confirmDelete(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const form = event.target.closest('form');
+
+            showConfirmAlert(
+                'Confirm Deletion',
+                'Are you sure you want to delete this image?',
+                'Yes, delete it!',
+                'Cancel'
+            ).then((isConfirmed) => {
+                if (isConfirmed) {
+                    form.submit();
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            // AJAX for Deleting Images
+            $('.image-gallery-container').on('submit', '.delete-image-form', function (e) {
+                e.preventDefault();
+                const form = $(this);
+                const galleryItem = form.closest('.gallery-item');
+
+                showConfirmAlert('Confirm Deletion', 'Are you sure?', 'Yes, delete!', 'Cancel')
+                    .then((isConfirmed) => {
+                        if (isConfirmed) {
+                            $.ajax({
+                                url: form.attr('action'),
+                                type: 'POST',
+                                data: form.serialize(),
+                                success: function (response) {
+                                    if (response.success) {
+                                        galleryItem.fadeOut(300, function () { $(this).remove(); });
+                                        showTimedAlert('Success', response.message, 'success');
+                                    } else {
+                                        showErrorAlert('Error', response.message);
+                                    }
+                                },
+                                error: function () {
+                                    showErrorAlert('Error', 'An unexpected error occurred.');
+                                }
+                            });
+                        }
+                    });
+            });
+
+            // Handle Add Image Box Click
+            $('#addImageBox').on('click', function () {
+                $('#imageUploadInput').click();
+            });
+
+            // AJAX for Adding Images
+            $('#imageUploadInput').on('change', function () {
+                const input = this;
+                if (input.files.length === 0) {
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('id', $(input).data('id'));
+                for (let i = 0; i < input.files.length; i++) {
+                    formData.append('imageDestinationFileList', input.files[i]);
+                }
+
+                $.ajax({
+                    url: $(input).data('url'),
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.success) {
+                            // Add new images to the gallery
+                            response.newImageUrls.forEach(function(url) {
+                                const newImageHtml = `
+                                    <div class="gallery-item">
+                                        <img src="${url}" alt="Event Image">
+                                        <form asp-controller="EventAndFestivalManagement"
+                                              asp-action="DeleteEventAndFestivalImageEdit" method="post" class="delete-image-form" style="display: inline;">
+                                            @Html.AntiForgeryToken()
+                                            <input hidden name="id" value="${$(input).data('id')}" />
+                                            <input hidden name="urlImage" value="${url}" />
+                                            <button type="submit" class="Delete-button-image">&times;</button>
+                                        </form>
+                                    </div>`;
+                                $('#addImageBox').before(newImageHtml);
+                            });
+                            showTimedAlert('Success', response.message, 'success');
+                        } else {
+                            showErrorAlert('Error', response.message);
+                        }
+                        // Clear the file input
+                        $(input).val('');
+                    },
+                    error: function () {
+                        showErrorAlert('Error', 'An unexpected error occurred during upload.');
+                        $(input).val('');
+                    }
+                });
+            });
         });
     </script>
 
     <script>
         $(document).ready(function () {
             @if (TempData["EditEventAndFestivalSuccess"] != null)
-                {
-                    <text>
-                        showTimedAlert("Success!", "@TempData["EditEventAndFestivalSuccess"]", "success", 1000);
-                    </text>
+            {
+                <text>
+                    showTimedAlert("Success!", "@TempData["EditEventAndFestivalSuccess"]", "success", 1000);
+                </text>
             }
-                @if (TempData["successMessage"] != null)
-                {
-                    <text>
-                        showTimedAlert("Success!", "@TempData["successMessage"]", "success", 1000);
-                    </text>
+            @if (TempData["successMessage"] != null)
+            {
+                <text>
+                    showTimedAlert("Success!", "@TempData["successMessage"]", "success", 1000);
+                </text>
             }
-                @if (TempData["errorMessage"] != null)
-                {
-                    <text>
-                        showTimedAlert("Error!", "@TempData["errorMessage"]", "error", 1000);
-                    </text>
+            @if (TempData["errorMessage"] != null)
+            {
+                <text>
+                    showTimedAlert("Error!", "@TempData["errorMessage"]", "error", 1000);
+                </text>
             }
-                                });
+        });
     </script>
 }

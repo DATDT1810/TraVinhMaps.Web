@@ -191,9 +191,9 @@
                     </div>
                 </div>
                 <div class="col-xxl-8 box-col-6 order-xxl-0 order-1">
-                     <div class="card" style="background-color: #00AC46 ; color: white; padding: 20px; text-align: center; border-radius: 15px;">
+                     <div class="card" style="background-color: #00AC46 ; color: white; padding: 20px; text-align: left; border-radius: 15px;">
                         <h2 style="margin: 0; font-weight: bold;">
-                            <i class="fa fa-cutlery" style="color: white;"></i><span style="color: white;"> @Model.FoodName</span>
+                          <span style="color: white;"> @Model.FoodName</span>
                         </h2>
                         <p style="margin: 5px 0 0;">A delicious specialty from Tra Vinh</p>
                     </div>
@@ -202,7 +202,7 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title" style="font-weight: bold"><i class="fa fa-file-text-o"></i> Description</h5>
+                            <h5 class="card-title" style="font-weight: bold">Description</h5>
                             <hr>
                             <div class="text-justify">
                                @Html.Raw(Model.Description ?? "<p>No description available.</p>")
@@ -237,7 +237,7 @@
                         <div class="card-body" style="display: flex; flex-direction: column; gap: 12px;">
                              <div class="d-flex align-items-center p-3 mb-3" style="background-color: #f8f9fa; border-radius: 12px;">
                                 <div class="flex-grow-1">
-                                    <h4 style="font-weight: 700; margin-bottom: 0;"><i class="fa fa-map-marker" style="color: #6366f1;"></i> Point of Sell</h4>
+                                    <h4 style="font-weight: 700; margin-bottom: 0;">Point of Sell</h4>
                                     <p style="color: #6c757d; margin-bottom: 0;">Locations where you can find @Model.FoodName</p>
                                 </div>
                                 <div class="d-flex align-items-center gap-4 mx-5">

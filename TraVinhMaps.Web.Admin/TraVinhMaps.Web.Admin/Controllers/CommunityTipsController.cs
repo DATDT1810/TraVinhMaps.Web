@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TraVinhMaps.Web.Admin.Models;
 using TraVinhMaps.Web.Admin.Models.CommunityTips;
+using TraVinhMaps.Web.Admin.Models.Tags;
 using TraVinhMaps.Web.Admin.Services.CommunityTips;
 using TraVinhMaps.Web.Admin.Services.Tags;
 
@@ -88,8 +89,29 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 new BreadcrumbItem { Title = "Create Tip " } // default URL for the current page
             };
 
-            var tags = await _tagService.ListAllAsync();
-            ViewBag.Tags = new SelectList(tags, "Id", "Name");
+            try
+            {
+                var tags = await _tagService.ListAllAsync(cancellationToken);
+                var tipTravelTag = tags.FirstOrDefault(t => t.Name == "Tip Travel");
+
+                if (tipTravelTag != null)
+                {
+                    ViewBag.Tags = new SelectList(new List<TagsResponse> { tipTravelTag }, "Id", "Name", tipTravelTag.Id);
+                }
+                else
+                {
+                    // Handle case where "Tip Travel" tag is not found
+                    ViewBag.Tags = new SelectList(new List<TagsResponse>(), "Id", "Name");
+                    TempData["CreateTipsError"] = "Could not find the 'Tip Travel' tag.";
+                }
+            }
+            catch (Exception)
+            {
+                // Log the exception
+                TempData["CreateTipsError"] = "An error occurred while fetching tags.";
+                ViewBag.Tags = new SelectList(new List<TagsResponse>(), "Id", "Name");
+            }
+
 
             return View();
         }
@@ -150,7 +172,18 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 }
 
                 var tags = await _tagService.ListAllAsync();
-                ViewBag.Tags = new SelectList(tags, "Id", "Name", tips.TagId);
+                var tipTravelTag = tags.FirstOrDefault(t => t.Name == "Tip Travel");
+
+                if (tipTravelTag != null)
+                {
+                    ViewBag.Tags = new SelectList(new List<TagsResponse> { tipTravelTag }, "Id", "Name", tipTravelTag.Id);
+                }
+                else
+                {
+                    // Handle case where "Tip Travel" tag is not found
+                    ViewBag.Tags = new SelectList(new List<TagsResponse>(), "Id", "Name");
+                    TempData["EditTipsError"] = "Could not find the 'Tip Travel' tag.";
+                }
                 return View(tips);
             }
             catch (Exception)

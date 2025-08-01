@@ -19,267 +19,7 @@
         { "Website", ("website", "fa fa-globe", "Official Website") }
     };
 }
-<style>
-    .btn-showcase {
-        margin-top: 0;
-        padding-top: 7px; 
-    }
-
-    .d-inline {
-        display: inline-block;
-        margin-right: 10px; 
-    }
-    .Delete-button-image {
-        position: absolute;
-        top: 2px;
-        right: 10px;
-        background-color: rgba(169, 169, 169, 0.6);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        z-index: 10;
-        padding: 0;
-    }
-
-    .add-image-box {
-        margin-top: 10px;
-        width: 100%;
-        height: 80px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px dashed #aaa;
-        position: relative;
-        cursor: pointer;
-        border-radius: 9px;
-        background-color: #f8f9fa;
-    }
-
-    .upload-placeholder {
-        font-size: 48px;
-        color: #aaa;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        cursor: pointer;
-    }
-
-    .ocop-margin {
-        margin-bottom: 15px;
-    }
-
-    .readonly-note {
-        color: red;
-        font-size: 0.875em;
-        font-style: italic;
-        margin-top: 4px;
-    }
-
-    .upload-placeholder:hover {
-        background-color: #e0e0e0;
-    }
-
-    #locations-container .location-group:nth-child(n+2) {
-        display: none;
-    }
-    .detail-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 15px;
-        font-size: 16px;
-    }
-    .detail-item i {
-        margin-right: 10px;
-        width: 20px;
-        text-align: center;
-    }
-    .detail-item strong {
-        width: 170px;
-        flex-shrink: 0;
-    }
-    .location-card {
-        background: #f0f2f3;
-        padding: 16px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-    }
-    .map-wrapper {
-        position: relative;
-        border-radius: 8px;
-        overflow: hidden;
-        border: 1px solid #333;
-        height: 300px;
-        margin-top: auto;
-    }
-    .pagination-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-    }
-    .pagination {
-        display: flex;
-        list-style: none;
-        padding: 0;
-    }
-    .pagination li {
-        margin: 0 5px;
-    }
-    .pagination a {
-        display: block;
-        padding: 8px 16px;
-        text-decoration: none;
-        color: #007bff;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-    }
-    .pagination a.active {
-        background-color: #007bff;
-        color: white;
-        border: 1px solid #007bff;
-    }
-
-    .selling-link-card {
-        background-color: #fff;
-        border-radius: 8px;
-        border-left: 4px solid;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        margin-bottom: 1rem;
-        padding: 1rem;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-    }
-
-    .selling-link-card.shopee { border-color: #EE4D2D; }
-    .selling-link-card.facebook { border-color: #1877F2; }
-    .selling-link-card.lazada { border-color: #0F146D; }
-    .selling-link-card.tiki { border-color: #1A94FF; }
-    .selling-link-card.website { border-color: #34A853; }
-    .selling-link-card.default { border-color: #6c757d; }
-
-    .selling-link-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-    }
-
-    .selling-link-info {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .selling-link-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        color: #fff;
-    }
-
-    .selling-link-icon.shopee { background-color: #EE4D2D; }
-    .selling-link-icon.facebook { background-color: #1877F2; }
-    .selling-link-icon.lazada { background-color: #0F146D; }
-    .selling-link-icon.tiki { background-color: #1A94FF; }
-    .selling-link-icon.website { background-color: #34A853; }
-    .selling-link-icon.default { background-color: #6c757d; }
-
-
-    .selling-link-title h6 {
-        margin: 0;
-        font-weight: 600;
-    }
-
-    .selling-link-title p {
-        margin: 0;
-        font-size: 0.875rem;
-        color: #6c757d;
-    }
-
-    .selling-link-actions {
-        display: flex;
-        gap: 0.5rem;
-    }
-
-    .selling-link-actions .btn {
-        border-radius: 50%;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-    }
-
-    .selling-link-body {
-        background-color: #f8f9fa;
-        border-radius: 8px;
-        padding: 0.75rem 1rem;
-        margin-top: 1rem;
-    }
-
-    .selling-link-body p {
-        margin: 0;
-        font-size: 0.8rem;
-        color: #6c757d;
-        text-transform: uppercase;
-        margin-bottom: 0.25rem;
-    }
-
-    .selling-link-body a {
-        word-break: break-all;
-        color: #007bff;
-        text-decoration: none;
-    }
-    .selling-link-body a:hover {
-        text-decoration: underline;
-    }
-
-    .selling-link-summary {
-        background-color: #fffbe6;
-        border-left: 4px solid #f59e0b;
-        border-radius: 8px;
-        padding: 1rem;
-        display: flex;
-        justify-content: space-around;
-        margin-bottom: 1.5rem;
-    }
-
-    .summary-item {
-        text-align: center;
-    }
-
-    .summary-item h4 {
-        margin: 0 0 0.25rem 0;
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #92400e;
-    }
-
-    .summary-item p {
-        margin: 0;
-        font-size: 0.8rem;
-        color: #92400e;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-</style>
+<link rel="stylesheet" type="text/css" href="~/css/pages/ocop-detail.css">
 <div class="page-body">
     <div class="container-fluid">
         <div class="page-title">
@@ -381,11 +121,13 @@
                     </div>
                 </div>
                 <div class="col-xxl-8 box-col-6 order-xxl-0 order-1">
-                    <div class="card" style="background-color: #00AC46 ; color: white; padding: 20px; text-align: center; border-radius: 15px;">
-                        <h2 style="margin: 0; font-weight: bold;">
-                            <i class="fa fa-leaf" style="color: white;"></i><span style="color: white;"> @Model.ProductName</span>
+                    <div class="card">
+                        <div class="card-body">
+                        <h2>
+                            <i class="fa fa-leaf"></i><span> @Model.ProductName</span>
                         </h2>
-                        <p style="margin: 5px 0 0;">High-quality OCOP product from the Mekong Delta</p>
+                        <p>High-quality OCOP product from the Mekong Delta</p>
+                        </div>
                     </div>
 
                     <div class="row">
@@ -423,7 +165,7 @@
 
                     <div class="card" style="min-height: 250px;">
                         <div class="card-body">
-                            <h5 class="card-title" style="font-weight: bold"><i class="fa fa-file-text-o"></i> Description</h5>
+                            <h5 class="card-title" style="font-weight: bold">Description</h5>
                             <hr>
                             <div class="text-justify">
                                 @Html.Raw(Model.ProductDescription)
@@ -446,13 +188,13 @@
                     <div class="card">
                         <div class="card-body"
                             style="display: flex; flex-direction: column; gap: 12px;">
-                            <div class="d-flex align-items-center p-3 mb-3" style="background-color: #f8f9fa; border-radius: 12px;">
+                            <div class="d-flex align-items-center p-3 mb-3" style="background-color: var(--bs-light); border-radius: 12px;">
                                 <div class="me-3">
-                                    <i class="fa fa-store" style="color: black;"></i>
+                                    <i class="fa fa-store"></i>
                                 </div>
                                 <div class="flex-grow-1">
                                     <h4 style="font-weight: 700; margin-bottom: 0;"><i class="fa fa-store" style="color: #6366f1;"></i>Selling Points of the Product</h4>
-                                    <p style="color: #6c757d; margin-bottom: 0;">@Model.ProductName</p>
+                                    <p style="color: var(--bs-gray-600); margin-bottom: 0;">@Model.ProductName</p>
                                 </div>
                                 <div class="d-flex align-items-center gap-4 mx-5">
                                     <div class="text-center">
@@ -566,12 +308,12 @@
             <div class="card">
                 <div class="card-body">
                     <div class="col-sm-12" style="padding: 0px;">
-                        <div class="tab-content" id="top-tabContent">
+                                <div class="tab-content" id="top-tabContent">
                             <div class="tab-pane fade active show" id="top-home" role="tabpanel"
                                 aria-labelledby="top-home-tab">
                                 <div style="margin-top: 10px;">
                                     <div class="filter-block">
-                                        <div class="d-flex justify-content-between align-items-center mb-3 p-3" style="background-color: #f8f9fa; border-radius: 12px;">
+                                        <div class="d-flex justify-content-between align-items-center mb-3 p-3" style="background-color: var(--bs-light); border-radius: 12px;">
                                             <h5 style="font-weight: bold; margin: 0;"><i class="fa fa-link" style="color: #6366f1;"></i> Store of selling link</h5>
                                             <a class="btn btn-success" style="border-radius: 20px;"
                                                 title="Create Point of Selling Link" data-bs-toggle="modal"
