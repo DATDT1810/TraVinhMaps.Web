@@ -1,0 +1,47 @@
+<!-- New Email Modal -->
+<div class="modal fade" id="newEmailModal" tabindex="-1" role="dialog" aria-labelledby="newEmailModalLabel"
+    aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="background: white; border-radius: 15px; border: 2px solid #8bc34a;">
+            <div class="modal-body text-center p-4" style="color: #2e7d32;">
+                <!-- Modal header -->
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h4 class="modal-title" style="color: #2e7d32;">Update Email</h4>
+                    <button type="button" class="btn-close text-success" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+
+                <!-- Icon -->
+                <div class="mb-3">
+                    <div class="rounded-circle bg-success bg-opacity-25 d-inline-flex align-items-center justify-content-center"
+                        style="width: 70px; height: 70px; box-shadow: 0 5px 15px rgba(139, 195, 74, 0.3);">
+                        <i class="fas fa-envelope text-success" style="font-size: 1.8rem;"></i>
+                    </div>
+                </div>
+
+                <!-- Form -->
+                <form id="newEmailForm">
+                    <div class="mb-3">
+                        <label for="newEmail" class="form-label text-success text-start d-block mb-2">New Email
+                            Address</label>
+                        <input type="email" class="form-control form-control-lg" id="newEmail"
+                            placeholder="Enter your new email" required
+                            style="background: white; border: 2px solid #8bc34a; color: #2e7d32; border-radius: 10px;">
+                        <div class="invalid-feedback text-start">Please enter a valid email address.</div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg"
+                            style="height: 45px; font-size: 1rem; border-radius: 10px; font-weight: 600; box-shadow: 0 3px 10px rgba(139, 195, 74, 0.3);">
+                            <i class="fas fa-check-circle me-2"></i>Update Email
+                        </button>
+                        <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal"
+                            style="height: 45px; font-size: 1rem; border-radius: 10px;">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

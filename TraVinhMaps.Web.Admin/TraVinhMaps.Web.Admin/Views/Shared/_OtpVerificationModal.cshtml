@@ -1,0 +1,68 @@
+<!-- OTP Verification Modal -->
+<div class="modal fade" id="otpModal" tabindex="-1" role="dialog" aria-labelledby="otpModalLabel" aria-hidden="true"
+    data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+        <div class="modal-content"
+            style="background: white; border-radius: 15px; border: 2px solid #8bc34a; min-height: 400px;">
+            <div class="modal-body text-center p-4" style="color: #2e7d32;">
+                <!-- Back button -->
+                <div class="d-flex align-items-center mb-3">
+                    <button type="button" class="btn btn-link text-success p-0" id="backBtn" style="font-size: 1rem;">
+                        <i class="fas fa-arrow-left me-2"></i>Back
+                    </button>
+                </div>
+
+                <!-- Icon -->
+                <div class="mb-4">
+                    <div class="rounded-circle bg-success bg-opacity-25 d-inline-flex align-items-center justify-content-center"
+                        style="width: 80px; height: 80px; box-shadow: 0 5px 15px rgba(139, 195, 74, 0.3);">
+                        <i class="fas fa-envelope text-success" style="font-size: 2.5rem;" id="otpIcon"></i>
+                    </div>
+                </div>
+
+                <!-- Title -->
+                <h3 class="mb-3" id="otpTitle" style="font-size: 1.5rem; font-weight: 600; color: #2e7d32;">Verify
+                    Current Email</h3>
+
+                <!-- Subtitle -->
+                <p class="mb-4 text-muted" id="otpSubtitle" style="font-size: 0.9rem; line-height: 1.5;">Your OTP is
+                    sent to joongnguyen2712@gmail.com now</p>
+
+                <!-- OTP Input -->
+                <div class="mb-4">
+                    <label class="form-label text-success mb-2" style="font-size: 0.9rem;">Confirm OTP</label>
+                    <div class="d-flex justify-content-center gap-2 mb-2">
+                        <input type="text" class="form-control otp-digit text-center" maxlength="1"
+                            style="width: 45px; height: 50px; background: white; border: 2px solid #8bc34a; color: #2e7d32; font-size: 1.3rem; border-radius: 8px;">
+                        <input type="text" class="form-control otp-digit text-center" maxlength="1"
+                            style="width: 45px; height: 50px; background: white; border: 2px solid #8bc34a; color: #2e7d32; font-size: 1.3rem; border-radius: 8px;">
+                        <input type="text" class="form-control otp-digit text-center" maxlength="1"
+                            style="width: 45px; height: 50px; background: white; border: 2px solid #8bc34a; color: #2e7d32; font-size: 1.3rem; border-radius: 8px;">
+                        <input type="text" class="form-control otp-digit text-center" maxlength="1"
+                            style="width: 45px; height: 50px; background: white; border: 2px solid #8bc34a; color: #2e7d32; font-size: 1.3rem; border-radius: 8px;">
+                        <input type="text" class="form-control otp-digit text-center" maxlength="1"
+                            style="width: 45px; height: 50px; background: white; border: 2px solid #8bc34a; color: #2e7d32; font-size: 1.3rem; border-radius: 8px;">
+                        <input type="text" class="form-control otp-digit text-center" maxlength="1"
+                            style="width: 45px; height: 50px; background: white; border: 2px solid #8bc34a; color: #2e7d32; font-size: 1.3rem; border-radius: 8px;">
+                    </div>
+                    <input type="hidden" id="otpInput">
+                </div>
+
+                <!-- Verify Button -->
+                <button type="button" class="btn btn-success btn-lg w-100 mb-3" id="verifyOtpBtn"
+                    style="height: 50px; font-size: 1rem; border-radius: 10px; font-weight: 600; box-shadow: 0 3px 10px rgba(139, 195, 74, 0.3);">
+                    <i class="fas fa-check-circle me-2"></i>Verify
+                </button>
+
+                <!-- Resend Button -->
+                <div class="mb-0">
+                    <button type="button" class="btn btn-link text-success" id="resendOtpBtn"
+                        style="font-size: 0.9rem;">
+                        <i class="fas fa-redo-alt me-2"></i>Resend OTP after <span id="countdown"
+                            style="font-weight: bold; color: #ff9800;">5:00</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

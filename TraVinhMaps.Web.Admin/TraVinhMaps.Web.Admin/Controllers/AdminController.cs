@@ -253,5 +253,29 @@ namespace TraVinhMaps.Web.Admin.Controllers
             var settingProfile = await _adminService.GetSettingProfileAsync();
             return View(settingProfile);
         }
+
+        [HttpGet("AccountSettings")]
+        public async Task<IActionResult> AccountSettings()
+        {
+            try
+            {
+                var profileModel = await _adminService.GetAdminProfileAsync();
+                if (profileModel == null)
+                {
+                    TempData["Error"] = "Unable to retrieve profile data.";
+                    return RedirectToAction("Index", "Home");
+                }
+
+                var settingsModel = await _adminService.GetSettingProfileAsync();
+                ViewBag.SettingsData = settingsModel;
+
+                return View("AccountSettings", profileModel);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "An error occurred while loading account settings data.";
+                return RedirectToAction("Index", "Home");
+            }
+        }
     }
 }
