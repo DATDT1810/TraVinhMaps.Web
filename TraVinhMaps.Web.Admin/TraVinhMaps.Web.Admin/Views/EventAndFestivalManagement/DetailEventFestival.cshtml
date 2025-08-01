@@ -1,33 +1,143 @@
 @using TraVinhMaps.Web.Admin.Models.EventAndFestivalFeature
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Globalization
+@inject IConfiguration Configuration
 @model EventAndFestivalResponse
 @{
     ViewData["Title"] = "DetailEventFestival";
 }
 
 <style>
+    .page-body {
+        background-color: #f0f2f5;
+    }
+
+    .event-header {
+        position: relative;
+        background: #158247 ;
+        color: white;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .header-status-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        text-transform: uppercase;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .header-status-badge .fa {
+        margin-right: 5px;
+    }
+
+    .header-status-badge-info {
+        background-color: #0dcaf0;
+    }
+
+    .header-status-badge-success {
+        background-color: #28a745;
+    }
+
+    .header-status-badge-danger {
+        background-color: #dc3545;
+    }
+
+    .event-header h2 {
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .event-header p {
+        margin: 5px 0 0;
+        opacity: 0.9;
+    }
+
+    .info-card {
+        background-color: #ffffff;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .info-card .info-item {
+        display: flex;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f2f5;
+    }
+    
+    .info-card .info-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    .info-card .info-item:first-child {
+        padding-top: 0;
+    }
+
+    .info-card .info-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .info-card .info-content .info-label {
+        font-size: 12px;
+        font-weight: bold;
+        color: #6c757d;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+
+    .info-card .info-content .info-value {
+        font-size: 16px;
+        color: #212529;
+    }
+    
+    .badge-custom {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        display: inline-block;
+    }
+
+    .badge-success-custom {
+        background-color: #e9f7ec;
+        color: #28a745;
+    }
+
+    .badge-info-custom {
+        background-color: #e8f7fa;
+        color: #17a2b8;
+    }
+
+    .badge-danger-custom {
+        background-color: #fbeaea;
+        color: #dc3545;
+    }
+
     .Delete-button-image {
         position: absolute;
         top: 2px;
         right: 2px;
-        background-color: rgba(169, 169, 169, 0.6);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        z-index: 10;
-        padding: 0;
-    }
-    .Delete-button-history-image {
-        position: absolute;
-        top: 4px;
-        right: 4px;
         background-color: rgba(169, 169, 169, 0.6);
         color: white;
         border: none;
@@ -57,20 +167,6 @@
         background-color: #f8f9fa;
     }
 
-    .add-image-history-box {
-        margin-top: 10px;
-        width: 100%;
-        height: 120px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px dashed #aaa;
-        position: relative;
-        cursor: pointer;
-        border-radius: 9px;
-        background-color: #f8f9fa;
-    }
-
     .upload-placeholder {
         font-size: 48px;
         color: #aaa;
@@ -82,38 +178,43 @@
         cursor: pointer;
     }
 
-    div.gallery {
-        margin: 5px;
-        @* border: 1px solid #ccc; *@
-        border-radius: 9px;
-        float: left;
-        width: 180px;
+    .description-card {
+        background-color: #f8f9fa;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
 
-    div.add_gallery {
-        margin: 5px;
-        @* border: 1px solid #ccc; *@
-        border-radius: 9px;
-        float: left;
-        width: 180px;
+    .description-card .card-title {
+        font-weight: bold;
+        color: #495057;
+        display: flex;
+        align-items: center;
+        font-size: 1.25rem;
     }
 
-    div.gallery:hover {
-        border: 1px solid #777;
+    .description-card .card-title i {
+        margin-right: 10px;
     }
 
-    div.gallery img {
-        width: 100%;
-        height: auto;
-        border-radius: 12px;
+    .description-card .card-title i.fa-file-alt {
+        color: #E57373;
     }
 
-    div.desc {
-        padding: 15px;
-        text-align: center;
+    .description-card .card-title i.fa-map {
+        color: #17a2b8;
+    }
+
+    .description-content {
+        margin-top: 15px;
+        padding-left: 20px;
+        border-left: 4px solid #E57373;
+        color: #343a40;
+        line-height: 1.7;
     }
 </style>
-
+<link rel="stylesheet" type="text/css" href="~/css/pages/ocop-detail.css">
 <div class="page-body">
     <div class="container-fluid">
         <div class="page-title">
@@ -138,18 +239,20 @@
             <div class="row product-page-main p-0">
                 <div class="col-xxl-4 col-md-6 box-col-12">
                     <div class="card">
-                        <div class="card-body">
+                        <div class="card-body" style="height: 650px;">
                             <div class="product-slider owl-carousel owl-theme" id="sync1">
                                 @foreach (var item in @Model.Images)
                                 {
-                                    <div class="item" style="height: 400px;"><img src="@item" alt="image" style="width: 100%; height: 400px;"></div>
+                                    <div class="item" style="height: 400px;"><img src="@item" alt="image"
+                                            style="width: 100%; height: 400px; object-fit: cover;"></div>
                                 }
                             </div>
                             <div class="owl-carousel owl-theme" id="sync2">
                                 @foreach (var item in @Model.Images)
                                 {
                                     <div class="item position-relative" style="height: 90px; width: 70px;">
-                                        <img src="@item" alt="" class="w-100" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                                        <img src="@item" alt="" class="w-100"
+                                            style="width: 100%; height: 100%; object-fit: cover; display: block;">
                                         <form asp-controller="EventAndFestivalManagement"
                                             asp-action="DeleteEventAndFestivalImage" method="post">
                                             @Html.AntiForgeryToken()
@@ -163,13 +266,13 @@
                                     </div>
                                 }
                             </div>
-                            <div class="item add-image-box" id="addImageBox_@Model.Id">
+                            <div class="item add-image-box">
                                 <form asp-controller="EventAndFestivalManagement" asp-action="AddEventAndFestivalImage"
-                                    method="post" enctype="multipart/form-data">
+                                    method="post" class="upload-placeholder" enctype="multipart/form-data">
                                     <input type="hidden" name="id" value="@Model.Id" />
                                     <div class="upload-placeholder">+</div>
                                     <input hidden type="file" name="imageDestinationFileList" multiple
-                                        id="uploadImageInput_@Model.Id" onchange="this.form.submit()" />
+                                        onchange="this.form.submit()" />
                                 </form>
                             </div>
 
@@ -182,166 +285,251 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xxl-5 box-col-6 order-xxl-0 order-1">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="product-page-details">
-                                <h3>@Model.NameEvent</h3>
-                            </div>
-                            <div style="margin-top: 10px;">
-                                <img class="activity-log-img rounded-circle img-fluid me-2" src="@ViewBag.EventAndFestivalTag.Image" alt="user" style="width: 24px; height: 24px;" />
-                                    @ViewBag.EventAndFestivalTag.Name
-                            </div>
+                <div class="col-xxl-8 box-col-6 order-xxl-0 order-1">
+                    @{
+                        var statusText = "";
+                        var statusClass = "";
+                        var now = DateTime.Now;
+                        var isFinished = false;
 
-                            <hr>
-                            <p>@Model.Location.Address</p>
-                            <hr>
-                            <div>
-                                <table class="product-page-width">
-                                    <tbody>
-                                        <tr>
-                                            <td> <b>Category:</b></td>
-                                            <td>@Model.Category</td>
-                                        </tr>
-                                        <tr>
-                                            <td> <b>Create At:</b></td>
-                                            <td>@Model.CreatedAt</td>
-                                        </tr>
-                                        <tr>
-                                            <td> <b>Location Type:</b></td>
-                                            <td>@(Model.Location.location.Type ?? "No type")</td>
-                                        </tr>
-                                        <tr>
-                                            <td> <b>Location name:</b></td>
-                                            <td>@(Model.Location.Name ?? "No type")</td>
-                                        </tr>
-                                        <tr>
-                                            <td> <b>Longitude/latitude:&nbsp;</b></td>
-                                            <td>@Model.Location.location.Coordinates[0] ,&nbsp @Model.Location.location.Coordinates[1]
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td> <b>Destination Type :</b></td>
-                                            <td>
-                                                <img class="activity-log-img rounded-circle img-fluid me-2" src="@ViewBag.marker.Image" alt="user" style="width: 24px; height: 24px;" />
-                                                @ViewBag.marker.Name
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        if (now < Model.StartDate)
+                        {
+                            statusText = "Upcoming";
+                            statusClass = "header-status-badge-info";
+                        }
+                        else if (now >= Model.StartDate && now <= Model.EndDate)
+                        {
+                            statusText = "Ongoing";
+                            statusClass = "header-status-badge-success";
+                        }
+                        else
+                        {
+                            statusText = "Ended";
+                            statusClass = "header-status-badge-danger";
+                            isFinished = true;
+                        }
+                    }
+                    <div class="event-header">
+                        <div class="header-status-badge @statusClass">
+                            <i class="fa fa-clock-o"></i>
+                            <span>@statusText</span>
+                        </div>
+                        <h2 style="max-width: 600px; color: white; text-align: start;">@Model.NameEvent</h2>
+                        <p style="text-align: start;">Cultural and social event held in the region</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-item">
+                            <div class="info-icon" style="background: linear-gradient(45deg, #ffc107, #ff8a00);">
+                                <i class="fa fa-sitemap"></i>
                             </div>
-                            <hr>
-                            <div class="m-t-15 btn-showcase">
-                                @{
-                                    var isPastStartDate = DateTime.Now > Model.StartDate;
-                                }
-                                <a class="btn btn-edit @(isPastStartDate ? "disabled" : "")"  asp-action="EditEventAndFestival" asp-route-id="@Model.Id"><i
-                                        class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit Event And Festival</a>
-                                <a class="btn btn-back" asp-action="Index">Back</a>
+                            <div class="info-content">
+                                <div class="info-label">CATEGORY</div>
+                                <div class="info-value"><span class="badge-custom badge-success-custom">@Model.Category</span></div>
+                            </div>
+                        </div>
+                     
+                        <div class="info-item">
+                            <div class="info-icon" style="background: linear-gradient(45deg, #17a2b8, #20c997);">
+                                <i class="fa fa-clock-o"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">CREATED DATE</div>
+                                <div class="info-value">@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-xxl-3 col-md-6 box-col-6">
-                    <div class="card">
-                        <div class="card-body">
-                            <!-- side-bar colleps block stat-->
-                            <div class="filter-block">
-                                <h4>Operating Date</h4>
-                                <ul>
-                                    <li>
-                                        <div class="media-body">
-                                            <h6>Start date:</h6>
-                                            <p>@Model.StartDate.ToLocalTime().ToString("dd/MM/yy, HH:mm")</p>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="media-body">
-                                            <h6>End date:</h6>
-                                            <p>@Model.EndDate.ToLocalTime().ToString("dd/MM/yy, HH:mm")</p>
-                                        </div>
-                                    </li>
-                                </ul>
+
+                    <div class="info-card">
+                        <div class="info-item">
+                            <div class="info-icon" style="background: linear-gradient(45deg, #6610f2, #6f42c1);">
+                                <i class="fa fa-map-marker"></i>
                             </div>
+                            <div class="info-content">
+                                <div class="info-label">LOCATION NAME</div>
+                                <div class="info-value">@(Model.Location.Name ?? "No name")</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon" style="background: linear-gradient(45deg, #20c997, #28a745);">
+                                <i class="fa fa-location-arrow"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">ADDRESS</div>
+                                <div class="info-value">@Model.Location.Address</div>
+                            </div>
+                        </div>
+                        <div class="info-item" style="display : none">
+                            <div class="info-icon" style="background: linear-gradient(45deg, #fd7e14, #ffc107);">
+                                <i class="fa fa-compass"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">COORDINATES</div>
+                                <div class="info-value">@Model.Location.location.Coordinates[1], @Model.Location.location.Coordinates[0]</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-item">
+                            <div class="info-icon" style="background: linear-gradient(45deg, #007bff, #17a2b8);">
+                                <i class="fa fa-calendar-plus-o"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">START DATE</div>
+                                <div class="info-value"><span class="badge-custom badge-info-custom">@Model.StartDate.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span></div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon" style="background: linear-gradient(45deg, #dc3545, #fd7e14);">
+                                <i class="fa fa-calendar-times-o"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">END DATE</div>
+                                <div class="info-value"><span class="badge-custom badge-info-custom">@Model.EndDate.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card description-card" style="min-height: 200px;">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fa fa-file-text"></i> Event Description</h5>
+                        <div class="description-content">
+                            @Html.Raw(Model.Description ?? "<p>No description available.</p>")
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="card">
-            <div class="row product-page-main">
-                <div class="col-sm-12">
-                    <ul class="nav nav-tabs border-tab nav-primary mb-0" id="top-tab" role="tablist">
-                        <li class="nav-item"><a class="nav-link active" id="top-home-tab" data-bs-toggle="tab"
-                                href="#top-home" role="tab" aria-controls="top-home"
-                                aria-selected="false">Description</a>
-                            <div class="material-border"></div>
-                        </li>
-                    </ul>
-                    <div class="tab-content" id="top-tabContent">
-                        <div class="tab-pane fade active show text-justify" id="top-home" role="tabpanel"
-                            aria-labelledby="top-home-tab">
-                            <p class="mb-0 m-t-20"> @Html.Raw(Model.Description ?? "<p>No description available.</p>")</p>
-                        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card description-card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fa fa-map"></i> Map</h5>
+                        <div id="mapContainer" style="width: 100%; height: 400px; border-radius: 8px; margin-top: 15px;"></div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            
+            <div class="m-t-15 btn-showcase" style="padding-bottom: 20px; display: flex; justify-content: end">
+                 @if (!isFinished)
+                        {
+                            <div class="d-inline">
+                                <a class="btn btn-success" asp-action="EditEventAndFestival" asp-route-id="@Model.Id"><i class="fa fa-pencil"
+                                                                                                                        aria-hidden="true"></i>&nbsp; Edit</a>
+                            </div>
+                        }
+                        <div class="d-inline">
+                            <a class="btn btn-danger" asp-action="Index">Back</a>
+                        </div>
+            </div>
+                       
+                    
+                
             </div>
         </div>
     </div>
-    <!-- Container-fluid Ends-->
 </div>
 
-@section Scripts { 
+@section Scripts {
     <script src="~/assets/js/sweetalert-custom.js"></script>
+
+    <!-- HERE Maps API Scripts -->
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+
     <script>
-        function copyWebsiteToClipboard(element) {
-            const text = element.innerText.trim();
-            if (text) {
-                navigator.clipboard.writeText(text).catch(function (err) {
-                    alert("Failed to copy text: " + err);
-                });
-            }
+        window.HERE_API_KEY = '@Configuration["HEREMAP_API_KEY"]';
+
+        function initializeHereMap() {
+            const platform = new H.service.Platform({
+                'apikey': window.HERE_API_KEY
+            });
+
+            const defaultLayers = platform.createDefaultLayers();
+
+            const mapContainer = document.getElementById('mapContainer');
+            if (!mapContainer) return;
+
+            const lat = @Model.Location.location.Coordinates[1].ToString(CultureInfo.InvariantCulture);
+            const lng = @Model.Location.location.Coordinates[0].ToString(CultureInfo.InvariantCulture);
+
+            const map = new H.Map(
+                mapContainer,
+                defaultLayers.vector.normal.map,
+                {
+                    zoom: 15,
+                    center: { lat: lat, lng: lng }
+                }
+            );
+
+            // Add map events
+            const mapEvents = new H.mapevents.MapEvents(map);
+            const behavior = new H.mapevents.Behavior(mapEvents);
+
+            // Add UI components
+            const ui = H.ui.UI.createDefault(map, defaultLayers);
+
+            // Add a marker
+            const markerIcon = '<svg width="24" height="24" ' +
+                'xmlns="http://www.w3.org/2000/svg">' +
+                '<rect stroke="white" fill="#13DA43" x="1" y="1" width="22" height="22" />' +
+                '<text x="12" y="18" font-size="12pt" font-family="Arial" font-weight="bold" ' +
+                'text-anchor="middle" fill="white">P</text></svg>';
+            const icon = new H.map.Icon(
+                '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#28a745"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>',
+                { size: { w: 32, h: 32 }, anchor: { x: 16, y: 32 } }
+            );
+
+            const marker = new H.map.Marker({ lat: lat, lng: lng }, { icon: icon });
+            map.addObject(marker);
         }
+    </script>
 
+    <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const addBox = document.getElementById("addImageBox_@Model.Id");
-            const uploadInput = document.getElementById("uploadImageInput_@Model.Id");
+            document.querySelector('.add-image-box .upload-placeholder').addEventListener('click', function () {
+                document.querySelector('input[name="imageDestinationFileList"]').click();
+            });
 
-            if (addBox && uploadInput) {
-                addBox.addEventListener("click", function () {
-                    uploadInput.click();
-                });
-            }
-
-            const addBoxHistory = document.getElementById("addImageHistoryBox_@Model.Id");
-            const uploadInputHistory = document.getElementById("uploadImageHistoryInput_@Model.Id");
-
-            if (addBoxHistory && uploadInputHistory) {
-                addBoxHistory.addEventListener("click", function () {
-                    uploadInputHistory.click();
-                });
-            }
-
-            // Razor sẽ chỉ render đoạn này nếu TempData có giá trị
+            // Razor will only render this block if TempData has a value
             @if (TempData["EditEventAndFestivalSuccess"] != null)
             {
                 <text>
-                    showTimedAlert("Success!", @TempData["EditEventAndFestivalSuccess"], "success", 1000);
+                    showTimedAlert("Success!", "@TempData["EditEventAndFestivalSuccess"]", "success", 1000);
                 </text>
             }
             @if (TempData["successMessage"] != null)
             {
                 <text>
-                    showTimedAlert("Success!", @TempData["successMessage"], "success", 1000);
+                    showTimedAlert("Success!", "@TempData["successMessage"]", "success", 1000);
                 </text>
             }
             @if (TempData["errorMessage"] != null)
             {
                 <text>
-                    showTimedAlert("Error!", @TempData["errorMessage"], "error", 1000);
+                    showTimedAlert("Error!", "@TempData["errorMessage"]", "error", 1000);
                 </text>
+            }
+
+            // Initialize the map
+            if (window.HERE_API_KEY) {
+                initializeHereMap();
+            } else {
+                console.error("HERE Maps API key is not configured.");
+                document.getElementById('mapContainer').innerHTML = '<div style="text-align: center; padding: 20px;">Map cannot be displayed. API key is missing.</div>';
             }
         });
     </script>
 }
-

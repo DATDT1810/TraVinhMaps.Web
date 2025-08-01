@@ -314,7 +314,7 @@
                                         </ul>
                                         <div class="tab-content" id="descriptionTabContent">
                                             <div class="tab-pane fade show active p-3" id="description-pane" role="tabpanel" aria-labelledby="description-tab-button">
-                                                <textarea asp-for="Description" id="descriptionEditor" class="form-control"
+                                                <textarea asp-for="Description" class="form-control wysiwyg-editor"
                                                           placeholder="Description of destination"
                                                           rows="10"></textarea>
                                                 <span asp-validation-for="Description" class="text-danger"></span>
@@ -336,7 +336,7 @@
 
                                             </div>
                                             <div class="tab-pane fade p-3" id="history-pane" role="tabpanel" aria-labelledby="history-tab-button">
-                                                <textarea asp-for="HistoryStory.Content" id="historyEditor" class="form-control"
+                                                <textarea asp-for="HistoryStory.Content" class="form-control wysiwyg-editor"
                                                           placeholder="History content of destination"
                                                           rows="10"></textarea>
                                                 <span asp-validation-for="HistoryStory.Content" class="text-danger"></span>
@@ -406,6 +406,7 @@
 
     <script src="~/assets/js/touristdestination/heremap-edit.js"></script>
     <script src="~/assets/js/touristdestination/heremaps-search.js"></script>
+    <script src="~/assets/js/ckeditor5.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -527,40 +528,6 @@
                     form.submit();
                 });
             });
-
-            // Initialize CKEditor
-            const editorConfig = {
-                toolbar: {
-                    items: [
-                        'heading',
-                        '|',
-                        'bold',
-                        'italic',
-                        'bulletedList',
-                        'numberedList',
-                        '|',
-                        'outdent',
-                        'indent',
-                        '|',
-                        'blockQuote',
-                        'undo',
-                        'redo'
-                    ]
-                },
-                language: 'en'
-            };
-
-            ClassicEditor
-                .create( document.querySelector( '#descriptionEditor' ), editorConfig)
-                .catch( error => {
-                    console.error( 'Error initializing CKEditor for Description:', error );
-                } );
-
-            ClassicEditor
-                .create( document.querySelector( '#historyEditor' ), editorConfig)
-                .catch( error => {
-                    console.error( 'Error initializing CKEditor for History Story:', error );
-                } );
         });
     </script>
 }

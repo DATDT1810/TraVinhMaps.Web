@@ -1,0 +1,53 @@
+/* CKEditor 5 Dark Mode Styles */
+
+body.dark-only .ck.ck-editor {
+    --ck-color-base-background: #1a1a1a !important;
+    --ck-color-base-foreground: #2d2d2d !important;
+    --ck-color-text: #ffffff !important;
+    --ck-color-base-border: #444 !important;
+    --ck-color-button-default-background: transparent !important;
+    --ck-color-button-default-hover-background: #404040 !important;
+    --ck-color-button-on-background: #4a90e2 !important;
+    --ck-color-button-on-color: #ffffff !important;
+    --ck-color-button-default-color: #ffffff !important;
+    --ck-color-dropdown-panel-background: #2d2d2d !important;
+    --ck-color-dropdown-panel-border: #444 !important;
+    --ck-color-list-item-hover-background: #404040 !important;
+    --ck-color-widget-outline: #4a90e2 !important;
+}
+
+body.dark-only .ck.ck-editor .ck-editor__main > .ck-editor__editable:not(.ck-focused) {
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+    border-color: #444 !important;
+}
+
+body.dark-only .ck.ck-editor .ck-editor__main > .ck-editor__editable.ck-focused {
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+    border-color: var(--ck-color-widget-outline) !important;
+}
+
+body.dark-only .ck.ck-toolbar {
+    background: #2d2d2d !important;
+    border-color: #444 !important;
+}
+
+body.dark-only .ck-editor__editable.ck-placeholder::before {
+    color: #a9a9a9 !important;
+}
+
+body.dark-only .ck.ck-button.ck-on, 
+body.dark-only a.ck.ck-button.ck-on {
+    color: var(--ck-color-button-on-color) !important;
+    background: var(--ck-color-button-on-background) !important;
+}
+
+body.dark-only .ck.ck-button:not(.ck-disabled):hover, 
+body.dark-only a.ck.ck-button:not(.ck-disabled):hover {
+    background: var(--ck-color-button-default-hover-background) !important;
+}
+
+body.dark-only .ck.ck-list__item .ck-button:hover {
+     background: var(--ck-color-list-item-hover-background) !important;
+}
