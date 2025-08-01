@@ -110,7 +110,7 @@
       if (!confirmed) return;
 
       $.ajax({
-        url: "/Admin/OcopProduct/DeleteOcopProduct",
+        url: window.apiBaseUrl + "/Admin/OcopProduct/DeleteOcopProduct",
         method: "POST",
         data: { id },
         headers: { RequestVerificationToken: token },
@@ -145,7 +145,7 @@
       if (!confirmed) return;
 
       $.ajax({
-        url: "/Admin/OcopProduct/RestoreOcopProduct",
+        url: window.apiBaseUrl + "/Admin/OcopProduct/RestoreOcopProduct",
         method: "POST",
         data: { id },
         headers: { RequestVerificationToken: token },
@@ -194,7 +194,7 @@ function exportOcopProductsToExcel() {
 
   // Fetch all OCOP product data from API
   $.ajax({
-    url: "https://localhost:7162/api/OcopProduct/GetAllOcopProduct",
+    url: window.apiBaseUrl + "/api/OcopProduct/GetAllOcopProduct",
     type: "GET",
     headers: {
       sessionId: sessionId,

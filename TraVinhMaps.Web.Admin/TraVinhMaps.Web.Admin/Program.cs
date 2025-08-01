@@ -124,14 +124,16 @@ builder.Services.AddTransient<AuthHttpMessageHandler>();
 // Register for The request must have the sessionId in the Header
 builder.Services.AddHttpClient("ApiClient", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7162/");
+    var apiBaseUrl = builder.Configuration.GetValue<string>("ApiSettings:BaseUrl");
+    client.BaseAddress = new Uri(apiBaseUrl);
     client.Timeout = TimeSpan.FromMinutes(5); // config wait time out with 5 minutes
 }).AddHttpMessageHandler<AuthHttpMessageHandler>();
 
 // Add a client without the auth handler for token refresh to avoid circular dependencies
 builder.Services.AddHttpClient("ApiClientNoAuth", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7162/");
+    var apiBaseUrl = builder.Configuration.GetValue<string>("ApiSettings:BaseUrl");
+    client.BaseAddress = new Uri(apiBaseUrl);
     client.Timeout = TimeSpan.FromMinutes(5);
 });
 

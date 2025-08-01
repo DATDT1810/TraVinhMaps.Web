@@ -491,7 +491,7 @@
 
       // Call the API directly to refresh OTP
       $.ajax({
-        url: 'https://localhost:7162/api/auth/refresh-otp?item=' + userIdentifier,
+        url: 'window.apiBaseUrl + "/api/auth/refresh-otp?item=' + userIdentifier,
         type: 'POST',
         success: function (response) {
           // Parse the response to get the token

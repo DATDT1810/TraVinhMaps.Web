@@ -64,7 +64,7 @@ function exportOcopProductsToExcel() {
 
   // Fetch all OCOP type data from API
   $.ajax({
-    url: "https://localhost:7162/api/OcopType/GetAllOcopType",
+    url: window.apiBaseUrl + "/api/OcopType/GetAllOcopType",
     type: "GET",
     headers: {
       sessionId: sessionId,

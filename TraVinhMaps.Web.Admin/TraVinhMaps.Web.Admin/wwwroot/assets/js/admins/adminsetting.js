@@ -6,6 +6,7 @@ $(document).ready(function () {
     let otpRequestToken = '';
     let newEmailValue = '';  // To store the new email value
     let newPhoneValue = '';  // To store the new phone value
+    let currentUseFor = ''; // Variable to hold the current useFor context
 
     // Functions to show and hide loading spinner
     function showLoading() {
@@ -17,9 +18,12 @@ $(document).ready(function () {
     }
 
     // Hàm gọi API request OTP
-    function requestOTP(identifier, fieldType) {
+    function requestOTP(identifier, fieldType, useFor) {
+        // Kiểm tra nếu identifier không hợp lệ
+        console.log("Requesting OTP with identifier:", identifier, "fieldType:", fieldType, "useFor:", useFor); // Debugging line
+        
         return $.ajax({
-            url: `https://localhost:7162/api/Admins/request-otp-update?identifier=${encodeURIComponent(identifier)}`,
+            url: `window.apiBaseUrl + "/api/Admins/request-otp-update?identifier=${encodeURIComponent(identifier)}&useFor=${useFor}`,
             method: "GET",
             headers: {
                 "SessionId": sessionId
@@ -38,9 +42,11 @@ $(document).ready(function () {
     }
 
     // Hàm hiển thị modal OTP
-    function showOTPModal(fieldType, identifier, isNewValue = false) {
+    function showOTPModal(fieldType, identifier, useFor) {
         currentFieldType = fieldType;
         currentIdentifier = identifier;
+        currentUseFor = useFor; // Store useFor in the global variable
+        const isNewValue = useFor === 2;
 
         // Cập nhật nội dung modal theo loại field và trạng thái (hiện tại/mới)
         if (fieldType === 'email') {
@@ -78,8 +84,12 @@ $(document).ready(function () {
     // Hàm bắt đầu countdown
     function startCountdown() {
         let timeLeft = 300; // 5 minutes in seconds
+        const resendButton = $('#resendOtpBtn');
+        const countdownSpan = $('#countdown');
+
+        resendButton.prop('disabled', true);
+        countdownSpan.show();
         formatCountdown(timeLeft);
-        $('#resendOtpBtn').prop('disabled', true);
 
         countdownTimer = setInterval(function() {
             timeLeft--;
@@ -87,7 +97,8 @@ $(document).ready(function () {
 
             if (timeLeft <= 0) {
                 clearInterval(countdownTimer);
-                $('#resendOtpBtn').prop('disabled', false).html('<i class="fas fa-redo-alt me-2"></i>Resend OTP');
+                resendButton.prop('disabled', false).find('span').hide();
+                resendButton.find('.resend-text').text('Resend OTP');
             }
         }, 1000);
     }
@@ -113,12 +124,12 @@ $(document).ready(function () {
                     // Kiểm tra nếu email không null/empty
                     if (identifier && identifier.trim() !== '') {
                         // Gọi API request OTP
-                        requestOTP(identifier, 'email')
+                        requestOTP(identifier, 'email', 1)
                             .done(function(response) {
-                                showOTPModal('email', identifier, false);
+                                showOTPModal('email', identifier, 1);
                             })
                             .fail(function(error) {
-                                showTimedAlert("Error", "Cannot send OTP. Please try again.", "error", 1000);
+                                showTimedAlert("Error", "Cannot send OTP. Please try again.", "error", 4000);
                             });
                     } else {
                         // Nếu email chưa có, cho phép cập nhật trực tiếp
@@ -141,12 +152,12 @@ $(document).ready(function () {
                     // Kiểm tra nếu phone không null/empty
                     if (identifier && identifier.trim() !== '') {
                         // Gọi API request OTP
-                        requestOTP(identifier, 'phone')
+                        requestOTP(identifier, 'phone', 1)
                             .done(function(response) {
-                                showOTPModal('phone', identifier);
+                                showOTPModal('phone', identifier, 1);
                             })
                             .fail(function(error) {
-                                showTimedAlert("Error", "Cannot send OTP. Please try again.", "error", 1000);
+                                showTimedAlert("Error", "Cannot send OTP. Please try again.", "error", 4000);
                             });
                     } else {
                         // Nếu phone chưa có, cho phép cập nhật trực tiếp
@@ -180,15 +191,15 @@ $(document).ready(function () {
                         }
 
                         if (identifier) {
-                            requestOTP(identifier, 'password')
+                            requestOTP(identifier, 'password', 1)
                                 .done(function(response) {
-                                    showOTPModal('password', identifier);
+                                    showOTPModal('password', identifier, 1);
                                 })
                                 .fail(function(error) {
-                                    showTimedAlert("Error", "Cannot send OTP. Please try again.", "error", 1000);
+                                    showTimedAlert("Error", "Cannot send OTP. Please try again.", "error", 4000);
                                 });
                         } else {
-                            showTimedAlert("Error", "Need email or phone number to verify.", "error", 1000);
+                            showTimedAlert("Error", "Need email or phone number to verify.", "error", 4000);
                         }
                     } else {
                         // Nếu chưa có password, cho phép tạo mới trực tiếp
@@ -200,6 +211,8 @@ $(document).ready(function () {
 
     // Xử lý xác thực OTP cho email/phone hiện tại
     $('#verifyOtpBtn').click(function() {
+        const $btn = $(this);
+        const originalBtnHtml = $btn.html();
         const otpCode = $('#otpInput').val();
 
         if (!otpCode || otpCode.length !== 6) {
@@ -207,9 +220,12 @@ $(document).ready(function () {
             return;
         }
 
+        // Disable button and show loading text
+        $btn.prop('disabled', true).html("loading.....");
+
         // Gọi API verify OTP
         $.ajax({
-            url: `https://localhost:7162/api/Admins/confirm-otp-update?otp=${otpCode}`,
+            url: `window.apiBaseUrl + "/api/Admins/confirm-otp-update?otp=${otpCode}`,
             method: "PUT",
             headers: {
                 "SessionId": sessionId,
@@ -218,7 +234,6 @@ $(document).ready(function () {
             contentType: "application/json",
             success: function(response) {
                 $('#otpModal').modal('hide');
-
                 // Sau khi xác thực thành công, hiển thị modal tương ứng
                 if (currentFieldType === 'email') {
                     $('#newEmailModal').modal('show');
@@ -230,6 +245,10 @@ $(document).ready(function () {
             },
             error: function(error) {
                 showErrorAlert("Error", "OTP is not correct or expired.");
+            },
+            complete: function() {
+                // Restore button state
+                $btn.prop('disabled', false).html(originalBtnHtml);
             }
         });
     });
@@ -237,23 +256,22 @@ $(document).ready(function () {
     // Xử lý gửi lại OTP
     $('#resendOtpBtn').click(function() {
         if (!$(this).prop('disabled')) {
-            // Call the specific resend OTP endpoint with the current identifier
-            $.ajax({
-                url: `https://localhost:7162/api/Admins/resend-otp-update-by-email?identifier=${encodeURIComponent(currentIdentifier)}`,
-                method: 'Get',
-                contentType: 'application/json',
-                headers: {
-                    "SessionId": sessionId,
-                    "id": otpRequestToken
-                },
-            })
-            .done(function(response) {
-                showTimedAlert("Success", "New OTP has been sent.", "success", 1000);
-                startCountdown();
-            })
-            .fail(function(error) {
-                showTimedAlert("Error", "Cannot send new OTP.", "error", 1000);
-            });
+            // Add detailed logging to diagnose the issue
+            console.log('--- Resend OTP Clicked ---');
+            console.log('Value of currentIdentifier:', currentIdentifier);
+            console.log('Value of currentFieldType:', currentFieldType);
+            console.log('Value of currentUseFor:', currentUseFor);
+            console.log('--------------------------');
+
+            // Re-use the main requestOTP function, passing the stored context
+            requestOTP(currentIdentifier, currentFieldType, currentUseFor)
+                .done(function(response) {
+                    showTimedAlert("Success", "New OTP has been sent.", "success", 4000);
+                    startCountdown();
+                })
+                .fail(function(error) {
+                    showTimedAlert("Error", "Cannot send new OTP.", "error", 4000);
+                });
         }
     });
 
@@ -275,6 +293,9 @@ $(document).ready(function () {
     // Handle new email form submission
     $('#newEmailForm').submit(function(e) {
         e.preventDefault();
+        const $form = $(this);
+        const $btn = $form.find('button[type="submit"]');
+        const originalBtnHtml = $btn.html();
         const newEmail = $('#newEmail').val();
         
         // Validate email
@@ -285,25 +306,31 @@ $(document).ready(function () {
         
         // Store new email for later use
         newEmailValue = newEmail;
-        $('#newEmailModal').modal('hide');
         
+        $btn.prop('disabled', true).html("loading.....");
+
         // Request OTP for the new email
-        requestOTP(newEmail, 'email')
+        requestOTP(newEmail, 'email', 2)
             .done(function(response) {
-                showOTPModal('email', newEmail, true); // true indicates this is for new email
+                $('#newEmailModal').modal('hide');
+                showOTPModal('email', newEmail, 2); // true indicates this is for new email
                 
                 // Replace the original verifyOtpBtn click handler with new one for new email
                 $('#verifyOtpBtn').off('click').on('click', function() {
+                    const $btn = $(this);
+                    const originalBtnHtml = $btn.html();
                     const otpCode = $('#otpInput').val();
                     
                     if (!otpCode || otpCode.length !== 6) {
-                        showTimedAlert("Error", "Please enter the full 6-digit OTP.", "error", 1000);
+                        showTimedAlert("Error", "Please enter the full 6-digit OTP.", "error", 4000);
                         return;
                     }
                     
+                    $btn.prop('disabled', true).html("loading.....");
+
                     // Verify OTP for new email
                     $.ajax({
-                        url: `https://localhost:7162/api/Admins/confirm-otp-update?otp=${otpCode}`,
+                        url: `window.apiBaseUrl + "/api/Admins/confirm-otp-update?otp=${otpCode}`,
                         method: "PUT",
                         headers: {
                             "SessionId": sessionId,
@@ -312,24 +339,32 @@ $(document).ready(function () {
                         contentType: "application/json",
                         success: function(response) {
                             $('#otpModal').modal('hide');
-                            
                             // Update the email with the PUT request
                             updateEmailFinal(newEmailValue);
                         },
                         error: function(error) {
-                            showTimedAlert("Error", "OTP is not correct or expired.", "error", 1000);
+                            showTimedAlert("Error", "OTP is not correct or expired.", "error", 4000);
+                        },
+                        complete: function() {
+                            $btn.prop('disabled', false).html(originalBtnHtml);
                         }
                     });
                 });
             })
             .fail(function(error) {
-                showTimedAlert("Error", "Cannot send OTP to new email. Please try again.", "error", 1000);
+                showTimedAlert("Error", "Cannot send OTP to new email. Please try again.", "error", 4000);
+            })
+            .always(function() {
+                $btn.prop('disabled', false).html(originalBtnHtml);
             });
     });
     
     // Handle new phone form submission
     $('#newPhoneForm').submit(function(e) {
         e.preventDefault();
+        const $form = $(this);
+        const $btn = $form.find('button[type="submit"]');
+        const originalBtnHtml = $btn.html();
         const newPhone = $('#newPhone').val();
         
         // Validate phone
@@ -340,25 +375,31 @@ $(document).ready(function () {
         
         // Store new phone for later use
         newPhoneValue = newPhone;
-        $('#newPhoneModal').modal('hide');
         
+        $btn.prop('disabled', true).html("loading.....");
+
         // Request OTP for the new phone
-        requestOTP(newPhone, 'phone')
+        requestOTP(newPhone, 'phone', 2)
             .done(function(response) {
-                showOTPModal('phone', newPhone, true); // true indicates this is for new phone
+                $('#newPhoneModal').modal('hide');
+                showOTPModal('phone', newPhone, 2); // true indicates this is for new phone
                 
                 // Replace the original verifyOtpBtn click handler with new one for new phone
                 $('#verifyOtpBtn').off('click').on('click', function() {
+                    const $btn = $(this);
+                    const originalBtnHtml = $btn.html();
                     const otpCode = $('#otpInput').val();
                     
                     if (!otpCode || otpCode.length !== 6) {
-                        showTimedAlert("Error", "Please enter the full 6-digit OTP.", "error", 1000);
+                        showTimedAlert("Error", "Please enter the full 6-digit OTP.", "error", 4000);
                         return;
                     }
                     
+                    $btn.prop('disabled', true).html("loading.....");
+
                     // Verify OTP for new phone
                     $.ajax({
-                        url: `https://localhost:7162/api/Admins/confirm-otp-update?otp=${otpCode}`,
+                        url: `window.apiBaseUrl + "/api/Admins/confirm-otp-update?otp=${otpCode}`,
                         method: "PUT",
                         headers: {
                             "SessionId": sessionId,
@@ -367,24 +408,32 @@ $(document).ready(function () {
                         contentType: "application/json",
                         success: function(response) {
                             $('#otpModal').modal('hide');
-                            
                             // Update the phone with the PUT request
                             updatePhoneFinal(newPhoneValue);
                         },
                         error: function(error) {
-                            showTimedAlert("Error", "OTP is not correct or expired.", "error", 1000);
+                            showTimedAlert("Error", "OTP is not correct or expired.", "error", 4000);
+                        },
+                        complete: function() {
+                            $btn.prop('disabled', false).html(originalBtnHtml);
                         }
                     });
                 });
             })
             .fail(function(error) {
-                showTimedAlert("Error", "Cannot send OTP to new phone. Please try again.", "error", 1000);
+                showTimedAlert("Error", "Cannot send OTP to new phone. Please try again.", "error", 4000);
+            })
+            .always(function() {
+                $btn.prop('disabled', false).html(originalBtnHtml);
             });
     });
     
     // Handle new password form submission
     $('#newPasswordForm').submit(function(e) {
         e.preventDefault();
+        const $form = $(this);
+        const $btn = $form.find('button[type="submit"]');
+        const originalBtnHtml = $btn.html();
         const currentPassword = $('#currentPassword').val();
         const newPassword = $('#newPassword').val();
         const confirmPassword = $('#confirmPassword').val();
@@ -417,8 +466,12 @@ $(document).ready(function () {
             return;
         }
         
-        updatePasswordFinal(currentPassword, newPassword);
-        $('#newPasswordModal').modal('hide');
+        $btn.prop('disabled', true).html("loading.....");
+
+        updatePasswordFinal(currentPassword, newPassword)
+            .always(function() {
+                $btn.prop('disabled', false).html(originalBtnHtml);
+            });
     });
     
     // Input validation on change
@@ -474,7 +527,7 @@ $(document).ready(function () {
     // Function to update email after all verifications
     function updateEmailFinal(newEmail) {
         $.ajax({
-            url: `https://localhost:7162/api/Admins/update-setting-admin`,
+            url: `window.apiBaseUrl + "/api/Admins/update-setting-admin`,
             method: "PUT",
             headers: {
                 "SessionId": sessionId
@@ -485,14 +538,25 @@ $(document).ready(function () {
                 "updateType": "email"
             }),
             success: function (res) {
-                showTimedAlert("Success", "Email has been updated!" , "success", 1000);
-                // Reload page after successful update
-                setTimeout(function() {
-                    location.reload();
-                }, 1500);
+                showConfirmAlert("Success", "Email has been updated! Please log in again.", "OK")
+                    .then(() => {
+                        // Create a form to submit a POST request for logout
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '/Authen/logout';
+                        
+                        // Add anti-forgery token if needed (assuming it's stored in a hidden input)
+                        const antiforgery = document.querySelector('input[name="__RequestVerificationToken"]');
+                        if (antiforgery) {
+                            form.appendChild(antiforgery.cloneNode());
+                        }
+                        
+                        document.body.appendChild(form);
+                        form.submit();
+                    });
             },
             error: function (err) {
-                showTimedAlert("Error", "Cannot update email.", "error", 1000);
+                showTimedAlert("Error", "Cannot update email.", "error", 4000);
             }
         });
     }
@@ -500,7 +564,7 @@ $(document).ready(function () {
     // Function to update phone after all verifications
     function updatePhoneFinal(newPhone) {
         $.ajax({
-            url: `https://localhost:7162/api/Admins/update-setting-admin`,
+            url: `window.apiBaseUrl + "/api/Admins/update-setting-admin`,
             method: "PUT",
             headers: {
                 "SessionId": sessionId
@@ -511,22 +575,33 @@ $(document).ready(function () {
                 "updateType": "phone"
             }),
             success: function (res) {
-                showTimedAlert("Success", "Phone number has been updated!", "success", 1000);
-                // Reload page after successful update
-                setTimeout(function() {
-                    location.reload();
-                }, 1500);
+                showConfirmAlert("Success", "Phone number has been updated! Please log in again.", "OK")
+                    .then(() => {
+                        // Create a form to submit a POST request for logout
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '/Authen/logout';
+
+                        // Add anti-forgery token if needed (assuming it's stored in a hidden input)
+                        const antiforgery = document.querySelector('input[name="__RequestVerificationToken"]');
+                        if (antiforgery) {
+                            form.appendChild(antiforgery.cloneNode());
+                        }
+
+                        document.body.appendChild(form);
+                        form.submit();
+                    });
             },
             error: function (err) {
-                showTimedAlert("Error", "Cannot update phone number.", "error", 1000);
+                showTimedAlert("Error", "Cannot update phone number.", "error", 4000);
             }
         });
     }
 
     // Function to update password
     function updatePasswordFinal(currentPassword, newPassword) {
-        $.ajax({
-            url: `https://localhost:7162/api/Admins/update-password-admin`,
+        return $.ajax({
+            url: `window.apiBaseUrl + "/api/Admins/update-password-admin`,
             method: "PUT",
             headers: {
                 "SessionId": sessionId
@@ -537,14 +612,15 @@ $(document).ready(function () {
                 "newPassword": newPassword
             }),
             success: function (res) {
-                showTimedAlert("Success", "Password has been updated!", "success", 1000);
+                $('#newPasswordModal').modal('hide');
+                showTimedAlert("Success", "Password has been updated!", "success", 4000);
                 // Reload page after successful update
                 setTimeout(function() {
                     location.reload();
                 }, 1500);
             },
             error: function (err) {
-                showTimedAlert("Error", "Cannot update password. Please check your current password and try again.", "error", 1000);
+                showTimedAlert("Error", "Cannot update password. Please check your current password and try again.", "error", 4000);
             }
         });
     }
@@ -588,4 +664,4 @@ $(document).ready(function () {
         $('.otp-digit:first').focus();
         updateOtpValue();
     });
-}); 
+});

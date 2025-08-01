@@ -1,0 +1,333 @@
+@model TraVinhMaps.Web.Admin.Models.Users.AdminProfileResponse
+@using TraVinhMaps.Web.Admin.Models.Users
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Edit Profile";
+    var settingsData = ViewBag.SettingsData as SettingProfileResponse;
+    var sessionId = User?.FindFirst("SessionId")?.Value;
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                   
+                </div>
+                <div class="col-6">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-home" style="font-size: 20px;"></i>
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item active">Profile</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="edit-profile">
+            <form asp-action="UpdateProfile" asp-controller="Admin" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="Id" value="@Model.Id" />
+                <input type="hidden" name="PhoneNumber" value="@Model.PhoneNumber" />
+                <input type="hidden" name="Password" value="@Model.Password" />
+                <input type="hidden" class="form-control" name="Email" value="@Model.Email" />
+                <div class="row mt-3">
+                    <!-- Security Information -->
+                    <div class="col-xl-6 d-flex">
+                        <div class="card flex-fill">
+                            <div class="card-header">
+                                <h4 class="card-title mb-0"><i class="fa fa-shield-alt me-2"></i>Security Information</h4>
+                            </div>
+                            <div class="card-body d-flex flex-column justify-content-space-around" style="justify-content: space-around;">
+                                <!-- Email -->
+                                <div class="security-item">
+                                    <h4 class="mb-1"><i class="fas fa-envelope me-2"></i>Email</h4>
+                                    @if (settingsData != null && !string.IsNullOrEmpty(settingsData.Email))
+                                    {
+                                        <p class="mb-1">@settingsData.Email</p>
+                                        <a href="#" class="btn btn-sm btn-outline-primary email-options-btn security-btn" data-field-type="email" data-identifier="@settingsData.Email">Change Email</a>
+                                    }
+                                    else
+                                    {
+                                        <p class="mb-1 text-muted">No email yet.</p>
+                                        <a href="#" class="btn btn-sm btn-outline-primary email-options-btn security-btn" data-field-type="email">Change Email</a>
+                                    }
+                                </div>
+
+                                <!-- Phone Number -->
+                                <div class="security-item">
+                                    <h4 class="mb-1"><i class="fas fa-phone me-2"></i>Phone number</h4>
+                                    @if (settingsData != null && !string.IsNullOrEmpty(settingsData.PhoneNumber))
+                                    {
+                                        <p class="mb-1">@settingsData.PhoneNumber</p>
+                                        <a href="#" class="btn btn-sm btn-outline-primary mt-1 phone-options-btn security-btn" data-field-type="phone" data-identifier="@settingsData.PhoneNumber">Change Phone Number</a>
+                                    }
+                                    else
+                                    {
+                                        <p class="mb-1 text-muted">No phone number yet.</p>
+                                        <a href="#" class="btn btn-sm btn-outline-primary phone-options-btn security-btn" data-field-type="phone">Change Phone Number</a>
+                                    }
+                                </div>
+
+                                <!-- Password -->
+                                <div class="security-item">
+                                    <h4 class="mb-1"><i class="fas fa-lock me-2"></i>Password</h4>
+                                    @if (settingsData != null && !string.IsNullOrEmpty(settingsData.Password))
+                                    {
+                                        <p class="mb-1 text-muted">Password has been set.</p>
+                                        <a href="#" class="btn btn-sm btn-outline-primary change-password-btn security-btn" data-field-type="password" data-identifier="password">Change Password</a>
+                                    }
+                                    else
+                                    {
+                                        <p class="mb-1 text-muted">Password has not been set.</p>
+                                        <a href="#" class="btn btn-sm btn-outline-primary change-password-btn security-btn" data-field-type="password" data-identifier="password">Change Password</a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Details -->
+                    <div class="col-xl-6 d-flex">
+                        <div class="card flex-fill">
+                            <div class="card-header">
+                                <h4 class="card-title mb-0"><i class="fa fa-book me-2"></i>Account Details</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center mb-4">
+                                    <img class="rounded-circle profile-avatar" alt="Profile Image"
+                                         src="@(string.IsNullOrEmpty(Model.Avatar) ? Url.Content("~/assets/images/user/user.png") : Model.Avatar)"
+                                         style="width: 120px; height: 120px; object-fit: cover;">
+                                    <div class="mt-2">
+                                        <label for="Avatar" class="btn btn-sm btn-outline-primary">Change</label>
+                                        <input id="Avatar" name="Avatar" type="file" accept="image/*" class="d-none">
+                                    </div>
+                                    <div id="image-error" class="text-danger mt-2" style="display: none;">
+                                        Please select a valid image file (JPEG, PNG, GIF, etc.)
+                                    </div>
+                                </div>
+                                <div class="details-grid">
+                                    <div class="detail-item" style="display : none;">
+                                        <label>Username</label>
+                                        <input class="form-control-plaintext" type="text" name="UserName" value="@Model.UserName" />
+                                    </div>
+                                    <div class="detail-item">
+                                        <label>Role</label>
+                                        <p>@Model.RoleName.ToUpper()</p>
+                                    </div>
+                                    <div class="detail-item">
+                                        <label>Created At</label>
+                                        <p>@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</p>
+                                    </div>
+                                    <div class="detail-item">
+                                        <label>Last Updated</label>
+                                        <p>@(Model.UpdatedAt.HasValue ? Model.UpdatedAt.Value.ToString("yyyy-MM-dd HH:mm") : "Not updated yet")</p>
+                                    </div>
+                                    <div class="detail-item">
+                                        <label>Status</label>
+                                        <p><span class="status-badge active">@(Model.Status ? "Active" : "Inactive")</span></p>
+                                    </div>
+                                    <div class="detail-item" style="display : none;">
+                                        <label>Forbidden Status</label>
+                                        <p><span class="status-badge not-forbidden">@(Model.IsForbidden ? "Forbidden" : "Not Forbidden")</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-end" >
+                                <button class="btn btn-primary" type="submit">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden field to store session ID for JavaScript -->
+<input type="hidden" name="sessionId" value="@sessionId" />
+
+<!-- Hidden fields for user data -->
+<input type="hidden" id="userEmail" value="@settingsData?.Email" />
+<input type="hidden" id="userPhone" value="@settingsData?.PhoneNumber" />
+
+<!-- Modals from Settings.cshtml -->
+@await Html.PartialAsync("_OtpVerificationModal")
+@await Html.PartialAsync("_NewEmailModal")
+@await Html.PartialAsync("_NewPhoneModal")
+@await Html.PartialAsync("_NewPasswordModal")
+
+<!-- Loading Spinner -->
+<div id="loadingSpinner" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" style="background-color: rgba(255, 255, 255, 0.7); z-index: 9999; display: none !important;">
+    <div class="d-flex flex-column align-items-center">
+        <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <span class="mt-2 text-success fw-bold">Processing...</span>
+    </div>
+</div>
+
+<style>
+    .row .card {
+        height: 100%;
+    }
+    .card {
+        transition: border-color 0.3s ease-in-out;
+        cursor: pointer;
+    }
+
+    .card-highlight {
+        border: 1px solid #2c786c !important; /* Green border */
+        box-shadow: 0 0 10px rgba(44, 120, 108, 0.5);
+    }
+
+    .profile-avatar {
+        border: 3px solid #2c786c;
+    }
+
+    .btn-outline-primary {
+        border-color: #2c786c;
+        color: #2c786c;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: #2c786c;
+        color: white;
+    }
+    
+    .btn-primary {
+        background-color: #2c786c;
+        border-color: #2c786c;
+    }
+
+    .security-item h6 {
+        color: #2c786c;
+    }
+
+    .security-btn {
+        width: 280px;
+    }
+
+    /* Account Details Grid */
+    .details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .detail-item {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+        position: relative;
+        border-left: 3px solid #2c786c;
+    }
+
+    .detail-item label {
+        font-size: 0.8rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+
+    .detail-item p, .detail-item .form-control-plaintext {
+        margin: 0;
+        font-size: 0.9rem;
+        font-weight: 500;
+        padding: 0;
+    }
+    
+    .form-control-plaintext {
+        border: none;
+        background: transparent;
+    }
+
+    .status-badge {
+        padding: 0.2em 0.6em;
+        border-radius: 0.25rem;
+        font-weight: 600;
+    }
+
+    .status-badge.active {
+        background-color: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+    }
+
+    .status-badge.not-forbidden {
+        background-color: rgba(220, 240, 220, 1);
+        color: #2c786c;
+    }
+
+    .dark-only .detail-item {
+        background-color: #2c303a; /* Dark background for items */
+        border-left-color: #2c786c; /* Keep the accent color */
+    }
+
+    .dark-only .detail-item label {
+        color: #adb5bd; /* Lighter text for labels */
+    }
+
+    .dark-only .detail-item p,
+    .dark-only .detail-item .form-control-plaintext {
+        color: #e9ecef; /* Light text for values */
+    }
+</style>
+    
+@section Scripts {
+    <script src="~/assets/js/sweetalert-custom.js"></script>
+    <script src="~/assets/js/admins/adminsetting.js?v=@DateTime.Now.Ticks"></script>
+    <script>
+        (function () {
+            const success = @Html.Raw(Json.Serialize(TempData["Success"]));
+            const error = @Html.Raw(Json.Serialize(TempData["Error"]));
+            if (success) showTimedAlert("Success!", success, "success", 1000);
+            if (error) showTimedAlert("Error!", error, "error", 1000);
+        })();
+
+        // Preview image before upload
+        document.getElementById('Avatar').addEventListener('change', function (e) {
+            if (e.target.files && e.target.files[0]) {
+                var reader = new FileReader();
+
+                const file = e.target.files[0];
+                const imageError = document.getElementById('image-error');
+                const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp', 'image/webp', 'image/svg+xml'];
+
+                if (!validImageTypes.includes(file.type)) {
+                    imageError.style.display = 'block';
+                    return;
+                } else {
+                    imageError.style.display = 'none';
+                }
+
+                reader.onload = function (e) {
+                    document.querySelector('.profile-avatar').setAttribute('src', e.target.result);
+                }
+
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Card highlight on click
+        document.addEventListener('DOMContentLoaded', function () {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('click', function () {
+                    // Remove highlight from all cards
+                    cards.forEach(c => c.classList.remove('card-highlight'));
+                    // Add highlight to the clicked card
+                    this.classList.add('card-highlight');
+                });
+            });
+        });
+    </script>
+}

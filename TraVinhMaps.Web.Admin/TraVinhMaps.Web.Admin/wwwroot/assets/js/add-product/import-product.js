@@ -112,7 +112,6 @@ $(document).ready(function () {
 
         // Clear existing data
         $('#excelDataBody').empty();
-        $('#issuesList').empty();
 
         // Get lookup data from the page
         const ocopTypes = window.ocopTypes || [];
@@ -120,7 +119,6 @@ $(document).ready(function () {
         const tags = window.tags || [];
 
         // Track validation issues
-        const issues = [];
         let validProducts = 0;
         let warningProducts = 0;
         let errorProducts = 0;
@@ -161,7 +159,6 @@ $(document).ready(function () {
                 status = 'Error';
                 statusClass = 'badge-light-danger';
                 note = 'Product name is required';
-                issues.push(`• Row ${i}: Product name is required`);
                 errorProducts++;
                 hasError = true;
             }
@@ -171,7 +168,6 @@ $(document).ready(function () {
                 status = 'Error';
                 statusClass = 'badge-light-danger';
                 note = 'Product price is required';
-                issues.push(`• Row ${i}: Product price is required`);
                 errorProducts++;
                 hasError = true;
             }
@@ -184,7 +180,6 @@ $(document).ready(function () {
                     status = 'Error';
                     statusClass = 'badge-light-danger';
                     note = `OcopType "${row[3]}" not found in database`;
-                    issues.push(`• Row ${i}: OcopType "${row[3]}" not found in database`);
                     errorProducts++;
                     hasError = true;
                 } else {
@@ -194,7 +189,6 @@ $(document).ready(function () {
                 status = 'Error';
                 statusClass = 'badge-light-danger';
                 note = 'OcopType is required';
-                issues.push(`• Row ${i}: OcopType is required`);
                 errorProducts++;
                 hasError = true;
             }
@@ -207,7 +201,6 @@ $(document).ready(function () {
                     status = 'Error';
                     statusClass = 'badge-light-danger';
                     note = `Company "${row[4]}" not found in database`;
-                    issues.push(`• Row ${i}: Company "${row[4]}" not found in database`);
                     errorProducts++;
                     hasError = true;
                 } else {
@@ -217,7 +210,6 @@ $(document).ready(function () {
                 status = 'Error';
                 statusClass = 'badge-light-danger';
                 note = 'Company is required';
-                issues.push(`• Row ${i}: Company is required`);
                 errorProducts++;
                 hasError = true;
             }
@@ -227,7 +219,6 @@ $(document).ready(function () {
                 status = 'Error';
                 statusClass = 'badge-light-danger';
                 note = 'OcopPoint must be a number between 1 and 5';
-                issues.push(`• Row ${i}: OcopPoint must be a number between 1 and 5`);
                 errorProducts++;
                 hasError = true;
             }
@@ -237,7 +228,6 @@ $(document).ready(function () {
                 status = 'Error';
                 statusClass = 'badge-light-danger';
                 note = 'OcopYear must be a valid year not in the future';
-                issues.push(`• Row ${i}: OcopYear must be a valid year not in the future`);
                 errorProducts++;
                 hasError = true;
             }
@@ -250,18 +240,13 @@ $(document).ready(function () {
                     status = 'Error';
                     statusClass = 'badge-light-danger';
                     note = `Tag "${row[7]}" not found in database`;
-                    issues.push(`• Row ${i}: Tag "${row[7]}" not found in database`);
                     errorProducts++;
                     hasError = true;
                 } else {
                     tagId = matchedTag.id;
                 }
             } else {
-                status = 'Warning';
-                statusClass = 'badge-light-warning';
-                note = 'Tag is recommended';
-                issues.push(`• Row ${i}: Tag is recommended`);
-                warningProducts++;
+                // Tag is optional, no warning needed
             }
 
             if (!hasError) {
@@ -342,141 +327,165 @@ $(document).ready(function () {
         // Setup image upload functionality
         setupImageUpload();
 
-        // Show validation issues if any
-        if (issues.length > 0) {
-            issues.forEach(issue => {
-                $('#issuesList').append($('<li>').html(issue));
-            });
-            $('#validationIssues').removeClass('d-none');
-
-            // Issues panel should be collapsed by default
-            $('#issuesContentWrapper').hide();
-            $('#issuesToggleIcon').removeClass('fa-chevron-up').addClass('fa-chevron-down');
-        } else {
-            $('#validationIssues').addClass('d-none');
-        }
+        // Run full validation to update the issues list
+        collectAllValidationIssues();
 
         // Count all products across all pages
         let totalProductCount = 0;
-        let missingImagesCount = 0;
         for (let i = 1; i < excelData.length; i++) {
             const row = excelData[i];
             if (row && row.length > 0) {
                 totalProductCount++;
+            }
+        }
+
+    // Update product count and estimated time
+    $('#productCount').text(totalProductCount);
+
+    // Estimate about 1 minute per 10 products
+    const estimatedMinutes = Math.ceil(totalProductCount / 10) * 2;
+    $('#estimatedTime').text(`~${estimatedMinutes}`);
+
+    // Show the data preview section
+    $('#dataPreviewSection').removeClass('d-none');
+}
+
+// Display validation issues in a grouped format
+function displayValidationIssues(issuesByRow) {
+    const issuesList = $('#issuesList');
+    issuesList.empty();
+
+    const issueKeys = Object.keys(issuesByRow);
+
+    if (issueKeys.length > 0) {
+        issueKeys.sort((a, b) => a - b).forEach(rowNum => {
+            const rowIssues = issuesByRow[rowNum];
+            if (rowIssues.length > 0) {
+                const li = $('<li>');
+                // Group issues under a single row entry
+                let issueHtml = `<div class="d-flex">
+                                     <strong class="me-2">• Row ${rowNum}:</strong>
+                                     <div>`;
+
+                if (rowIssues.length === 1) {
+                    issueHtml += rowIssues[0];
+                } else {
+                    const nestedList = rowIssues.map(issue => `<div>- ${issue}</div>`).join('');
+                    issueHtml += `${nestedList}`;
+                }
                 
-                // Check for missing images
-                if (!excelData[i].files || excelData[i].files.length === 0) {
-                    missingImagesCount++;
-                    
-                    // Add image issue to the list if not already there
-                    const imageIssue = `• Row ${i}: No images uploaded for product "${row[0] || 'Unnamed'}"`;
-                    let exists = false;
-                    $('#issuesList li').each(function() {
-                        if ($(this).html().includes(`Row ${i}: No images uploaded`)) {
-                            exists = true;
-                            return false;
-                        }
-                    });
-                    
-                    if (!exists) {
-                        $('#issuesList').append($('<li>').html(imageIssue));
-                        $('#validationIssues').removeClass('d-none');
-                    }
-                }
+                issueHtml += `</div></div>`;
+                li.html(issueHtml);
+                issuesList.append(li);
             }
-        }
-
-        // Update product count and estimated time
-        $('#productCount').text(totalProductCount);
-
-        // Estimate about 1 minute per 10 products
-        const estimatedMinutes = Math.ceil(totalProductCount / 10) * 2;
-        $('#estimatedTime').text(`~${estimatedMinutes}`);
-
-        // Show the data preview section
-        $('#dataPreviewSection').removeClass('d-none');
-    }
-
-    // Collect validation issues from all rows
-    function collectAllValidationIssues() {
-        const issues = [];
-
-        // Get lookup data from the page
-        const ocopTypes = window.ocopTypes || [];
-        const companies = window.companies || [];
-        const tags = window.tags || [];
-
-        // Check all rows, not just the current page
-        for (let i = 1; i < excelData.length; i++) {
-            const row = excelData[i];
-            if (!row || row.length === 0) continue;
-
-            // Clear previous IDs
-            if (!excelData[i].ids) {
-                excelData[i].ids = {};
-            }
-
-            // Product Name validation
-            if (!row[0]) {
-                issues.push(`• Row ${i}: Product name is required`);
-            }
-
-            // Price validation
-            if (!row[2]) {
-                issues.push(`• Row ${i}: Product price is required`);
-            }
-
-            // OcopType validation
-            if (row[3]) {
-                const matchedType = ocopTypes.find(t => t.name.toLowerCase() === row[3].toString().toLowerCase());
-                if (!matchedType) {
-                    issues.push(`• Row ${i}: OcopType "${row[3]}" not found in database`);
-                } else {
-                    excelData[i].ids.ocopTypeId = matchedType.id;
-                }
-            } else {
-                issues.push(`• Row ${i}: OcopType is required`);
-            }
-
-            // Company validation
-            if (row[4]) {
-                const matchedCompany = companies.find(c => c.name.toLowerCase() === row[4].toString().toLowerCase());
-                if (!matchedCompany) {
-                    issues.push(`• Row ${i}: Company "${row[4]}" not found in database`);
-                } else {
-                    excelData[i].ids.companyId = matchedCompany.id;
-                }
-            } else {
-                issues.push(`• Row ${i}: Company is required`);
-            }
-
-            // OcopPoint validation
-            if (!row[5] || isNaN(parseInt(row[5])) || parseInt(row[5]) < 1 || parseInt(row[5]) > 5) {
-                issues.push(`• Row ${i}: OcopPoint must be a number between 1 and 5`);
-            }
-
-            // OcopYear validation
-            if (!row[6] || isNaN(parseInt(row[6])) || parseInt(row[6]) > new Date().getFullYear()) {
-                issues.push(`• Row ${i}: OcopYear must be a valid year not in the future`);
-            }
-
-            // Use default Tag ID
-            const defaultTagId = tags.length > 0 ? tags[0].id : null;
-            excelData[i].ids.tagId = defaultTagId;
-        }
-
-        // Update UI
-        $('#issuesList').empty();
-
-        if (issues.length > 0) {
-            issues.forEach(issue => {
-                $('#issuesList').append($('<li>').html(issue));
-            });
-            $('#validationIssues').removeClass('d-none');
+        });
+        $('#validationIssues').removeClass('d-none');
+        
+        // Check if panel should be expanded
+        if (sessionStorage.getItem('issuesExpanded') === 'true') {
+            $('#issuesContentWrapper').show();
+            $('#issuesToggleIcon').removeClass('fa-chevron-down').addClass('fa-chevron-up');
         } else {
-            $('#validationIssues').addClass('d-none');
+            $('#issuesContentWrapper').hide();
+            $('#issuesToggleIcon').removeClass('fa-chevron-up').addClass('fa-chevron-down');
         }
+    } else {
+        $('#validationIssues').addClass('d-none');
     }
+}
+
+// Collect validation issues from all rows
+function collectAllValidationIssues() {
+    const issuesByRow = {};
+
+    // Helper to add an issue
+    const addIssue = (rowNum, message) => {
+        if (!issuesByRow[rowNum]) {
+            issuesByRow[rowNum] = [];
+        }
+        // Avoid adding duplicate messages for the same row
+        if (!issuesByRow[rowNum].includes(message)) {
+            issuesByRow[rowNum].push(message);
+        }
+    };
+
+    // Get lookup data from the page
+    const ocopTypes = window.ocopTypes || [];
+    const companies = window.companies || [];
+    const tags = window.tags || [];
+
+    // Check all rows, not just the current page
+    for (let i = 1; i < excelData.length; i++) {
+        const row = excelData[i];
+        if (!row || row.length === 0) continue;
+
+        // Clear previous IDs
+        if (!excelData[i].ids) {
+            excelData[i].ids = {};
+        }
+
+        // Product Name validation
+        if (!row[0]) {
+            addIssue(i, 'Product name is required');
+        }
+
+        // Price validation
+        if (!row[2]) {
+            addIssue(i, 'Product price is required');
+        }
+
+        // OcopType validation
+        if (row[3]) {
+            const matchedType = ocopTypes.find(t => t.name.toLowerCase() === row[3].toString().toLowerCase());
+            if (!matchedType) {
+                addIssue(i, `OcopType "${row[3]}" not found in database`);
+            } else {
+                excelData[i].ids.ocopTypeId = matchedType.id;
+            }
+        } else {
+            addIssue(i, 'OcopType is required');
+        }
+
+        // Company validation
+        if (row[4]) {
+            const matchedCompany = companies.find(c => c.name.toLowerCase() === row[4].toString().toLowerCase());
+            if (!matchedCompany) {
+                addIssue(i, `Company "${row[4]}" not found in database`);
+            } else {
+                excelData[i].ids.companyId = matchedCompany.id;
+            }
+        } else {
+            addIssue(i, 'Company is required');
+        }
+
+        // OcopPoint validation
+        if (!row[5] || isNaN(parseInt(row[5])) || parseInt(row[5]) < 1 || parseInt(row[5]) > 5) {
+            addIssue(i, 'OcopPoint must be a number between 1 and 5');
+        }
+
+        // OcopYear validation
+        if (!row[6] || isNaN(parseInt(row[6])) || parseInt(row[6]) > new Date().getFullYear()) {
+            addIssue(i, 'OcopYear must be a valid year not in the future');
+        }
+        
+        // Tag validation (recommendation) - REMOVED
+        // if (!row[7]) {
+        //     addIssue(i, 'Tag is recommended');
+        // }
+
+        // Image validation
+        if (!excelData[i].files || excelData[i].files.length === 0) {
+            addIssue(i, `No images uploaded for product "${row[0] || 'Unnamed'}"`);
+        }
+
+        // Use default Tag ID
+        const defaultTagId = tags.length > 0 ? tags[0].id : null;
+        excelData[i].ids.tagId = defaultTagId;
+    }
+
+    // Update UI
+    displayValidationIssues(issuesByRow);
+}
 
     // Handle pagination clicks
     $('#prevPageBtn').click(function (e) {
@@ -1107,7 +1116,7 @@ $(document).ready(function () {
                     // Send batch request
                     console.log('Attempting to send AJAX request to import products...');
                     $.ajax({
-                        url: 'https://localhost:7162/api/OcopProduct/import-product',
+                        url: 'window.apiBaseUrl + "/api/OcopProduct/import-product',
                         type: 'POST',
                         headers: {
                             'sessionId': window.sessionId,
@@ -1117,7 +1126,7 @@ $(document).ready(function () {
                         contentType: false,
                         timeout: 300000, // 5 minutes timeout
                         beforeSend: function(xhr) {
-                            console.log('Starting AJAX request to:', 'https://localhost:7162/api/OcopProduct/import-product');
+                            console.log('Starting AJAX request to:', 'window.apiBaseUrl + "/api/OcopProduct/import-product');
                         },
                         success: function (response) {
                             console.log(`Batch ${batchIndex + 1} completed successfully`, response);

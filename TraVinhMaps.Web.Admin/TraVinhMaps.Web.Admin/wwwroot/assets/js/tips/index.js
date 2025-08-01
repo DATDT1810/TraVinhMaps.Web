@@ -44,7 +44,7 @@ $(document).ready(function () {
     ).then(function (confirmed) {
       if (confirmed) {
         $.ajax({
-          url: "/CommunityTips/Delete",
+          url: window.apiBaseUrl + "/CommunityTips/Delete",
           type: "POST",
           data: {
             __RequestVerificationToken: token,
@@ -88,7 +88,7 @@ $(document).ready(function () {
     ).then(function (confirmed) {
       if (confirmed) {
         $.ajax({
-          url: "/CommunityTips/Restore",
+          url: window.apiBaseUrl + "/CommunityTips/Restore",
           type: "POST",
           data: {
             __RequestVerificationToken: token,
@@ -156,7 +156,7 @@ $("#tipsExportBtn").on("click", function () {
 
 function exportTipsToExcel() {
   $.ajax({
-    url: "https://localhost:7162/api/CommunityTips/GetAllTip",
+    url: window.apiBaseUrl + "/api/CommunityTips/GetAllTip",
     type: "GET",
     headers: {
       sessionId: sessionId,
@@ -279,7 +279,7 @@ function exportTipsToExcel() {
       } else if (xhr.status === 403) {
         errorMessage = "You do not have permission to perform this action.";
       } else if (xhr.status === 404) {
-        errorMessage = "API endpoint not found. Verify the URL: https://localhost:7162/api/CommunityTips/GetAllTip";
+        errorMessage = "API endpoint not found. Verify the URL: " + window.apiBaseUrl + "/api/CommunityTips/GetAllTip";
       }
       showTimedAlert("Export Error!", errorMessage, "error", 1000);
     }
