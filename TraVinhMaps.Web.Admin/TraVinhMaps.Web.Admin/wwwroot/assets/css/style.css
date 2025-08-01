@@ -1473,7 +1473,7 @@ svg.f-light {
 }
 
 .bg-success {
-  background-color: #00AC46 !important;
+  background-color: #158247 !important;
   color: #fff;
 }
 
@@ -21777,6 +21777,7 @@ body.dark-only .invoice-table-data {
 body.dark-only .form-control {
   background-color: #22242B !important;
   border-color: rgba(255, 255, 255, 0.1);
+  color: #cccccc;
 }
 body.dark-only input::-webkit-input-placeholder {
   color: rgba(255, 255, 255, 0.6);
@@ -28386,6 +28387,7 @@ table.table-bordered thead tr th p {
   min-height: 50px;
   border: 2px solid var(--chart-dashed-border);
   overflow: auto;
+  background: center;
 }
 .customSuggestionsList .empty {
   color: var(--theme-deafult);
@@ -31693,9 +31695,6 @@ table.table-bordered thead tr th p {
 .ck-editor__editable {
   min-height: 150px !important;
 }
-.ck-editor__editable p{
-  color: #000 !important;
-}
 
 /* choose file */
 input[type="file"]::file-selector-button {
@@ -31711,8 +31710,4 @@ input[type="file"]::file-selector-button:hover {
 }
 
 
-/*config for cket*/
-body.dark-only .ck.ck-editor {
-    color: black !important;
-   
-}
+

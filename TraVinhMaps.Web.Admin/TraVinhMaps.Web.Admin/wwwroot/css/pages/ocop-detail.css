@@ -344,13 +344,11 @@ body.dark-only .card {
 }
 
 body.dark-only .card h1,
-body.dark-only .card h2,
 body.dark-only .card h3,
 body.dark-only .card h4,
 body.dark-only .card h5,
 body.dark-only .card h6,
 body.dark-only .card p,
-body.dark-only .card span,
 body.dark-only .card div,
 body.dark-only .card strong,
 body.dark-only .card label,
@@ -393,7 +391,8 @@ body.dark-only .btn-close {
     filter: invert(1) grayscale(100%) brightness(200%);
 }
 
-body.dark-only .d-flex.align-items-center.p-3.mb-3 {
+body.dark-only .d-flex.align-items-center.p-3.mb-3,
+body.dark-only .filter-block .sell {
     background-color: var(--dark-card-bg, #2c323f) !important;
 }
 
