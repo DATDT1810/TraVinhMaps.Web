@@ -74,6 +74,34 @@
     .form-select.text-truncate {
         padding-right: 2.25rem;
     }
+
+    .price-options {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .price-option {
+        flex: 1;
+        padding: 0.7rem;
+        border: 1px solid #ced4da;
+        border-radius: 0.375rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .price-option.active {
+        background-color: #28A745;
+        color: white;
+        border-color: #28A745;
+    }
+
+    .price-option i {
+        font-size: 1.5rem;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
 </style>
 
 <div class="page-body">
@@ -141,7 +169,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="mb-3">
+                                        <div style="display: none;" class="mb-3">
                                             <label>Type Location</label>
                                             <select asp-for="Type" class="form-select">
                                                 <option selected value="Point">Point</option>
@@ -174,7 +202,7 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-6">
                                                 <div class="mb-3">
                                                     <label>Opent Time</label>
                                                     <select asp-for="OpeningHours.OpenTime" id="openTime" class="form-select">
@@ -187,7 +215,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-6">
                                                 <div class="mb-3">
                                                     <label>Close Time</label>
                                                     <select asp-for="OpeningHours.CloseTime" id="closeTime" class="form-select">
@@ -201,14 +229,25 @@
                                                     <span id="timeValidationError" class="text-danger d-block"></span>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-4">
-                                                <div class="mb-3">
-                                                    <label>Ticket</label>
-                                                    <select asp-for="Ticket" class="form-select">
-                                                        <option value="Free">Free</option>
-                                                        <option value="Chargeable">Chargeable</option>
-                                                    </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Price</label>
+                                            <input asp-for="Ticket" type="hidden" id="ticket-hidden-input" />
+                                            <div class="price-options">
+                                                <div class="price-option" data-value="Free">
+                                                    <i class="fa fa-tag"></i>
+                                                    <span>Free Ticket</span>
                                                 </div>
+                                                <div class="price-option" data-value="Chargeable">
+                                                    <i class="fa fa-tag"></i>
+                                                    <span>Chargeable</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3" id="price-input-container" style="display: none;">
+                                            <div class="input-group">
+                                                <span class="input-group-text">đ</span>
+                                                <input id="price" class="form-control" type="number" placeholder="100000">
                                             </div>
                                         </div>
                                         <div class="mb-3">
@@ -228,12 +267,12 @@
                                         </div>
                                         <div class="mb-3">
                                             <label>Description</label>
-                                            <textarea asp-for="Description" id="descriptionEditor" class="form-control" placeholder="Description of destination" rows="10"></textarea>
+                                            <textarea asp-for="Description" class="form-control wysiwyg-editor" placeholder="Description of destination" rows="10"></textarea>
                                             <span asp-validation-for="Description" class="text-danger"></span>
                                         </div>
                                         <div class="mb-3">
                                             <label>History Story</label>
-                                            <textarea asp-for="HistoryStory.Content" id="historyEditor" class="form-control" placeholder="History content of destination" rows="10"></textarea>
+                                            <textarea asp-for="HistoryStory.Content" class="form-control wysiwyg-editor" placeholder="History content of destination" rows="10"></textarea>
                                             <span asp-validation-for="HistoryStory.Content" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -299,6 +338,7 @@
     
     <script src="~/assets/js/touristdestination/heremap-edit.js"></script>
     <script src="~/assets/js/touristdestination/heremaps-search.js"></script>
+    <script src="~/assets/js/ckeditor5.js"></script>
     
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -374,9 +414,40 @@
             closeTimeSelect.addEventListener('change', validateTime);
             validateTime();
 
-            // Initialize CKEditor
-            ClassicEditor.create(document.querySelector('#descriptionEditor')).catch(error => { console.error(error); });
-            ClassicEditor.create(document.querySelector('#historyEditor')).catch(error => { console.error(error); });
+            const priceOptions = document.querySelectorAll('.price-option');
+            const hiddenTicketInput = document.getElementById('ticket-hidden-input');
+            const priceInputContainer = document.getElementById('price-input-container');
+            const priceInput = document.getElementById('price');
+
+            function setTicketState(selectedValue) {
+                priceOptions.forEach(opt => {
+                    opt.classList.toggle('active', opt.dataset.value === selectedValue);
+                });
+
+                if (selectedValue === 'Chargeable') {
+                    priceInputContainer.style.display = 'block';
+                    hiddenTicketInput.value = priceInput.value;
+                } else {
+                    priceInputContainer.style.display = 'none';
+                    hiddenTicketInput.value = 'Free Ticket';
+                    priceInput.value = '';
+                }
+            }
+
+            priceInput.addEventListener('input', () => {
+                if (hiddenTicketInput.value !== 'Free Ticket') {
+                    hiddenTicketInput.value = priceInput.value;
+                }
+            });
+
+            priceOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    setTicketState(option.dataset.value);
+                });
+            });
+
+            // Set initial state to 'Free' for the create page
+            setTicketState('Free');
         });
     </script>
 }

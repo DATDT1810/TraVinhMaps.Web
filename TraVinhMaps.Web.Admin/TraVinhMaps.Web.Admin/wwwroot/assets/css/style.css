@@ -31612,3 +31612,9 @@ table.table-bordered thead tr th p {
     line-height: 1.6;
     text-align: start;
 }
+
+/*config for cket*/
+body.dark-only .ck.ck-editor {
+    color: black !important;
+   
+}

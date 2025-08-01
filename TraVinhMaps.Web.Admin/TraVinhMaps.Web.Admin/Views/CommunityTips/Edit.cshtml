@@ -4,12 +4,13 @@
     ViewData["Title"] = "Edit Tip";
 }
 
+
 <div class="page-body">
     <div class="container-fluid">
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
-                    <h4>@ViewData["Title"]</h4>
+                  
                 </div>
                 @{
                     var breadcrumbs = ViewData["Breadcrumb"] as List<BreadcrumbItem>;
@@ -26,31 +27,35 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
-                <div class="card">
-                    <div class="card-body">
+                <div class="card shadow-sm" style="border-radius: 15px;">
+                    <div class="card-header text-white" style="background-color: #28a745; border-top-left-radius: 15px; border-top-right-radius: 15px; padding: 20px;">
+                        <h4 class="mb-0 text-white">@ViewData["Title"]</h4>
+                        <p class="mb-0" style="color: rgba(255, 255, 255, 0.75);">Edit your content</p>
+                    </div>
+                    <div class="card-body" style="padding: 30px;">
                         <form asp-action="Edit" method="post">
                             <input type="hidden" asp-for="Id" />
-                            <div class="mb-3">
-                                <label asp-for="Title" class="form-label"></label>
-                                <input asp-for="Title" class="form-control" />
+                            <div class="mb-4">
+                                <label asp-for="Title" class="form-label fw-bold" style="border-left: 4px solid #28a745; padding-left: 12px; font-size: 1.1rem  ">Title</label>
+                                <input asp-for="Title" class="form-control mt-2" style="border-radius: 8px; padding: 10px; border-color: #e0e0e0;" />
                                 <span asp-validation-for="Title" class="text-danger"></span>
                             </div>
-                            <div class="mb-3">
-                                <label asp-for="Content" class="form-label"></label>
-                                <textarea asp-for="Content" id="Description" class="form-control" rows="7"></textarea>
+                            <div class="mb-4">
+                                <label asp-for="Content" class="form-label fw-bold" style="border-left: 4px solid #28a745; padding-left: 12px; font-size: 1.1rem; margin-bottom: 15px;">Content</label>
+                                <textarea asp-for="Content" id="Description" class="form-control mt-2" rows="7" style="border-radius: 8px; padding: 10px; border-color: #e0e0e0;"></textarea>
                                 <span asp-validation-for="Content" class="text-danger"></span>
                             </div>
-                            <div class="mb-3">
-                                <label asp-for="TagId" class="form-label">Tag</label>
-                                <select asp-for="TagId" class="form-select" asp-items="ViewBag.Tags"></select>
+                            <div class="mb-4" style="display: none">
+                                <label asp-for="TagId" class="form-label fw-bold" style="border-left: 4px solid #28a745; padding-left: 12px; font-size: 1.1rem;">Tag</label>
+                                <select asp-for="TagId" class="form-select mt-2" asp-items="ViewBag.Tags" required style="border-radius: 8px; padding: 10px; border-color: #e0e0e0;"></select>
                                 <span asp-validation-for="TagId" class="text-danger"></span>
                             </div>
 
-                            <div class="row">
+                            <div class="row mt-5">
                                 <div class="col">
                                     <div class="text-end">
-                                        <a class="btn btn-danger" asp-action="Index">Cancel</a>
-                                        <button type="submit" class="btn btn-success">Save Changes</button>
+                                        <a class="btn btn-light me-2" asp-action="Index" style="border-radius: 8px; padding: 10px 25px; font-weight: 600; border: 1px solid #ddd;">Cancel</a>
+                                        <button type="submit" class="btn btn-success" style="border-radius: 8px; padding: 10px 25px; font-weight: 600;">Save Changes</button>
                                     </div>
                                 </div>
                             </div>

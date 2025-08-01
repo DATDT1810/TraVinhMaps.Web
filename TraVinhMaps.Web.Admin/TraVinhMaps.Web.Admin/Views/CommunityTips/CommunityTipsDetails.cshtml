@@ -1,23 +1,163 @@
 @using TraVinhMaps.Web.Admin.Models.CommunityTips
 @model CommunityTipsResponse
 @{
-    ViewData["Title"] = " Tips Details";
+    ViewData["Title"] = "Tips Details";
 }
+
+<style>
+    .details-container {
+        background-color: #f0f2f5;
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    .details-header {
+        text-align: center;
+        margin-bottom: 10px;
+        background-color: #4CAF50;
+        padding: 30px;
+        border-radius: 15px;
+    }
+
+    .details-title {
+        font-size: 2rem;
+        font-weight: bold;
+        color: white;
+        padding-top: 10px;
+        min-height: 70px;
+    }
+
+    .details-subtitle {
+        font-size: 1.2rem;
+        color: white;
+    }
+
+    .details-content-card {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .details-content {
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+    .details-content p {
+        font-size: 17px;
+        font-weight: 400;     
+    }
+
+    .info-boxes {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .info-box {
+        background-color: white;
+        color: #333;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        flex: 1;
+        border: 1px solid #eeeeee;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .info-box-label {
+        font-size: 0.9rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+    }
+
+    .info-box-value {
+        font-size: 1.2rem;
+    }
+
+    .summary-box {
+        background-color: #e8f5e9;
+        color: #333;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        border: 1px solid #eeeeee;
+        border-left: 5px solid #a5d6a7;
+    }
+
+    .summary-item {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+
+    .details-footer {
+        text-align: right;
+    }
+
+    .btn-back-custom {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 30px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: background-color 0.3s;
+    }
+
+    .btn-back-custom:hover {
+        background-color: #388E3C;
+        color: white;
+    }
+
+    /* Dark Mode Styles */
+    body.dark-only .details-header {
+        background-color: #4CAF50;
+    }
+
+    body.dark-only .details-content-card {
+        background-color: #212529;
+        color: #dce0e6;
+    }
+
+    body.dark-only .details-content,
+    body.dark-only .info-box-label,
+    body.dark-only .summary-item {
+        color: #dce0e6;
+    }
+
+    body.dark-only .info-box {
+        background-color: #2c323f;
+        border-color: #444c5c;
+    }
+
+    body.dark-only .info-box-value {
+        color: #dce0e6 !important;
+    }
+
+    body.dark-only .summary-box {
+        background-color: #2c323f;
+        border-color: #444c5c;
+        border-left-color: #a5d6a7;
+    }
+
+    body.dark-only .btn-back-custom {
+        background-color: #4CAF50;
+    }
+</style>
 
 <div class="page-body">
     <div class="container-fluid">
         <div class="page-title">
             <div class="row">
-                <div class="col-6">
-                    <h4>@ViewData["Title"]</h4>
+                <div class="col-12">
+                    <div class="details-header">
+                        <h1 class="details-title">@Model.Title</h1>
+
+                    </div>
                 </div>
-                @{
-                    var breadcrumbs = ViewData["Breadcrumb"] as List<BreadcrumbItem>;
-                }
-                @if (breadcrumbs != null)
-                {
-                    @await Html.PartialAsync("_Breadcrumb", breadcrumbs)
-                }
             </div>
         </div>
     </div>
@@ -25,42 +165,40 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="col-sm-12">
-                            <div class="card-header">
-                                <h4>@Model.Title</h4>
-                            </div>
-                            <div class="card-body">
-                                <span class="text-justify">@Html.Raw(Model.Content)</span>
+                <div class="details-content-card">
 
-                                <div class="row">
-                                    <div class="col-md-3 mt-3 mb-3">
-                                        <label class="form-label">Status</label>
-                                        <input class="form-control" value="@Model.Status " readonly>
-                                    </div>
-                                    <div class="col-md-3 mt-3 mb-3">
-                                        <label class="form-label">Tag</label>
-                                        <input class="form-control" value="@ViewBag.TagName " readonly>
-                                    </div>
-                                    <div class="col-md-3 mt-3 mb-3">
-                                        <label class="form-label">Creat At</label>
-                                        <input class="form-control" value="@Model.CreatedAt " readonly>
-                                    </div>
-                                    <div class="col-md-3 mt-3 mb-3">
-                                        <label class="form-label">Update At</label>
-                                        <input class="form-control" value="@(Model.UpdateAt?.ToLocalTime().ToString("dd/MM/yy, HH:mm") ?? "No update")" readonly>
-                                    </div>
-                                </div>
+
+                    <div class="info-boxes">
+                        <div class="info-box">
+                            <div class="info-box-label">Status</div>
+                            <div class="info-box-value" style="color: @(Model.Status ? "#4CAF50" : "#f44336");">
+                                <i class="fa @(Model.Status ? "fa-check-square" : "fa-times-circle")"></i>
+                                @(Model.Status ? "Active" : "Inactive")
                             </div>
                         </div>
+
+                        <div class="info-box">
+                            <div class="info-box-label">Created At</div>
+                            <div class="info-box-value">@Model.CreatedAt.ToString("dd/MM/yyyy")</div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-label">Updated At</div>
+                            <div class="info-box-value">@(Model.UpdateAt?.ToLocalTime().ToString("dd/MM/yy, HH:mm") ??
+                                                                "Not updated")</div>
+                        </div>
                     </div>
-                    <div class="card-footer">
-                        <a class="btn btn-back float-end" asp-controller="CommunityTips" asp-action="Index">Back</a>
+
+                    <div class="summary-box">
+                        <div class="details-content">
+                            @Html.Raw(Model.Content)
+                        </div>
+                    </div>
+
+                    <div class="details-footer">
+                        <a class="btn-back-custom" asp-controller="CommunityTips" asp-action="Index">Back</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-

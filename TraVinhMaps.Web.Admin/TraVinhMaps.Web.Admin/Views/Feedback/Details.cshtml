@@ -10,7 +10,7 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
-                    <h4>@ViewData["Title"]</h4>
+                    <h4></h4>
                 </div>
                 @{
                     var breadcrumbs = ViewData["Breadcrumb"] as List<BreadcrumbItem>;
@@ -24,27 +24,39 @@
     </div>
     <!-- Container-fluid starts-->
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="col-sm-12">
-                                <div class="card-header">
-                                    <h4>@Model.Username</h4>
-                                </div>
-                                <div class="card-body"><span>@Model.Content</span>
-                                </div>
-                                <div class="card-body"><span>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span>
-                                </div>
-                                <div class="card-footer">
-                                    <a class="btn btn-back float-end" asp-controller="Feedback" asp-action="Index">Back</a>
-                                </div>
-                        </div>
+        <div class="card" style="border-radius: .5rem;">
+            <div class="card-header" style="background-color: #198754; color: white; border-top-left-radius: .5rem; border-top-right-radius: .5rem;">
+                <h4 class="mb-0 text-white">Feedback Details</h4>
+            </div>
+            <div class="card-body text-center p-4">
+                <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px; background-color: #198754; color: white; font-size: 32px; font-weight: bold;">
+                    @if (!string.IsNullOrEmpty(Model.Username))
+                    {
+                        @Model.Username.Substring(0, 1).ToUpper()
+                    }
+                </div>
+                <h5 class="mb-2">@Model.Username</h5>
+                <hr style="width: 50px; margin: 1rem auto; border-top: 2px solid #198754;" />
+
+                <div class="position-relative d-inline-block p-4 rounded mb-4" style="background-color: #e9f7ef; max-width: 100%; width: 350px;">
+                    <span class="position-absolute top-0 start-0 p-2" style="font-size: 2rem; color: #198754; opacity: 0.5;">“</span>
+                    <p class="mb-0" style="color: #333; text-align: left;">@Model.Content</p>
+                    <span class="position-absolute bottom-0 end-0 p-2" style="font-size: 2rem; color: #198754; opacity: 0.5;">”</span>
+                </div>
+
+                <div>
+                    <div class="d-inline-flex align-items-center text-muted mb-4" style="background-color: #e9f7ef; border-radius: 20px; padding: 8px 15px;">
+                        <i class="fa fa-clock-o me-2"></i>
+                        <span>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span>
                     </div>
+                </div>
+
+                <div>
+                    <a class="btn" style="background-color: #198754; color: white; border-radius: .5rem; padding: 10px 30px;" asp-controller="Feedback" asp-action="Index">
+                        &larr; Back
+                    </a>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Container-fluid Ends-->
-
+    <!-- Container-fluid Ends-->

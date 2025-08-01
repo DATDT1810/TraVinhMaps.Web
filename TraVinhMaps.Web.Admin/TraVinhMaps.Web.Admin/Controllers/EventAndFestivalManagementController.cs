@@ -156,6 +156,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 Type = eventAndFestivalDetail.Location.location.Type,
                 longitude = eventAndFestivalDetail.Location.location.Coordinates[0],
                 latitude = eventAndFestivalDetail.Location.location.Coordinates[1],
+                Images = eventAndFestivalDetail.Images ?? new List<string>()
             };
 
             ViewBag.Category = new List<SelectListItem>
@@ -356,6 +357,78 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return Json(new { success = false, message = $"Error deleting image: {ex.Message}" });
             }
         }
+
+
+
+        // Edit Image Event And Festival -- start
+        [HttpPost("AddEventAndFestivalImageEdit")]
+        public async Task<JsonResult> AddEventAndFestivalImageEdit(string id, List<IFormFile> imageDestinationFileList)
+        {
+            try
+            {
+                if (!IsImageListFile(imageDestinationFileList))
+                {
+                    return Json(new { success = false, message = "Invalid file type. Please upload valid image files." });
+                }
+                AddImageEventAndFestivalRequest addImageEventAndFestivalRequest = new AddImageEventAndFestivalRequest()
+                {
+                    id = id,
+                    imageFile = imageDestinationFileList
+                };
+                var result = await _eventAndFestivalService.AddEventAndFestivalImage(addImageEventAndFestivalRequest);
+                if (result == null)
+                {
+                    return Json(new { success = false, message = "Adding photos failed, please try again later." });
+                }
+                return Json(new { success = true, message = "Image(s) added successfully.", newImageUrls = result });
+            }
+            catch (System.Exception ex)
+            {
+                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
+            }
+        }
+
+        // POST: EventAndFestivalManagement/DeleteEventAndFestivalImage
+        [HttpPost("DeleteEventAndFestivalImageEdit")]
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> DeleteEventAndFestivalImageEdit(string id, string urlImage)
+        {
+            try
+            {
+                if (id == null)
+                {
+                    return Json(new { success = false, message = "Event ID is required." });
+                }
+                var eventAndFestivalDetail = await _eventAndFestivalService.GetEventAndFestivalById(id);
+                if (eventAndFestivalDetail == null)
+                {
+                    return Json(new { success = false, message = "Event not found." });
+                }
+
+                var currentImages = eventAndFestivalDetail.Images;
+                if (currentImages == null || currentImages.Count <= 1)
+                {
+                    return Json(new { success = false, message = "You cannot delete the last remaining image." });
+                }
+
+                DeleteEventAndFestivalImage deleteEventAndFestivalImage = new DeleteEventAndFestivalImage()
+                {
+                    id = id,
+                    imageUrl = urlImage
+                };
+                var result = await _eventAndFestivalService.DeleteEventAndFestivalImage(deleteEventAndFestivalImage);
+                if (result)
+                {
+                    return Json(new { success = true, message = "Image deleted successfully." });
+                }
+                return Json(new { success = false, message = "Failed to delete image, please try again." });
+            }
+            catch (System.Exception ex)
+            {
+                return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
+            }
+        }
+        // Edit Image Event And Festival -- end
 
         // GET: EventAndFestivalManagement/Error
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
