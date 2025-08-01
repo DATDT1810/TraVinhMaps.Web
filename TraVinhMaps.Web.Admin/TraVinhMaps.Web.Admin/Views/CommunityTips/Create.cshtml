@@ -46,7 +46,7 @@
                                         <div class="col">
                                             <div class="mb-4">
                                                 <label asp-for="Content" class="control-label">Enter Content</label>
-                                                <textarea asp-for="Content" id="Description" class="form-control"
+                                                <textarea asp-for="Content" id="Description" class="form-control wysiwyg-editor"
                                                     rows="7" required></textarea>
                                                 <span asp-validation-for="Content" class="text-danger"></span>
                                             </div>
@@ -72,7 +72,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col">
-                                            <div class="text-end">
+                                            <div class="text-end gap-2">
                                                 <a asp-controller="CommunityTips" asp-action="Index"
                                                     class="btn btn-cancel">Cancel</a>
                                                 <button type="submit" class="btn btn-success me-3">Create Tip</button>

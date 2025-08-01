@@ -7,6 +7,9 @@
 }
 <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/intltelinput.min.css">
 <link rel="stylesheet" type="text/css" href="~/assets/css/vendors/tagify.css">
+<style>
+
+</style>
 
 <div class="page-body">
     <div class="container-fluid">
@@ -76,7 +79,7 @@
                                                 <p class="f-m-light mt-1">Please select at least 2 locations</p>
                                             </div>
                                             <div class="card-body">
-                                                <div>
+                                                <div class="itinerary">
                                                     <input name="tags-manual-suggestions"
                                                         placeholder="write or choose destination">
                                                     <input type="hidden" asp-for="Locations" id="LocationsInput" />
@@ -185,10 +188,6 @@
                 console.log("original Input's value:", tagify.DOM.originalInput.value);
                 console.log("event detail:", e.detail);
             });
-
-            // add the first 2 tags and makes them readonly
-            @* var tagsToAdd = tagify.whitelist.slice(0, 3);
-            tagify.addTags(tagsToAdd); *@
 
                 // bind events
                 tagify.on("add", onAddTag);
