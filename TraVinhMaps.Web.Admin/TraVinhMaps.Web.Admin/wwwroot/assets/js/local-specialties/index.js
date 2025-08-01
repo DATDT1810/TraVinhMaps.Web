@@ -36,7 +36,7 @@ $(document).ready(function () {
 
   /********************* 1. BỘ LỌC TRẠNG THÁI ******************/
   $("#statusFilter").on("change", function () {
-  const filter = $(this).val(); // all | active | inactive | tag
+  const filter = $(this).val(); // active | inactive
   let hasVisibleRows = false;
   let stt = 1;
 

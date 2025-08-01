@@ -41,10 +41,10 @@ const jsStrings = [
   "Review Management",
   "Send Notifications",
   "Analytics",
-  "Ocop",
+  "OCOP",
   "Destination",
   "Ocop Product",
-  "Ocop Type",
+  "OCOP Type",
   "Company",
   "Local Specialties",
   "Sell Locations",
@@ -487,6 +487,11 @@ const jsStrings = [
   "New password is required",
   "Confirm password is required",
   "Verification code has been resent successfully",
+  "Your OTP is sent to verify",
+  "Verify to change password",
+  "Verify Current Email",
+  "Verify New Phone Number Your OTP is sent to now",
+  "Your OTP is sent to now",
 
   // --- Mẫu lỗi MẶC ĐỊNH của .NET (quan trọng nhất) ---
   "The %s field is required.",
@@ -637,7 +642,6 @@ function getAllPlainTexts(element = null) {
     });
   }
 
-  // console.log("Collected strings:", Array.from(texts)); // Uncomment for debugging
   return Array.from(texts);
 }
 
@@ -850,7 +854,7 @@ async function changeLanguage(targetLang, targetName, element = null) {
     const allTexts = getAllPlainTexts(element);
     if (allTexts.length === 0) {
       if (element) {
-          console.log("⚠️ No translatable content found in the specified element.");
+          console.log("No translatable content found in the specified element.");
       }
       return;
     }
@@ -902,12 +906,12 @@ async function changeLanguage(targetLang, targetName, element = null) {
     if (textsToTranslateViaApi.length === 0) {
       if (!element) {
         console.log(
-          `✅ All strings processed from cache for the whole page. No API call needed.`
+          `All strings processed from cache for the whole page. No API call needed.`
         );
         window.dispatchEvent(new CustomEvent("languageChanged"));
         lastTranslationTime = Date.now();
       } else {
-        console.log(`✅ All strings for the element processed from cache.`);
+        console.log(`All strings for the element processed from cache.`);
       }
       return;
     }
@@ -1059,9 +1063,9 @@ function patchSwal() {
             // Call our custom translated Swal function instead of the original
             return showTranslatedSwal(options);
         };
-        console.log("✅ Swal.fire has been patched for automatic translation.");
+        console.log("Swal.fire has been patched for automatic translation.");
     } else {
-        console.warn("⚠️ Swal was not found on the window object. Patching failed.");
+        console.warn("Swal was not found on the window object. Patching failed.");
     }
 }
 
@@ -1256,16 +1260,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
 
-      if (!isValid) {
-        e.preventDefault();
-        // This will now be automatically translated
-        Swal.fire({
-          icon: "error",
-          title: "Invalid Input",
-          text: "Please correct the validation errors before submitting.",
-          showConfirmButton: true,
-        });
-      }
+      // if (!isValid) {
+      //   e.preventDefault();
+      //   // This will now be automatically translated
+      //   Swal.fire({
+      //     icon: "error",
+      //     title: "Invalid Input",
+      //     text: "Please correct the validation errors before submitting.",
+      //     showConfirmButton: true,
+      //   });
+      // }
     });
   }
 });

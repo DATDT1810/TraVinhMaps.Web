@@ -6,9 +6,9 @@ namespace TraVinhMaps.Web.Admin.Models.EventAndFestivalFeature
     public class CreateEventAndFestivalRequestViewModel
     {
         [Required]
-        [StringLength(200, ErrorMessage = "Event name cannot exceed 200 characters.")]
+        [StringLength(200, ErrorMessage = "Event name can't exceed 200 characters.")]
         public required string NameEvent { get; set; }
-        [StringLength(3000, ErrorMessage = "Description cannot exceed 3000 characters.")]
+        [StringLength(3000, ErrorMessage = "Description can't exceed 3000 characters.")]
         public string? Description { get; set; }
         [Required(ErrorMessage = "Start date is required.")]
         [DateNotInPast("MM/dd/yyyy")]
@@ -23,9 +23,9 @@ namespace TraVinhMaps.Web.Admin.Models.EventAndFestivalFeature
         [StringLength(300, ErrorMessage = "Address cannot exceed 300 characters.")]
         public string? Address { get; set; }
         public string Type { get; set; }
-        [Required(ErrorMessage = "longitude of destination is required")]
+        [Required(ErrorMessage = "Longitude of destination is required.")]
         public double longitude { get; set; }
-        [Required(ErrorMessage = "latitude of destination is required")]
+        [Required(ErrorMessage = "Latitude of destination is required.")]
         public double latitude { get; set; }
         public string? TagId { get; set; }
         public string? MarkerId { get; set; }
