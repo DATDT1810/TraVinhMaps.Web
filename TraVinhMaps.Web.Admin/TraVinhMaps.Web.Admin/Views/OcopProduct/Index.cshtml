@@ -3,7 +3,7 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model IEnumerable<OcopProductResponse>;
 @{
-    ViewData["Title"] = "Ocop Product Management";
+    ViewData["Title"] = "OCOP Product Management";
     var sessionId = User.Claims.FirstOrDefault(c => c.Type == "sessionId")?.Value;
 }
 <div class="page-body">
@@ -54,7 +54,7 @@
                                 <div class="dropdown d-inline-block">
                                     <button class="btn btn-success" type="button" id="createOcopDropdown"
                                         data-bs-toggle="dropdown" aria-expanded="false" style="min-width: 200px;">
-                                        <i class="fa fa-plus me-1"></i>Create Ocop Product
+                                        <i class="fa fa-plus me-1"></i>Create OCOP Product
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="createOcopDropdown"
                                         style="min-width: 200px;">
@@ -204,18 +204,18 @@
         }
 
         .ocop-dropdown-item {
-            background-color: #0a3b26;
-            color: white !important;
-            transition: all 0.2s ease;
-            margin-bottom: 2px;
+            background-color: #d4e9dd;  
+            color: #0a3b26 !important; 
             font-weight: 500;
+            margin-bottom: 2px;
+            transition: all 0.2s ease;
         }
 
         .ocop-dropdown-item:hover {
-            background-color: #072c1b !important;
+            background-color: #0a3b26 !important;  
+            color: #ffffff !important;          
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
             transform: translateY(-2px);
-            color: #ffffff !important;
         }
 
         .dropdown-menu {

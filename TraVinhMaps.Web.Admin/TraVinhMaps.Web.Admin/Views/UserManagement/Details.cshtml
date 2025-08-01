@@ -59,7 +59,7 @@
                                 <label class="form-label">DateOfBirth</label>
                                 <input class="form-control" value="@Model.UserProfile.DateOfBirth" readonly>
                             </div>
-                           <div class="mb-3">
+                            <div class="mb-3">
                                 <label class="form-label">Gender</label>
                                 <div class="form-control">
                                     @Model.UserProfile.Gender
@@ -78,65 +78,67 @@
                 </div>
                 <div class="col-xl-7">
                     <div class="card">
-                    <div class="card-header">
+                        <div class="card-header">
                         <h4 class="card-title mb-0">Review</h4>
-                            <div class="card-body" style="max-height: 542px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
-                                @if (ViewBag.Reviews is List<TraVinhMaps.Web.Admin.Models.Review.ReviewResponse> reviews && reviews.Any())
-                                {
-                                    foreach (var review in reviews)
+                        </div>
+                        <div class="card-body"
+                            style="max-height: 542px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+                        @if (ViewBag.Reviews is List<TraVinhMaps.Web.Admin.Models.Review.ReviewResponse> reviews && reviews.Any())
+                        {
+                            foreach (var review in reviews)
+                            {
+                                var destinationName = destinationNames != null && destinationNames.ContainsKey(review.DestinationId)
+                                    ? destinationNames[review.DestinationId]
+                                    : "Unknown destination";
+
+                                <div class="mb-4 border-bottom pb-3">
+                                    <p><strong>Tourist Destination Name: </strong> @destinationName</p>
+                                    <p><strong>Rating: </strong> @review.Rating</p>
+
+                                    @if (!string.IsNullOrEmpty(review.Comment))
                                     {
-                                        
-                                        var destinationName = destinationNames != null && destinationNames.ContainsKey(review.DestinationId)
-                                        ? destinationNames[review.DestinationId]
-                                        : "Unknown destination";
-                                        <div class="mb-4 border-bottom pb-3">
-                                            <p><strong>Tourist Destination Name: </strong> @destinationName</p>
-                                            <p><strong>Rating: </strong> @review.Rating</p>
+                                        <p><strong>Comment: </strong> @review.Comment</p>
+                                    }
 
-                                            @if (!string.IsNullOrEmpty(review.Comment))
+                                    @if (review.Images != null && review.Images.Any())
+                                    {
+                                        <div class="mb-2">
+                                            <strong>Images: </strong><br />
+                                            @foreach (var img in review.Images)
                                             {
-                                                <p><strong>Comment: </strong> @review.Comment</p>
-                                            }
-
-                                            @if (review.Images != null && review.Images.Any())
-                                            {
-                                                <div class="mb-2">
-                                                    <strong>Images: </strong><br />
-                                                    @foreach (var img in review.Images)
-                                                    {
-                                                        <img src="@img" alt="review image" style="width:100px; margin-right:10px;" />
-                                                    }
-                                                </div>
-                                            }
-
-                                            @if (review.Reply != null && review.Reply.Any())
-                                            {
-                                                <div class="mt-2">
-                                                    <strong>Replies: </strong>
-                                                    <ul>
-                                                        @foreach (var reply in review.Reply)
-                                                        {
-                                                            <li>
-                                                                <p><strong>UserId:</strong> @reply.UserId</p>
-                                                                <p>@reply.Content</p>
-                                                                <small class="text-muted">@reply.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</small>
-                                                            </li>
-                                                        }
-                                                    </ul>
-                                                </div>
+                                                <img src="@img" alt="review image" style="width:100px; margin-right:10px;" />
                                             }
                                         </div>
                                     }
-                                }
-                                else
-                                {
-                                    <p>No reviews available.</p>
-                                }
-                            </div>
+
+                                    @if (review.Reply != null && review.Reply.Any())
+                                    {
+                                        <div class="mt-2">
+                                            <strong>Replies: </strong>
+                                            <ul>
+                                                @foreach (var reply in review.Reply)
+                                                {
+                                                    <li>
+                                                        <p><strong>UserId:</strong> @reply.UserId</p>
+                                                        <p>@reply.Content</p>
+                                                        <small class="text-muted">@reply.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</small>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p>No reviews available.</p>
+                        }
                         </div>
                     </div>
                 </div>
             </div>
+            <a class="btn btn-back float-end mb-3 me-3" asp-action="Index">Back</a>
         </div>
     </div>
     <!-- Container-fluid Ends-->

@@ -23,11 +23,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
         // GET: OcopType/Index
         public async Task<IActionResult> Index()
         {
-            ViewData["Title"] = "Ocop Type NManagement";
+            ViewData["Title"] = "OCOP Type NManagement";
             ViewData["Breadcrumb"] = new List<BreadcrumbItem>
             {
-                new BreadcrumbItem { Title = "Ocop Type Management", Url = Url.Action("Index", "OcopType")! },
-                new BreadcrumbItem { Title = "Ocop Type List" } // default URL for the current page
+                new BreadcrumbItem { Title = "OCOP Type Management", Url = Url.Action("Index", "OcopType")! },
+                new BreadcrumbItem { Title = "OCOP Type List" } // default URL for the current page
             };
             var listOcopType = await _ocopTypeService.ListAllAsync();
             return View(listOcopType);
@@ -68,7 +68,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     CreatedAt = result.value.data.CreatedAt,
                     UpdateAt = result.value.data.UpdateAt
                 };
-                TempData["SuccessMessage"] = "Ocop type created successfully!";
+                TempData["SuccessMessage"] = "OCOP type created successfully!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
@@ -87,16 +87,16 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [HttpGet("UpdateOcopType")]
         public async Task<IActionResult> UpdateOcopType(string id)
         {
-            ViewData["Title"] = "Ocop Type NManagement";
+            ViewData["Title"] = "OCOP Type NManagement";
             ViewData["Breadcrumb"] = new List<BreadcrumbItem>
             {
-                new BreadcrumbItem { Title = "Ocop Type Management", Url = Url.Action("Index", "OcopType")! },
-                new BreadcrumbItem { Title = "Edit Ocop Type" } // default URL for the current page
+                new BreadcrumbItem { Title = "OCOP Type Management", Url = Url.Action("Index", "OcopType")! },
+                new BreadcrumbItem { Title = "Edit OCOP Type" } // default URL for the current page
             };
             var findOcopType = await _ocopTypeService.GetByIdAsync(id);
             if (findOcopType == null)
             {
-                return NotFound("Ocop type not found.");
+                return NotFound("OCOP type not found.");
             }
         
             UpdateOcopTypeRequest updateOcopTypeRequest = new UpdateOcopTypeRequest
@@ -134,7 +134,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 TempData["ErrorMessage"] = "Something went wrong, please try again: " + ex.Message + "\n" + ex.StackTrace;
                 return View("UpdateOcopType", request);
             }
-            TempData["SuccessMessage"] = "Ocop type updated successfully!";
+            TempData["SuccessMessage"] = "OCOP type updated successfully!";
             return RedirectToAction("Index");
         }
     }

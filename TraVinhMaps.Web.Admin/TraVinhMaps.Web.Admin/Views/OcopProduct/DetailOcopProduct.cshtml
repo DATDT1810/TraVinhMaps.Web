@@ -285,7 +285,7 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
-                    <h4>Ocop Product Detail</h4>
+                    <h4>OCOP Product Detail</h4>
                     @if (TempData["ErrorMessage"] != null)
                     {
                         <div id="alert-message" class="alert alert-danger">
@@ -306,9 +306,9 @@
                             <a asp-controller="Home" asp-action="Index"><i class="fa fa-home"
                                     style="font-size: 20px;"></i></a>
                         </li>
-                        <li class="breadcrumb-item"> <a asp-controller="OcopProduct" asp-action="Index">Ocop Product</a>
+                        <li class="breadcrumb-item"> <a asp-controller="OcopProduct" asp-action="Index">OCOP Product</a>
                         </li>
-                        <li class="breadcrumb-item active">Ocop Product Detail</li>
+                        <li class="breadcrumb-item active">OCOP Product Detail</li>
                     </ol>
                 </div>
             </div>
@@ -412,7 +412,7 @@
                         <div class="col-md-6 d-flex">
                             <div class="card flex-fill">
                                 <div class="card-body" style="min-height: 235px;">
-                                    <div class="detail-item"><i class="fa fa-calendar"></i> <strong>Year of Recognition:</strong> <span>@Model.OcopYearRelease</span></div>
+                                    <div class="detail-item"><i class="fa fa-calendar"></i> <strong>Year Released:</strong> <span>@Model.OcopYearRelease</span></div>
                                     <div class="detail-item"><i class="fa fa-check-circle"></i> <strong>Status:</strong> <span class="text-success" style="font-weight: bold;">● Active</span></div>
                                     <div class="detail-item"><i class="fa fa-clock-o"></i> <strong>Created At:</strong> <span>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span></div>
                                     <div class="detail-item txt-success"><i class="fa fa-refresh"></i> <strong>Updated At:</strong> <span>@(Model.UpdateAt.HasValue ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy, HH:mm") : "No updates yet")</span></div>
@@ -423,7 +423,7 @@
 
                     <div class="card" style="min-height: 250px;">
                         <div class="card-body">
-                            <h5 class="card-title" style="font-weight: bold"><i class="fa fa-file-text-o" style="margin-right: 2px; color: black;"></i> Product Description</h5>
+                            <h5 class="card-title" style="font-weight: bold"><i class="fa fa-file-text-o"></i> Description</h5>
                             <hr>
                             <div class="text-justify">
                                 @Html.Raw(Model.ProductDescription)
@@ -432,14 +432,12 @@
                     </div>
                     
                     <div class="m-t-15 btn-showcase" style="padding-bottom: 20px; display: flex; justify-content: end">
-                        <div class="d-inline">
-                            <a class="btn btn-edit" asp-action="UpdateOcopProduct" asp-route-id="@Model.Id">
-                                <i class="fa fa-pencil" aria-hidden="true"></i>Edit OCOP Product
-                            </a>
-                        </div>
-                        <div class="d-inline">
+                        <div class="d-inline p-0">
                             <a class="btn btn-back" asp-action="Index">
                                 Back
+                            </a>
+                            <a class="btn btn-edit" asp-action="UpdateOcopProduct" asp-route-id="@Model.Id">
+                                <i class="fa fa-pencil" aria-hidden="true"></i>Edit OCOP Product
                             </a>
                         </div>
                     </div>

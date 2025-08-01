@@ -111,7 +111,7 @@
                                 <div class="row">
                                     <div class="col-sm-3">
                                         <div class="mb-3">
-                                            <label asp-for="OcopPoint">Ocop Point</label>
+                                            <label asp-for="OcopPoint">OCOP Point</label>
                                             <select asp-for="OcopPoint" class="form-select" required>
                                                 <option selected value="1">1</option>
                                                 <option value="2">2</option>
@@ -124,7 +124,7 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <div class="mb-3">
-                                            <label asp-for="OcopYearRelease">Ocop Year Release</label>
+                                            <label asp-for="OcopYearRelease">OCOP Year Release</label>
                                             <select asp-for="OcopYearRelease" class="form-select" required>
                                                 @for (int year = DateTime.Now.Year; year >= 1900; year--)
                                                 {
@@ -136,23 +136,26 @@
                                     </div>
                                     <div class="col-sm-3">
                                         <div class="mb-3">
-                                            <label asp-for="TagId">OCOP Product Tag</label>
-                                            <select asp-for="TagId" class="form-select" required>
-                                                @foreach (var tag in ViewBag.Tags)
+                                            @{
+                                                string ocopTagId = "";
+                                                foreach (var tag in ViewBag.Tags)
                                                 {
-                                                    if (@tag.Name == "Ocop")
+                                                    if (tag.Name == "Ocop")
                                                     {
-                                                        <option value="@tag.Id">@tag.Name</option>
+                                                        ocopTagId = tag.Id;
+                                                        break;
                                                     }
                                                 }
-                                            </select>
-                                            <span asp-validation-for="TagId" class="text-danger"></span>
+                                            }
+                                            <label>OCOP Product Tag</label>
+                                            <input type="hidden" name="TagId" value="@ocopTagId" />
+                                            <input type="text" class="form-control" value="Ocop" disabled />
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col">
                                             <div class="mb-3">
-                                                <label asp-for="SellingLinkId">Ocop Product Selling Link</label>
+                                                <label asp-for="SellingLinkId">OCOP Product Selling Link</label>
                                                 <input asp-for="SellingLinkId" class="form-control" type="text"
                                                     placeholder="Selling link of product" required />
                                                 <span asp-validation-for="SellingLinkId" class="text-danger"></span>
@@ -163,7 +166,7 @@
                                         <div class="col">
                                             <div class="text-end">
                                                 <a asp-action="Index" asp-controller="OcopProduct"
-                                                    class="btn btn-danger">Cancel</a>
+                                                    class="btn btn-cancel">Cancel</a>
                                                 <button type="submit" class="btn btn-success me-3">Create
                                                     OCOP
                                                     Product</button>
@@ -183,8 +186,9 @@
 @section Scripts {
     @Html.AntiForgeryToken()
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="~/assets/js/sweetalert-custom.js"></script>
     <script src="~/assets/js/ocopproduct/crud.js"></script>
@@ -197,6 +201,6 @@
                 alert.style.display = "none";
             }
         }, 1000); 
-            }
+                }
     </script>
 }

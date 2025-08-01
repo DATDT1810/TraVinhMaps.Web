@@ -202,7 +202,7 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title" style="font-weight: bold"><i class="fa fa-file-text-o" style="margin-right: 2px; color: black;"></i> Description</h5>
+                            <h5 class="card-title" style="font-weight: bold"><i class="fa fa-file-text-o"></i> Description</h5>
                             <hr>
                             <div class="text-justify">
                                @Html.Raw(Model.Description ?? "<p>No description available.</p>")
@@ -222,15 +222,14 @@
                     
                     <div class="m-t-15 btn-showcase" style="padding-bottom: 20px; display: flex; justify-content: end">
                         <div class="d-inline">
+                            <a class="btn btn-back" asp-action="Index">
+                                Back
+                            </a>
                             <a class="btn btn-edit" asp-action="EditLocalSpecialty" asp-route-id="@Model.Id">
                                 <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp; Edit Local Specialty
                             </a>
                         </div>
-                        <div class="d-inline">
-                            <a class="btn btn-back" asp-action="Index">
-                                Back
-                            </a>
-                        </div>
+
                     </div>
                 </div>
                 <div class="col-xxl-12 box-col-12 order-xxl-0 order-1">

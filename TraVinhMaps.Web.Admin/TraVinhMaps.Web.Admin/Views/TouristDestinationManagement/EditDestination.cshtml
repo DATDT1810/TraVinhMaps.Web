@@ -341,7 +341,7 @@
                                                           rows="10"></textarea>
                                                 <span asp-validation-for="HistoryStory.Content" class="text-danger"></span>
                                                 <div class="image-gallery-container">
-                                                    @if (Model.HistoryStory.Images != null)
+                                                   @if (Model.HistoryStory != null && Model.HistoryStory.Images != null)
                                                     {
                                                         foreach (var imageUrl in Model.HistoryStory.Images)
                                                         {
@@ -351,6 +351,7 @@
                                                             </div>
                                                         }
                                                     }
+
                                                     <div class="add-image-box" id="addHistoryImageBox">
                                                         +
                                                     </div>

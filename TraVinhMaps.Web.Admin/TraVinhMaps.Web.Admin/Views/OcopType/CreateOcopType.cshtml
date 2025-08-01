@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="col-6">
                     <h4>
-                        Ocop Type Create</h4>
+                        OCOP Type Create</h4>
                     @if (TempData["ErrorMessage"] != null)
                     {
                         <div id="alert-message" class="alert alert-danger">
@@ -26,8 +26,8 @@
                                 <i class="fa fa-home" style="font-size: 20px;"></i>
                             </a>
                         </li>
-                        <li class="breadcrumb-item"><a asp-action="Index">Management Ocop Type</a></li>
-                        <li class="breadcrumb-item active">Ocop Type Create form</li>
+                        <li class="breadcrumb-item"><a asp-action="Index">Management OCOP Type</a></li>
+                        <li class="breadcrumb-item active">OCOP Type Create</li>
                     </ol>
                 </div>
             </div>
@@ -46,7 +46,7 @@
                                         <div class="mb-3">
                                             <label>Ocop Type Name</label>
                                             <input asp-for="OcopTypeName" class="form-control" type="text"
-                                                placeholder="Name of ocop type">
+                                                placeholder="Name of OCOP type">
                                             <span asp-validation-for="OcopTypeName" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -55,8 +55,8 @@
                                     <div class="col">
                                         <div class="text-end">
                                             <a asp-action="Index"
-                                                class="btn btn-danger">Cancel</a>
-                                            <button type="submit" class="btn btn-success me-3">Create Ocop Type</button>
+                                                class="btn btn-cancel">Cancel</a>
+                                            <button type="submit" class="btn btn-success me-3">Create OCOP Type</button>
                                         </div>
                                     </div>
                                 </div>
