@@ -1,5 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Http
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@using System.Text.Json;
 @using TraVinhMaps.Web.Admin.Controllers
 <!DOCTYPE html>
 <html lang="en">
@@ -387,6 +390,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@7.0.5/dist/browser/signalr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+
+    <script>
+        window.apiBaseUrl = @Html.Raw(Json.Serialize(Configuration.GetValue<string>("ApiSettings:BaseUrl")));
+    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

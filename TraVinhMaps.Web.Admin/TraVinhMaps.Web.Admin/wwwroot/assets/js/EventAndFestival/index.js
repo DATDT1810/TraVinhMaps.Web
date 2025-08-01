@@ -215,7 +215,7 @@ function stripHtml(html) {
 
 function exportFestivalsToExcel() {
   $.ajax({
-    url: "https://localhost:7162/api/EventAndFestival/GetAllEventAndFestinal",
+    url: "window.apiBaseUrl + "/api/EventAndFestival/GetAllEventAndFestinal",
     type: "GET",
     headers: {
       sessionId: sessionId,

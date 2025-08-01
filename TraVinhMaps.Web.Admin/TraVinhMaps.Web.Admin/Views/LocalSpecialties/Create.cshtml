@@ -1,9 +1,73 @@
 @using TraVinhMaps.Web.Admin.Models.LocalSpecialties
 @model CreateSpecialtyViewModel
+@inject IConfiguration Configuration
 
 @{
     ViewData["Title"] = "Create Local Specialty";
 }
+
+<style>
+    .ck-powered-by,
+    .ck.ck-powered-by,
+    .ck-powered-by-balloon,
+    .ck-balloon-panel .ck-powered-by,
+    .ck-balloon-panel.ck-powered-by-balloon {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+    }
+
+    .add-image-box {
+        margin-top: 10px;
+        width: 100%;
+        height: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #aaa;
+        position: relative;
+        cursor: pointer;
+        border-radius: 9px;
+        background-color: #f8f9fa;
+    }
+
+    .upload-placeholder {
+        font-size: 24px;
+        color: #aaa;
+    }
+
+    .add-image-box:hover {
+        background-color: #e0e0e0;
+    }
+
+    #searchAddressBtn {
+        background-color: #28a745;
+        color: white;
+        border-color: #28a745;
+    }
+
+    #searchAddressBtn:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+
+    .input-group:focus-within #searchAddressBtn {
+        z-index: 4;
+        border-color: #86b7fe;
+    }
+
+    .ck-editor__editable_inline {
+        min-height: 150px !important;
+    }
+
+    .location-group {
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
+</style>
 
 <div class="page-body">
     <div class="container-fluid">
@@ -31,46 +95,83 @@
                         <div class="form theme-form">
                             <form asp-action="Create" method="post" enctype="multipart/form-data"
                                 id="createLocalSpecialtyForm">
+
                                 <div class="row">
-                                    <div class="col-md-8">
+                                    <div class="col-lg-7">
+                                        <div id="map" class="here-map-container" data-latitude="9.9513"
+                                            data-longitude="106.3346"
+                                            style="width: 100%; height: 400px; background-color: #f0f0f0; border-radius: 10px; position: relative;">
+                                        </div>
+                                        <br />
+                                        <div class="mb-3">
+                                            <label>Address</label>
+                                            <div style="position: relative;">
+                                                <div class="input-group">
+                                                    <textarea id="Address" class="form-control"
+                                                        placeholder="Enter an address to search on the map"
+                                                        autocomplete="off" rows="2"></textarea>
+                                                    <button class="btn btn-success" type="button"
+                                                        id="searchAddressBtn"><i class="fa fa-search"></i>
+                                                        Search</button>
+                                                </div>
+                                                <div id="addressSuggestions" class="list-group"
+                                                    style="position: absolute; z-index: 1056; width: 100%; max-height: 220px; overflow-y: auto;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label>Latitude </label>
+                                                    <input id="latitude" class="form-control" type="number" step="any"
+                                                        placeholder="Latitude" data-language="en" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label>Longitude </label>
+                                                    <input id="longitude" class="form-control" type="number" step="any"
+                                                        placeholder="Longitude" data-language="en" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                      
+                                    </div>
+
+                                    <div class="col-lg-5">
                                         <div class="mb-3">
                                             <label>Food Name</label>
                                             <input asp-for="FoodName" class="form-control" type="text"
                                                 placeholder="Enter food name (e.g., Bánh Tét Trà Vinh)" />
                                             <span asp-validation-for="FoodName" class="text-danger"></span>
                                         </div>
-                                    </div>
-                                    <div class="col-md-4" style="display: none;">
-                                        <div class="mb-3">
+                                        <div class="mb-3" style="display: none;">
                                             <label>Tag</label>
                                             <input type="text" class="form-control"
                                                 value="@(ViewBag.LocalSpecialTag?.Name ?? "Local Specialty")"
                                                 readonly />
                                         </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col">
                                         <div class="mb-3">
                                             <label>Description</label>
-                                            <textarea asp-for="Description" id="Description" class="form-control wysiwyg-editor"
-                                                placeholder="Description of the local specialty" rows="5"></textarea>
+                                            <textarea asp-for="Description" id="Description"
+                                                class="form-control wysiwyg-editor"
+                                                placeholder="Description of the local specialty"
+                                                rows="5"></textarea>
                                             <span asp-validation-for="Description" class="text-danger"></span>
                                         </div>
                                     </div>
                                 </div>
+                                <hr>
+
+                               
 
                                 <!-- Images Upload -->
                                 <div class="row">
                                     <div class="col">
                                         <label>Upload Local Specialty Images</label>
-                                        <div class="item add-image-box" id="addImageBox"
-                                            style="cursor: pointer; border: 2px dashed #ccc; padding: 20px; text-align: center;">
-                                            <div class="upload-placeholder" style="font-size: 24px; color: #666;">+
-                                            </div>
-                                            <p style="color: #666;">Click to upload images (Max 5,
-                                                JPG/JPEG/PNG/GIF/BMP/WEBP)</p>
+                                        <div class="item add-image-box" id="addImageBox">
+                                            <div class="upload-placeholder">+</div>
+                                            <p style="color: #666; margin: 0;">Click to upload (Max 5)</p>
                                             <input asp-for="Images" type="file" accept="image/*" multiple
                                                 id="uploadImageInput" style="display: none;" />
                                         </div>
@@ -79,119 +180,6 @@
                                     </div>
                                 </div>
                                 <hr>
-                                <!-- Locations -->
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="mb-3">
-                                            <label>Selling Locations</label>
-                                            <div id="locations-container">
-                                                @if (Model != null && Model.Locations != null)
-                                                {
-                                                    @for (int i = 0; i < Model.Locations.Count; i++)
-                                                    {
-                                                        <div class="location-group mb-3">
-                                                            <div class="row">
-                                                                <div class="col-sm-4">
-                                                                    <label>Name of Location</label>
-                                                                    <input asp-for="Locations[i].Name" class="form-control"
-                                                                        placeholder="Location name" />
-                                                                    <span asp-validation-for="Locations[i].Name"
-                                                                        class="text-danger"></span>
-                                                                </div>
-                                                                <div class="col-sm-4">
-                                                                    <label>Address</label>
-                                                                    <input asp-for="Locations[i].Address" class="form-control"
-                                                                        placeholder="Address" />
-                                                                    <span asp-validation-for="Locations[i].Address"
-                                                                        class="text-danger"></span>
-                                                                </div>
-                                                                <div class="col-sm-4">
-                                                                    <label>Marker Type</label>
-                                                                    <input type="text" class="form-control"
-                                                                        value="@(ViewBag.SellLocationMarker?.Name ?? "Sell Location")"
-                                                                        readonly />
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-sm-6">
-                                                                    <label>Longitude</label>
-                                                                    <input asp-for="Locations[i].Longitude" class="form-control"
-                                                                        type="number" step="any" placeholder="Longitude"
-                                                                        min="-180" max="180" />
-                                                                    <span asp-validation-for="Locations[i].Longitude"
-                                                                        class="text-danger"></span>
-                                                                </div>
-                                                                <div class="col-sm-6">
-                                                                    <label>Latitude</label>
-                                                                    <input asp-for="Locations[i].Latitude" class="form-control"
-                                                                        type="number" step="any" placeholder="Latitude"
-                                                                        min="-90" max="90" />
-                                                                    <span asp-validation-for="Locations[i].Latitude"
-                                                                        class="text-danger"></span>
-                                                                </div>
-                                                            </div>
-                                                            <button type="button"
-                                                                class="btn btn-danger btn-sm mt-2 remove-location">Remove</button>
-                                                        </div>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    <div class="location-group mb-3">
-                                                        <div class="row">
-                                                            <div class="col-sm-4">
-                                                                <label>Name of Location</label>
-                                                                <input name="Locations[0].Name" class="form-control"
-                                                                    placeholder="Location name" />
-                                                                <span class="text-danger field-validation-valid"
-                                                                    data-valmsg-for="Locations[0].Name"
-                                                                    data-valmsg-replace="true"></span>
-                                                            </div>
-                                                            <div class="col-sm-4">
-                                                                <label>Address</label>
-                                                                <input name="Locations[0].Address" class="form-control"
-                                                                    placeholder="Address" />
-                                                                <span class="text-danger field-validation-valid"
-                                                                    data-valmsg-for="Locations[0].Address"
-                                                                    data-valmsg-replace="true"></span>
-                                                            </div>
-                                                            <div class="col-sm-4">
-                                                                <label class="form-label">Marker Type</label>
-                                                                <input type="text" class="form-control"
-                                                                    value="@(ViewBag.SellLocationMarker?.Name ?? "Sell Location")"
-                                                                    readonly />
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-sm-6">
-                                                                <label>Longitude</label>
-                                                                <input name="Locations[0].Longitude" class="form-control"
-                                                                    type="number" step="any" placeholder="Longitude"
-                                                                    min="-180" max="180" />
-                                                                <span class="text-danger field-validation-valid"
-                                                                    data-valmsg-for="Locations[0].Longitude"
-                                                                    data-valmsg-replace="true"></span>
-                                                            </div>
-                                                            <div class="col-sm-6">
-                                                                <label>Latitude</label>
-                                                                <input name="Locations[0].Latitude" class="form-control"
-                                                                    type="number" step="any" placeholder="Latitude"
-                                                                    min="-90" max="90" />
-                                                                <span class="text-danger field-validation-valid"
-                                                                    data-valmsg-for="Locations[0].Latitude"
-                                                                    data-valmsg-replace="true"></span>
-                                                            </div>
-                                                        </div>
-                                                        <button type="button"
-                                                            class="btn btn-danger btn-sm mt-2 remove-location">Remove</button>
-                                                    </div>
-                                                }
-                                            </div>
-                                            <button type="button" class="btn btn-dowload mb-3"
-                                                onclick="addLocation()">Add Location</button>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <div class="row">
                                     <div class="col">
@@ -214,33 +202,42 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <link rel="stylesheet" href="~/assets/css/LocalSpecialties/details.css">
     <script src="~/assets/js/sweetalert-custom.js"></script>
     <script src="~/assets/js/local-specialties/create.js"></script>
     <script src="~/assets/js/ckeditor5.js"></script>
-    <script>
-        window.sellLocationMarkerName = "@(ViewBag.SellLocationMarker?.Name ?? "Sell Location")";
-        window.locationIndex = @(Model != null && Model.Locations != null ? Model.Locations.Count : 1);
 
-        $(document).ready(function () {
+    <!-- HERE Maps API references -->
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+
+    <script>
+        // Pass API Key from configuration to the browser
+        window.HERE_API_KEY = '@Configuration["HEREMAP_API_KEY"]';
+    </script>
+
+    <!-- Reusing the map logic from EventAndFestival -->
+    <script src="~/assets/js/EventAndFestival/heremap-edit-event.js"></script>
+
+    <script>
+        window.locationIndex = @(Model?.Locations?.Count ?? 0);
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // --- TempData Alerts ---
             @if (TempData["CreateLocalSpecialtiesError"] != null)
-                {
-                    <text>
-                        showTimedAlert("Error!", "@TempData["CreateLocalSpecialtiesError"]", "error", 1000);
-                    </text>
+            {
+                <text>
+                    showTimedAlert("Error!", "@TempData["CreateLocalSpecialtiesError"]", "error", 1000);
+                </text>
             }
-                                    else if (TempData["CreateLocalSpecialtiesError"] != null)
-                {
-                    <text>
-                        showTimedAlert("Error!", "@TempData["CreateLocalSpecialtiesError"]", "error", 1000);
-                    </text>
+            else if (TempData["CreateLocalSpecialtiesSuccess"] != null)
+            {
+                <text>
+                    showTimedAlert("Success!", "@TempData["CreateLocalSpecialtiesSuccess"]", "success", 1000);
+                </text>
             }
-                                    else if (TempData["CreateLocalSpecialtiesSuccess"] != null)
-                {
-                    <text>
-                        showTimedAlert("Success!", "@TempData["CreateLocalSpecialtiesSuccess"]", "success", 1000);
-                    </text>
-            }
-                                });
+        });
     </script>
 }

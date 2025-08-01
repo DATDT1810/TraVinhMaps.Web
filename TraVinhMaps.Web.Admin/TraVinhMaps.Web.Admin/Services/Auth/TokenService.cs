@@ -66,7 +66,7 @@ namespace TraVinhMaps.Web.Admin.Services.Auth
 
                 try
                 {
-                    var response = await httpClient.PostAsync("/api/auth/refresh-token", content);
+                    var response = await httpClient.PostAsync("api/auth/refresh-token", content);
 
                     if (response.IsSuccessStatusCode)
                     {

@@ -1,6 +1,6 @@
 // --- PHẦN KẾT NỐI SIGNALR ---
 const connection = new signalR.HubConnectionBuilder()
-  .withUrl("https://localhost:7162/dashboardHub") // Đảm bảo URL này đúng
+  .withUrl("window.apiBaseUrl + "/dashboardHub") // Đảm bảo URL này đúng
   .build();
 
 // --- PHẦN LẮNG NGHE SỰ KIỆN ---

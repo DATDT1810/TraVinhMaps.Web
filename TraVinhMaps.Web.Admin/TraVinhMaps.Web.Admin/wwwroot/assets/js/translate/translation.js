@@ -514,7 +514,7 @@ const jsStrings = [
   "Latitude",
 ];
 
-const apiBase = "https://localhost:7162/api/Translation";
+const apiBase = window.apiBaseUrl + "/api/Translation";
 const minTranslationInterval = 5000;
 const BATCH_SIZE_FRONTEND = 100; // Tăng kích thước batch để giảm số lượng yêu cầu API
 

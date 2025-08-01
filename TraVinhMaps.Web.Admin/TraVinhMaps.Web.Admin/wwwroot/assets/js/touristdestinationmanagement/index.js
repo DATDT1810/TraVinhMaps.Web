@@ -89,7 +89,7 @@ $(document).ready(function () {
     ).then((confirmed) => {
       if (confirmed) {
         $.ajax({
-          url: "/Admin/TouristDestinationManagement/DeleteDestination",
+          url: window.apiBaseUrl + "/Admin/TouristDestinationManagement/DeleteDestination",
           method: "POST",
           data: { id: destinationId },
           headers: { RequestVerificationToken: token },
@@ -136,7 +136,7 @@ $(document).ready(function () {
     ).then((confirmed) => {
       if (confirmed) {
         $.ajax({
-          url: "/Admin/TouristDestinationManagement/RestoreDestination",
+          url: window.apiBaseUrl + "/Admin/TouristDestinationManagement/RestoreDestination",
           method: "POST",
           data: { id: destinationId },
           headers: { RequestVerificationToken: token },
@@ -184,7 +184,7 @@ $("#destinationExportBtn").on("click", function () {
 
 function exportDestinationsToExcel() {
   $.ajax({
-    url: "https://localhost:7162/api/TouristDestination/GetAllDestinations",
+    url: window.apiBaseUrl + "/api/TouristDestination/GetAllDestinations",
     type: "GET",
     headers: {
       sessionId: sessionId,

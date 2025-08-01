@@ -1116,7 +1116,7 @@ function collectAllValidationIssues() {
                     // Send batch request
                     console.log('Attempting to send AJAX request to import products...');
                     $.ajax({
-                        url: 'https://localhost:7162/api/OcopProduct/import-product',
+                        url: 'window.apiBaseUrl + "/api/OcopProduct/import-product',
                         type: 'POST',
                         headers: {
                             'sessionId': window.sessionId,
@@ -1126,7 +1126,7 @@ function collectAllValidationIssues() {
                         contentType: false,
                         timeout: 300000, // 5 minutes timeout
                         beforeSend: function(xhr) {
-                            console.log('Starting AJAX request to:', 'https://localhost:7162/api/OcopProduct/import-product');
+                            console.log('Starting AJAX request to:', 'window.apiBaseUrl + "/api/OcopProduct/import-product');
                         },
                         success: function (response) {
                             console.log(`Batch ${batchIndex + 1} completed successfully`, response);

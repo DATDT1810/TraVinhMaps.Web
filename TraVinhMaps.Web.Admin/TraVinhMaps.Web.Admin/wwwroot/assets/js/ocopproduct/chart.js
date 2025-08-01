@@ -11,7 +11,7 @@ let myCompareProductsChart = null;
 let isInitialLoad = true;
 
 // OCOP API URL
-const ocopApi = "https://localhost:7162/api/OcopProduct/";
+const ocopApi = window.apiBaseUrl + "/api/OcopProduct/";
 
 // Theme-based color configuration
 const THEME_COLORS = {
@@ -749,7 +749,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.refreshAllOcopCharts = refreshAllOcopChartsForRealtime;
 
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("https://localhost:7162/dashboardHub")
+        .withUrl(window.apiBaseUrl + "/dashboardHub")
         .withAutomaticReconnect()
         .build();
 

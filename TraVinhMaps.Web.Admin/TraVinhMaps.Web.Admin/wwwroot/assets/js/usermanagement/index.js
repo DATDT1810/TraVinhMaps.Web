@@ -136,7 +136,7 @@ $(document).ready(function () {
       if (!confirmed) return;
 
       $.ajax({
-        url: "/Admin/UserManagement/Delete",
+        url: window.apiBaseUrl + "/Admin/UserManagement/Delete",
         method: "POST",
         data: { id },
         headers: { RequestVerificationToken: token },
@@ -181,7 +181,7 @@ $(document).ready(function () {
       if (!confirmed) return;
 
       $.ajax({
-        url: "/Admin/UserManagement/Restore",
+        url: window.apiBaseUrl + "/Admin/UserManagement/Restore",
         method: "POST",
         data: { id },
         headers: { RequestVerificationToken: token },
@@ -226,7 +226,7 @@ $(document).ready(function () {
   // Export table to Excel
   function exportTableToExcel() {
     $.ajax({
-      url: "https://localhost:7162/api/Users/all",
+      url: window.apiBaseUrl + "/api/Users/all",
       type: "GET",
       headers: { sessionId: sessionId },
       success: function (response) {

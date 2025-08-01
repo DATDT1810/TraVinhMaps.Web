@@ -203,8 +203,8 @@ function fetchChartData(chartId, timeRange, tags, callback) {
   const timeRangeForApi = getApiTimeRange(timeRange);
   const performanceTagsQuery = tags ? tags.map(t => `tags=${encodeURIComponent(t)}`).join("&") : "";
   const apiUrl = chartId === "performance"
-    ? `https://localhost:7162/api/Users/performance-tags?timeRange=${timeRangeForApi}&${performanceTagsQuery}`
-    : `https://localhost:7162/api/Users/stats?groupBy=${chartId}&timeRange=${timeRangeForApi}`;
+    ? `window.apiBaseUrl + "/api/Users/performance-tags?timeRange=${timeRangeForApi}&${performanceTagsQuery}`
+    : `window.apiBaseUrl + "/api/Users/stats?groupBy=${chartId}&timeRange=${timeRangeForApi}`;
   fetch(apiUrl, { headers: { "X-Requested-With": "XMLHttpRequest" } })
     .then((response) => {
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -766,7 +766,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return role ? role.toLowerCase() : null;
   }
   const connection = new signalR.HubConnectionBuilder()
-    .withUrl("https://localhost:7162/dashboardHub")
+    .withUrl(window.apiBaseUrl + "/dashboardHub")
     .configureLogging(signalR.LogLevel.Error)
     .withAutomaticReconnect()
     .build();
