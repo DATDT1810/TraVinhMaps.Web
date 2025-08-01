@@ -52,7 +52,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     if (model.Avatar.Length == 0)
                     {
                         TempData["Error"] = "The uploaded file is empty.";
-                        return RedirectToAction(nameof(Profile));
+                        return RedirectToAction(nameof(AccountSettings));
                     }
 
                     // Validate file extension
@@ -62,7 +62,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     if (!allowedExtensions.Contains(extension))
                     {
                         TempData["Error"] = "Invalid file format. Please upload an image file (JPEG, PNG, GIF, BMP, WebP).";
-                        return RedirectToAction(nameof(Profile));
+                        return RedirectToAction(nameof(AccountSettings));
                     }
 
                     // Validate content type
@@ -74,7 +74,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     if (!allowedContentTypes.Contains(model.Avatar.ContentType))
                     {
                         TempData["Error"] = "Invalid file type. Please upload an image file.";
-                        return RedirectToAction(nameof(Profile));
+                        return RedirectToAction(nameof(AccountSettings));
                     }
 
                     // Validate file size (e.g., max 5MB)
@@ -82,7 +82,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     if (model.Avatar.Length > maxFileSizeInBytes)
                     {
                         TempData["Error"] = "File size exceeds the maximum limit (5MB).";
-                        return RedirectToAction(nameof(Profile));
+                        return RedirectToAction(nameof(AccountSettings));
                     }
                 }
 
@@ -92,18 +92,18 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 if (result)
                 {
                     TempData["Success"] = "Profile updated successfully.";
-                    return RedirectToAction(nameof(Profile));
+                    return RedirectToAction(nameof(AccountSettings));
                 }
                 else
                 {
                     TempData["Error"] = "Failed to update profile. Please try again.";
-                    return RedirectToAction(nameof(Profile));
+                    return RedirectToAction(nameof(AccountSettings));
                 }
             }
             catch (Exception ex)
             {
                 TempData["Error"] = "An error occurred while updating your profile: " + ex.Message;
-                return RedirectToAction(nameof(Profile));
+                return RedirectToAction(nameof(AccountSettings));
             }
         }
 

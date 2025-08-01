@@ -53,9 +53,7 @@
                                 <div class="dropzone-area" id="excelDropzone">
                                     <div class="dz-message text-center">
                                         <div class="mb-3">
-                                            <img src="/assets/images/dashboard_icon/excel-icon.png" alt="Excel Icon"
-                                                width="80" class="mb-3"
-                                                onerror="this.src='/assets/images/logo/logo-icon.png'" />
+                                           
                                         </div>
                                         <h5 class="para-text">Drag and drop the Excel file here or click to select the file</h5>
                                         <p class="para-text">Supported formats: .xlsx, .xls (Maximum 10MB)</p>
@@ -100,7 +98,7 @@
                                                     <div class="card-header bg-success text-white">
                                                         <h6 class="mb-0">OcopTypes</h6>
                                                     </div>
-                                                    <div class="card-body p-0">
+                                                    <div class="card-body p-0 lookup-list-scrollable">
                                                         <ul class="list-group list-group-flush" id="ocopTypesList">
                                                             @if (ViewBag.OcopTypes != null)
                                                             {
@@ -118,7 +116,7 @@
                                                     <div class="card-header bg-success text-white">
                                                         <h6 class="mb-0">Companies</h6>
                                                     </div>
-                                                    <div class="card-body p-0">
+                                                    <div class="card-body p-0 lookup-list-scrollable">
                                                         <ul class="list-group list-group-flush" id="companiesList">
                                                             @if (ViewBag.Companies != null)
                                                             {
@@ -136,7 +134,7 @@
                                                     <div class="card-header bg-success text-white">
                                                         <h6 class="mb-0">Tags</h6>
                                                     </div>
-                                                    <div class="card-body p-0">
+                                                    <div class="card-body p-0 lookup-list-scrollable">
                                                         <ul class="list-group list-group-flush" id="tagsList">
                                                             @if (ViewBag.Tags != null)
                                                             {
@@ -329,11 +327,11 @@
     <style>
         /* Color overrides for system theme */
         .bg-success {
-            background-color: #66bb6a !important;  /* Lighter green */
+            background-color: #158247 !important;  /* Lighter green */
         }
         
         .btn-success {
-            background-color: #66bb6a !important;
+            background-color: #158247 !important;
             border-color: #4caf50 !important;
         }
         
@@ -345,7 +343,7 @@
         
         /* Table headers in contrasting blue */
         #excelDataTable thead {
-            background-color: #26c6da !important;
+            background-color: #158247 !important;
         }
         
         /* Issue styling with yellow theme */
@@ -369,11 +367,14 @@
             height: 38px;
             padding: 8px 12px;
             transition: all 0.2s ease;
-            border-color: rgba(0, 0, 0, 0.1);
+            background-color: rgba(0, 0, 0, 0.1); /* Semi-transparent dark background */
+            border: 1px solid rgba(0, 0, 0, 0.2); /* Slightly darker border */
+            color: #fff; /* White icon */
         }
 
         #toggleIssuesBtn:hover {
-            background-color: rgba(255, 255, 255, 0.2);
+            background-color: rgba(0, 0, 0, 0.2); /* Darker on hover */
+            border-color: rgba(0, 0, 0, 0.3);
         }
 
         #issuesContentWrapper {
@@ -382,7 +383,7 @@
         }
 
         .dropzone-area {
-            border: 2px dashed #4caf50;
+            border: 2px dashed ##158247;
             border-radius: 8px;
             padding: 40px 20px;
             text-align: center;
@@ -405,7 +406,7 @@
 
         .badge-light-primary {
             background-color: #e8f5e9;
-            color: #388e3c;
+            color: ##158247;
             border: 1px solid #a5d6a7;
         }
 
@@ -469,13 +470,13 @@
         }
 
         .page-link {
-            color: #4caf50;
+            color: ##158247;
             border-color: #a5d6a7;
         }
 
         .page-item.active .page-link {
-            background-color: #4caf50;
-            border-color: #4caf50;
+            background-color: ##158247;
+            border-color: ##158247;
         }
 
         .page-item.disabled .page-link {
@@ -598,6 +599,60 @@
         
         .required-image-label {
             font-style: italic;
+        }
+
+        .lookup-list-scrollable {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Dark mode styles for the table */
+        .dark-only #excelDataTable {
+            background-color: #2c303a;
+            color: #d1d5db;
+        }
+
+        .dark-only #excelDataTable thead {
+            background-color: #374151 !important;
+            color: #f9fafb;
+        }
+
+        .dark-only #excelDataTable tbody tr {
+            border-color: #4b5563;
+        }
+
+        .dark-only #excelDataTable tbody tr:nth-child(even) {
+            background-color: #374151;
+        }
+
+
+        .dark-only [contenteditable="true"] {
+            background-color: #4b5563;
+            color: #f9fafb;
+        }
+
+        .dark-only [contenteditable="true"]:focus {
+            background-color: #5a667d;
+            outline-color: #66bb6a;
+        }
+
+        .dark-only .pagination-info,
+        .dark-only .page-link {
+            color: #9ca3af;
+        }
+
+        .dark-only .page-item.disabled .page-link {
+            color: #6b7280;
+        }
+
+        .dark-only .page-link:hover {
+            background-color: #4b5563;
+        }
+
+        .dark-only .page-item.active .page-link {
+            background-color: #4caf50;
+            border-color: #4caf50;
+            color: #ffffff;
         }
     </style>
 }

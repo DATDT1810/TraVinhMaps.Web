@@ -14,7 +14,7 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
-                    <h4>@ViewData["Title"]</h4>
+                   
                 </div>
                 <div class="col-6">
                     <ol class="breadcrumb">
@@ -23,8 +23,8 @@
                                 <i class="fa fa-home" style="font-size: 20px;"></i>
                             </a>
                         </li>
-                        <li class="breadcrumb-item">Admin</li>
-                        <li class="breadcrumb-item active">Edit Profile</li>
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item active">Profile</li>
                     </ol>
                 </div>
             </div>
@@ -36,36 +36,10 @@
         <div class="edit-profile">
             <form asp-action="UpdateProfile" asp-controller="Admin" method="post" enctype="multipart/form-data">
                 @Html.AntiForgeryToken()
-                <div class="row">
-                    <!-- My Profile -->
-                    <div class="col-xl-12">
-                        <div class="card">
-                            <div class="card-body p-3">
-                                <div class="d-flex align-items-center">
-                                    <div class="text-center me-3">
-                                        <img class="rounded-circle profile-avatar" alt="Profile Image"
-                                             src="@(string.IsNullOrEmpty(Model.Avatar) ? Url.Content("~/assets/images/user/user.png") : Model.Avatar)"
-                                             style="width: 80px; height: 80px; object-fit: cover;">
-                                        <div class="mt-2">
-                                            <label for="Avatar" class="btn btn-sm btn-outline-primary">Change</label>
-                                            <input id="Avatar" name="Avatar" type="file" accept="image/*" class="d-none">
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h4 class="card-title mb-0"><i class="fa fa-user me-2"></i>My Profile</h4>
-                                        <div id="image-error" class="text-danger mt-2" style="display: none;">
-                                            Please select a valid image file (JPEG, PNG, GIF, etc.)
-                                        </div>
-                                    </div>
-                                </div>
-                                <input type="hidden" name="Id" value="@Model.Id" />
-                                <input type="hidden" name="PhoneNumber" value="@Model.PhoneNumber" />
-                                <input type="hidden" name="Password" value="@Model.Password" />
-                                <input type="hidden" class="form-control" name="Email" value="@Model.Email" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <input type="hidden" name="Id" value="@Model.Id" />
+                <input type="hidden" name="PhoneNumber" value="@Model.PhoneNumber" />
+                <input type="hidden" name="Password" value="@Model.Password" />
+                <input type="hidden" class="form-control" name="Email" value="@Model.Email" />
                 <div class="row mt-3">
                     <!-- Security Information -->
                     <div class="col-xl-6 d-flex">
@@ -73,49 +47,49 @@
                             <div class="card-header">
                                 <h4 class="card-title mb-0"><i class="fa fa-shield-alt me-2"></i>Security Information</h4>
                             </div>
-                            <div class="card-body d-flex flex-column justify-content-between">
+                            <div class="card-body d-flex flex-column justify-content-space-around" style="justify-content: space-around;">
                                 <!-- Email -->
                                 <div class="security-item">
-                                    <h6 class="mb-1"><i class="fas fa-envelope me-2"></i>Email</h6>
+                                    <h4 class="mb-1"><i class="fas fa-envelope me-2"></i>Email</h4>
                                     @if (settingsData != null && !string.IsNullOrEmpty(settingsData.Email))
                                     {
                                         <p class="mb-1">@settingsData.Email</p>
-                                        <a href="#" class="btn btn-sm btn-outline-primary email-options-btn" data-field-type="email" data-identifier="@settingsData.Email">Change Email</a>
+                                        <a href="#" class="btn btn-sm btn-outline-primary email-options-btn security-btn" data-field-type="email" data-identifier="@settingsData.Email">Change Email</a>
                                     }
                                     else
                                     {
                                         <p class="mb-1 text-muted">No email yet.</p>
-                                        <a href="#" class="btn btn-sm btn-outline-primary email-options-btn" data-field-type="email">Change Email</a>
+                                        <a href="#" class="btn btn-sm btn-outline-primary email-options-btn security-btn" data-field-type="email">Change Email</a>
                                     }
                                 </div>
 
                                 <!-- Phone Number -->
                                 <div class="security-item">
-                                    <h6 class="mb-1"><i class="fas fa-phone me-2"></i>Phone number</h6>
+                                    <h4 class="mb-1"><i class="fas fa-phone me-2"></i>Phone number</h4>
                                     @if (settingsData != null && !string.IsNullOrEmpty(settingsData.PhoneNumber))
                                     {
                                         <p class="mb-1">@settingsData.PhoneNumber</p>
-                                        <a href="#" class="btn btn-sm btn-outline-primary mt-1 phone-options-btn" data-field-type="phone" data-identifier="@settingsData.PhoneNumber">Change Phone Number</a>
+                                        <a href="#" class="btn btn-sm btn-outline-primary mt-1 phone-options-btn security-btn" data-field-type="phone" data-identifier="@settingsData.PhoneNumber">Change Phone Number</a>
                                     }
                                     else
                                     {
                                         <p class="mb-1 text-muted">No phone number yet.</p>
-                                        <a href="#" class="btn btn-sm btn-outline-primary phone-options-btn" data-field-type="phone">Change Phone Number</a>
+                                        <a href="#" class="btn btn-sm btn-outline-primary phone-options-btn security-btn" data-field-type="phone">Change Phone Number</a>
                                     }
                                 </div>
 
                                 <!-- Password -->
                                 <div class="security-item">
-                                    <h6 class="mb-1"><i class="fas fa-lock me-2"></i>Password</h6>
+                                    <h4 class="mb-1"><i class="fas fa-lock me-2"></i>Password</h4>
                                     @if (settingsData != null && !string.IsNullOrEmpty(settingsData.Password))
                                     {
                                         <p class="mb-1 text-muted">Password has been set.</p>
-                                        <a href="#" class="btn btn-sm btn-outline-primary change-password-btn" data-field-type="password" data-identifier="password">Change Password</a>
+                                        <a href="#" class="btn btn-sm btn-outline-primary change-password-btn security-btn" data-field-type="password" data-identifier="password">Change Password</a>
                                     }
                                     else
                                     {
                                         <p class="mb-1 text-muted">Password has not been set.</p>
-                                        <a href="#" class="btn btn-sm btn-outline-primary change-password-btn" data-field-type="password" data-identifier="password">Change Password</a>
+                                        <a href="#" class="btn btn-sm btn-outline-primary change-password-btn security-btn" data-field-type="password" data-identifier="password">Change Password</a>
                                     }
                                 </div>
                             </div>
@@ -129,8 +103,20 @@
                                 <h4 class="card-title mb-0"><i class="fa fa-book me-2"></i>Account Details</h4>
                             </div>
                             <div class="card-body">
+                                <div class="text-center mb-4">
+                                    <img class="rounded-circle profile-avatar" alt="Profile Image"
+                                         src="@(string.IsNullOrEmpty(Model.Avatar) ? Url.Content("~/assets/images/user/user.png") : Model.Avatar)"
+                                         style="width: 120px; height: 120px; object-fit: cover;">
+                                    <div class="mt-2">
+                                        <label for="Avatar" class="btn btn-sm btn-outline-primary">Change</label>
+                                        <input id="Avatar" name="Avatar" type="file" accept="image/*" class="d-none">
+                                    </div>
+                                    <div id="image-error" class="text-danger mt-2" style="display: none;">
+                                        Please select a valid image file (JPEG, PNG, GIF, etc.)
+                                    </div>
+                                </div>
                                 <div class="details-grid">
-                                    <div class="detail-item">
+                                    <div class="detail-item" style="display : none;">
                                         <label>Username</label>
                                         <input class="form-control-plaintext" type="text" name="UserName" value="@Model.UserName" />
                                     </div>
@@ -150,13 +136,13 @@
                                         <label>Status</label>
                                         <p><span class="status-badge active">@(Model.Status ? "Active" : "Inactive")</span></p>
                                     </div>
-                                    <div class="detail-item">
+                                    <div class="detail-item" style="display : none;">
                                         <label>Forbidden Status</label>
                                         <p><span class="status-badge not-forbidden">@(Model.IsForbidden ? "Forbidden" : "Not Forbidden")</span></p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-footer text-end">
+                            <div class="card-footer text-end" >
                                 <button class="btn btn-primary" type="submit">Save Changes</button>
                             </div>
                         </div>
@@ -227,6 +213,10 @@
         color: #2c786c;
     }
 
+    .security-btn {
+        width: 280px;
+    }
+
     /* Account Details Grid */
     .details-grid {
         display: grid;
@@ -276,11 +266,25 @@
         background-color: rgba(220, 240, 220, 1);
         color: #2c786c;
     }
-</style>
 
+    .dark-only .detail-item {
+        background-color: #2c303a; /* Dark background for items */
+        border-left-color: #2c786c; /* Keep the accent color */
+    }
+
+    .dark-only .detail-item label {
+        color: #adb5bd; /* Lighter text for labels */
+    }
+
+    .dark-only .detail-item p,
+    .dark-only .detail-item .form-control-plaintext {
+        color: #e9ecef; /* Light text for values */
+    }
+</style>
+    
 @section Scripts {
     <script src="~/assets/js/sweetalert-custom.js"></script>
-    <script src="~/assets/js/admins/adminsetting.js"></script>
+    <script src="~/assets/js/admins/adminsetting.js?v=@DateTime.Now.Ticks"></script>
     <script>
         (function () {
             const success = @Html.Raw(Json.Serialize(TempData["Success"]));
