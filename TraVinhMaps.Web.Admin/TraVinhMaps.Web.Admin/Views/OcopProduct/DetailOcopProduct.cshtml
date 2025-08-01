@@ -25,7 +25,7 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
-                    <h4>OCOP Product Detail</h4>
+                    <h4>OCOP Product Details</h4>
                     @if (TempData["ErrorMessage"] != null)
                     {
                         <div id="alert-message" class="alert alert-danger">
@@ -48,7 +48,7 @@
                         </li>
                         <li class="breadcrumb-item"> <a asp-controller="OcopProduct" asp-action="Index">OCOP Product</a>
                         </li>
-                        <li class="breadcrumb-item active">OCOP Product Detail</li>
+                        <li class="breadcrumb-item active">OCOP Product Details</li>
                     </ol>
                 </div>
             </div>
@@ -84,7 +84,7 @@
                                 {
                                     @foreach (var item in Model.ProductImage)
                                     {
-                                        <div class="item" style="height: 90px; width: 70px;">
+                                        <div class="item position-relative" style="height: 90px; width: 70px;">
                                             <img src="@item" alt="image ocop product"
                                                 style="width: 100%; height: 100%; object-fit: cover; display: block;">
                                             <form asp-controller="OcopProduct" asp-action="DeleteOcopProductImage"
@@ -121,9 +121,9 @@
                     </div>
                 </div>
                 <div class="col-xxl-8 box-col-6 order-xxl-0 order-1">
-                    <div class="card">
+                    <div class="card text-white bg-success p-1 text-start rounded-4">
                         <div class="card-body">
-                        <h2>
+                        <h2 class="text-white">
                             <i class="fa fa-leaf"></i><span> @Model.ProductName</span>
                         </h2>
                         <p>High-quality OCOP product from the Mekong Delta</p>
@@ -157,7 +157,7 @@
                                     <div class="detail-item"><i class="fa fa-calendar"></i> <strong>Year Released:</strong> <span>@Model.OcopYearRelease</span></div>
                                     <div class="detail-item"><i class="fa fa-check-circle"></i> <strong>Status:</strong> <span class="text-success" style="font-weight: bold;">● Active</span></div>
                                     <div class="detail-item"><i class="fa fa-clock-o"></i> <strong>Created At:</strong> <span>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span></div>
-                                    <div class="detail-item txt-success"><i class="fa fa-refresh"></i> <strong>Updated At:</strong> <span>@(Model.UpdateAt.HasValue ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy, HH:mm") : "No updates yet")</span></div>
+                                    <div class="detail-item"><i class="fa fa-refresh"></i> <strong>Updated At:</strong> <span class="txt-success">@(Model.UpdateAt.HasValue ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy, HH:mm") : "No updates yet")</span></div>
                                 </div>
                             </div>
                         </div>
@@ -173,7 +173,7 @@
                         </div>
                     </div>
                     
-                    <div class="m-t-15 btn-showcase" style="padding-bottom: 20px; display: flex; justify-content: end">
+                    <div class="m-t-15 d-flex justify-content-end btn-showcase" style="padding-bottom: 20px;">
                         <div class="d-inline p-0">
                             <a class="btn btn-back" asp-action="Index">
                                 Back
@@ -188,20 +188,19 @@
                     <div class="card">
                         <div class="card-body"
                             style="display: flex; flex-direction: column; gap: 12px;">
-                            <div class="d-flex align-items-center p-3 mb-3" style="background-color: var(--bs-light); border-radius: 12px;">
+                            <div class="d-flex align-items-center p-3 ps-0 mb-3" style="background-color: var(--bs-light); border-radius: 12px;">
                                 <div class="me-3">
                                     <i class="fa fa-store"></i>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <h4 style="font-weight: 700; margin-bottom: 0;"><i class="fa fa-store" style="color: #6366f1;"></i>Selling Points of the Product</h4>
-                                    <p style="color: var(--bs-gray-600); margin-bottom: 0;">@Model.ProductName</p>
+                                    <h4 class="f-w-700 mb-0">Selling Points of the Product</h4>
+                                    <p class="mb-0" style="color: var(--bs-gray-600);">@Model.ProductName</p>
                                 </div>
                                 <div class="d-flex align-items-center gap-4 mx-5">
                                     <div class="text-center">
-                                        <h3 style="font-weight: 700; color: #6366f1; margin-bottom: 0;">@(Model.Sellocations?.Count ?? 0)</h3>
-                                        <p style="font-size: 0.8rem; color: #6c757d; margin-bottom: 0; text-transform: uppercase;">Selling Points</p>
+                                        <h3 class="f-w-700 mb-0" style="color: #6366f1;">@(Model.Sellocations?.Count ?? 0)</h3>
+                                        <p class="text-secondary mb-0 text-uppercase" style="font-size: 0.8rem;">Selling Points</p>
                                     </div>
-                   
                                 </div>
                                 <div>
                                     <a class="btn btn-success" style="border-radius: 50px; padding: 10px 20px;"
@@ -214,7 +213,7 @@
                             <div>
                                 @if (Model.Sellocations == null || !Model.Sellocations.Any())
                                 {
-                                    <div  style="display: flex; justify-content: space-between; align-items: center; padding-left: 12px">
+                                   <div class="d-flex justify-content-between align-items-center ps-3">
                                         <div>
                                             <b>No Location Name.</b><br />
                                             <span>No Location Address.</span>
@@ -230,7 +229,7 @@
 
                                             <div class="col-md-6 mb-4 d-flex">
                                                 <div class="location-card">
-                                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                                                    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap" style="gap: 8px;">
                                                         <div>
                                                             <h3 style="margin: 0; font-weight: 600; max-width: 430px; min-height: 60px">
                                                                 @(item?.LocationName ?? "No Location Name.")
@@ -239,7 +238,7 @@
                                                                 @(item?.LocationAddress ?? "No Location Address.")
                                                             </div>
                                                         </div>
-                                                        <div style="display: flex; gap: 6px; padding-bottom : 50px">
+                                                        <div class="d-flex" style="gap: 6px; padding-bottom : 50px">
                                                             <button type="button" title="Edit"
                                                                     style="background: none; border: none; padding: 4px; cursor: pointer; font-size: 14px; line-height: 1;"
                                                                     class="btn btn-success btn-sm px-2 py-1 edit-location-btn" data-bs-toggle="modal"
@@ -260,8 +259,7 @@
                                                             </button>
                                                         </div>
                                                     </div>
-                                                    <div
-                                                        style="display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; align-items: center;">
+                                                    <div class="d-flex flex-wrap align-items-center mb-3" style="gap: 12px;">
                                                         <label
                                                             style="font-size: 0.8rem; min-width: 70px; margin: 0;">Longitude</label>
                                                         <input type="text" class="form-control" readonly
@@ -311,10 +309,10 @@
                                 <div class="tab-content" id="top-tabContent">
                             <div class="tab-pane fade active show" id="top-home" role="tabpanel"
                                 aria-labelledby="top-home-tab">
-                                <div style="margin-top: 10px;">
+                                <div class="mt-1">
                                     <div class="filter-block">
-                                        <div class="d-flex justify-content-between align-items-center mb-3 p-3" style="background-color: var(--bs-light); border-radius: 12px;">
-                                            <h5 style="font-weight: bold; margin: 0;"><i class="fa fa-link" style="color: #6366f1;"></i> Store of selling link</h5>
+                                        <div class="sell d-flex justify-content-between align-items-center mb-3 p-3" style="background-color: var(--bs-light); border-radius: 12px;">
+                                            <h5 class="fw-bold m-0"><i class="fa fa-link" style="color: #6366f1;"></i> Store of selling link</h5>
                                             <a class="btn btn-success" style="border-radius: 20px;"
                                                 title="Create Point of Selling Link" data-bs-toggle="modal"
                                                 data-bs-target="#addSellingLinkModal"><i class="fa fa-plus"></i> Add New Link</a>
@@ -484,7 +482,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editLocationModalLabel">Edit Location</h5>
+                    <h5 class="modal-title fw-bold text-success" id="editLocationModalLabel">Edit Location</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="editLocationForm" method="post">
@@ -544,14 +542,14 @@
                             </div>
                             <div class="col-md-7">
                                 <div id="editMapContainer"
-                                    style="width: 100%; height: 400px; border-radius: 8px; border: 1px solid #ddd;">
+                                    style="width: 100%; height: 500px; border-radius: 8px; border: 1px solid #ddd;">
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
                     </div>
                 </form>
             </div>

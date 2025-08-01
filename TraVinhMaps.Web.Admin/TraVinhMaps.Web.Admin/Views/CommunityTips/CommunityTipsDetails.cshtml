@@ -52,8 +52,6 @@
     .info-boxes {
         display: flex;
         justify-content: space-between;
-        gap: 15px;
-        margin-bottom: 30px;
     }
 
     .info-box {
@@ -83,7 +81,6 @@
         color: #333;
         padding: 20px;
         border-radius: 10px;
-        margin-bottom: 30px;
         border: 1px solid #eeeeee;
         border-left: 5px solid #a5d6a7;
     }
@@ -152,12 +149,16 @@
     <div class="container-fluid">
         <div class="page-title">
             <div class="row">
-                <div class="col-12">
-                    <div class="details-header">
-                        <h1 class="details-title">@Model.Title</h1>
-
-                    </div>
+                <div class="col-6">
+                    <h4>@ViewData["Title"]</h4>
                 </div>
+                @{
+                    var breadcrumbs = ViewData["Breadcrumb"] as List<BreadcrumbItem>;
+                }
+                @if (breadcrumbs != null)
+                {
+                    @await Html.PartialAsync("_Breadcrumb", breadcrumbs)
+                }
             </div>
         </div>
     </div>
@@ -166,9 +167,10 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="details-content-card">
-
-
-                    <div class="info-boxes">
+                    <div class="details-header mb-3">
+                        <h1 class="details-title">@Model.Title</h1>
+                    </div>
+                    <div class="info-boxes gap-3 mb-3">
                         <div class="info-box">
                             <div class="info-box-label">Status</div>
                             <div class="info-box-value" style="color: @(Model.Status ? "#4CAF50" : "#f44336");">
@@ -176,7 +178,6 @@
                                 @(Model.Status ? "Active" : "Inactive")
                             </div>
                         </div>
-
                         <div class="info-box">
                             <div class="info-box-label">Created At</div>
                             <div class="info-box-value">@Model.CreatedAt.ToString("dd/MM/yyyy")</div>
@@ -188,14 +189,14 @@
                         </div>
                     </div>
 
-                    <div class="summary-box">
-                        <div class="details-content">
+                    <div class="summary-box mb-4">
+                        <div class="details-content text-justify">
                             @Html.Raw(Model.Content)
                         </div>
                     </div>
 
                     <div class="details-footer">
-                        <a class="btn btn-back" asp-controller="CommunityTips" asp-action="Index">Back</a>
+                        <a class="btn btn-back me-3" asp-controller="CommunityTips" asp-action="Index">Back</a>
                     </div>
                 </div>
             </div>

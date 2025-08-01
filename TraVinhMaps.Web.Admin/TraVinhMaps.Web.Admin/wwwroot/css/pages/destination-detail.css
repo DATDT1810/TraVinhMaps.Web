@@ -1,270 +1,385 @@
+.Delete-button-image {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background-color: rgba(169, 169, 169, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  padding: 0;
+}
+
+.Delete-button-history-image {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background-color: rgba(169, 169, 169, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  padding: 0;
+}
+
+.add-image-box {
+  margin-top: 10px;
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #aaa;
+  position: relative;
+  cursor: pointer;
+  border-radius: 9px;
+  background-color: #f8f9fa;
+}
+
+.add-image-history-box {
+  margin-top: 10px;
+  width: 100%;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #aaa;
+  position: relative;
+  cursor: pointer;
+  border-radius: 9px;
+  background-color: #f8f9fa;
+}
+
+.upload-placeholder {
+  font-size: 48px;
+  color: #aaa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+div.gallery {
+  margin: 5px;
+  border-radius: 9px;
+  float: left;
+  width: 180px;
+}
+
+div.add_gallery {
+  margin: 5px;
+  border-radius: 9px;
+  float: left;
+  width: 180px;
+}
+
+div.gallery:hover {
+  border: 1px solid #777;
+}
+
+div.gallery img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+div.desc {
+  padding: 15px;
+  text-align: center;
+}
+
 /* New Styles for Redesign */
 .info-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #333;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
 }
 
 .info-header i {
-    margin-right: 0.75rem;
-    color: #007bff;
+  margin-right: 0.75rem;
+  color: #007bff;
 }
 
 .info-block {
-    background-color: #f0f2f5;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  background-color: #f0f2f5;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .rating-block {
-    background-color: #f0f2f5;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
+  background-color: #f0f2f5;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
 }
 
 .rating-main {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .rating-main .stars i {
-    color: #ffc107;
+  color: #ffc107;
 }
 
 .rating-main .score {
-    font-size: 1.5rem;
-    font-weight: bold;
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
 .rating-reviews {
-    font-size: 0.9rem;
-    color: #6c757d;
-    text-align: right;
+  font-size: 0.9rem;
+  color: #6c757d;
+  text-align: right;
 }
 
 .tag {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    background-color: #e0e7ff;
-    color: #4338ca;
-    font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  background-color: #e0e7ff;
+  color: #4338ca;
+  font-weight: 500;
 }
 
 .tag img {
-    width: 20px;
-    height: 20px;
-    margin-right: 0.5rem;
+  width: 20px;
+  height: 20px;
+  margin-right: 0.5rem;
 }
 
 /* Operating Time New Styles */
 .operating-time-card .info-header {
-    justify-content: space-between;
+  justify-content: space-between;
 }
 .current-time {
-    text-align: right;
+  text-align: right;
 }
 .current-time span {
-    font-size: 0.8rem;
-    color: #6c757d;
+  font-size: 0.8rem;
+  color: #6c757d;
 }
 .current-time div {
-    font-size: 1.2rem;
-    font-weight: bold;
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 .timeline {
-    padding: 1rem 0;
+  padding: 1rem 0;
 }
 .timeline-bar {
-    width: 100%;
-    height: 8px;
-    background-color: #e9ecef;
-    border-radius: 4px;
+  width: 100%;
+  height: 8px;
+  background-color: #e9ecef;
+  border-radius: 4px;
 }
 .timeline-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.9rem;
-    margin-top: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
 }
 .timeline-labels i {
-    margin-right: 0.3rem;
+  margin-right: 0.3rem;
 }
 .time-cards {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 .time-card {
-    flex: 1;
-    padding: 1rem;
-    border-radius: 12px;
-    text-align: center;
+  flex: 1;
+  padding: 1rem;
+  border-radius: 12px;
+  text-align: center;
 }
 .time-card.open {
-    background-color: #e6f7f2;
-    color: #00875a;
+  background-color: #e6f7f2;
+  color: #00875a;
 }
 .time-card.close {
-    background-color: #fff0f0;
-    color: #de350b;
+  background-color: #fff0f0;
+  color: #de350b;
 }
 .time-card .label {
-    font-size: 0.9rem;
+  font-size: 0.9rem;
 }
 .time-card .time {
-    font-size: 1.8rem;
-    font-weight: bold;
-    line-height: 1.2;
+  font-size: 1.8rem;
+  font-weight: bold;
+  line-height: 1.2;
 }
 .time-card .ampm {
-    font-size: 1.2rem;
-    font-weight: bold;
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 .time-card i {
-    font-size: 1.5rem;
-    margin-top: 0.5rem;
+  font-size: 1.5rem;
+  margin-top: 0.5rem;
 }
 .status-bar {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    margin-top: 1rem;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
 }
 .status-bar .dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    margin-right: 0.75rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 0.75rem;
 }
 .status-bar.open .dot {
-    background-color: #28a745;
+  background-color: #28a745;
 }
 .status-bar.closed .dot {
-    background-color: #dc3545;
+  background-color: #dc3545;
 }
 .total-duration {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 1rem;
-    color: black;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  color: black;
 }
 
 /* Destination Type & Contact Info Styles */
 .styled-info-box {
-    background-color: #faf5ff;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-top: 1.5rem;
+  background-color: #faf5ff;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1.5rem;
 }
 .styled-info-box .info-label {
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
 }
 .styled-info-box .info-value {
-    display: flex;
-    align-items: center;
-    color: #9333ea;
-    font-weight: 500;
+  display: flex;
+  align-items: center;
+  color: #9333ea;
+  font-weight: 500;
 }
 .styled-info-box .info-value i {
-    margin-right: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 .contact-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 .contact-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 1rem;
-    font-size: 1.2rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  font-size: 1.2rem;
 }
-.contact-icon.phone { background-color: #e0f2fe; color: #0284c7; }
-.contact-icon.email { background-color: #dcfce7; color: #16a34a; }
-.contact-icon.website { background-color: #f3e8ff; color: #9333ea; }
+.contact-icon.phone {
+  background-color: #e0f2fe;
+  color: #0284c7;
+}
+.contact-icon.email {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+.contact-icon.website {
+  background-color: #f3e8ff;
+  color: #9333ea;
+}
 .contact-details .label {
-    font-size: 0.8rem;
-    color: black;
+  font-size: 0.8rem;
+  color: black;
 }
 .contact-details .value {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 .address-container {
-    position: relative;
-    padding: 0 1rem;
+  position: relative;
+  padding: 0 1rem;
 }
 
 .address-content {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    margin-bottom: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  margin-bottom: 0;
 }
 
 .address-content.expanded {
-    -webkit-line-clamp: unset;
+  -webkit-line-clamp: unset;
 }
 
 .expand-btn {
-    color: #007bff;
-    cursor: pointer;
-    font-weight: bold;
-    display: none;
-    text-align: right;
-    margin-top: 5px;
+  color: #007bff;
+  cursor: pointer;
+  font-weight: bold;
+  display: none;
+  text-align: right;
+  margin-top: 5px;
 }
 
 /* Dark mode styles for DetailDestination.cshtml */
 
 body.dark .card {
-    background-color: #2c2c2c;
-    color: #ffffff;
-    border: 1px solid #444;
+  background-color: #2c2c2c;
+  color: #ffffff;
+  border: 1px solid #444;
 }
 
 body.dark .breadcrumb-item a,
 body.dark .breadcrumb-item.active {
-    color: #a0a0a0;
+  color: #a0a0a0;
 }
 
 body.dark .breadcrumb-item a:hover {
-    color: #ffffff;
+  color: #ffffff;
 }
 
 body.dark .page-title h4 {
-    color: #ffffff;
+  color: #ffffff;
 }
 
 body.dark .tag {
-    background-color: #3a3a3a;
-    color: #d1d1d1;
+  background-color: #3a3a3a;
+  color: #d1d1d1;
 }
 
 body.dark h2 {
-    color: #ffffff;
+  color: #ffffff;
 }
 
 body.dark .info-header,
@@ -273,204 +388,213 @@ body.dark .rating-block h6,
 body.dark .styled-info-box .info-label,
 body.dark .contact-details .label,
 body.dark .total-duration {
-    color: #e0e0e0 !important;
+  color: #e0e0e0 !important;
 }
 
 body.dark .info-header i {
-    color: #0098d7;
+  color: #0098d7;
 }
 
 body.dark .address-container p,
 body.dark .expand-btn {
-    color: #c0c0c0;
+  color: #c0c0c0;
 }
 
 body.dark .info-block {
-    background-color: #333333;
-    color: #dcdcdc;
+  background-color: #333333;
+  color: #dcdcdc;
 }
 
 body.dark .info-block .txt-success {
-    color: #28a745;
+  color: #28a745;
 }
 
 body.dark .rating-block {
-    background-color: #333333;
+  background-color: #333333;
 }
 
 body.dark .rating-block h6 {
-    color: #ffffff;
+  color: #ffffff;
 }
 
 body.dark .rating-main .stars i {
-    color: #ffc107;
+  color: #ffc107;
 }
 
 body.dark .rating-main .score {
-    color: #ffffff;
+  color: #ffffff;
 }
 
 body.dark .styled-info-box {
-    background-color: #3a3a3a;
+  background-color: #3a3a3a;
 }
 
 body.dark .styled-info-box .info-label {
-    color: #e0e0e0;
+  color: #e0e0e0;
 }
 
 body.dark .styled-info-box .info-value {
-    color: #c38fff;
+  color: #c38fff;
 }
 
 body.dark .btn-edit {
-    background-color: #007bff;
-    border-color: #007bff;
-    color: #ffffff;
+  background-color: #007bff;
+  border-color: #007bff;
+  color: #ffffff;
 }
 
 body.dark .btn-back {
-    background-color: #6c757d;
-    border-color: #6c757d;
-    color: #ffffff;
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: #ffffff;
 }
 
 body.dark .operating-time-card {
-    background-color: #2c2c2c;
+  background-color: #2c2c2c;
 }
 
 body.dark .current-time span {
-    color: #a0a0a0;
+  color: #a0a0a0;
 }
 
 body.dark .current-time div {
-    color: #ffffff;
+  color: #ffffff;
 }
 
 body.dark .time-card.open {
-    background-color: #2a4a3e;
-    color: #63e6be;
+  background-color: #2a4a3e;
+  color: #63e6be;
 }
 
 body.dark .time-card.close {
-    background-color: #5d3a3a;
-    color: #ff8f8f;
+  background-color: #5d3a3a;
+  color: #ff8f8f;
 }
 
 body.dark .status-bar {
-    background-color: #333333;
-    border-color: #555555;
-    color: #ffffff;
+  background-color: #333333;
+  border-color: #555555;
+  color: #ffffff;
 }
 
 body.dark .operating-time-card .total-duration,
 body.dark .info-block span:last-child,
 body.dark .contact-details .value,
 body.dark .contact-details .value a {
-    color: #ffffff !important;
+  color: #ffffff !important;
 }
 
 body.dark .contact-details .value {
-    color: #ffffff !important;
+  color: #ffffff !important;
 }
 
 body.dark .card .card-body h5 {
-    color: #ffffff;
+  color: #ffffff;
 }
 
-
-body.dark .contact-icon.phone { background-color: #2b4b5a; color: #38bdf8; }
-body.dark .contact-icon.email { background-color: #2f5139; color: #4ade80; }
-body.dark .contact-icon.website { background-color: #4a385c; color: #c084fc; }
+body.dark .contact-icon.phone {
+  background-color: #2b4b5a;
+  color: #38bdf8;
+}
+body.dark .contact-icon.email {
+  background-color: #2f5139;
+  color: #4ade80;
+}
+body.dark .contact-icon.website {
+  background-color: #4a385c;
+  color: #c084fc;
+}
 
 body.dark .nav-tabs .nav-link {
-    color: #a0a0a0;
-    border-color: #444 #444 #2c2c2c;
+  color: #a0a0a0;
+  border-color: #444 #444 #2c2c2c;
 }
 
 body.dark .nav-tabs .nav-link.active {
-    color: #ffffff;
-    background-color: #2c2c2c;
-    border-color: #444 #444 #2c2c2c;
+  color: #ffffff;
+  background-color: #2c2c2c;
+  border-color: #444 #444 #2c2c2c;
 }
 
 body.dark .tab-content {
-    color: #dcdcdc;
+  color: #dcdcdc;
 }
 
 body.dark #map {
-    background-color: #3a3a3a !important;
+  background-color: #3a3a3a !important;
 }
 
 body.dark .text-justify {
-    color: #dcdcdc;
+  color: #dcdcdc;
 }
 
 body.dark .gallery a {
-    color: #0098d7;
+  color: #0098d7;
 }
 
 body.dark .add_gallery .add-image-history-box {
-    border-color: #555;
-    background-color: #333;
+  border-color: #555;
+  background-color: #333;
 }
 
 body.dark .add_gallery .upload-placeholder {
-    color: #777;
+  color: #777;
 }
 
 body.dark .page-body {
-    background-color: #1e1e1e;
+  background-color: #1e1e1e;
 }
 
 body.dark .container-fluid {
-    background-color: transparent;
+  background-color: transparent;
 }
 
-body.dark-only .info-block{
-    background-color: #1A1C23;
+body.dark-only .info-block {
+  background-color: #1a1c23;
 }
-body.dark-only .rating-block{
-    background-color: #1A1C23;
+body.dark-only .rating-block {
+  background-color: #1a1c23;
 }
-body.dark-only .styled-info-box{
-    background-color: #1A1C23;
+body.dark-only .styled-info-box {
+  background-color: #1a1c23;
 }
 
 body.dark-only .contact-details .label {
-    color: #ffffff;
+  color: #ffffff;
 }
 body.dark-only span {
-    color: #ffffff;
+  color: #ffffff;
 }
 
-body.dark-only .current-time{
-    color: #ffffff;
+body.dark-only .current-time {
+  color: #ffffff;
 }
 
 body.dark-only .nav-item {
-    color: #ffffff;
+  color: #ffffff;
 }
 
-
 body.dark-only .nav-link {
-    color: #ffffff;
+  color: #ffffff;
 }
 
 body.dark-only .time-card.open {
-    
-    background-color: #1A1C23;
+  background-color: #1a1c23;
 }
 
 body.dark-only .time-card.close {
-    
-    background-color: #1A1C23;
+  background-color: #1a1c23;
 }
 body.dark-only .status-bar {
-    background-color: #1A1C23;
-    color: #ffffff;
+  background-color: #1a1c23;
+  color: #ffffff;
 }
 
 body.dark-only .tag {
-    background-color: #1A1C23;
-    color: #ffffff;
+  background-color: #1a1c23;
+  color: #ffffff;
+}
+
+body.dark-only #sync2 .item img{
+    color: var(--body-font-color)
 }

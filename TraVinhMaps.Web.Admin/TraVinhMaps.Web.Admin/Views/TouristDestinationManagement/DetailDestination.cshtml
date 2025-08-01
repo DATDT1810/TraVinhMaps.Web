@@ -60,7 +60,7 @@
     </div>
     <!-- Container-fluid starts-->
     <div class="container-fluid">
-        <div>
+        <div class="dark-only">
             <div class="row product-page-main p-0">
                 <div class="col-xxl-4 col-md-6 box-col-12">
                     <div class="card h-100">
@@ -123,15 +123,15 @@
                             </div>
                             <div class="address-container">
                                 <p class="address-content" id="addressContent">@Model.Address</p>
-                                <a href="#" class="expand-btn" id="expandBtn">mở rộng</a>
+                                <a href="#" class="expand-btn" id="expandBtn">See more</a>
                             </div>
 
                             <div class="info-block mt-4">
-                                <span>Create At:</span>
+                                <span><i class="fa fa-clock-o"></i> Create At:</span>
                                 <span><i class="fa fa-calendar"></i> @Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span>
                             </div>
                             <div class="info-block">
-                                <span>Update At:</span>
+                                <span><i class="fa fa-refresh"></i> Update At:</span>
                                 <span class="txt-success"><i class="fa fa-calendar"></i> @(Model.UpdateAt.HasValue ? Model.UpdateAt.Value.ToLocalTime().ToString("dd/MM/yy HH:mm") : "No update")</span>
                             </div>
 
@@ -168,21 +168,25 @@
                                 </div>
                             </div>
 
-                            @if (!string.IsNullOrWhiteSpace(Model.Ticket) && Model.Ticket != "0")
+                           @if (!string.IsNullOrWhiteSpace(Model.Ticket) && Model.Ticket != "0")
                             {
                                 <div class="styled-info-box">
                                     <div class="info-label">Ticket Price:</div>
                                     <div class="info-value">
                                         <i class="fa fa-ticket"></i>
                                         <span>@Model.Ticket</span>
-                                        @if (!Model.Ticket.Trim().ToLower().Equals("free"))
+                                        @{
+                                            var ticketStr = Model.Ticket.Trim().ToLowerInvariant();
+                                            var isNumeric = decimal.TryParse(Model.Ticket, out _);
+                                            var isFree = ticketStr == "free" || ticketStr == "miễn phí";
+                                        }
+                                        @if (!isFree && isNumeric)
                                         {
                                             <span>đ</span>
                                         }
                                     </div>
                                 </div>
                             }
-
 
                             <div class="mt-auto pt-4">
                                 <div class="m-t-15 btn-showcase">
@@ -305,7 +309,7 @@
                                 @foreach(var item in Model.HistoryStory.Images) {
                                 <div class="gallery position-relative">
                                     <a target="_blank" href="@item">
-                                        <img src="@item" alt="Mountains" width="600" height="400">
+                                        <img src="@item" alt="Mountains" width="600px" height="400px" style="height: 130px;">
                                     </a>
                                     <form asp-controller="TouristDestinationManagement"
                                             asp-action="DeleteHistoryDestinationImage" method="post">
@@ -344,7 +348,18 @@
     <!-- Container-fluid Ends-->
 </div>
 
-<script>
+@section Scripts {
+    <!-- HERE Maps API references -->
+    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+    
+    <script>
+        // Set the API key for all subsequent scripts to use
+        window.HERE_API_KEY = '@Configuration["HEREMAP_API_KEY"]';
+
     function updateClock() {
         const now = new Date();
         const hours = now.getHours().toString().padStart(2, '0');
@@ -407,19 +422,6 @@
             }
         });
     });
-</script>
-
-@section Scripts {
-    <!-- HERE Maps API references -->
-    <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
-    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
-    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
-    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
-    <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
-    
-    <script>
-        // Set the API key for all subsequent scripts to use
-        window.HERE_API_KEY = '@Configuration["HEREMAP_API_KEY"]';
     </script>
 
     <script src="~/assets/js/touristdestination/heremap-detail.js"></script>

@@ -214,8 +214,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
             ViewData["Title"] = "Ocop Product Management";
             ViewData["Breadcrumb"] = new List<BreadcrumbItem>
             {
-                new BreadcrumbItem { Title = "Ocop Product Management", Url = Url.Action("Index", "OcopProduct")! },
-                new BreadcrumbItem { Title = "Update Ocop Product" } // default URL for the current page
+                new BreadcrumbItem { Title = "OCOP Product Management", Url = Url.Action("Index", "OcopProduct")! },
+                new BreadcrumbItem { Title = "Update OCOP Product" } // default URL for the current page
             };
             var findOcopProduct = await _ocopProductService.GetByIdAsync(id);
             if (findOcopProduct == null)

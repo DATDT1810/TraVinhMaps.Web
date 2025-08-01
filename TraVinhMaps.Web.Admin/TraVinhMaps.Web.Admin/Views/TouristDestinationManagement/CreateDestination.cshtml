@@ -92,9 +92,9 @@
     }
 
     .price-option.active {
-        background-color: #28A745;
+        background-color: #158247;
         color: white;
-        border-color: #28A745;
+        border-color: #158247;
     }
 
     .price-option i {
@@ -148,7 +148,7 @@
                                                     <textarea asp-for="Address" class="form-control"
                                                         placeholder="Address of destination" autocomplete="off"
                                                         rows="2"></textarea>
-                                                    <button class="btn btn-outline-secondary" type="button"
+                                                    <button class="btn btn-success" type="button"
                                                         id="searchAddressBtn"><i class="fa fa-search"></i>
                                                         Search</button>
                                                 </div>
@@ -260,7 +260,7 @@
                                             </div>
                                         </div>
                                         <div class="mb-3">
-                                            <label>Price</label>
+                                            <label>Reference Price</label>
                                             <input asp-for="Ticket" type="hidden" id="ticket-hidden-input" />
                                             <div class="price-options">
                                                 <div class="price-option" data-value="Free">
@@ -300,14 +300,14 @@
                                         <div class="mb-3">
                                             <label>History Story</label>
                                             <textarea asp-for="HistoryStory.Content" id="historyEditor"
-                                                class="form-control" placeholder="History content of destination"
+                                                class="form-control wysiwyg-editor" placeholder="History content of destination"
                                                 rows="10"></textarea>
                                             <span asp-validation-for="HistoryStory.Content" class="text-danger"></span>
                                         </div>
                                     </div>
                                     <div class="mb-3">
                                         <label>Description</label>
-                                        <textarea asp-for="Description" id="descriptionEditor" class="form-control"
+                                        <textarea asp-for="Description" id="descriptionEditor" class="form-control wysiwyg-editor"
                                             placeholder="Description of destination" rows="10"></textarea>
                                         <span asp-validation-for="Description" class="text-danger"></span>
                                     </div>
@@ -359,9 +359,6 @@
     @Html.AntiForgeryToken()
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-
-    <!-- CKEditor 5 -->
-    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
 
     <!-- HERE Maps API references -->
     <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
