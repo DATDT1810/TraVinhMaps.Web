@@ -11,7 +11,7 @@ let myCompareProductsChart = null;
 let isInitialLoad = true;
 
 // OCOP API URL
-const ocopApi = window.apiBaseUrl + "/api/OcopProduct/";
+const ocopApi = window.apiBaseUrl + "api/OcopProduct/";
 
 // Theme-based color configuration
 const THEME_COLORS = {
@@ -442,12 +442,25 @@ function drawCompareProductsChart(data) {
             maintainAspectRatio: false,
             plugins: {
                 legend: { position: "top", labels: { color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) } },
-                title: { display: true, text: t("OCOP Product Comparison"), color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) },
+                title: { 
+                    display: true, 
+                    text: t("OCOP Product Comparison"), 
+                    color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel) 
+                },
                 tooltip: {
                     backgroundColor: getChartColor(THEME_COLORS.light.tooltipBg, THEME_COLORS.dark.tooltipBg),
                     titleColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
                     bodyColor: getChartColor(THEME_COLORS.light.tooltipText, THEME_COLORS.dark.tooltipText),
                 },
+                annotation: {
+                    annotations: data.length === 0 ? [{
+                        type: 'label',
+                        content: t("No data available"),
+                        position: 'center',
+                        font: { size: 16 },
+                        color: getChartColor(THEME_COLORS.light.datalabel, THEME_COLORS.dark.datalabel)
+                    }] : []
+                }
             },
             scales: {
                 y: {
@@ -606,8 +619,13 @@ async function refreshCompareProductsChart(productIds, showAlert = true) {
         const res = await fetch(url);
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
-        drawCompareProductsChart(data.data ?? []);
-        if (showAlert) showTimedAlert(t("Success!"), t("Comparison chart refreshed"), "success", 1500);
+        const chartData = data.data ?? [];
+        drawCompareProductsChart(chartData);
+        if (chartData.length === 0) {
+            if (showAlert) showTimedAlert(t("Warning!"), t("No data available for the selected period."), "warning", 1000);
+        } else if (showAlert) {
+            showTimedAlert(t("Success!"), t("Comparison chart refreshed"), "success", 1500);
+        }
     } catch (err) {
         drawCompareProductsChart([]);
         logDebug("Compare Products refresh error", err);
@@ -749,7 +767,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.refreshAllOcopCharts = refreshAllOcopChartsForRealtime;
 
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl(window.apiBaseUrl + "/dashboardHub")
+        .withUrl(window.apiBaseUrl + "dashboardHub")
         .withAutomaticReconnect()
         .build();
 

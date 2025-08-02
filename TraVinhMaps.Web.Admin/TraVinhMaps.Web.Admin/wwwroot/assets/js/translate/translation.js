@@ -514,7 +514,7 @@ const jsStrings = [
   "Latitude",
 ];
 
-const apiBase = window.apiBaseUrl + "/api/Translation";
+const apiBase = window.apiBaseUrl + "api/Translation";
 const minTranslationInterval = 5000;
 const BATCH_SIZE_FRONTEND = 100; // Tăng kích thước batch để giảm số lượng yêu cầu API
 
@@ -986,13 +986,6 @@ async function changeLanguage(targetLang, targetName, element = null) {
     }
   } catch (err) {
     console.error("Critical error during translation:", err);
-    showTranslatedSwal({ // Use the wrapper here too
-      icon: "warning",
-      title: "Partial translation",
-      text: "Some texts could not be translated due to server limits. Please try again later.",
-      showConfirmButton: false,
-      timer: 2500,
-    });
   }
 }
 

@@ -33,7 +33,7 @@ $("#notificationExportBtn").on("click", () => {
 /* ===== 4. Export function ===== */
 function exportNotificationsToExcel() {
   $.ajax({
-    url: "window.apiBaseUrl + "/api/Notifications/all",
+    url: window.apiBaseUrl + "api/Notifications/all",
     type: "GET",
     headers: { sessionId },
     success: (resp) => {

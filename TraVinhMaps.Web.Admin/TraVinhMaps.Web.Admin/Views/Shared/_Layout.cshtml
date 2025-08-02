@@ -306,7 +306,7 @@
                             </li>
                             <!-- Feedback Management -->
                             <li class="sidebar-list">
-                                <a class="sidebar-link sidebar-title link-nav" asp-controller="Feedback"
+                                <a class="sidebar-link sidebar-title link-nav" asp-controller="Feedback"  data-href="/Feedback"
                                     asp-action="Index">
                                     <i class="fa fa-envelope"></i>
                                     <span>Feedback</span>
@@ -383,17 +383,17 @@
 
     <!-- Add SheetJS libraries for Excel export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+        window.apiBaseUrl = @Html.Raw(Json.Serialize(Configuration.GetValue<string>("ApiSettings:BaseUrl")));
+    </script>
 
     <!-- Theme js-->
     <script src="~/assets/js/script.js"></script>
-    <script src="~/assets/js/translate/translation.js"></script> 
+    <script src="~/assets/js/translate/translation.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@7.0.5/dist/browser/signalr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
 
-    <script>
-        window.apiBaseUrl = @Html.Raw(Json.Serialize(Configuration.GetValue<string>("ApiSettings:BaseUrl")));
-    </script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

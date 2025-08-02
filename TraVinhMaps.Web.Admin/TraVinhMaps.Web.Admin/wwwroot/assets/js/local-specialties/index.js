@@ -206,7 +206,7 @@ function stripHtml(html) {
 
 function exportLocalSpecialtiesToExcel() {
   $.ajax({
-    url: "window.apiBaseUrl + "/api/LocalSpecialties/all",
+    url: window.apiBaseUrl + "api/LocalSpecialties/all",
     type: "GET",
     headers: {
       sessionId: sessionId,

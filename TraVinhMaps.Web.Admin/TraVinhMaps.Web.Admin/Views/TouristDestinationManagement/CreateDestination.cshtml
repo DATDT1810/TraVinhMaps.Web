@@ -276,7 +276,8 @@
                                         <div class="mb-3" id="price-input-container" style="display: none;">
                                             <div class="input-group">
                                                 <span class="input-group-text">đ</span>
-                                                <input id="price" class="form-control" type="number" placeholder="100000">
+                                                <input id="price" class="form-control" type="number"
+                                                    placeholder="100000">
                                             </div>
                                         </div>
                                         <div class="mb-3">
@@ -300,15 +301,16 @@
                                         <div class="mb-3">
                                             <label>History Story</label>
                                             <textarea asp-for="HistoryStory.Content" id="historyEditor"
-                                                class="form-control wysiwyg-editor" placeholder="History content of destination"
-                                                rows="10"></textarea>
+                                                class="form-control wysiwyg-editor"
+                                                placeholder="History content of destination" rows="10"></textarea>
                                             <span asp-validation-for="HistoryStory.Content" class="text-danger"></span>
                                         </div>
                                     </div>
                                     <div class="mb-3">
                                         <label>Description</label>
-                                        <textarea asp-for="Description" id="descriptionEditor" class="form-control wysiwyg-editor"
-                                            placeholder="Description of destination" rows="10"></textarea>
+                                        <textarea asp-for="Description" id="descriptionEditor"
+                                            class="form-control wysiwyg-editor" placeholder="Description of destination"
+                                            rows="10"></textarea>
                                         <span asp-validation-for="Description" class="text-danger"></span>
                                     </div>
                                 </div>
@@ -374,7 +376,7 @@
     <script src="~/assets/js/touristdestination/heremap-edit.js"></script>
     <script src="~/assets/js/touristdestination/heremaps-search.js"></script>
     <script src="~/assets/js/ckeditor5.js"></script>
-    
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             // Your existing script for file upload preview
@@ -385,7 +387,15 @@
                 if (!addBox || !uploadInput) return;
 
                 // Click to open file dialog
-                addBox.addEventListener("click", () => uploadInput.click());
+                @* addBox.addEventListener("click", () => uploadInput.click()); *@
+                    const trigger = addBox.querySelector(".upload-placeholder");
+                if (trigger) {
+                    trigger.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        uploadInput.click();
+                    });
+                }
+
 
                 // Preview container
                 let previewContainer = document.createElement("div");

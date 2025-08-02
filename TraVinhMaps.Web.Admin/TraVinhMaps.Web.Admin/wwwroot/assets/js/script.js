@@ -178,8 +178,9 @@
       const isSubLink = $link.closest("ul").hasClass("sidebar-submenu");
 
       // Check if the current path matches or starts with the link's href
-      const isMatch =
-        path === href || (href !== "/" && path.startsWith(href + "/"));
+      // const isMatch = path === href || (href !== "/" && path.startsWith(href + "/"));
+      const isMatch = path === href || path.startsWith(href + "/") || path.startsWith(href + "?");
+
 
       if (isMatch) {
         // Prioritize longer matches, with sub-links having lower priority

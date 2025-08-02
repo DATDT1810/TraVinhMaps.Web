@@ -1,6 +1,6 @@
 // --- PHẦN KẾT NỐI SIGNALR ---
 const connection = new signalR.HubConnectionBuilder()
-  .withUrl("window.apiBaseUrl + "/dashboardHub") // Đảm bảo URL này đúng
+  .withUrl(window.apiBaseUrl + "dashboardHub")
   .build();
 
 // --- PHẦN LẮNG NGHE SỰ KIỆN ---

@@ -164,3 +164,58 @@ $(document).ready(function () {
     });
   });
 });
+
+  /************ EXPORT EXCEL ***********/
+const sessionId = "@sessionId";
+
+$("#markerExportBtn").on("click", function () {
+        showInfoAlert("Exporting", "Retrieving marker data...", "OK", exportMarkersToExcel);
+    });
+
+    function exportMarkersToExcel() {
+        $.ajax({
+            url: window.apiBaseUrl + "api/Marker/GetAllMarkers",
+            type: "GET",
+            success: function (response) {
+                let markers = Array.isArray(response) ? response : response.data || [];
+
+                if (markers.length > 0) {
+                    const wb = XLSX.utils.book_new();
+                    const header = ["#", "Name", "Image URL", "Created At", "Status"];
+                    const data = [header];
+
+                    markers.forEach((marker, index) => {
+                        const row = [
+                            index + 1,
+                            marker.name || "—",
+                            marker.image || "—",
+                            marker.createdAt ? new Date(marker.createdAt).toLocaleString() : "—",
+                            marker.status ? "Active" : "Inactive"
+                        ];
+                        data.push(row);
+                    });
+
+                    const ws = XLSX.utils.aoa_to_sheet(data);
+                    ws["!cols"] = [
+                        { wch: 5 },
+                        { wch: 30 },
+                        { wch: 50 },
+                        { wch: 20 },
+                        { wch: 12 },
+                    ];
+
+                    XLSX.utils.book_append_sheet(wb, ws, "Markers");
+                    const today = new Date().toISOString().slice(0, 10);
+                    XLSX.writeFile(wb, `marker_list_${today}.xlsx`);
+
+                    showTimedAlert("Exported", `${markers.length} markers exported.`, "success", 1000);
+                } else {
+                    showTimedAlert("No Data", "No markers found to export.", "error", 1000);
+                }
+            },
+            error: function (xhr) {
+                console.error("Export error:", xhr);
+                showTimedAlert("Export Failed", "Could not export markers.", "error", 1000);
+            }
+        });
+    }

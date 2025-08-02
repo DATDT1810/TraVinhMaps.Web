@@ -17,7 +17,7 @@ let analyticsChart, demographicsChart, topInteractionChart, topFavoritesChart, c
 const chartDataCache = new Map();
 
 // Base API URL
-const destinationApi = window.DESTINATION_API_URL || window.apiBaseUrl + "/api/TouristDestination/";
+const destinationApi = window.DESTINATION_API_URL || window.apiBaseUrl + "api/TouristDestination/";
 
 // Theme-based color configuration
 const THEME_COLORS = {
@@ -802,7 +802,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.refreshAllDestinationCharts = refreshAllDestinationChartsForRealtime;
 
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl(window.apiBaseUrl + "/dashboardHub")
+        .withUrl(window.apiBaseUrl + "dashboardHub")
         .withAutomaticReconnect()
         .build();
 

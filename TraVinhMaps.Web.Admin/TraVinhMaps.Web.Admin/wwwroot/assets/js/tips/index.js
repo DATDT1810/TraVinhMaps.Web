@@ -44,7 +44,7 @@ $(document).ready(function () {
     ).then(function (confirmed) {
       if (confirmed) {
         $.ajax({
-          url: window.apiBaseUrl + "/CommunityTips/Delete",
+          url: "/CommunityTips/Delete",
           type: "POST",
           data: {
             __RequestVerificationToken: token,
@@ -88,7 +88,7 @@ $(document).ready(function () {
     ).then(function (confirmed) {
       if (confirmed) {
         $.ajax({
-          url: window.apiBaseUrl + "/CommunityTips/Restore",
+          url: "/CommunityTips/Restore",
           type: "POST",
           data: {
             __RequestVerificationToken: token,
@@ -156,7 +156,7 @@ $("#tipsExportBtn").on("click", function () {
 
 function exportTipsToExcel() {
   $.ajax({
-    url: window.apiBaseUrl + "/api/CommunityTips/GetAllTip",
+    url: window.apiBaseUrl + "api/CommunityTips/GetAllTip",
     type: "GET",
     headers: {
       sessionId: sessionId,
