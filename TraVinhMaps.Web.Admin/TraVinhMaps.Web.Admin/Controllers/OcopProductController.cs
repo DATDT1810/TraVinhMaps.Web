@@ -743,10 +743,10 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [HttpGet("dashboard")]
         public async Task<IActionResult> OcopDashboard([FromQuery] List<string> productIds = null, string timeRange = "month", DateTime? startDate = null, DateTime? endDate = null)
         {
-            ViewData["Title"] = "OCOP Product Analytics";
+            ViewData["Title"] = "Analytics";
             ViewData["Breadcrumb"] = new List<BreadcrumbItem>
             {
-                new BreadcrumbItem { Title = "Ocop Product Analytics", Url = Url.Action("dashboard", "OcopProduct")! },
+                new BreadcrumbItem { Title = "Analytics", Url = Url.Action("OcopDashboard", "OcopProduct")! },
                 new BreadcrumbItem { Title = "Ocop Analytics" } // default URL for the current page
             };
 
