@@ -7,7 +7,7 @@ function exportReviewToExcel() {
   console.log("Session ID:", sessionId);
 
   $.ajax({
-    url: window.apiBaseUrl + "/api/Review/GetAllReview",
+    url: window.apiBaseUrl + "api/Review/GetAllReview",
     type: "GET",
     headers: {
       sessionId: sessionId,

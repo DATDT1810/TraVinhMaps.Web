@@ -168,7 +168,7 @@ $("#itineraryExportBtn").on("click", () => {
 /* --- Core --- */
 function exportItinerariesToExcel() {
   $.ajax({
-    url: "window.apiBaseUrl + "/api/ItineraryPlan/GetAllItineraryPlan",
+    url: window.apiBaseUrl + "api/ItineraryPlan/GetAllItineraryPlan",
     type: "GET",
     headers: {
       sessionId,

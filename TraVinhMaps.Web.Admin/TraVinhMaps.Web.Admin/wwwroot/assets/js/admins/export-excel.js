@@ -14,7 +14,7 @@ const sessionId = "@sessionId";
 // Function to export admin data to Excel
 function exportTableToExcel() {
   $.ajax({
-    url: window.apiBaseUrl + "/api/Admins/all",
+    url: window.apiBaseUrl + "api/Admins/all",
     type: "GET",
     headers: {
       sessionId: sessionId,

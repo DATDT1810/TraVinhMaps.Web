@@ -62,7 +62,7 @@ function exportCompaniesToExcel() {
   }
 
   $.ajax({
-    url: "window.apiBaseUrl + "/api/Company/GetAllCompany",
+    url: window.apiBaseUrl + "api/Company/GetAllCompany",
     type: "GET",
     headers: {
       sessionId: sessionId,

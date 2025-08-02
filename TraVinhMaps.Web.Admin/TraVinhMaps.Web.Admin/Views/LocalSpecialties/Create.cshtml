@@ -163,8 +163,6 @@
                                 </div>
                                 <hr>
 
-                               
-
                                 <!-- Images Upload -->
                                 <div class="row">
                                     <div class="col">
@@ -172,7 +170,7 @@
                                         <div class="item add-image-box" id="addImageBox">
                                             <div class="upload-placeholder">+</div>
                                             <p style="color: #666; margin: 0;">Click to upload (Max 5)</p>
-                                            <input asp-for="Images" type="file" accept="image/*" multiple
+                                            <input asp-for="Images" type="file" accept=".png,.jpg,.jpeg" multiple
                                                 id="uploadImageInput" style="display: none;" />
                                         </div>
                                         <div id="imagePreview" class="row mt-3 g-3"></div>

@@ -380,7 +380,14 @@
                 if (!addBox || !uploadInput) return;
 
 
-                addBox.addEventListener("click", () => uploadInput.click());
+                @* addBox.addEventListener("click", () => uploadInput.click()); *@
+                const trigger = addBox.querySelector(".upload-placeholder");
+                if (trigger) {
+                    trigger.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        uploadInput.click();
+                    });
+                }
 
 
                 let previewContainer = document.createElement("div");

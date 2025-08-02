@@ -25,7 +25,7 @@ $("#feedbackExportBtn").on("click", function () {
 
 function exportFeedbackToExcel() {
   $.ajax({
-    url: "window.apiBaseUrl + "/api/Feedback/all",
+    url: window.apiBaseUrl + "api/Feedback/all",
     type: "GET",
     headers: {
       sessionId: sessionId,
