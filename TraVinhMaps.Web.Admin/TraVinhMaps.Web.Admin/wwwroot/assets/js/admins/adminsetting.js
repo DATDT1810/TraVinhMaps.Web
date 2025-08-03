@@ -23,7 +23,7 @@ $(document).ready(function () {
         console.log("Requesting OTP with identifier:", identifier, "fieldType:", fieldType, "useFor:", useFor); // Debugging line
         
         return $.ajax({
-            url: `window.apiBaseUrl + "/api/Admins/request-otp-update?identifier=${encodeURIComponent(identifier)}&useFor=${useFor}`,
+            url: window.apiBaseUrl + "api/Admins/request-otp-update?identifier=" + encodeURIComponent(identifier) + "&useFor=" + useFor,
             method: "GET",
             headers: {
                 "SessionId": sessionId
@@ -225,7 +225,7 @@ $(document).ready(function () {
 
         // Gọi API verify OTP
         $.ajax({
-            url: `window.apiBaseUrl + "/api/Admins/confirm-otp-update?otp=${otpCode}`,
+            url: window.apiBaseUrl + "api/Admins/confirm-otp-update?otp=" + otpCode,
             method: "PUT",
             headers: {
                 "SessionId": sessionId,
@@ -240,7 +240,7 @@ $(document).ready(function () {
                 } else if (currentFieldType === 'phone') {
                     $('#newPhoneModal').modal('show');
                 } else if (currentFieldType === 'password') {
-                    $('#newPasswordModal').modal('show');
+                    $('#newPasswordModal').modal('show');   
                 }
             },
             error: function(error) {
@@ -330,7 +330,7 @@ $(document).ready(function () {
 
                     // Verify OTP for new email
                     $.ajax({
-                        url: `window.apiBaseUrl + "/api/Admins/confirm-otp-update?otp=${otpCode}`,
+                        url: window.apiBaseUrl + "api/Admins/confirm-otp-update?otp=" + otpCode,
                         method: "PUT",
                         headers: {
                             "SessionId": sessionId,
@@ -399,7 +399,7 @@ $(document).ready(function () {
 
                     // Verify OTP for new phone
                     $.ajax({
-                        url: `window.apiBaseUrl + "/api/Admins/confirm-otp-update?otp=${otpCode}`,
+                        url: window.apiBaseUrl + "api/Admins/confirm-otp-update?otp=" + otpCode,
                         method: "PUT",
                         headers: {
                             "SessionId": sessionId,
@@ -527,7 +527,7 @@ $(document).ready(function () {
     // Function to update email after all verifications
     function updateEmailFinal(newEmail) {
         $.ajax({
-            url: `window.apiBaseUrl + "/api/Admins/update-setting-admin`,
+            url: window.apiBaseUrl + "api/Admins/update-setting-admin"  ,
             method: "PUT",
             headers: {
                 "SessionId": sessionId
@@ -564,7 +564,7 @@ $(document).ready(function () {
     // Function to update phone after all verifications
     function updatePhoneFinal(newPhone) {
         $.ajax({
-            url: `window.apiBaseUrl + "/api/Admins/update-setting-admin`,
+            url: window.apiBaseUrl + "api/Admins/update-setting-admin",
             method: "PUT",
             headers: {
                 "SessionId": sessionId
@@ -601,7 +601,7 @@ $(document).ready(function () {
     // Function to update password
     function updatePasswordFinal(currentPassword, newPassword) {
         return $.ajax({
-            url: `window.apiBaseUrl + "/api/Admins/update-password-admin`,
+            url: window.apiBaseUrl + "api/Admins/update-password-admin",
             method: "PUT",
             headers: {
                 "SessionId": sessionId
