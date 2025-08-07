@@ -411,6 +411,19 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
+             @if (TempData["error"] != null)
+            {
+                <text>
+                showErrorAlert("Error!", "@Html.Raw(TempData["error"])");
+                </text>
+            }
+             @if (TempData["success"] != null)
+            {
+                <text>
+                showSuccessAlert("Success", "@Html.Raw(TempData["success"])");
+                </text>
+            }
             // Listen for the custom 'mapReady' event from our script
             document.addEventListener('mapReady', function () {
                 // Once the map is loaded, we can safely attach listeners to the form fields

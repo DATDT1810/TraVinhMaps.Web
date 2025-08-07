@@ -285,6 +285,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 var result = await _destinationService.DeleteDestinationImage(deleteDestinationImageRequest);
                 if (result)
                 {
+                    TempData["success"] = "Delete photos to this tourist attraction successfully";
                     return RedirectToAction("DetailDestination", new { id = id });
                 }
                 TempData["error"] = "Something went wrong with delete image, please try again";
@@ -311,9 +312,10 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 var result = await _destinationService.DeleteDestinationHistoryImage(deleteDestinationImageRequest);
                 if (result)
                 {
+                    TempData["success"] = "Delete history photos to this tourist attraction successfully";
                     return RedirectToAction("DetailDestination", new { id = id });
                 }
-                TempData["errorHistory"] = "Something went wrong with delete history image, please try again";
+                TempData["error"] = "Something went wrong with delete history image, please try again";
                 return RedirectToAction("DetailDestination", new { id = id });
             }
             catch (System.Exception ex)
@@ -333,17 +335,44 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     TempData["error"] = "Invalid file type. Please upload a valid image file.";
                     return RedirectToAction("DetailDestination", new { id = id });
                 }
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+                var maxFileSize = 5 * 1024 * 1024; // 5 MB
+                var maxImages = 5;
                 AddDestinationImageRequest addDestinationImageRequest = new AddDestinationImageRequest()
                 {
                     id = id,
                     imageFile = imageDestinationFileList
                 };
+                if (imageDestinationFileList.Count > maxImages)
+                {
+                    TempData["error"] = $"You can upload up to {maxImages} images only.";
+                }
+
+                foreach (var file in imageDestinationFileList)
+                {
+                    if (file.Length == 0)
+                    {
+                        TempData["error"] = $"File '{file.FileName}' is empty.";
+                    }
+
+                    if (file.Length > maxFileSize)
+                    {
+                        TempData["error"] = $"File '{file.FileName}' exceeds the maximum size of 5 MB.";
+                    }
+
+                    var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        TempData["error"] = $"File '{file.FileName}' has an unsupported format. Allowed: {string.Join(", ", allowedExtensions)}";
+                    }
+                }
                 var result = await _destinationService.AddDestinationImage(addDestinationImageRequest);
                 if (result == null)
                 {
                     TempData["error"] = "Adding photos to this tourist attraction failed, please try again later";
                     return RedirectToAction("DetailDestination", new { id = id });
                 }
+                TempData["success"] = "Adding photos to this tourist attraction successfully";
                 return RedirectToAction("DetailDestination", new { id = id });
             }
             catch (System.Exception ex)
@@ -363,6 +392,34 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     TempData["error"] = "Invalid file type. Please upload a valid image file.";
                     return RedirectToAction("DetailDestination", new { id = id });
                 }
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png"};
+                var maxFileSize = 5 * 1024 * 1024; // 5 MB
+                var maxImages = 5;
+
+                if (imageDestinationFileList.Count > maxImages)
+                {
+                    TempData["error"] = $"You can upload up to {maxImages} images only.";
+                }
+
+                foreach (var file in imageDestinationFileList)
+                {
+                    if (file.Length == 0)
+                    {
+                        TempData["error"] = $"File '{file.FileName}' is empty.";
+                    }
+
+                    if (file.Length > maxFileSize)
+                    {
+                        TempData["error"] = $"File '{file.FileName}' exceeds the maximum size of 5 MB.";
+                    }
+
+                    var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        TempData["error"] = $"File '{file.FileName}' has an unsupported format. Allowed: {string.Join(", ", allowedExtensions)}";
+                    }
+                }
+
                 AddDestinationImageRequest addDestinationImageRequest = new AddDestinationImageRequest()
                 {
                     id = id,
@@ -371,9 +428,10 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 var result = await _destinationService.AddDestinationHistoryImage(addDestinationImageRequest);
                 if (result == null)
                 {
-                    TempData["errorHistory"] = "adding history photos to this tourist attraction failed, please try again later";
+                    TempData["error"] = "Adding history photos to this tourist attraction failed, please try again later";
                     return RedirectToAction("DetailDestination", new { id = id });
                 }
+                TempData["success"] = "Adding photos to this tourist attraction successfully";
                 return RedirectToAction("DetailDestination", new { id = id });
             }
             catch (System.Exception ex)
@@ -394,6 +452,33 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     TempData["error"] = "Invalid file type. Please upload a valid image file.";
                     return RedirectToAction("DetailDestination", new { id = id });
                 }
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png"};
+                var maxFileSize = 5 * 1024 * 1024; // 5 MB
+                var maxImages = 5;
+
+                if (imageDestinationFileList.Count > maxImages)
+                {
+                    TempData["error"] = $"You can upload up to {maxImages} images only.";
+                }
+
+                foreach (var file in imageDestinationFileList)
+                {
+                    if (file.Length == 0)
+                    {
+                        TempData["error"] = $"File '{file.FileName}' is empty.";
+                    }
+
+                    if (file.Length > maxFileSize)
+                    {
+                        TempData["error"] = $"File '{file.FileName}' exceeds the maximum size of 5 MB.";
+                    }
+
+                    var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        TempData["error"] = $"File '{file.FileName}' has an unsupported format. Allowed: {string.Join(", ", allowedExtensions)}";
+                    }
+                }
                 AddDestinationImageRequest addDestinationImageRequest = new AddDestinationImageRequest()
                 {
                     id = id,
@@ -403,8 +488,9 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 if (result == null)
                 {
                     TempData["error"] = "Adding photos to this tourist attraction failed, please try again later";
-                    return RedirectToAction("DetailDestination", new { id = id });
+                    return RedirectToAction("EditDestination", new { id = id });
                 }
+                TempData["success"] = "Edit tourist attraction successfully";
                 return RedirectToAction("EditDestination", new { id = id });
             }
             catch (System.Exception ex)
@@ -424,6 +510,33 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     TempData["error"] = "Invalid file type. Please upload a valid image file.";
                     return RedirectToAction("DetailDestination", new { id = id });
                 }
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+                var maxFileSize = 5 * 1024 * 1024; // 5 MB
+                var maxImages = 5;
+
+                if (imageDestinationFileList.Count > maxImages)
+                {
+                    TempData["error"] = $"You can upload up to {maxImages} images only.";
+                }
+
+                foreach (var file in imageDestinationFileList)
+                {
+                    if (file.Length == 0)
+                    {
+                        TempData["error"] = $"File '{file.FileName}' is empty.";
+                    }
+
+                    if (file.Length > maxFileSize)
+                    {
+                        TempData["error"] = $"File '{file.FileName}' exceeds the maximum size of 5 MB.";
+                    }
+
+                    var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        TempData["error"] = $"File '{file.FileName}' has an unsupported format. Allowed: {string.Join(", ", allowedExtensions)}";
+                    }
+                }
                 AddDestinationImageRequest addDestinationImageRequest = new AddDestinationImageRequest()
                 {
                     id = id,
@@ -432,9 +545,10 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 var result = await _destinationService.AddDestinationHistoryImage(addDestinationImageRequest);
                 if (result == null)
                 {
-                    TempData["errorHistory"] = "adding history photos to this tourist attraction failed, please try again later";
+                    TempData["error"] = "Adding history photos to this tourist attraction failed, please try again later";
                     return RedirectToAction("DetailDestination", new { id = id });
                 }
+                TempData["success"] = "Adding history photos to this tourist attraction successfully";
                 return RedirectToAction("EditDestination", new { id = id });
             }
             catch (System.Exception ex)
@@ -443,7 +557,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
-         [HttpPost("DeleteDestinationImageUpdate")]
+        [HttpPost("DeleteDestinationImageUpdate")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteDestinationImageUpdate(string id, string urlImage)
         {
@@ -475,6 +589,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 var result = await _destinationService.DeleteDestinationImage(deleteDestinationImageRequest);
                 if (result)
                 {
+                    TempData["success"] = "Delete photos to this tourist attraction successfully";
                     return RedirectToAction("EditDestination", new { id = id });
                 }
                 TempData["error"] = "Something went wrong with delete image, please try again";
@@ -486,7 +601,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
-       
+
         [HttpPost("DeleteHistoryDestinationImageUpdate")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteHistoryDestinationImageUpdate(string id, string urlImage)
@@ -501,9 +616,10 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 var result = await _destinationService.DeleteDestinationHistoryImage(deleteDestinationImageRequest);
                 if (result)
                 {
+                    TempData["success"] = "Delete photos to this tourist attraction successfully";
                     return RedirectToAction("EditDestination", new { id = id });
                 }
-                TempData["errorHistory"] = "Something went wrong with delete history image, please try again";
+                TempData["error"] = "Something went wrong with delete history image, please try again";
                 return RedirectToAction("EditDestination", new { id = id });
             }
             catch (System.Exception ex)
