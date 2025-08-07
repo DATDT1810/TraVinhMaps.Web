@@ -86,7 +86,7 @@ $(document).ready(function () {
     var files = this.files;
     var maxImages = 5;
     var maxFileSize = 5 * 1024 * 1024; // 5 MB
-    var allowedExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "webp"];
+    var allowedExtensions = ["jpg", "jpeg", "png"];
 
     // Validate client-side
     if (files.length > maxImages) {

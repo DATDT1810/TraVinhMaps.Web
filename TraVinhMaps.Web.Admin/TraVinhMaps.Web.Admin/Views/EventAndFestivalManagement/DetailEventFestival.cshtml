@@ -516,6 +516,19 @@
                 </text>
             }
 
+              @if (TempData["error"] != null)
+            {
+                <text>
+                showErrorAlert("Error!", "@Html.Raw(TempData["error"])");
+                </text>
+            }
+             @if (TempData["success"] != null)
+            {
+                <text>
+                showSuccessAlert("Success", "@Html.Raw(TempData["success"])");
+                </text>
+            }
+
             // Initialize the map
             if (window.HERE_API_KEY) {
                 initializeHereMap();
