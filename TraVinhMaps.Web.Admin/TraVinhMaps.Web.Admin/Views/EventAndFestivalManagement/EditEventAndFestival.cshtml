@@ -247,15 +247,12 @@
                                                     {
                                                         <div class="gallery-item">
                                                             <img src="@item" alt="Event Image">
-                                                            <form asp-controller="EventAndFestivalManagement"
-                                                                  asp-action="DeleteEventAndFestivalImageEdit" method="post" class="delete-image-form" style="display: inline;">
-                                                                @Html.AntiForgeryToken()
-                                                                <input hidden name="id" value="@Model.Id" />
-                                                                <input hidden name="urlImage" value="@item" />
-                                                                <button type="submit" class="Delete-button-image">
-                                                                    &times;
-                                                                </button>
-                                                            </form>
+                                                            <button type="button" class="Delete-button-image delete-image-btn"
+                                                                    data-id="@Model.Id"
+                                                                    data-url-image="@item"
+                                                                    data-action="@Url.Action("DeleteEventAndFestivalImageEdit", "EventAndFestivalManagement")">
+                                                                &times;
+                                                            </button>
                                                         </div>
                                                     }
                                                     <div class="add-image-box" id="addImageBox">
@@ -388,18 +385,22 @@
 
         $(document).ready(function () {
             // AJAX for Deleting Images
-            $('.image-gallery-container').on('submit', '.delete-image-form', function (e) {
+            $('.image-gallery-container').on('click', '.delete-image-btn', function (e) {
                 e.preventDefault();
-                const form = $(this);
-                const galleryItem = form.closest('.gallery-item');
+                const button = $(this);
+                const galleryItem = button.closest('.gallery-item');
 
                 showConfirmAlert('Confirm Deletion', 'Are you sure?', 'Yes, delete!', 'Cancel')
                     .then((isConfirmed) => {
                         if (isConfirmed) {
                             $.ajax({
-                                url: form.attr('action'),
+                                url: button.data('action'),
                                 type: 'POST',
-                                data: form.serialize(),
+                                data: {
+                                    id: button.data('id'),
+                                    urlImage: button.data('url-image'),
+                                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                                },
                                 success: function (response) {
                                     if (response.success) {
                                         galleryItem.fadeOut(300, function () { $(this).remove(); });
