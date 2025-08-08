@@ -187,7 +187,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateSpecialtyViewModel request, CancellationToken cancellationToken)
         {
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
 
             if (request.Images == null || !request.Images.Any())
             {
@@ -304,7 +304,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return Json(new { success = false, message = "Please select images and provide the local specialty ID." });
             }
 
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
             var maxFileSize = 5 * 1024 * 1024; // 5 MB
             var maxImages = 5;
 

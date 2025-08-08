@@ -335,6 +335,17 @@ const jsStrings = [
   "An error occurred while updating the selling link.",
   "An error occurred while uploading the images.",
   "Adding photos to this tourist attraction failed, please try again later",
+  "Something went wrong with delete history image, please try again",
+  "Delete photos to this tourist attraction successfully",
+  "Something went wrong with delete image, please try again",
+  "You cannot delete the last remaining image.",
+  "Adding history photos to this tourist attraction failed, please try again later",
+  "Adding history photos to this tourist attraction successfully",
+  "Invalid file type. Please upload a valid image file.",
+  "Edit tourist attraction successfully",
+  "Adding photos to this tourist attraction successfully",
+  "Delete history photos to this tourist attraction successfully",
+  
 
   // =======================================================================
   // 9. HỆ THỐNG & DỊCH THUẬT (System & Translation)

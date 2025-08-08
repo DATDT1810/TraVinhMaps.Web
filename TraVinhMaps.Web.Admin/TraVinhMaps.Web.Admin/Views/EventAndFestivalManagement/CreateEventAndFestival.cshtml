@@ -350,6 +350,19 @@
     <script>
         // Gộp tất cả các tác vụ cần thực hiện khi trang tải xong vào một chỗ
         document.addEventListener("DOMContentLoaded", function () {
+
+              @if (TempData["error"] != null)
+            {
+                <text>
+                showErrorAlert("Error!", "@Html.Raw(TempData["error"])");
+                </text>
+            }
+             @if (TempData["success"] != null)
+            {
+                <text>
+                showSuccessAlert("Success", "@Html.Raw(TempData["success"])");
+                </text>
+            }
            
             // --- BƯỚC 1: Đặt ngày bắt đầu mặc định là ngày mai ---
             const startDateInput = document.getElementById('StartDate');

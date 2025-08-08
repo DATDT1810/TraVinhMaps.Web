@@ -98,13 +98,6 @@
                                         id="uploadImageInput_@Model.Id" onchange="this.form.submit()" />
                                 </form>
                             </div>
-
-                            @if (TempData["error"] != null)
-                            {
-                                <div style="margin-top: 20px;">
-                                    <span class="text-danger">@TempData["error"]</span>
-                                </div>
-                            }
                         </div>
                     </div>
                 </div>
@@ -390,6 +383,23 @@
         }
     });
 
+     document.addEventListener("DOMContentLoaded", function () {
+            // ... (Mã hiện có của bạn) ...
+
+            @if (TempData["error"] != null)
+            {
+                <text>
+                showErrorAlert("Error!", "@Html.Raw(TempData["error"])");
+                </text>
+            }
+             @if (TempData["success"] != null)
+            {
+                <text>
+                showSuccessAlert("Success", "@Html.Raw(TempData["success"])");
+                </text>
+            }
+        });
+
     document.addEventListener("DOMContentLoaded", function () {
         const addBox = document.getElementById("addImageHistoryBox_@Model.Id");
         const uploadInput = document.getElementById("uploadImageHistoryInput_@Model.Id");
@@ -425,6 +435,7 @@
     </script>
 
     <script src="~/assets/js/touristdestination/heremap-detail.js"></script>
+    <script src="~/assets/js/sweetalert-custom.js"></script>
 }
 
 @section Styles {

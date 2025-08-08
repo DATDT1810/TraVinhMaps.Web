@@ -494,6 +494,18 @@
                     showTimedAlert("Error!", "@TempData["errorMessage"]", "error", 1000);
                 </text>
             }
+              @if (TempData["error"] != null)
+            {
+                <text>
+                showErrorAlert("Error!", "@Html.Raw(TempData["error"])");
+                </text>
+            }
+             @if (TempData["success"] != null)
+            {
+                <text>
+                showSuccessAlert("Success", "@Html.Raw(TempData["success"])");
+                </text>
+            }
         });
     </script>
 }
