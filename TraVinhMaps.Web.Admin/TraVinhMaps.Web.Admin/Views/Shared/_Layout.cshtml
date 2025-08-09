@@ -130,7 +130,7 @@
                         </li>
                         <li class="profile-nav onhover-dropdown">
                             <div class="media profile-media">
-                                <img class="b-r-10" src="~/assets/images/dashboard/profile.png" alt="avt">
+                                @await Component.InvokeAsync("Avatar")
                                 <div class="media-body d-xxl-block d-none box-col-none">
                                     <div class="d-flex align-items-center gap-2">
                                         <span>@User.Identity.Name </span><i class="middle fa fa-angle-down"> </i>
@@ -221,7 +221,7 @@
                                 <a class="sidebar-link sidebar-title link-nav"
                                     asp-controller="TouristDestinationManagement" asp-action="Index">
                                     <i class="fa fa-globe"></i>
-                                    <span>Destination</span>
+                                    <span>Destinations</span>
                                 </a>
                             </li>
                             <!-- Ocop Product -->
@@ -229,7 +229,7 @@
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="OcopProduct"
                                     asp-action="Index">
                                     <i class="fa fa-shopping-bag"></i>
-                                    <span>OCOP Product</span>
+                                    <span>OCOP Products</span>
                                 </a>
                             </li>
                             <!-- Ocop Type -->
@@ -283,19 +283,22 @@
                             <!-- Send Notifications -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="Notifications"
-                                    asp-action="Index">
+                                    asp-action="Index" data-href="/Notifications">
                                     <i class="fa fa-bell"></i>
                                     <span>Send Notifications</span>
                                 </a>
                             </li>
                             <!-- Marker Management -->
-                            <li class="sidebar-list">
-                                <a class="sidebar-link sidebar-title link-nav" asp-controller="MarkerManagement"
-                                    asp-action="Index">
-                                    <i class="fa fa-map-marker"></i>
-                                    <span>Marker Managment</span>
-                                </a>
-                            </li>
+                            @if (User.IsInRole("super-admin"))
+                            {
+                                <li class="sidebar-list">
+                                    <a class="sidebar-link sidebar-title link-nav" asp-controller="MarkerManagement"
+                                        asp-action="Index">
+                                        <i class="fa fa-map-marker"></i>
+                                        <span>Marker Management</span>
+                                    </a>
+                                </li>
+                            }
                             <!-- Itineraries Management -->
                             <li class="sidebar-list">
                                 <a class="sidebar-link sidebar-title link-nav" asp-controller="ItineraryPlanManagement"
@@ -306,10 +309,10 @@
                             </li>
                             <!-- Feedback Management -->
                             <li class="sidebar-list">
-                                <a class="sidebar-link sidebar-title link-nav" asp-controller="Feedback"  data-href="/Feedback"
-                                    asp-action="Index">
+                                <a class="sidebar-link sidebar-title link-nav" asp-controller="Feedback"
+                                    data-href="/Feedback" asp-action="Index">
                                     <i class="fa fa-envelope"></i>
-                                    <span>Feedback</span>
+                                    <span>Feedbacks</span>
                                 </a>
                             </li>
                             <!-- Analytics -->

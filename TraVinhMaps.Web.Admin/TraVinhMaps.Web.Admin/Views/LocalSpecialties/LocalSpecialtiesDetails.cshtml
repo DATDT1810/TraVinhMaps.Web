@@ -55,7 +55,7 @@
                                         @foreach (var item in Model.Images.Where(i => !string.IsNullOrWhiteSpace(i)))
                                         {
                                             <div class="item position-relative" style="height: 90px; width: 70px;">
-                                                <img src="@item" alt="image ocop product"
+                                                <img src="@item" alt="image"
                                                     style="width: 100%; height: 100%; object-fit: cover; display: block;">
                                                 <button type="button" class="delete-button-image delete-image-btn"
                                                         data-id="@Model.Id" data-image-url="@item"

@@ -110,10 +110,12 @@ function downloadChart(chart, filename, type) {
         showTimedAlert(t("Error"), t("No chart available for download"), "error", 1000);
         return;
     }
+    // Check if chart has data before downloading
     if (!chart.data.labels || chart.data.labels.length === 0) {
         showTimedAlert(t("Warning"), t("No data available to download."), "warning", 1000);
         return;
     }
+    
     if (type === "png") {
         const canvas = chart.canvas;
         const targetCanvas = document.createElement("canvas");
@@ -428,6 +430,7 @@ function drawCompareDestinationsChart(data) {
                     backgroundColor: getChartColor(THEME_COLORS.light.blue, THEME_COLORS.dark.blue),
                     borderColor: getChartColor(THEME_COLORS.light.blue, THEME_COLORS.dark.blue).replace("0.7", "1"),
                     borderWidth: 1,
+                    barThickness: 20
                 },
                 {
                     label: t("Interactions"),
@@ -435,6 +438,7 @@ function drawCompareDestinationsChart(data) {
                     backgroundColor: getChartColor(THEME_COLORS.light.green, THEME_COLORS.dark.green),
                     borderColor: getChartColor(THEME_COLORS.light.green, THEME_COLORS.dark.green).replace("0.7", "1"),
                     borderWidth: 1,
+                    barThickness: 20
                 },
                 {
                     label: t("Favorites"),
@@ -442,6 +446,7 @@ function drawCompareDestinationsChart(data) {
                     backgroundColor: getChartColor(THEME_COLORS.light.red, THEME_COLORS.dark.red),
                     borderColor: getChartColor(THEME_COLORS.light.red, THEME_COLORS.dark.red).replace("0.7", "1"),
                     borderWidth: 1,
+                    barThickness: 20
                 },
             ],
         },

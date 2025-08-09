@@ -70,6 +70,7 @@ const jsStrings = [
   "Invalid Input",
   "Too fast!",
   "Notification",
+  "Confirm OTP",
 
   // =======================================================================
   // 4. BẢNG ĐIỀU KHIỂN & BIỂU ĐỒ (Dashboards & Charts)
