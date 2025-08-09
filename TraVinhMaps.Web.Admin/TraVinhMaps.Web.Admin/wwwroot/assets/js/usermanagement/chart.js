@@ -126,7 +126,13 @@ function showTimedAlert(title, message, type, duration) {
 // Core Chart Functions
 function downloadChart(chart, chartId, filenamePrefix) {
   if (!chart) {
-    showTimedAlert(t("Error!"), t("No chart data available to download!"), "error", 1000);
+    showTimedAlert(t("Error!"), t("Chart not ready or has no data."), "error", 1000);
+    return;
+  }
+  // Check if chart has valid data
+  const hasData = chart.data && chart.data.labels?.length > 0 && chart.data.datasets?.some(ds => ds.data?.some(v => v > 0));
+  if (!hasData) {
+    showTimedAlert(t("No Data"), t(`No data available to download.`), "warning", 1500);
     return;
   }
   const canvas = chart.canvas;
@@ -205,7 +211,7 @@ function fetchChartData(chartId, timeRange, tags, callback) {
   const performanceTagsQuery = tags ? tags.map(t => `tags=${encodeURIComponent(t)}`).join("&") : "";
   const apiUrl = chartId === "performance"
     ? `${apiBaseUrl}/api/Users/performance-tags?timeRange=${timeRangeForApi}&${performanceTagsQuery}`
-    :  `${apiBaseUrl}/api/Users/stats?groupBy=${chartId}&timeRange=${timeRangeForApi}`;
+    : `${apiBaseUrl}/api/Users/stats?groupBy=${chartId}&timeRange=${timeRangeForApi}`;
   fetch(apiUrl, { headers: { "X-Requested-With": "XMLHttpRequest" } })
     .then((response) => {
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
@@ -679,6 +685,11 @@ function initializeCharts(initialData = {}) {
       button.addEventListener("click", () => {
         const chartInstance = getChart();
         if (chartInstance) {
+          const hasData = chartInstance.data && chartInstance.data.labels?.length > 0 && chartInstance.data.datasets?.some(ds => ds.data?.some(v => v > 0));
+          if (!hasData) {
+            showTimedAlert(t("No Data"), t(`No data available to download.`), "warning", 1500);
+            return;
+          }
           downloadChart(chartInstance, buttonId.replace("download", "").toLowerCase(), filenamePrefix);
         } else {
           showTimedAlert(t("Error!"), t("Chart not ready or has no data."), "error", 1000);
@@ -705,6 +716,11 @@ function initializeCharts(initialData = {}) {
           default: showTimedAlert(t("Error"), t("Invalid chart selection."), "error", 1500); return;
         }
         if (chartToDownload) {
+          const hasData = chartToDownload.data && chartToDownload.data.labels?.length > 0 && chartToDownload.data.datasets?.some(ds => ds.data?.some(v => v > 0));
+          if (!hasData) {
+            showTimedAlert(t("No Data"), t(`No data available to download.`), "warning", 1500);
+            return;
+          }
           downloadChart(chartToDownload, selectedChartId, filename);
         } else {
           showTimedAlert(t("Error!"), t("Chart not ready or has no data."), "error", 1000);

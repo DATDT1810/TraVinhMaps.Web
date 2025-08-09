@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TraVinhMaps.Web.Admin.Models;
@@ -23,6 +24,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             _markerService = markerService;
         }
 
+        [Authorize(Roles = "super-admin")]
         // GET: MarkerManagement/Index
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -42,12 +44,14 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(Markers);
         }
 
+        [Authorize(Roles = "super-admin")]
         [HttpGet("CreateMarker")]
         public IActionResult CreateMarker()
         {
             return View();
         }
 
+        [Authorize(Roles = "super-admin")]
         [HttpPost("CreateMarker")]
         public async Task<IActionResult> CreateMarker(CreateMarkerRequest createMarkerRequest)
         {
@@ -69,6 +73,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        [Authorize(Roles = "super-admin")]
         [HttpGet("MarkerDetail")]
         public async Task<IActionResult> MarkerDetail(string id)
         {
@@ -86,6 +91,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View(marker);
         }
 
+        [Authorize(Roles = "super-admin")]
         [HttpPost("EditMarker")]
         public async Task<IActionResult> EditMarker(MarkerResponse markerResponse)
         {
@@ -105,6 +111,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "super-admin")]
         [HttpPost("UpdateMarkerImage")]
         public async Task<IActionResult> UpdateMarkerImage(string id, string oldUrlImage, IFormFile markerImage)
         {
@@ -135,6 +142,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             return View("Error!");
         }
 
+        [Authorize(Roles = "super-admin")]
         [HttpPost("DeleteMarker")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteMarker(string id, CancellationToken cancellationToken)
@@ -150,6 +158,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
         }
 
+        [Authorize(Roles = "super-admin")]
         [HttpPost("RestoreMarker")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreMarker(string id, CancellationToken cancellationToken)
@@ -164,7 +173,5 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 return Json(new { success = false, message = $"Error delete marker: {ex.Message}" });
             }
         }
-
-
     }
 }
