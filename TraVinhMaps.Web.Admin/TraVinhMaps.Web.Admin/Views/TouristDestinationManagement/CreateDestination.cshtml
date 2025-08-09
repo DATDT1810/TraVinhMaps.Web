@@ -110,10 +110,6 @@
             <div class="row">
                 <div class="col-6">
                     <h4>Create Destination</h4>
-                    @if (ViewBag.error != null)
-                    {
-                        <span class="text-danger">@ViewBag.error</span>
-                    }
                 </div>
                 <div class="col-6">
                     <ol class="breadcrumb">
@@ -227,7 +223,7 @@
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <div class="mb-3">
-                                                    <label>Opent Time</label>
+                                                    <label>Open Time</label>
                                                     <select asp-for="OpeningHours.OpenTime" id="openTime"
                                                         class="form-select">
                                                         @for (int i = 0; i < 24; i++)

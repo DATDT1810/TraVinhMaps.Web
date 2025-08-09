@@ -132,5 +132,23 @@
             if (success) showTimedAlert("Success!", success, "success", 1000);
             if (error) showTimedAlert("Error!", error, "error", 1000);
         })();
+
+         document.addEventListener("DOMContentLoaded", function () {
+            // ... (Mã hiện có của bạn) ...
+
+            @if (TempData["error"] != null)
+            {
+                <text>
+                showErrorAlert("Error!", "@Html.Raw(TempData["error"])");
+                </text>
+            }
+             @if (TempData["success"] != null)
+            {
+                <text>
+                showSuccessAlert("Success", "@Html.Raw(TempData["success"])");
+                </text>
+            }
+            
+        });
     </script>
 }
