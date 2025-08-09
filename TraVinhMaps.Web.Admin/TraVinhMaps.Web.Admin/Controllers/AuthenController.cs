@@ -194,7 +194,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                             new Claim(ClaimTypes.Name, TempData["Username"]?.ToString() ?? "User"),
                             new Claim("sessionId", result.SessionId),
                             new Claim(ClaimTypes.Role, result.Role),
-                            new Claim("expiredAt", DateTime.UtcNow.AddDays(1).ToString("o"))
+                            new Claim("expiredAt", DateTime.UtcNow.AddDays(1).ToString("o")),
                         };
                         if (isRememberMe)
                         {
@@ -324,7 +324,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Failed to send verification code. Please try again or contact support.");
+                    ModelState.AddModelError("", "Email or phone number not found.");
                     return View("ForgotPassword", model);
                 }
             }

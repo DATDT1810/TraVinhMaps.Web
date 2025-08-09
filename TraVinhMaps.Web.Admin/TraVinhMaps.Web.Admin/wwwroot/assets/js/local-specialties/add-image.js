@@ -161,7 +161,7 @@ $(document).ready(function () {
             $("#sync2")
               .trigger("add.owl.carousel", [
                 `<div class="item" style="height: 90px; width: 70px; position: relative;">
-                  <img src="${imageUrl}" alt="image ocop product"
+                  <img src="${imageUrl}" alt="image"
                     style="width: 100%; height: 100%; object-fit: cover; display: block;">
                   <button type="button" class="delete-button-image delete-image-btn"
                           data-id="${$(
