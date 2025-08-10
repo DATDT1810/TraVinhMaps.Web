@@ -504,6 +504,7 @@ const jsStrings = [
   "Verify Current Email",
   "Verify New Phone Number Your OTP is sent to now",
   "Your OTP is sent to now",
+  "Failed to resend verification code. Please try again.",
 
   // --- Mẫu lỗi MẶC ĐỊNH của .NET (quan trọng nhất) ---
   "The %s field is required.",

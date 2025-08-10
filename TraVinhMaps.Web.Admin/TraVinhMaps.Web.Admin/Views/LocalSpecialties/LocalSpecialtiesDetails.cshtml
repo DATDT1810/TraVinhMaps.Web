@@ -133,7 +133,7 @@
                                 </div>
                                 <div class="d-flex align-items-center gap-4 mx-5">
                                     <div class="text-center">
-                                        <h3 class="mb-0 f-w-700" style="color: #6366f1;">@(Model.Locations?.Count ?? 0)</h3>
+                                        <h3 id="sellingCount" class="mb-0 f-w-700" style="color: #6366f1;">@(Model.Locations?.Count ?? 0)</h3>
                                         <p class="mb-0 text-uppercase" style="font-size: 0.8rem; color: #6c757d;">Selling Points</p>
                                     </div>
                                 </div>
@@ -144,7 +144,7 @@
                                     </a>
                                 </div>
                             </div>
-                            <div>
+                            @* <div>
                                 @if (Model.Locations == null || !Model.Locations.Any())
                                 {
                                     <div class="d-flex justify-content-between align-items-center ps-3">
@@ -160,7 +160,7 @@
                                         @for (int i = 0; i < Model.Locations.Count; i++)
                                         {
                                             var item = Model.Locations[i];
-                                            <div class="col-md-6 mb-4 d-flex">
+                                            <div class="col-md-6 mb-4 d-flex" data-location-id="@item.LocationId">
                                                 <div class="location-card">
                                                     <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
                                                         <div>
@@ -218,7 +218,87 @@
                                         </ul>
                                     </div>
                                 }
+                            </div> *@
+                            <div>
+    <div id="locationList" class="row">
+        @if (Model.Locations == null || !Model.Locations.Any())
+        {
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center ps-3">
+                    <div>
+                        <strong>No Location Name.</strong><br />
+                        <span>No Location Address.</span>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            @for (int i = 0; i < Model.Locations.Count; i++)
+            {
+                var item = Model.Locations[i];
+                <div class="col-md-6 mb-4 d-flex" data-location-id="@item.LocationId">
+                    <div class="location-card">
+                        <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+                            <div>
+                                <h5 style="margin: 0; font-weight: 600; max-width: 430px; min-height: 60px">
+                                    @(item.Name ?? "No Location Name.")
+                                </h5>
+                                <div class="fs-6 pt-1" style="max-width: 430px; min-height: 42px;">
+                                    @(item.Address ?? "No Location Address.")
+                                </div>
                             </div>
+                            <div class="d-flex gap-2 pb-5">
+                                <button type="button" class="btn btn-success btn-sm px-2 py-1 edit-location-btn"
+                                        title="Edit" style="font-size: 14px; line-height: 1;"
+                                        data-bs-toggle="modal" data-bs-target="#editLocationModal"
+                                        data-id="@Model.Id"
+                                        data-location-id="@item.LocationId"
+                                        data-name="@item.Name"
+                                        data-address="@item.Address"
+                                        data-type="@(item.Location?.Type ?? "Point")"
+                                        data-longitude="@(item.Location?.Coordinates?.FirstOrDefault() ?? 0)"
+                                        data-latitude="@(item.Location?.Coordinates?.Skip(1).FirstOrDefault() ?? 0)">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                </button>
+                                <button type="button" class="delete-sell-location btn btn-danger btn-sm px-2 py-1"
+                                        title="Delete" style="font-size: 14px; line-height: 1;"
+                                        data-product-id="@Model.Id"
+                                        data-location-id="@item.LocationId"
+                                        data-location-name="@item.Name">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="map-wrapper">
+                            <div class="here-map-container"
+                                 style="height: 100%; width: 100%;"
+                                 data-latitude="@(item.Location?.Coordinates?.Skip(1).FirstOrDefault().ToString(CultureInfo.InvariantCulture) ?? "0")"
+                                 data-longitude="@(item.Location?.Coordinates?.FirstOrDefault().ToString(CultureInfo.InvariantCulture) ?? "0")">
+                            </div>
+                            <div class="map-overlay edit-location-btn" title="Edit"
+                                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; cursor: pointer;"
+                                 data-bs-toggle="modal" data-bs-target="#editLocationModal"
+                                 data-id="@Model.Id"
+                                 data-location-id="@item.LocationId"
+                                 data-name="@item.Name"
+                                 data-address="@item.Address"
+                                 data-type="@(item.Location?.Type ?? "Point")"
+                                 data-longitude="@(item.Location?.Coordinates?.FirstOrDefault() ?? 0)"
+                                 data-latitude="@(item.Location?.Coordinates?.Skip(1).FirstOrDefault() ?? 0)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <div class="pagination-container">
+        <ul class="pagination" id="pagination"></ul>
+    </div>
+</div>
+
                         </div>
                     </div>
                 </div>
@@ -340,7 +420,6 @@
     @Html.AntiForgeryToken()
     <link rel="stylesheet" href="~/assets/css/LocalSpecialties/details.css">
     <script src="~/assets/js/sweetalert-custom.js"></script>
-    <script src="~/assets/js/local-specialties/add-image.js"></script>
     
     <!-- HERE Maps API Scripts -->
     <script type="text/javascript" src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
@@ -355,55 +434,10 @@
     
     <script src="~/assets/js/local-specialties/heremap-loader.js"></script>
     <script src="~/assets/js/local-specialties/edit-location-map.js"></script>
-    <script src="~/assets/js/local-specialties/form-handler.js"></script>
+    @* <script src="~/assets/js/local-specialties/form-handler.js"></script> *@
+    <script src="~/assets/js/local-specialties/add-image.js"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Pagination logic
-            const itemsPerPage = 2;
-            const locationList = document.getElementById('locationList');
-            if (locationList) {
-                const paginationContainer = document.getElementById('pagination');
-                const items = Array.from(locationList.getElementsByClassName('col-md-6'));
-                const pageCount = Math.ceil(items.length / itemsPerPage);
-
-                function showPage(page) {
-                    const start = (page - 1) * itemsPerPage;
-                    const end = start + itemsPerPage;
-
-                    items.forEach((item, index) => {
-                        if (index >= start && index < end) {
-                            item.classList.remove('d-none');
-                        } else {
-                            item.classList.add('d-none');
-                        }
-                    });
-                    updatePaginationUI(page);
-                }
-
-                function updatePaginationUI(currentPage) {
-                    if (!paginationContainer) return;
-                    paginationContainer.innerHTML = '';
-                    for (let i = 1; i <= pageCount; i++) {
-                        const li = document.createElement('li');
-                        const a = document.createElement('a');
-                        a.href = '#';
-                        a.innerText = i;
-                        if (i === currentPage) a.classList.add('active');
-                        a.addEventListener('click', (e) => { e.preventDefault(); showPage(i); });
-                        li.appendChild(a);
-                        paginationContainer.appendChild(li);
-                    }
-                }
-
-                if (items.length > itemsPerPage) {
-                    showPage(1);
-                } else {
-                    items.forEach(item => item.classList.remove('d-none'));
-                }
-            }
-        });
-
         // Populate edit modal with data
         const editLocationModal = document.getElementById('editLocationModal');
         if (editLocationModal) {

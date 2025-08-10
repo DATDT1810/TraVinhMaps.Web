@@ -29,17 +29,20 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="col-sm-12">
-                                <div class="card-header">
-                                    <h4>@Model.Title</h4>
-                                </div>
-                                <div class="card-body text-justify">
-                                    <span>@Html.Raw(Model.Content)</span>
-                                </div>
-                                <div class="card-body"<i class="fa fa-clock-o me-2"></i><span>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span>
-                                </div>
-                                <div class="card-footer">
-                                    <a class="btn btn-back float-end" asp-controller="Notifications" asp-action="Index">Back</a>
-                                </div>
+                            <div class="card-header">
+                                <h4>@Model.Title</h4>
+                            </div>
+                            <div class="card-body text-justify">
+                                <span>@Html.Raw(Model.Content)</span>
+                            </div>
+                            <div class="card-body">
+                                <i class="fa fa-clock-o me-1"></i>
+                                <span>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span>
+                            </div>
+                            <div class="card-footer">
+                                <a class="btn btn-back float-end" asp-controller="Notifications"
+                                    asp-action="Index">Back</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -48,4 +51,3 @@
     </div>
 </div>
 <!-- Container-fluid Ends-->
-
