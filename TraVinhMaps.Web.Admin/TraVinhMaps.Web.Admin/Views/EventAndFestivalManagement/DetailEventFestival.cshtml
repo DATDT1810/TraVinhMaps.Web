@@ -417,16 +417,17 @@
         </div>
         <div class="row">
             <div class="mt-2 pb-3 d-flex justify-content-end btn-showcase">
+                <div class="d-inline">
+                            <a class="btn btn-back" asp-action="Index">Back</a>
+                        </div>
                  @if (!isFinished)
                         {
                             <div class="d-inline">
                                 <a class="btn btn-success" asp-action="EditEventAndFestival" asp-route-id="@Model.Id"><i class="fa fa-pencil"
-                                                                                                                        aria-hidden="true"></i>&nbsp; Edit</a>
+                                                                                                                        aria-hidden="true"></i> Edit Event and Festival</a>
                             </div>
                         }
-                        <div class="d-inline">
-                            <a class="btn btn-back" asp-action="Index">Back</a>
-                        </div>
+                        
             </div>                                
         </div>
     </div>
