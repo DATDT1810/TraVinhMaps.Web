@@ -72,7 +72,6 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 var errorMessages = ModelState.Where(ms => ms.Value.Errors.Count > 0)
                                             .Select(ms => $"Key: {ms.Key}, Errors: {string.Join(", ", ms.Value.Errors.Select(e => e.ErrorMessage))}")
                                             .ToList();
-                TempData["ErrorMessage"] = string.Join("<br/>", errorMessages);
                 return View("CreateCompany", companyViewModel);
             }
             try
@@ -97,12 +96,13 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     CreatedAt = result.value.data.CreatedAt,
                     UpdateAt = result.value.data.UpdateAt
                 };
+                Console.WriteLine("Data: " + createCompany);
                 TempData["SuccessMessage"] = "Company created successfully!";
                 return RedirectToAction("Index");
             }
             catch (HttpRequestException ex)
             {
-                TempData["ErrorMessage"] = $"Failed to create company: {ex.Message}";
+                TempData["ErrorMessage"] = $"{ex.Message}";
                 return View("CreateCompany", companyViewModel);
             }
             catch (Exception ex)
@@ -172,8 +172,8 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Something went wrong, please try again: " + ex.Message + "\n" + ex.StackTrace;
-                return View("UpdateOcopType", request);
+                TempData["ErrorMessage"] = $"{ex.Message}";
+                return View("UpdateOcopType", updateCompanyRequest);
             }
             TempData["SuccessMessage"] = "Company updated successfully!";
             return RedirectToAction("Index");
