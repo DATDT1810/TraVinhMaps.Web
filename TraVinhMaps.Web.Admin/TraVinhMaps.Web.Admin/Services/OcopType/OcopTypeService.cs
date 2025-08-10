@@ -34,18 +34,33 @@ namespace TraVinhMaps.Web.Admin.Services.OcopType
 
             HttpResponseMessage responseMessage = await _httpClient.PostAsync(ocopTypeApi + "AddOcopType", content, cancellationToken);
 
-            if (responseMessage.IsSuccessStatusCode)
+            var responseContent = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
+
+            if (!responseMessage.IsSuccessStatusCode)
             {
-                var contentResult = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
-                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return System.Text.Json.JsonSerializer.Deserialize<CreateOcopTypeResponse<OcopTypeResponse>>(contentResult, option)
-                    ?? throw new HttpRequestException("Unable to create ocop type.");
+                OcopTypeMessage? apiError = null;
+                try
+                {
+                    apiError = System.Text.Json.JsonSerializer.Deserialize<OcopTypeMessage>(responseContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                }
+                catch
+                {
+                    // Bỏ qua nếu không parse được
+                }
+
+                if (apiError != null && !string.IsNullOrEmpty(apiError.Message))
+                {
+                    throw new HttpRequestException(apiError.Message);
+                }
+
+                throw new HttpRequestException($"Unable to create ocop type. Status: {responseMessage.StatusCode}");
             }
-            else
-            {
-                var errorResult = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
-                throw new HttpRequestException($"Unable to fetch create ocop type. Status: {responseMessage.StatusCode}, Error: {errorResult}");
-            }
+
+            var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var ocopTypeResponse = System.Text.Json.JsonSerializer.Deserialize<CreateOcopTypeResponse<OcopTypeResponse>>(responseContent, option)
+                ?? throw new HttpRequestException("Unable to create ocop type.");
+
+            return ocopTypeResponse;
         }
         public async Task<long> CountAsync(Expression<Func<OcopTypeResponse, bool>> predicate = null, CancellationToken cancellationToken = default)
         {
@@ -98,26 +113,34 @@ namespace TraVinhMaps.Web.Admin.Services.OcopType
         }
 
         public async Task<OcopTypeMessage> UpdateAsync(UpdateOcopTypeRequest entity, CancellationToken cancellationToken = default)
-        {
-            var options = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            };
-            var data = System.Text.Json.JsonSerializer.Serialize(entity, options);
-            var content = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
+{
+    var options = new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+    var data = System.Text.Json.JsonSerializer.Serialize(entity, options);
+    var content = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
 
-            HttpResponseMessage responseMessage = await _httpClient.PutAsync(ocopTypeApi + "UpdateOcopType", content);
-            if (responseMessage.IsSuccessStatusCode)
-            {
-                var contentResponse = await responseMessage.Content.ReadAsStringAsync();
-                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return System.Text.Json.JsonSerializer.Deserialize<OcopTypeMessage>(contentResponse, option) ?? throw new HttpRequestException("Fail to update ocop type.");
-            }
-            else
-            {
-                var errorResult = await responseMessage.Content.ReadAsStringAsync();
-                throw new HttpRequestException($"Unable to fetch update ocop type. Status: {responseMessage.StatusCode}, Error: {errorResult}");
-            }
+    HttpResponseMessage responseMessage = await _httpClient.PutAsync(ocopTypeApi + "UpdateOcopType", content);
+    var responseContent = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
+
+    var result = System.Text.Json.JsonSerializer.Deserialize<OcopTypeMessage>(responseContent, new JsonSerializerOptions
+    {
+        PropertyNameCaseInsensitive = true
+    });
+
+    if (!responseMessage.IsSuccessStatusCode)
+    {
+        if (result != null && !string.IsNullOrEmpty(result.Message))
+        {
+            throw new HttpRequestException(result.Message);
         }
+
+        throw new HttpRequestException($"Unable to update ocop type. Status: {responseMessage.StatusCode}");
+    }
+
+    return result ?? throw new HttpRequestException("Unknown response from server.");
+}
+
     }
 }

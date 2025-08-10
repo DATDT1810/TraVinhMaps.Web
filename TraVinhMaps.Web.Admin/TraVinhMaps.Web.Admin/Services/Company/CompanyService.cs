@@ -56,19 +56,33 @@ namespace TraVinhMaps.Web.Admin.Services.Company
             var json = System.Text.Json.JsonSerializer.Serialize(entity);
             using var content = new StringContent(json, Encoding.UTF8, "application/json");
             HttpResponseMessage responseMessage = await _httpClient.PostAsync(companyApi + "AddCompany", content);
-            Console.WriteLine("Response: ", responseMessage);
-            if (responseMessage.IsSuccessStatusCode)
+            var responseContent = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
+
+            if (!responseMessage.IsSuccessStatusCode)
             {
-                var contentResult = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
-                Console.WriteLine("API Response Content: " + contentResult);
-                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return System.Text.Json.JsonSerializer.Deserialize<CreateCompanyResponse<CompanyResponse>>(contentResult, option) ?? throw new HttpRequestException("Unable to create ocop type.");
+                CompanyMessage? apiError = null;
+                try
+                {
+                    apiError = System.Text.Json.JsonSerializer.Deserialize<CompanyMessage>(responseContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                }
+                catch
+                {
+                    // Bỏ qua nếu không parse được
+                }
+
+                if (apiError != null && !string.IsNullOrEmpty(apiError.Message))
+                {
+                    throw new HttpRequestException(apiError.Message);
+                }
+
+                throw new HttpRequestException($"Unable to create company. Status: {responseMessage.StatusCode}");
             }
-            else
-            {
-                var errorResult = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
-                throw new HttpRequestException($"Unable to fetch create company. Status: {responseMessage.StatusCode}, Error: {errorResult}");
-            }
+
+            var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var ocopTypeResponse = System.Text.Json.JsonSerializer.Deserialize<CreateCompanyResponse<CompanyResponse>>(responseContent, option)
+                ?? throw new HttpRequestException("Unable to create company.");
+
+            return ocopTypeResponse;
         }
 
 
@@ -82,17 +96,24 @@ namespace TraVinhMaps.Web.Admin.Services.Company
             var content = new StringContent(data, System.Text.Encoding.UTF8, "application/json");
 
             HttpResponseMessage responseMessage = await _httpClient.PutAsync(companyApi + "UpdateCompany", content);
-            if (responseMessage.IsSuccessStatusCode)
+            var responseContent = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
+
+            var result = System.Text.Json.JsonSerializer.Deserialize<CompanyMessage>(responseContent, new JsonSerializerOptions
             {
-                var contentResponse = await responseMessage.Content.ReadAsStringAsync();
-                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return JsonSerializer.Deserialize<CompanyMessage>(contentResponse, option) ?? throw new HttpRequestException("Fail to update company.");
-            }
-            else
+                PropertyNameCaseInsensitive = true
+            });
+
+            if (!responseMessage.IsSuccessStatusCode)
             {
-                var errorResult = await responseMessage.Content.ReadAsStringAsync();
-                throw new HttpRequestException($"Unable to fetch update company. Status: {responseMessage.StatusCode}, Error: {errorResult}");
+                if (result != null && !string.IsNullOrEmpty(result.Message))
+                {
+                    throw new HttpRequestException(result.Message);
+                }
+
+                throw new HttpRequestException($"Unable to update company. Status: {responseMessage.StatusCode}");
             }
+
+            return result ?? throw new HttpRequestException("Unknown response from server.");
         }
 
         public async Task<long> CountAsync(Expression<Func<CompanyResponse, bool>> predicate = null, CancellationToken cancellationToken = default)

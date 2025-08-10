@@ -49,9 +49,9 @@ namespace TraVinhMaps.Web.Admin.Controllers
                 var errorMessages = ModelState.Where(ms => ms.Value.Errors.Count > 0)
                                             .Select(ms => $"Key: {ms.Key}, Errors: {string.Join(", ", ms.Value.Errors.Select(e => e.ErrorMessage))}")
                                             .ToList();
-                TempData["ErrorMessage"] = string.Join("<br/>", errorMessages);
                 return View("CreateOcopType", createOcopTypeRequest);
             }
+
             try
             {
                 var result = await _ocopTypeService.AddAsync(createOcopTypeRequest, cancellationToken);
@@ -73,7 +73,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
             catch (HttpRequestException ex)
             {
-                TempData["ErrorMessage"] = $"Failed to create ocop type: {ex.Message}";
+                TempData["ErrorMessage"] = $"{ex.Message}";
                 return View("CreateOcopType", createOcopTypeRequest);
             }
             catch (Exception ex)
@@ -113,6 +113,17 @@ namespace TraVinhMaps.Web.Admin.Controllers
         [HttpPost("UpdateOcopTypePost")]
         public async Task<IActionResult> UpdateOcopTypePost(OcopTypeResponse request, CancellationToken cancellationToken = default)
         {
+            if (!ModelState.IsValid)
+            {
+                var updateOcopTypeRequestInvalid = new UpdateOcopTypeRequest
+                {
+                    Id = request.Id,
+                    OcopTypeName = request.OcopTypeName,
+                    UpdateAt = request.UpdateAt
+                };
+
+                return View("UpdateOcopType", updateOcopTypeRequestInvalid);
+            }
             var existingOcopType = await _ocopTypeService.GetByIdAsync(request.Id);
             if (existingOcopType == null)
             {
@@ -131,8 +142,14 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = "Something went wrong, please try again: " + ex.Message + "\n" + ex.StackTrace;
-                return View("UpdateOcopType", request);
+                TempData["ErrorMessage"] = $"{ex.Message}";
+                var updateOcopTypeRequestInvalid = new UpdateOcopTypeRequest
+                {
+                    Id = request.Id,
+                    OcopTypeName = request.OcopTypeName,
+                    UpdateAt = request.UpdateAt
+                };
+                return View("UpdateOcopType", updateOcopTypeRequestInvalid);
             }
             TempData["SuccessMessage"] = "OCOP type updated successfully!";
             return RedirectToAction("Index");
