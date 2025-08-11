@@ -12,7 +12,7 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-6">
-                   
+                
                 </div>
                 <div class="col-6">
                     <ol class="breadcrumb">
@@ -43,12 +43,12 @@
                     <div class="col-xl-6 d-flex">
                         <div class="card flex-fill">
                             <div class="card-header">
-                                <h4 class="card-title mb-0"><i class="fa fa-shield-alt me-2"></i>Security Information</h4>
+                                <h4 class="card-title mb-0"><i class="fa fa-shield me-2"></i>Security Information</h4>
                             </div>
                             <div class="card-body d-flex flex-column justify-content-space-around" style="justify-content: space-around;">
                                 <!-- Email -->
                                 <div class="security-item">
-                                    <h4 class="mb-1"><i class="fas fa-envelope me-2"></i>Email</h4>
+                                    <h4 class="mb-1"><i class="fa fa-envelope me-2"></i>Email</h4>
                                     @if (settingsData != null && !string.IsNullOrEmpty(settingsData.Email))
                                     {
                                         <p class="mb-1">@settingsData.Email</p>
@@ -63,7 +63,7 @@
 
                                 <!-- Phone Number -->
                                 <div class="security-item">
-                                    <h4 class="mb-1"><i class="fas fa-phone me-2"></i>Phone number</h4>
+                                    <h4 class="mb-1"><i class="fa fa-phone me-2"></i>Phone number</h4>
                                     @if (settingsData != null && !string.IsNullOrEmpty(settingsData.PhoneNumber))
                                     {
                                         <p class="mb-1">@settingsData.PhoneNumber</p>
@@ -78,7 +78,7 @@
 
                                 <!-- Password -->
                                 <div class="security-item">
-                                    <h4 class="mb-1"><i class="fas fa-lock me-2"></i>Password</h4>
+                                    <h4 class="mb-1"><i class="fa fa-lock me-2"></i>Password</h4>
                                     @if (settingsData != null && !string.IsNullOrEmpty(settingsData.Password))
                                     {
                                         <p class="mb-1 text-muted">Password has been set.</p>
@@ -184,7 +184,7 @@
     }
 
     .card-highlight {
-        border: 1px solid #2c786c !important; /* Green border */
+        border: 1px solid #2c786c !important;
         box-shadow: 0 0 10px rgba(44, 120, 108, 0.5);
     }
 

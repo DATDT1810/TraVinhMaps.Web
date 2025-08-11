@@ -77,48 +77,66 @@ $(document).ready(function () {
   }
 
   // Update row UI
-  function updateRow(row, isActive, id) {
-    const statusSpan = row.find("td:eq(4) span");
-    const actionCell = row.find("td:last-child ul.action");
-    let currentText = statusSpan.text().toLowerCase().trim();
-    let statusText = isActive
-      ? currentText.includes("hoạt")
-        ? "Hoạt động"
-        : "Active"
-      : currentText.includes("hoạt")
-      ? "Không hoạt động"
-      : "Inactive";
+  // Update row UI
+function updateRow(row, isActive, id) {
+  const dtRow = table.row(row);
+  const rowData = dtRow.data(); // Lấy dữ liệu của dòng
 
-    // Cập nhật status
-    statusSpan
-      .text(statusText)
-      .removeClass("badge-light-danger badge-light-primary")
-      .addClass(isActive ? "badge-light-primary" : "badge-light-danger");
+  // 1. Cập nhật ô Trạng thái (Status)
+  const isVietnamese = (rowData[4] || "").includes("hoạt");
+  const newStatusText = isActive
+    ? isVietnamese ? "Hoạt động" : "Active"
+    : isVietnamese ? "Không hoạt động" : "Inactive";
+  const newStatusClass = isActive
+    ? "badge-light-primary"
+    : "badge-light-danger";
+  const newStatusHtml = `<span class="badge ${newStatusClass}">${newStatusText}</span>`;
+  
+  // Cập nhật dữ liệu trạng thái trong DataTables
+  dtRow.cell(row, 4).data(newStatusHtml);
 
-    // Cập nhật nút hành động
-    if (isActive) {
-      actionCell.find(".unban-user").replaceWith(`
-      <a class="delete ban-user" href="javascript:void(0)" data-id="${id}" title="Ban">
-        <i class="fa fa-ban"></i>
-      </a>
-    `);
-    } else {
-      actionCell.find(".ban-user").replaceWith(`
-      <a class="restore unban-user" href="javascript:void(0)" data-id="${id}" title="Unban">
-        <i class="fa fa-unlock"></i>
-      </a>
-    `);
+  // 2. Cập nhật ô Hành động (Action) - SỬA LỖI TẠI ĐÂY
+  // Thay vì thay thế toàn bộ HTML, chúng ta chỉ thay thế nút cụ thể
+  const actionCell = $(row).find("td:last-child");
+
+  if (isActive) {
+    // Người dùng vừa được UNBAN -> trạng thái là ACTIVE
+    // Tìm nút "unban-user" và thay nó bằng nút "ban-user"
+    const unbanLink = actionCell.find(".unban-user");
+    if (unbanLink.length > 0) {
+      unbanLink.parent().replaceWith(`
+        <li>
+          <a class="delete ban-user" href="javascript:void(0)" data-id="${id}" title="Ban">
+            <i class="fa fa-ban"></i>
+          </a>
+        </li>
+      `);
     }
-
-    // Xóa dòng hiện tại khỏi bảng (bởi vì trạng thái đã đổi → không còn hợp filter hiện tại)
-    table.row(row).remove();
-
-    // Redraw lại toàn bảng (sẽ lọc lại đúng theo filter, và STT sẽ được cập nhật trong drawCallback)
-    setTimeout(() => {
-      table.draw(false);
-      updatePaginationInfo();
-    }, 100);
+  } else {
+    // Người dùng vừa bị BAN -> trạng thái là INACTIVE
+    // Tìm nút "ban-user" và thay nó bằng nút "unban-user"
+    const banLink = actionCell.find(".ban-user");
+    if (banLink.length > 0) {
+      banLink.parent().replaceWith(`
+        <li>
+          <a class="restore unban-user" href="javascript:void(0)" data-id="${id}" title="Unban">
+            <i class="fa fa-unlock"></i>
+          </a>
+        </li>
+      `);
+    }
   }
+
+  // Cập nhật HTML của ô hành động trong DataTables sau khi đã thay đổi
+  dtRow.cell(row, -1).data(actionCell.html());
+
+  // 3. Vẽ lại bảng để áp dụng bộ lọc
+  // Dòng này sẽ tự động bị ẩn đi vì trạng thái không còn khớp với bộ lọc hiện tại
+  table.draw(false);
+
+  // Cập nhật lại thông tin phân trang
+  updatePaginationInfo();
+}
 
   // Ban user
   $(document).on("click", ".ban-user", function (e) {

@@ -31,6 +31,11 @@ namespace TraVinhMaps.Web.Admin.ViewComponents
             var avatarUrl = user?.FirstOrDefault()?.UserProfile?.Avatar
                             ?? "/assets/images/dashboard/profile.png";
 
+            if (!string.IsNullOrEmpty(user?.FirstOrDefault()?.UserProfile?.Avatar))
+            {
+                avatarUrl += $"?v={DateTime.UtcNow.Ticks}";
+            }
+
             return View("Default", avatarUrl);
         }
     }
