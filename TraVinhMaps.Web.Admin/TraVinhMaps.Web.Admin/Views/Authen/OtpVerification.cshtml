@@ -1,4 +1,5 @@
 ﻿@model TraVinhMaps.Web.Admin.Models.Auth.OtpVerificationViewModel
+@inject IConfiguration Configuration
 @{
   ViewData["Title"] = "OTP Verification";
   Layout = "";
@@ -174,8 +175,6 @@
   .btn-disabled {
     opacity: 0.65;
     cursor: not-allowed;
-    background-color: #6c757d;
-    border-color: #6c757d;
   }
 
   .validation-summary-errors {
@@ -263,7 +262,7 @@
             </div>
             <div class="form-group mb-0">
               <div class="text-end mt-3">
-                <button class="btn btn-success btn-block w-100" type="submit">Verify</button>
+                <button class="btn btn-success btn-block w-100" type="submit" id="verifyBtn">Verify</button>
               </div>
             </div>
           </form>
@@ -291,6 +290,7 @@
 <script src="~/assets/js/sweetalert-custom.js"></script>
 
 <script>
+    window.apiBaseUrl = "@Configuration.GetSection("ApiSettings")["BaseUrl"]";
   $(document).ready(function () {
     // Display errors with SweetAlert if present
     @if (TempData["ErrorMessage"] != null)
@@ -307,13 +307,13 @@
         </text>
     }
 
-      // Store the remaining time in localStorage to persist across page loads
+      // Store the remaining time in sessionStorage to persist across page loads but not browser sessions
       let timerKey = 'otpCountdownEndTime';
 
     const urlParams = new URLSearchParams(window.location.search);
     const isNewRequest = urlParams.get("new") === "true";
     if (isNewRequest) {
-      localStorage.removeItem(timerKey);
+      sessionStorage.removeItem(timerKey);
       // Xoá query để tránh reset lại khi reload sau này
       const newUrl = window.location.origin + window.location.pathname;
       window.history.replaceState({}, document.title, newUrl);
@@ -398,6 +398,10 @@
         e.preventDefault();
         // $('.digit-input').addClass('error');
         $('#otp-error').text('Please enter a valid 6-digit code').show();
+      } else {
+        // Disable button and show processing state to prevent multiple clicks
+        const verifyBtn = $('#verifyBtn');
+        verifyBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
       }
     });
 
@@ -406,14 +410,14 @@
       return Math.floor(Date.now() / 1000);
     }
 
-    // Save end time to localStorage
+    // Save end time to sessionStorage
     function saveEndTime(endTime) {
-      localStorage.setItem(timerKey, endTime.toString());
+      sessionStorage.setItem(timerKey, endTime.toString());
     }
 
-    // Get saved end time from localStorage
+    // Get saved end time from sessionStorage
     function getSavedEndTime() {
-      const saved = localStorage.getItem(timerKey);
+      const saved = sessionStorage.getItem(timerKey);
       return saved ? parseInt(saved, 10) : null;
     }
 
@@ -421,6 +425,7 @@
     function startCountdown() {
       const countdownTimer = $('#countdown-timer');
       const resendBtn = $('#resendBtn');
+      const verifyBtn = $('#verifyBtn');
 
       // Check if there's a saved end time
       let endTime = getSavedEndTime();
@@ -438,9 +443,11 @@
 
       // Disable the button initially if time remains
       if (initialRemainingSeconds > 0) {
-        resendBtn.prop('disabled', true).addClass('btn-disabled').removeClass('btn-active');
+        resendBtn.prop('disabled', true).addClass('btn-disabled');
       } else {
-        resendBtn.prop('disabled', false).removeClass('btn-disabled').addClass('btn-active');
+        resendBtn.prop('disabled', false).removeClass('btn-disabled');
+        verifyBtn.prop('disabled', true).addClass('btn-disabled');
+        countdownTimer.text("00:00");
       }
 
       const interval = setInterval(function () {
@@ -451,10 +458,11 @@
 
         if (remainingSeconds <= 0) {
           clearInterval(interval);
-          resendBtn.prop('disabled', false).removeClass('btn-disabled').addClass('btn-active');
+          resendBtn.prop('disabled', false).removeClass('btn-disabled');
+          verifyBtn.prop('disabled', true).addClass('btn-disabled');
 
           // Clear the saved end time since it expired
-          localStorage.removeItem(timerKey);
+          sessionStorage.removeItem(timerKey);
         }
       }, 1000);
 
@@ -486,12 +494,12 @@
       var userIdentifier = $('#userIdentifier').val();
 
       // Disable the button during API call
-      $(this).prop('disabled', true).addClass('btn-disabled').removeClass('btn-active');
+      $(this).prop('disabled', true).addClass('btn-disabled');
       $('#resend-message').text('Sending new code...');
 
       // Call the API directly to refresh OTP
       $.ajax({
-        url: 'window.apiBaseUrl + "/api/auth/refresh-otp?item=' + userIdentifier,
+        url: window.apiBaseUrl + "api/auth/refresh-otp?item=" + userIdentifier,
         type: 'POST',
         success: function (response) {
           // Parse the response to get the token
@@ -580,10 +588,13 @@
           // Start a new 5-minute countdown
           updateTimerDisplay(300); // Show exactly 5 minutes initially
           countdownInterval = startCountdown();
+
+          // Re-enable verify button
+          $('#verifyBtn').prop('disabled', false).removeClass('btn-disabled');
         },
         error: function () {
           $('#resend-message').removeClass('text-success').addClass('text-danger').text('Failed to resend verification code. Please try again.');
-          $('#resendBtn').prop('disabled', false).removeClass('btn-disabled').addClass('btn-active');
+          $('#resendBtn').prop('disabled', false).removeClass('btn-disabled');
         }
       });
     });
