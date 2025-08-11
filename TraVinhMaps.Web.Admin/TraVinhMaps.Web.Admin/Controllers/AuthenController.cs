@@ -90,7 +90,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     TempData["IsRememberMe"] = model.RememberMe;
 
                     // Redirect to OTP verification page
-                    return RedirectToAction("OtpVerification", new { newRequest = true });
+                    return RedirectToAction("OtpVerification", new { @new = "true" });
                 }
                 else
                 {
@@ -320,7 +320,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
                     TempData["Username"] = model.Identifier;
                     TempData["IsPasswordReset"] = true;
 
-                    return RedirectToAction("OtpVerification");
+                    return RedirectToAction("OtpVerification", new { @new = "true" });
                 }
                 else
                 {
@@ -471,7 +471,7 @@ namespace TraVinhMaps.Web.Admin.Controllers
 
                     // Sign out of the cookie authentication scheme to prevent automatic cookie creation
                     await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                    return RedirectToAction("OtpVerification", new { newRequest = true });
+                    return RedirectToAction("OtpVerification", new { @new = "true" });
                 }
                 else
                 {
