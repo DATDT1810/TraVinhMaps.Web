@@ -129,7 +129,8 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="form theme-form">
-                            <form asp-action="CreateDestination" method="post" enctype="multipart/form-data">
+                            <form asp-action="CreateDestination" id="create_des_form" method="post"
+                                enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col-lg-7">
                                         <div id="map" class="here-map-container" data-latitude="9.9513"
@@ -189,7 +190,7 @@
                                         <div class="mb-3">
                                             <label>Destination Title</label>
                                             <input asp-for="Name" class="form-control" type="text"
-                                                placeholder="Destination title">
+                                                placeholder="Destination title" required>
                                             <span asp-validation-for="Name" class="text-danger"></span>
                                         </div>
                                         <div class="row">
@@ -338,7 +339,8 @@
                                     <div class="col">
                                         <div class="text-end">
                                             <a asp-action="Index" class="btn btn-cancel">Cancel</a>
-                                            <button type="submit" class="btn btn-success me-3">Create
+                                            <button type="submit" id="createDestination"
+                                                class="btn btn-success me-3">Create
                                                 Destination</button>
                                         </div>
                                     </div>
@@ -372,6 +374,7 @@
     <script src="~/assets/js/touristdestination/heremap-edit.js"></script>
     <script src="~/assets/js/touristdestination/heremaps-search.js"></script>
     <script src="~/assets/js/ckeditor5.js"></script>
+    
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -384,14 +387,13 @@
 
                 // Click to open file dialog
                 @* addBox.addEventListener("click", () => uploadInput.click()); *@
-                    const trigger = addBox.querySelector(".upload-placeholder");
+                            const trigger = addBox.querySelector(".upload-placeholder");
                 if (trigger) {
                     trigger.addEventListener("click", (e) => {
                         e.stopPropagation();
                         uploadInput.click();
                     });
                 }
-
 
                 // Preview container
                 let previewContainer = document.createElement("div");
@@ -490,5 +492,24 @@
             // Set initial state to 'Free' for the create page
             setTicketState('Free');
         });
+
+
+        const create_des_form = document.getElementById('create_des_form');
+        if (create_des_form) {
+            create_des_form.addEventListener('submit', function (e) {
+                // Nếu form không hợp lệ thì dừng lại
+                if (!$(this).valid()) {
+                    e.preventDefault();
+                    return;
+                }
+
+                // Nếu hợp lệ thì mới đổi nút
+                const createDestination = document.getElementById('createDestination');
+                if (createDestination) {
+                    createDestination.disabled = true;
+                    createDestination.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating...';
+                }
+            });
+        }
     </script>
 }

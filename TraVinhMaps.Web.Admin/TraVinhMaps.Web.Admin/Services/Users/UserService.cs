@@ -18,14 +18,21 @@ namespace TraVinhMaps.Web.Admin.Services.Users
 
         public async Task<IEnumerable<UserResponse>> ListAllAsync(CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync(userApi + "all", cancellationToken);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var content = await response.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                return JsonSerializer.Deserialize<IEnumerable<UserResponse>>(content, options) ?? new List<UserResponse>();
+                var response = await _httpClient.GetAsync(userApi + "all", cancellationToken);
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    return JsonSerializer.Deserialize<IEnumerable<UserResponse>>(content, options) ?? new List<UserResponse>();
+                }
             }
-            throw new HttpRequestException("Unable to fetch get all users.");
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching user list: {ex.Message}");
+            }
+            return new List<UserResponse>();
         }
 
         public async Task<IEnumerable<UserResponse>> ListAsync(Func<UserResponse, bool> predicate, CancellationToken cancellationToken = default)

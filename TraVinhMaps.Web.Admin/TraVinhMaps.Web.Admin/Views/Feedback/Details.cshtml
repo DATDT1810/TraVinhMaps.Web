@@ -33,6 +33,17 @@
                                     <h4>@Model.Username</h4>
                                 </div>
                                 <div class="card-body"><span>@Model.Content</span>
+                                <hr>
+                                <div>
+                                    @if (Model.Images != null && Model.Images.Count > 0)
+                                        {
+                                            <img class="w-50" src="@Model.Images[0]" alt="img review">
+                                        }
+                                        else
+                                        {
+                                            <p>No image reviews</p>
+                                        }
+                                </div>
                                 </div>
                                 <div class="card-body"><i class="fa fa-clock-o me-2"></i><span>@Model.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")</span>
                                 </div>

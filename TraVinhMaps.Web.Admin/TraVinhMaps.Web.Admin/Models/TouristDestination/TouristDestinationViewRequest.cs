@@ -10,7 +10,7 @@ namespace TraVinhMaps.Web.Admin.Models.TouristDestination
 {
     public class TouristDestinationViewRequest
     {
-        [DisplayName("Destination title")]
+        [DisplayName("Destination Title")]
         [MinLength(2, ErrorMessage = "Title must be at least 2 characters")]
         [MaxLength(100, ErrorMessage = "Title must be less than or equal to 100 characters")]
         [Required(ErrorMessage = "Title of destination is required")]

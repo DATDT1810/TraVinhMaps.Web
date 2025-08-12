@@ -77,66 +77,69 @@ $(document).ready(function () {
   }
 
   // Update row UI
-  // Update row UI
-function updateRow(row, isActive, id) {
-  const dtRow = table.row(row);
-  const rowData = dtRow.data(); // Lấy dữ liệu của dòng
+  function updateRow(row, isActive, id) {
+    const dtRow = table.row(row);
+    const rowData = dtRow.data(); // Lấy dữ liệu của dòng
 
-  // 1. Cập nhật ô Trạng thái (Status)
-  const isVietnamese = (rowData[4] || "").includes("hoạt");
-  const newStatusText = isActive
-    ? isVietnamese ? "Hoạt động" : "Active"
-    : isVietnamese ? "Không hoạt động" : "Inactive";
-  const newStatusClass = isActive
-    ? "badge-light-primary"
-    : "badge-light-danger";
-  const newStatusHtml = `<span class="badge ${newStatusClass}">${newStatusText}</span>`;
-  
-  // Cập nhật dữ liệu trạng thái trong DataTables
-  dtRow.cell(row, 4).data(newStatusHtml);
+    // 1. Cập nhật ô Trạng thái (Status)
+    const isVietnamese = (rowData[4] || "").includes("hoạt");
+    const newStatusText = isActive
+      ? isVietnamese
+        ? "Hoạt động"
+        : "Active"
+      : isVietnamese
+      ? "Không hoạt động"
+      : "Inactive";
+    const newStatusClass = isActive
+      ? "badge-light-primary"
+      : "badge-light-danger";
+    const newStatusHtml = `<span class="badge ${newStatusClass}">${newStatusText}</span>`;
 
-  // 2. Cập nhật ô Hành động (Action) - SỬA LỖI TẠI ĐÂY
-  // Thay vì thay thế toàn bộ HTML, chúng ta chỉ thay thế nút cụ thể
-  const actionCell = $(row).find("td:last-child");
+    // Cập nhật dữ liệu trạng thái trong DataTables
+    dtRow.cell(row, 4).data(newStatusHtml);
 
-  if (isActive) {
-    // Người dùng vừa được UNBAN -> trạng thái là ACTIVE
-    // Tìm nút "unban-user" và thay nó bằng nút "ban-user"
-    const unbanLink = actionCell.find(".unban-user");
-    if (unbanLink.length > 0) {
-      unbanLink.parent().replaceWith(`
+    // 2. Cập nhật ô Hành động (Action) - SỬA LỖI TẠI ĐÂY
+    // Thay vì thay thế toàn bộ HTML, chúng ta chỉ thay thế nút cụ thể
+    const actionCell = $(row).find("td:last-child");
+
+    if (isActive) {
+      // Người dùng vừa được UNBAN -> trạng thái là ACTIVE
+      // Tìm nút "unban-user" và thay nó bằng nút "ban-user"
+      const unbanLink = actionCell.find(".unban-user");
+      if (unbanLink.length > 0) {
+        unbanLink.parent().replaceWith(`
         <li>
           <a class="delete ban-user" href="javascript:void(0)" data-id="${id}" title="Ban">
             <i class="fa fa-ban"></i>
           </a>
         </li>
       `);
-    }
-  } else {
-    // Người dùng vừa bị BAN -> trạng thái là INACTIVE
-    // Tìm nút "ban-user" và thay nó bằng nút "unban-user"
-    const banLink = actionCell.find(".ban-user");
-    if (banLink.length > 0) {
-      banLink.parent().replaceWith(`
+      }
+    } else {
+      // Người dùng vừa bị BAN -> trạng thái là INACTIVE
+      // Tìm nút "ban-user" và thay nó bằng nút "unban-user"
+      const banLink = actionCell.find(".ban-user");
+      if (banLink.length > 0) {
+        banLink.parent().replaceWith(`
         <li>
           <a class="restore unban-user" href="javascript:void(0)" data-id="${id}" title="Unban">
             <i class="fa fa-unlock"></i>
           </a>
         </li>
       `);
+      }
     }
+
+    // Cập nhật HTML của ô hành động trong DataTables sau khi đã thay đổi
+    dtRow.cell(row, -1).data(actionCell.html());
+
+    // 3. Vẽ lại bảng để áp dụng bộ lọc
+    // Dòng này sẽ tự động bị ẩn đi vì trạng thái không còn khớp với bộ lọc hiện tại
+    table.draw(false);
+
+    // Cập nhật lại thông tin phân trang
+    updatePaginationInfo();
   }
-
-  // Cập nhật HTML của ô hành động trong DataTables sau khi đã thay đổi
-  dtRow.cell(row, -1).data(actionCell.html());
-
-  // 3. Vẽ lại bảng để áp dụng bộ lọc
-  // Dòng này sẽ tự động bị ẩn đi vì trạng thái không còn khớp với bộ lọc hiện tại
-  table.draw(false);
-
-  // Cập nhật lại thông tin phân trang
-  updatePaginationInfo();
-}
 
   // Ban user
   $(document).on("click", ".ban-user", function (e) {
@@ -248,99 +251,109 @@ function updateRow(row, isActive, id) {
       type: "GET",
       headers: { sessionId: sessionId },
       success: function (response) {
-        if (response && response.length > 0) {
-          const wb = XLSX.utils.book_new();
-          const headerRow = [
-            "#",
-            "User ID",
-            "Username",
-            "Email",
-            "Phone Number",
-            "Role ID",
-            "Status",
-            "Is Forbidden",
-            "Created At",
-            "Updated At",
-            "Full Name",
-            "Date of Birth",
-            "Profile Phone",
-            "Gender",
-            "Address",
-            "Avatar URL",
-            "Favorites",
-          ];
-          const data = [headerRow];
-
-          response.forEach((user, index) => {
-            let favoritesData = "—";
-            if (user.favorites && user.favorites.length > 0) {
-              try {
-                favoritesData = JSON.stringify(user.favorites);
-              } catch (e) {
-                favoritesData = "Invalid favorites data";
-              }
-            }
-            const profile = user.profile || {};
-            const rowData = [
-              (index + 1).toString(),
-              user.id || "—",
-              user.username || "—",
-              user.email || "—",
-              user.phoneNumber || "—",
-              user.roleId || "—",
-              user.status ? "Active" : "Inactive",
-              user.isForbidden ? "Yes" : "No",
-              user.createdAt ? new Date(user.createdAt).toLocaleString() : "—",
-              user.updatedAt ? new Date(user.updatedAt).toLocaleString() : "—",
-              profile.fullName || "—",
-              profile.dateOfBirth || "—",
-              profile.phoneNumber || "—",
-              profile.gender || "—",
-              profile.address || "—",
-              profile.avatar || "—",
-              favoritesData,
-            ];
-            data.push(rowData);
-          });
-
-          const ws = XLSX.utils.aoa_to_sheet(data);
-          ws["!cols"] = [
-            { wch: 5 },
-            { wch: 25 },
-            { wch: 20 },
-            { wch: 30 },
-            { wch: 15 },
-            { wch: 25 },
-            { wch: 10 },
-            { wch: 12 },
-            { wch: 20 },
-            { wch: 20 },
-            { wch: 25 },
-            { wch: 15 },
-            { wch: 15 },
-            { wch: 10 },
-            { wch: 50 },
-            { wch: 70 },
-            { wch: 50 },
-          ];
-          XLSX.utils.book_append_sheet(wb, ws, "User List");
-          const today = new Date().toISOString().slice(0, 10);
-          const fileName = `user_list_${today}.xlsx`;
-          XLSX.writeFile(wb, fileName);
-          showTimedAlert(
-            "Export Successful!",
-            `${response.length} items have been exported to Excel.`,
-            "success",
-            1000
-          );
-        } else {
+        // Không có dữ liệu thì báo lỗi và dừng
+        if (!response || response.length === 0) {
           showTimedAlert(
             "Export Error!",
             "No user data available for export.",
             "error",
             1000
           );
+          return;
         }
+
+        // Có dữ liệu mới báo đang export
+        showInfoAlert(
+          "Exporting Data",
+          "Retrieving all user data for export...",
+          "OK"
+        );
+
+        const wb = XLSX.utils.book_new();
+        const headerRow = [
+          "#",
+          "User ID",
+          "Username",
+          "Email",
+          "Phone Number",
+          "Role ID",
+          "Status",
+          "Is Forbidden",
+          "Created At",
+          "Updated At",
+          "Full Name",
+          "Date of Birth",
+          "Profile Phone",
+          "Gender",
+          "Address",
+          "Avatar URL",
+          "Favorites",
+        ];
+        const data = [headerRow];
+
+        response.forEach((user, index) => {
+          let favoritesData = "—";
+          if (user.favorites && user.favorites.length > 0) {
+            try {
+              favoritesData = JSON.stringify(user.favorites);
+            } catch (e) {
+              favoritesData = "Invalid favorites data";
+            }
+          }
+          const profile = user.profile || {};
+          const rowData = [
+            (index + 1).toString(),
+            user.id || "—",
+            user.username || "—",
+            user.email || "—",
+            user.phoneNumber || "—",
+            user.roleId || "—",
+            user.status ? "Active" : "Inactive",
+            user.isForbidden ? "Yes" : "No",
+            user.createdAt ? new Date(user.createdAt).toLocaleString() : "—",
+            user.updatedAt ? new Date(user.updatedAt).toLocaleString() : "—",
+            profile.fullName || "—",
+            profile.dateOfBirth || "—",
+            profile.phoneNumber || "—",
+            profile.gender || "—",
+            profile.address || "—",
+            profile.avatar || "—",
+            favoritesData,
+          ];
+          data.push(rowData);
+        });
+
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        ws["!cols"] = [
+          { wch: 5 },
+          { wch: 25 },
+          { wch: 20 },
+          { wch: 30 },
+          { wch: 15 },
+          { wch: 25 },
+          { wch: 10 },
+          { wch: 12 },
+          { wch: 20 },
+          { wch: 20 },
+          { wch: 25 },
+          { wch: 15 },
+          { wch: 15 },
+          { wch: 10 },
+          { wch: 50 },
+          { wch: 70 },
+          { wch: 50 },
+        ];
+        XLSX.utils.book_append_sheet(wb, ws, "User List");
+        const today = new Date().toISOString().slice(0, 10);
+        const fileName = `user_list_${today}.xlsx`;
+        XLSX.writeFile(wb, fileName);
+
+        showTimedAlert(
+          "Export Successful!",
+          `${response.length} items have been exported to Excel.`,
+          "success",
+          1000
+        );
       },
       error: function (xhr, status, error) {
         console.error("Error fetching user data:", error);

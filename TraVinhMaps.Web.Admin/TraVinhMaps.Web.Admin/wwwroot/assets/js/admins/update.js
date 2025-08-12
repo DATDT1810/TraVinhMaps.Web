@@ -78,24 +78,20 @@ $(document).ready(function () {
 
     if (isActive) {
       actionCell.find(".restore-admin").replaceWith(`
-        <a class="delete delete-admin" href="javascript:void(0)" data-id="${id}" title="Delete">
-          <i class="fa fa-trash"></i>
-        </a>
-      `);
+      <a class="delete delete-admin" href="javascript:void(0)" data-id="${id}" title="Delete">
+        <i class="fa fa-trash"></i>
+      </a>
+    `);
     } else {
       actionCell.find(".delete-admin").replaceWith(`
-        <a class="restore restore-admin" href="javascript:void(0)" data-id="${id}" title="Restore">
-          <i class="fa fa-undo"></i>
-        </a>
-      `);
+      <a class="restore restore-admin" href="javascript:void(0)" data-id="${id}" title="Restore">
+        <i class="fa fa-undo"></i>
+      </a>
+    `);
     }
 
-    // Xoá row hiện tại nếu không còn phù hợp với filter → rồi vẽ lại
-    table.row(row).remove();
-
-    setTimeout(() => {
-      table.draw(false);
-    }, 100);
+    // Không xóa row, chỉ redraw để filter tự ẩn/hiện
+    table.row(row).invalidate().draw(false);
   }
 
   // Delete admin

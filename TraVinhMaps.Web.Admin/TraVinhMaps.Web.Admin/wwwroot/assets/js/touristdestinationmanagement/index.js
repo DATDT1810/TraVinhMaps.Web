@@ -172,13 +172,12 @@ $(document).ready(function () {
 
 // ------- Export Destinations to Excel ------- 
 const sessionId = "@sessionId";
-
 $("#destinationExportBtn").on("click", function () {
   showInfoAlert(
-    "Exporting Destinations",
-    "Retrieving all tourist destinations for export...",
-    "OK",
-    exportDestinationsToExcel
+      "Exporting Data",
+      "Retrieving all tourist destinations for export...",
+      "OK",
+      exportDestinationsToExcel 
   );
 });
 
@@ -194,166 +193,103 @@ function exportDestinationsToExcel() {
       console.log("API response received:", response);
       const destinations = response.data || [];
 
-      if (destinations.length > 0) {
-        try {
-          const wb = XLSX.utils.book_new();
-          const headerRow = [
-            "#",
-            "ID",
-            "Name",
-            "Average Rating",
-            "Favorite Count",
-            "Description",
-            "Address",
-            "Location Type",
-            "Coordinates",
-            "Images",
-            "History Story Content",
-            "History Story Images",
-            "Destination Type ID",
-            "Opening Hours",
-            "Capacity",
-            "Contact Phone",
-            "Contact Email",
-            "Contact Website",
-            "Tag ID",
-            "Ticket",
-            "Status",
-            "Created At",
-            "Updated At",
-          ];
-          const data = [headerRow];
-
-          destinations.forEach((destination, index) => {
-            let imagesStr = "—";
-            if (destination.images && destination.images.length > 0) {
-              imagesStr = destination.images.join("\n");
-            }
-            let historyStoryContent = "—";
-            let historyStoryImages = "—";
-            if (destination.historyStory) {
-              historyStoryContent = destination.historyStory.content || "—";
-              if (
-                destination.historyStory.images &&
-                destination.historyStory.images.length > 0
-              ) {
-                historyStoryImages = destination.historyStory.images.join("\n");
-              }
-            }
-            let coordinatesStr = "—";
-            if (
-              destination.location &&
-              destination.location.coordinates &&
-              destination.location.coordinates.length >= 2
-            ) {
-              coordinatesStr = `[${destination.location.coordinates[0]}, ${destination.location.coordinates[1]}]`;
-            }
-            let openingHoursStr = "—";
-            if (destination.openingHours) {
-              openingHoursStr = `${
-                destination.openingHours.openTime || "—"
-              } - ${destination.openingHours.closeTime || "—"}`;
-            }
-            let contactPhone = "—",
-              contactEmail = "—",
-              contactWebsite = "—";
-            if (destination.contact) {
-              contactPhone = destination.contact.phone || "—";
-              contactEmail = destination.contact.email || "—";
-              contactWebsite = destination.contact.website || "—";
-            }
-
-            const rowData = [
-              (index + 1).toString(),
-              destination.id || "—",
-              destination.name || "—",
-              destination.avarageRating !== undefined
-                ? destination.avarageRating.toFixed(2)
-                : "—",
-              destination.favoriteCount !== undefined
-                ? destination.favoriteCount
-                : "—",
-              destination.description || "—",
-              destination.address || "—",
-              destination.location?.type || "—",
-              coordinatesStr,
-              imagesStr,
-              historyStoryContent,
-              historyStoryImages,
-              destination.destinationTypeId || "—",
-              openingHoursStr,
-              destination.capacity || "—",
-              contactPhone,
-              contactEmail,
-              contactWebsite,
-              destination.tagId || "—",
-              destination.ticket || "—",
-              destination.status ? "Active" : "Inactive",
-              destination.createdAt
-                ? new Date(destination.createdAt).toLocaleString()
-                : "—",
-              destination.updateAt
-                ? new Date(destination.updateAt).toLocaleString()
-                : "—",
-            ];
-            data.push(rowData);
-          });
-
-          const ws = XLSX.utils.aoa_to_sheet(data);
-          ws["!cols"] = [
-            { wch: 5 },
-            { wch: 25 },
-            { wch: 30 },
-            { wch: 15 },
-            { wch: 15 },
-            { wch: 60 },
-            { wch: 50 },
-            { wch: 15 },
-            { wch: 25 },
-            { wch: 100 },
-            { wch: 100 },
-            { wch: 100 },
-            { wch: 25 },
-            { wch: 20 },
-            { wch: 15 },
-            { wch: 20 },
-            { wch: 30 },
-            { wch: 50 },
-            { wch: 25 },
-            { wch: 20 },
-            { wch: 10 },
-            { wch: 20 },
-            { wch: 20 },
-          ];
-          const rowCount = data.length;
-          ws["!rows"] = [];
-          for (let i = 0; i < rowCount; i++) ws["!rows"][i] = { hpt: 25 };
-
-          XLSX.utils.book_append_sheet(wb, ws, "Tourist Destinations");
-          const today = new Date().toISOString().slice(0, 10);
-          const fileName = `tourist_destinations_${today}.xlsx`;
-          XLSX.writeFile(wb, fileName);
-
-          showTimedAlert(
-            "Export Successful!",
-            `${destinations.length} destinations have been exported to Excel.`,
-            "success",
-            1000
-          );
-        } catch (ex) {
-          console.error("Error during Excel creation:", ex);
-          showTimedAlert(
-            "Export Error",
-            `Error creating Excel file: ${ex.message}`,
-            "error",
-            1000
-          );
-        }
-      } else {
+      // Nếu không có data => báo lỗi và dừng
+      if (destinations.length === 0) {
         showTimedAlert(
           "Export Warning!",
           "No destinations found for export.",
           "warning",
+          1000
+        );
+        return;
+      }
+
+      // Có dữ liệu mới báo đang export
+      showInfoAlert(
+        "Exporting Destinations",
+        "Retrieving all tourist destinations for export...",
+        "OK"
+      );
+
+      try {
+        const wb = XLSX.utils.book_new();
+        const headerRow = [
+          "#", "ID", "Name", "Average Rating", "Favorite Count", "Description", "Address",
+          "Location Type", "Coordinates", "Images", "History Story Content", "History Story Images",
+          "Destination Type ID", "Opening Hours", "Capacity", "Contact Phone", "Contact Email",
+          "Contact Website", "Tag ID", "Ticket", "Status", "Created At", "Updated At"
+        ];
+        const data = [headerRow];
+
+        destinations.forEach((destination, index) => {
+          let imagesStr = destination.images?.length > 0
+            ? destination.images.join("\n") : "—";
+          let historyStoryContent = destination.historyStory?.content || "—";
+          let historyStoryImages = destination.historyStory?.images?.length > 0
+            ? destination.historyStory.images.join("\n") : "—";
+          let coordinatesStr = (destination.location?.coordinates?.length >= 2)
+            ? `[${destination.location.coordinates[0]}, ${destination.location.coordinates[1]}]` : "—";
+          let openingHoursStr = destination.openingHours
+            ? `${destination.openingHours.openTime || "—"} - ${destination.openingHours.closeTime || "—"}`
+            : "—";
+          let contactPhone = destination.contact?.phone || "—";
+          let contactEmail = destination.contact?.email || "—";
+          let contactWebsite = destination.contact?.website || "—";
+
+          const rowData = [
+            (index + 1).toString(),
+            destination.id || "—",
+            destination.name || "—",
+            destination.avarageRating !== undefined ? destination.avarageRating.toFixed(2) : "—",
+            destination.favoriteCount ?? "—",
+            destination.description || "—",
+            destination.address || "—",
+            destination.location?.type || "—",
+            coordinatesStr,
+            imagesStr,
+            historyStoryContent,
+            historyStoryImages,
+            destination.destinationTypeId || "—",
+            openingHoursStr,
+            destination.capacity || "—",
+            contactPhone,
+            contactEmail,
+            contactWebsite,
+            destination.tagId || "—",
+            destination.ticket || "—",
+            destination.status ? "Active" : "Inactive",
+            destination.createdAt ? new Date(destination.createdAt).toLocaleString() : "—",
+            destination.updateAt ? new Date(destination.updateAt).toLocaleString() : "—",
+          ];
+          data.push(rowData);
+        });
+
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        ws["!cols"] = [
+          { wch: 5 }, { wch: 25 }, { wch: 30 }, { wch: 15 }, { wch: 15 }, { wch: 60 },
+          { wch: 50 }, { wch: 15 }, { wch: 25 }, { wch: 100 }, { wch: 100 }, { wch: 100 },
+          { wch: 25 }, { wch: 20 }, { wch: 15 }, { wch: 20 }, { wch: 30 }, { wch: 50 },
+          { wch: 25 }, { wch: 20 }, { wch: 10 }, { wch: 20 }, { wch: 20 }
+        ];
+        ws["!rows"] = Array(data.length).fill({ hpt: 25 });
+
+        XLSX.utils.book_append_sheet(wb, ws, "Tourist Destinations");
+        const today = new Date().toISOString().slice(0, 10);
+        const fileName = `tourist_destinations_${today}.xlsx`;
+        XLSX.writeFile(wb, fileName);
+
+        showTimedAlert(
+          "Export Successful!",
+          `${destinations.length} destinations have been exported to Excel.`,
+          "success",
+          1000
+        );
+      } catch (ex) {
+        console.error("Error during Excel creation:", ex);
+        showTimedAlert(
+          "Export Error",
+          `Error creating Excel file: ${ex.message}`,
+          "error",
           1000
         );
       }
@@ -362,11 +298,10 @@ function exportDestinationsToExcel() {
       console.error("API Error Details:", status, error);
       let errorMessage =
         "Could not retrieve destination data. Please check your connection or permissions.";
-      if (xhr.status === 401)
-        errorMessage = "Unauthorized access. Please log in again.";
-      else if (xhr.status === 403)
-        errorMessage = "You do not have permission to perform this action.";
+      if (xhr.status === 401) errorMessage = "Unauthorized access. Please log in again.";
+      else if (xhr.status === 403) errorMessage = "You do not have permission to perform this action.";
       showTimedAlert("Export Error!", errorMessage, "error", 1000);
     },
   });
 }
+

@@ -1170,10 +1170,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (!files || files.length === 0) return;
       
-      if (files.length > 5) {
+      if (files.length > 8) {
         validationMessage.textContent = translateText(
           "You can upload a maximum of %s images."
-        ).replace("%s", "5");
+        ).replace("%s", "8");
         uploadInput.value = "";
         return;
       }
@@ -1188,7 +1188,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (hasInvalidFormat) {
         validationMessage.textContent = translateText(
-          "Please upload valid image files only (e.g., JPG, PNG, GIF)."
+          "Please upload valid image files only (e.g., JPG, PNG)."
         );
         uploadInput.value = "";
         return;

@@ -40,13 +40,14 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="form theme-form">
-                            <form asp-action="CreateOcopTypePost" method="post" enctype="multipart/form-data">
+                            <form asp-action="CreateOcopTypePost" id="create_form" method="post"
+                                enctype="multipart/form-data">
                                 <div class="row">
                                     <div class="col">
                                         <div class="mb-3">
                                             <label>Ocop Type Name</label>
                                             <input asp-for="OcopTypeName" class="form-control" type="text"
-                                                placeholder="Name of OCOP type">
+                                                placeholder="Name of OCOP type" required>
                                             <span asp-validation-for="OcopTypeName" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -54,9 +55,9 @@
                                 <div class="row">
                                     <div class="col">
                                         <div class="text-end">
-                                            <a asp-action="Index"
-                                                class="btn btn-cancel">Cancel</a>
-                                            <button type="submit" class="btn btn-success me-3">Create OCOP Type</button>
+                                            <a asp-action="Index" class="btn btn-cancel">Cancel</a>
+                                            <button type="submit" id="create_btn" class="btn btn-success me-3">Create
+                                                OCOP Type</button>
                                         </div>
                                     </div>
                                 </div>
@@ -81,6 +82,24 @@
             if (alert) {
                 alert.style.display = "none";
             }
-        }, 5000); 
+        }, 2000);
+
+        // check create button
+        const create_form = document.getElementById('create_form');
+        if (create_form) {
+            create_form.addEventListener('submit', function (e) {
+                if (!this.checkValidity()) {
+                    e.preventDefault(); // Dừng submit
+                    e.stopPropagation();
+                    return;
+                }
+                const create_btn = document.getElementById('create_btn');
+                if (create_btn) {
+                    create_btn.disabled = true;
+                    create_btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating...';
+                }
+            });
+        }
+
     </script>
 }

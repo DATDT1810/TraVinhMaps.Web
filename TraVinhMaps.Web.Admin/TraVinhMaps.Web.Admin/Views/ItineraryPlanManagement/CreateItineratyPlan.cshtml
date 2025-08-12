@@ -36,12 +36,12 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="form theme-form">
-                            <form asp-action="CreateItineratyPlan" method="post">
+                            <form id="create_form" asp-action="CreateItineratyPlan" method="post">
                                 <div class="row">
                                     <div class="mb-3">
                                         <label>Itinerary Plan Title</label>
                                         <input asp-for="Name" class="form-control" type="text"
-                                            placeholder="Itinerary Plan title">
+                                            placeholder="Itinerary Plan title" required>
                                         <span asp-validation-for="Name" class="text-danger"></span>
                                     </div>
                                 </div>
@@ -92,7 +92,8 @@
                                     <div class="col">
                                         <div class="text-end">
                                             <a asp-action="Index" class="btn btn-cancel">Cancel</a>
-                                            <button type="submit" class="btn btn-success me-3">Create Itinerary
+                                            <button id="create_btn" type="submit" class="btn btn-success me-3">Create
+                                                Itinerary
                                                 Plan</button>
                                         </div>
                                     </div>
@@ -189,8 +190,8 @@
                 console.log("event detail:", e.detail);
             });
 
-                // bind events
-                tagify.on("add", onAddTag);
+            // bind events
+            tagify.on("add", onAddTag);
             tagify.DOM.input.addEventListener("focus", onSelectFocus);
         });
     </script>
@@ -218,6 +219,24 @@
                 <text>
                     showTimedAlert("Error!", "@TempData["errorMessage"]", "error", 1000);
                 </text>
+        }
+
+        // check create button
+            const create_form = document.getElementById("create_form");
+        if (create_form) {
+            create_form.addEventListener("submit", function (e) {
+                if (!this.checkValidity()) {
+                    e.preventDefault(); // Dừng submit
+                    e.stopPropagation();
+                    return;
+                }
+                const create_btn = document.getElementById("create_btn");
+                if (create_btn) {
+                    create_btn.disabled = true;
+                    create_btn.innerHTML =
+                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating...';
+                }
+            });
         }
     </script>
 }

@@ -1,7 +1,7 @@
 @using TraVinhMaps.Web.Admin.Models.Admins
 @model AdminRequest
 @{
-     // ViewData["Title"] = "Create"; 
+    // ViewData["Title"] = "Create";
 }
 
 <div class="page-body">
@@ -35,7 +35,7 @@
                                         <div class="mb-3">
                                             <label asp-for="Email" class="form-label">Email</label>
                                             <input asp-for="Email" class="form-control" type="email"
-                                                placeholder="Enter email *">
+                                                placeholder="Enter email *" required>
                                             <span asp-validation-for="Email" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -52,7 +52,8 @@
                                         <div class="text-end">
                                             <a asp-controller="Admin" asp-action="Index"
                                                 class="btn btn-cancel">Cancel</a>
-                                            <button type="submit" class="btn btn-success me-3">Create</button>
+                                            <button type="submit" id="create_btn"
+                                                class="btn btn-success me-3">Create</button>
                                         </div>
                                     </div>
                                 </div>
@@ -69,4 +70,24 @@
     <partial name="_ValidationScriptsPartial" />
     <script src="~/assets/js/sweetalert-custom.js"></script>
     <script src="~/assets/js/admins/create.js"></script>
+    <script>
+        const createAdminForm = document.getElementById('createAdminForm');
+        if (createAdminForm) {
+            createAdminForm.addEventListener('submit', function (e) {
+                // Nếu form không hợp lệ => dừng lại, không disable nút
+                if (!createAdminForm.checkValidity()) {
+                    e.preventDefault(); // Ngăn submit
+                    e.stopPropagation();
+                    return;
+                }
+
+                const create_btn = document.getElementById('create_btn');
+                if (create_btn) {
+                    create_btn.disabled = true;
+                    create_btn.innerHTML =
+                        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating...';
+                }
+            });
+        }
+    </script>
 }

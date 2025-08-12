@@ -43,19 +43,26 @@ namespace TraVinhMaps.Web.Admin.Services.Review
         }
         public async Task<long> CountAsync(Expression<Func<ReviewResponse, bool>> predicate = null, CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync(reviewApi + "CountReviews");
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var contentResult = await response.Content.ReadAsStringAsync(cancellationToken);
-                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var result = System.Text.Json.JsonSerializer.Deserialize<ApiResponse<long>>(contentResult, option);
-                return result.Data;
+                var response = await _httpClient.GetAsync(reviewApi + "CountReviews");
+                if (response.IsSuccessStatusCode)
+                {
+                    var contentResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                    var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var result = System.Text.Json.JsonSerializer.Deserialize<ApiResponse<long>>(contentResult, option);
+                    return result.Data;
+                }
+                else
+                {
+                    var errorResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                var errorResult = await response.Content.ReadAsStringAsync(cancellationToken);
-                throw new HttpRequestException($"Unable to fetch count review. Status: {response.StatusCode}, Error: {errorResult}");
+                return 0;
             }
+            return 0;
         }
         public async Task<long> GetTotalUsersReviewedAsync(CancellationToken cancellationToken = default)
         {
