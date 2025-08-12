@@ -99,9 +99,11 @@ namespace TraVinhMaps.Web.Admin.Controllers
             if (data == null)
             {
                 ViewBag.error = "Something went wrong, please try again";
+                TempData["CreateDestinationError"] = "Failed to add the destination!";
                 return View(touristDestinationViewRequest);
             }
             ViewBag.DestinationTypes = await GetDestinationTypeList();
+            TempData["CreateDestinationSuccess"] = "The destination was created successfully!";
             return RedirectToAction("Index");
         }
 

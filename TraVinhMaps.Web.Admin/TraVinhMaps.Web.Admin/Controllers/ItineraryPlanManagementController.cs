@@ -66,6 +66,13 @@ namespace TraVinhMaps.Web.Admin.Controllers
             if (!ModelState.IsValid)
             {
                 TempData["errorMessage"] = "Create itinerary plan failed, please try again";
+                ViewBag.DestinationList = await GetDestinationNamesAsync(); ;
+                return View(itineraryPlanRequestViewModel);
+            }
+            if (itineraryPlanRequestViewModel.Locations == null || itineraryPlanRequestViewModel.Locations == "")
+            {
+                TempData["errorMessage"] = "Add at least 2 Destination, please try again";
+                ViewBag.DestinationList = await GetDestinationNamesAsync(); ;
                 return View(itineraryPlanRequestViewModel);
             }
             List<string> listDestination = JsonSerializer.Deserialize<List<string>>(itineraryPlanRequestViewModel.Locations);

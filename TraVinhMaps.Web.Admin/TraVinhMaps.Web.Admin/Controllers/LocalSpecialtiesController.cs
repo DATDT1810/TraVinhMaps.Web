@@ -196,9 +196,9 @@ namespace TraVinhMaps.Web.Admin.Controllers
             }
             else
             {
-                if (request.Images.Count > 5)
+                if (request.Images.Count > 8)
                 {
-                    TempData["CreateLocalSpecialtiesError"] = "You can upload a maximum of 5 images.";
+                    TempData["CreateLocalSpecialtiesError"] = "You can upload a maximum of 8 images.";
                     return View(request);
                 }
 

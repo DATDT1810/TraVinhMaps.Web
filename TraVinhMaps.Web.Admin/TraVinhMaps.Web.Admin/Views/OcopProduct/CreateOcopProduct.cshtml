@@ -35,8 +35,8 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="form theme-form">
-                            <form asp-controller="OcopProduct" asp-action="CreateOcopProductPost" method="post"
-                                enctype="multipart/form-data">
+                            <form id="create_form" asp-controller="OcopProduct" asp-action="CreateOcopProductPost"
+                                method="post" enctype="multipart/form-data">
                                 @Html.AntiForgeryToken()
 
                                 <div class="row">
@@ -53,8 +53,9 @@
                                     <div class="col">
                                         <div class="mb-3">
                                             <label asp-for="ProductDescription">Product Description</label>
-                                            <textarea asp-for="ProductDescription" id="Description" class="form-control wysiwyg-editor"
-                                                placeholder="Description of product" rows="10"></textarea>
+                                            <textarea asp-for="ProductDescription" id="Description"
+                                                class="form-control wysiwyg-editor" placeholder="Description of product"
+                                                rows="10"></textarea>
                                             <span asp-validation-for="ProductDescription" class="text-danger"></span>
                                         </div>
                                     </div>
@@ -167,7 +168,8 @@
                                             <div class="text-end">
                                                 <a asp-action="Index" asp-controller="OcopProduct"
                                                     class="btn btn-cancel">Cancel</a>
-                                                <button type="submit" class="btn btn-success me-3">Create
+                                                <button id="create_btn" type="submit"
+                                                    class="btn btn-success me-3">Create
                                                     OCOP
                                                     Product</button>
                                             </div>
@@ -200,7 +202,22 @@
             if (alert) {
                 alert.style.display = "none";
             }
-        }, 1000); 
+        }, 1000);
+
+        const create_form = document.getElementById('create_form');
+        if (create_form) {
+            create_form.addEventListener('submit', function (e) {
+                if (!$(this).valid()) {
+                    e.preventDefault(); // Chặn submit nếu invalid
+                    return;
                 }
+                const create_btn = document.getElementById('create_btn');
+                if (create_btn) {
+                    create_btn.disabled = true;
+                    create_btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating...';
+                }
+            });
+        }
+
     </script>
 }

@@ -138,19 +138,20 @@ function stripHtml(html) {
   tmp.innerHTML = html;
   let text = tmp.textContent || tmp.innerText || "—";
   // Thay thế \r\n bằng dấu xuống dòng thực tế cho Excel
-  return text.replace(/\r\n/g, '\n');
+  return text.replace(/\r\n/g, "\n");
 }
 
 // Get session ID from Razor
 const sessionId = "@sessionId";
 
-// Handle export button click
 $("#tipsExportBtn").on("click", function () {
   showInfoAlert(
     "Exporting Tips",
     "Retrieving all community tips for export...",
     "OK",
-    exportTipsToExcel
+    function () {
+      exportTipsToExcel();
+    }
   );
 });
 
@@ -160,128 +161,111 @@ function exportTipsToExcel() {
     type: "GET",
     headers: {
       sessionId: sessionId,
-      "X-CSRF-TOKEN": $('input[name="__RequestVerificationToken"]').val()
+      "X-CSRF-TOKEN": $('input[name="__RequestVerificationToken"]').val(),
     },
     success: function (response) {
-      console.log("API response received:", JSON.stringify(response, null, 2));
+      let tips = Array.isArray(response) ? response : response.data || [];
 
-      // Extract tips: handle both flat array and object with data property
-      let tips = Array.isArray(response) ? response : (response.data || []);
-
-      // Debug: Log response details
-      if (!response) {
-        console.error("Response is null or undefined.");
-      } else if (Array.isArray(response)) {
-        console.log("Response is a flat array with", response.length, "tips.");
-      } else if (!response.data) {
-        console.warn("Warning: response.data is undefined or null. Full response:", JSON.stringify(response, null, 2));
-      } else if (response.data.length === 0) {
-        console.warn("Warning: response.data is an empty array.");
-      }
-
-      if (tips.length > 0) {
-        try {
-          // Create a workbook
-          const wb = XLSX.utils.book_new();
-
-          // Create header row with all fields from CommunityTipsResponse
-          const headerRow = [
-            "No.",
-            "ID",
-            "Title",
-            "Content",
-            "Tag ID",
-            "Tag Name",
-            "Status",
-            "Created At",
-            "Updated At"
-          ];
-
-          const data = [headerRow];
-
-          // Process the tip data
-          tips.forEach((tip, index) => {
-            const rowData = [
-              (index + 1).toString(),
-              tip.id || "—",
-              stripHtml(tip.title) || "—",
-              stripHtml(tip.content) || "—",
-              tip.tagId || "—",
-              tip.tagName || "—", // Handle missing tagName
-              tip.status ? "Active" : "Inactive",
-              tip.createdAt ? new Date(tip.createdAt).toLocaleString() : "—",
-              tip.updateAt ? new Date(tip.updateAt).toLocaleString() : "—"
-            ];
-
-            data.push(rowData);
-          });
-
-          // Create worksheet from data
-          const ws = XLSX.utils.aoa_to_sheet(data);
-
-          // Set column widths for better readability
-          ws['!cols'] = [
-            { wch: 5 },   // No.
-            { wch: 25 },  // ID
-            { wch: 40 },  // Title
-            { wch: 80 },  // Content
-            { wch: 25 },  // Tag ID
-            { wch: 20 },  // Tag Name
-            { wch: 10 },  // Status
-            { wch: 20 },  // Created At
-            { wch: 20 }   // Updated At
-          ];
-
-          // Configure row heights to accommodate multiline text
-          const rowCount = data.length;
-          ws['!rows'] = [];
-          for (let i = 0; i < rowCount; i++) {
-            ws['!rows'][i] = { hpt: 40 }; // Increased row height
-          }
-
-          // Add the worksheet to the workbook
-          XLSX.utils.book_append_sheet(wb, ws, "Community Tips");
-
-          // Generate Excel file and trigger download
-          const today = new Date().toISOString().slice(0, 10);
-          const fileName = `community_tips_${today}.xlsx`;
-          XLSX.writeFile(wb, fileName);
-
-          showTimedAlert(
-            "Export Successful!",
-            `${tips.length} tips have been exported to Excel.`,
-            "success",
-            1000
-          );
-        } catch (ex) {
-          console.error("Error during Excel creation:", ex);
-          showTimedAlert(
-            "Export Error",
-            `Error creating Excel file: ${ex.message}`,
-            "error",
-            1000
-          );
-        }
-      } else {
+      // Nếu không có dữ liệu thì cảnh báo và dừng
+      if (!tips || tips.length === 0) {
         showTimedAlert(
           "Export Warning!",
-          "No tips found for export.",
+          "No tips data available for export.",
           "warning",
+          1000
+        );
+        return;
+      }
+
+      // ✅ Chỉ show thông báo này khi chắc chắn có dữ liệu
+      showInfoAlert(
+        "Exporting Tips",
+        "Retrieving all community tips for export...",
+        "OK"
+      );
+
+      // --- Phần xuất Excel giữ nguyên như code gốc ---
+      try {
+        const wb = XLSX.utils.book_new();
+        const headerRow = [
+          "No.",
+          "ID",
+          "Title",
+          "Content",
+          "Tag ID",
+          "Tag Name",
+          "Status",
+          "Created At",
+          "Updated At",
+        ];
+        const data = [headerRow];
+
+        tips.forEach((tip, index) => {
+          const rowData = [
+            (index + 1).toString(),
+            tip.id || "—",
+            stripHtml(tip.title) || "—",
+            stripHtml(tip.content) || "—",
+            tip.tagId || "—",
+            tip.tagName || "—",
+            tip.status ? "Active" : "Inactive",
+            tip.createdAt ? new Date(tip.createdAt).toLocaleString() : "—",
+            tip.updateAt ? new Date(tip.updateAt).toLocaleString() : "—",
+          ];
+          data.push(rowData);
+        });
+
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        ws["!cols"] = [
+          { wch: 5 },
+          { wch: 25 },
+          { wch: 40 },
+          { wch: 80 },
+          { wch: 25 },
+          { wch: 20 },
+          { wch: 10 },
+          { wch: 20 },
+          { wch: 20 },
+        ];
+        ws["!rows"] = Array(data.length).fill({ hpt: 40 });
+
+        XLSX.utils.book_append_sheet(wb, ws, "Community Tips");
+
+        const today = new Date().toISOString().slice(0, 10);
+        const fileName = `community_tips_${today}.xlsx`;
+        XLSX.writeFile(wb, fileName);
+
+        showTimedAlert(
+          "Export Successful!",
+          `${tips.length} tips have been exported to Excel.`,
+          "success",
+          1000
+        );
+      } catch (ex) {
+        console.error("Error during Excel creation:", ex);
+        showTimedAlert(
+          "Export Error",
+          `Error creating Excel file: ${ex.message}`,
+          "error",
           1000
         );
       }
     },
     error: function (xhr, status, error) {
       console.error("API Error Details:", status, error, xhr.responseText);
-      let errorMessage = "Could not retrieve tip data. Please check your connection or permissions.";
+      let errorMessage =
+        "Could not retrieve tip data. Please check your connection or permissions.";
       if (xhr.status === 401) {
         errorMessage = "Unauthorized access. Please log in again.";
       } else if (xhr.status === 403) {
         errorMessage = "You do not have permission to perform this action.";
       } else if (xhr.status === 404) {
-        errorMessage = "API endpoint not found. Verify the URL: " + window.apiBaseUrl + "/api/CommunityTips/GetAllTip";
+        errorMessage =
+          "API endpoint not found. Verify the URL: " +
+          window.apiBaseUrl +
+          "/api/CommunityTips/GetAllTip";
       }
       showTimedAlert("Export Error!", errorMessage, "error", 1000);
-    }
+    },
   });
 }

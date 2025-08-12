@@ -35,7 +35,7 @@
     </div>
     <!-- Container-fluid starts-->
     <div class="container-fluid">
-        <form asp-action="CreateCompanyPost" method="post" enctype="multipart/form-data">
+        <form asp-action="CreateCompanyPost" id="create_form" method="post" enctype="multipart/form-data">
             <div class="row">
                 <!-- Left Column Card -->
                 <div class="col-md-4">
@@ -44,28 +44,24 @@
                             <h5>Basic Information</h5>
                         </div>
                         <div class="card-body">
-                              <div class="mb-3" style="width: 100%;">
+                            <div class="mb-3" style="width: 100%;">
                                 <label>Company Name</label>
-                                <input asp-for="Name" class="form-control" type="text"
-                                    placeholder="Name of company">
+                                <input asp-for="Name" class="form-control" type="text" placeholder="Name of company" required>
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
-                             <div class="mb-3" style="width: 100%;">
+                            <div class="mb-3" style="width: 100%;">
                                 <label>Phone</label>
-                                <input asp-for="Contact.Phone" class="form-control"
-                                    placeholder="Phone number" />
+                                <input asp-for="Contact.Phone" class="form-control" placeholder="Phone number" />
                                 <span asp-validation-for="Contact.Phone" class="text-danger"></span>
                             </div>
-                             <div class="mb-3" style="width: 100%;">
+                            <div class="mb-3" style="width: 100%;">
                                 <label>Email</label>
-                                <input asp-for="Contact.Email" class="form-control"
-                                    placeholder="Email address" />
+                                <input asp-for="Contact.Email" class="form-control" placeholder="Email address" />
                                 <span asp-validation-for="Contact.Email" class="text-danger"></span>
                             </div>
                             <div class="mb-3" style="width: 100%;">
                                 <label>Website</label>
-                                <input asp-for="Contact.Website" class="form-control"
-                                    placeholder="Website URL" />
+                                <input asp-for="Contact.Website" class="form-control" placeholder="Website URL" />
                                 <span asp-validation-for="Contact.Website" class="text-danger"></span>
                             </div>
                         </div>
@@ -74,15 +70,18 @@
                 <!-- Right Column Card -->
                 <div class="col-md-8">
                     <div class="card">
-                         <div class="card-header">
+                        <div class="card-header">
                             <h5>Address & Location</h5>
                         </div>
                         <div class="card-body">
-                             <div id="mapContainer" style="height: 400px; width: 100%; margin-bottom: 20px; border-radius: 8px;"></div>
+                            <div id="mapContainer"
+                                style="height: 400px; width: 100%; margin-bottom: 20px; border-radius: 8px;"></div>
                             <div class="mb-3">
                                 <label>Company Address</label>
-                                <input id="Address" asp-for="Address" class="form-control" type="text" placeholder="Start typing an address..." autocomplete="off">
-                                <div id="suggestionsContainer" class="list-group" style="position: absolute; z-index: 1000; width: 95%;"></div>
+                                <input id="Address" asp-for="Address" class="form-control" type="text"
+                                    placeholder="Start typing an address..." autocomplete="off">
+                                <div id="suggestionsContainer" class="list-group"
+                                    style="position: absolute; z-index: 1000; width: 95%;"></div>
                                 <span asp-validation-for="Address" class="text-danger"></span>
                             </div>
                             <div class="mb-3">
@@ -94,14 +93,16 @@
                                             <div class="col-md-6 mb-2">
                                                 <label>Latitude</label>
                                                 <input id="latitude" name="Locations[0].Latitude" class="form-control"
-                                                    value="@(Model.Locations.Any() ? Model.Locations[0].Latitude : "0")" readonly/>
+                                                    value="@(Model.Locations.Any() ? Model.Locations[0].Latitude : "0")"
+                                                    readonly />
                                                 <span class="text-danger"
                                                     asp-validation-for="Locations[0].Latitude"></span>
                                             </div>
                                             <div class="col-md-6 mb-2">
                                                 <label>Longitude</label>
                                                 <input id="longitude" name="Locations[0].Longitude" class="form-control"
-                                                    value="@(Model.Locations.Any() ? Model.Locations[0].Longitude : "0")" readonly/>
+                                                    value="@(Model.Locations.Any() ? Model.Locations[0].Longitude : "0")"
+                                                    readonly />
                                                 <span class="text-danger"
                                                     asp-validation-for="Locations[0].Longitude"></span>
                                             </div>
@@ -118,7 +119,7 @@
                 <div class="col">
                     <div class="text-end mt-3">
                         <a asp-action="Index" class="btn btn-cancel">Cancel</a>
-                        <button type="submit" class="btn btn-success me-3">Create Company</button>
+                        <button type="submit" id="create_btn" class="btn btn-success me-3">Create Company</button>
                     </div>
                 </div>
             </div>
@@ -131,7 +132,7 @@
     @Html.AntiForgeryToken()
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    
+
     <!-- HERE Maps API -->
     <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js" type="text/javascript" charset="utf-8"></script>
     <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js" type="text/javascript" charset="utf-8"></script>
@@ -178,8 +179,8 @@
             window.addEventListener('resize', () => map.getViewPort().resize());
 
             addMarkerToMap(latitude, longitude);
-            
-            map.addEventListener('tap', function(evt) {
+
+            map.addEventListener('tap', function (evt) {
                 const coord = map.screenToGeo(evt.currentPointer.viewportX, evt.currentPointer.viewportY);
                 updateMarker(coord.lat, coord.lng);
                 reverseGeocode(coord);
@@ -277,7 +278,7 @@
                     });
             });
 
-             document.addEventListener('click', function(e) {
+            document.addEventListener('click', function (e) {
                 if (e.target.id !== 'Address') {
                     suggestionsContainer.innerHTML = '';
                 }
@@ -304,18 +305,18 @@
                 });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const initialLat = parseFloat(document.getElementById('latitude').value) || 9.9503;
             const initialLng = parseFloat(document.getElementById('longitude').value) || 106.3415;
             initMap(initialLat, initialLng);
             setupAutocomplete();
-            
+
             if (document.getElementById('latitude').value !== "0" && document.getElementById('longitude').value !== "0") {
-                 reverseGeocode({lat: initialLat, lng: initialLng});
+                reverseGeocode({ lat: initialLat, lng: initialLng });
             }
 
             const form = document.querySelector('form');
-            form.addEventListener('submit', function(event) {
+            form.addEventListener('submit', function (event) {
                 const address = document.getElementById('Address').value;
                 const latitude = document.getElementById('latitude').value;
                 const longitude = document.getElementById('longitude').value;
@@ -334,6 +335,24 @@
                 }
             });
         });
+
+
+        const create_form = document.getElementById('create_form');
+        if (create_form) {
+            create_form.addEventListener('submit', function (e) {
+                if (!this.checkValidity()) {
+                    e.preventDefault(); // Dừng submit
+                    e.stopPropagation();
+                    return;
+                }
+                const create_btn = document.getElementById('create_btn');
+                if (create_btn) {
+                    create_btn.disabled = true;
+                    create_btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating...';
+                }
+            });
+        }
+
     </script>
 }
 @inject IConfiguration Configuration

@@ -49,13 +49,7 @@ function exportNotificationsToExcel() {
 
       /* ---------- Tạo workbook ---------- */
       const wb = XLSX.utils.book_new();
-      const header = [
-            "No.",
-            "ID",
-            "Title",
-            "Content",
-            "Created At",
-          ];
+      const header = ["No.", "ID", "Title", "Content", "Created At"];
       const rows = [header];
 
       resp.forEach((n, i) =>
@@ -93,5 +87,22 @@ function exportNotificationsToExcel() {
         "error",
         1000
       ),
+  });
+}
+
+const create_form = document.getElementById("create_form");
+if (create_form) {
+  create_form.addEventListener("submit", function (e) {
+    if (!this.checkValidity()) {
+      e.preventDefault(); // Dừng submit
+      e.stopPropagation();
+      return;
+    }
+    const create_btn = document.getElementById("create_btn");
+    if (create_btn) {
+      create_btn.disabled = true;
+      create_btn.innerHTML =
+        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating...';
+    }
   });
 }

@@ -36,7 +36,6 @@
 
 
 // Export OCOP type to Excel
-// Get session ID
 const sessionId = "@sessionId";
 
 // Handle Excel export button click
@@ -49,115 +48,77 @@ $("#exportOcopTypeBtn").on("click", function () {
   );
 });
 
-
-// Function to export OCOP type to Excel
 function exportOcopProductsToExcel() {
-  // Debug: Check if sessionId exists
   if (!sessionId) {
     console.error("Error: sessionId is missing or undefined");
     showTimedAlert(
       "Export Error",
-      "Session ID is missing. Please log in again."
+      "Session ID is missing. Please log in again.",
+      "error",
+      1000
     );
     return;
   }
 
-  // Fetch all OCOP type data from API
   $.ajax({
     url: window.apiBaseUrl + "api/OcopType/GetAllOcopType",
     type: "GET",
-    headers: {
-      sessionId: sessionId,
-    },
+    headers: { sessionId: sessionId },
     success: function (response) {
       console.log("API response received:", response);
 
-      // Extract ocop type from the data field in the response
-      const ocopType = response.data || [];
+      const ocopType = Array.isArray(response?.data) ? response.data : [];
 
-      if (ocopType.length > 0) {
-        try {
-          // Create a workbook
-          const wb = XLSX.utils.book_new();
-
-          // Create header row with all fields
-          const headerRow = [
-            "#",
-            "ID",
-            "Ocop Type Name",
-            "Created At",
-            "Updated At",
-          ];
-
-          const data = [headerRow];
-
-          // Process the ocop type data from the API
-          ocopType.forEach((type, index) => {
-
-            const rowData = [
-              (index + 1).toString(),
-              type.id || "—",
-              type.ocopTypeName || "—",
-              type.createdAt
-                ? new Date(type.createdAt).toLocaleString()
-                : "—",
-              type.updateAt
-                ? new Date(type.updateAt).toLocaleString()
-                : "—",
-            ];
-
-            data.push(rowData);
-          });
-
-          // Create worksheet from data
-          const ws = XLSX.utils.aoa_to_sheet(data);
-
-          // Set column widths for better readability
-          ws["!cols"] = [
-            { wch: 5 }, // #
-            { wch: 25 }, // ID
-            { wch: 30 }, // Ocop Type Name
-            { wch: 20 }, // Created At
-            { wch: 20 }, // Updated At
-          ];
-
-          // Configure row heights to accommodate multiline text
-          const rowCount = data.length;
-          ws["!rows"] = [];
-          for (let i = 0; i < rowCount; i++) {
-            ws["!rows"][i] = { hpt: 25 }; // Default row height
-          }
-
-          // Add the worksheet to the workbook
-          XLSX.utils.book_append_sheet(wb, ws, "OCOP Products");
-
-          // Generate Excel file and trigger download
-          const today = new Date().toISOString().slice(0, 10);
-          const fileName = `ocop_products_${today}.xlsx`;
-          XLSX.writeFile(wb, fileName);
-
-          showTimedAlert(
-            "Export Successful",
-            `${ocopType.length} Items have been exported to Excel.`,
-            "success",
-            1000
-          );
-        } catch (ex) {
-          console.error("Error during Excel creation:", ex);
-          showTimedAlert(
-            "Export Error",
-            `Error creating Excel file: ${ex.message}`,
-            "error",
-            1000
-          );
-        }
-      } else {
+      // Nếu không có dữ liệu → thông báo giống yêu cầu
+      if (ocopType.length === 0) {
         showTimedAlert(
-          "Export Error",
-          "No OCOP type data available for export.",
+          "No Data Available",
+          "No reviews available for export.",
           "error",
+          1500
+        );
+        return;
+      }
+
+      try {
+        const wb = XLSX.utils.book_new();
+        const headerRow = ["#", "ID", "Ocop Type Name", "Created At", "Updated At"];
+        const data = [headerRow];
+
+        ocopType.forEach((type, index) => {
+          const rowData = [
+            (index + 1).toString(),
+            type.id || "—",
+            type.ocopTypeName || "—",
+            type.createdAt ? new Date(type.createdAt).toLocaleString() : "—",
+            type.updateAt ? new Date(type.updateAt).toLocaleString() : "—",
+          ];
+          data.push(rowData);
+        });
+
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        ws["!cols"] = [
+          { wch: 5 },
+          { wch: 25 },
+          { wch: 30 },
+          { wch: 20 },
+          { wch: 20 },
+        ];
+        ws["!rows"] = data.map(() => ({ hpt: 25 }));
+
+        XLSX.utils.book_append_sheet(wb, ws, "OCOP Products");
+        const today = new Date().toISOString().slice(0, 10);
+        XLSX.writeFile(wb, `ocop_products_${today}.xlsx`);
+
+        showTimedAlert(
+          "Export Successful",
+          `${ocopType.length} items exported to Excel.`,
+          "success",
           1000
         );
+      } catch (ex) {
+        console.error("Error during Excel creation:", ex);
+        showTimedAlert("Export Error", ex.message, "error", 1000);
       }
     },
     error: function (xhr, status, error) {
@@ -171,3 +132,4 @@ function exportOcopProductsToExcel() {
     },
   });
 }
+

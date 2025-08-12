@@ -198,7 +198,7 @@
                                 </div>
                                 <div class="d-flex align-items-center gap-4 mx-5">
                                     <div class="text-center">
-                                        <h3 class="f-w-700 mb-0" style="color: #6366f1;">@(Model.Sellocations?.Count ?? 0)</h3>
+                                        <h3 id="sellingPointsCount" class="f-w-700 mb-0" style="color: #6366f1;">@(Model.Sellocations?.Count ?? 0)</h3>
                                         <p class="text-secondary mb-0 text-uppercase" style="font-size: 0.8rem;">Selling Points</p>
                                     </div>
                                 </div>
@@ -320,7 +320,7 @@
 
                                         @if (sellingLinks != null && sellingLinks.Any())
                                         {
-                                            <div class="selling-link-summary">
+                                            <div id="selling-link-summary-container" class="selling-link-summary">
                                                 <div class="summary-item">
                                                     <h4>@sellingLinks.Count</h4>
                                                     <p>Total Links</p>
@@ -677,7 +677,7 @@
             });
 
             // Pagination logic
-            const itemsPerPage = 2;
+            @* const itemsPerPage = 2;
             const sellocationList = document.getElementById('sellocation-list');
             const paginationContainer = document.getElementById('pagination');
             const items = Array.from(sellocationList.getElementsByClassName('col-md-6'));
@@ -720,7 +720,66 @@
 
             if (items.length > 0) {
                 showPage(1);
-            }
+            } *@
+            // Đặt hàm này bên ngoài $(document).ready() hoặc bên trong nhưng ở phạm vi cao hơn
+// để hàm refreshOcopDetails có thể gọi nó.
+function setupLocationPagination(opts = {}) {
+  const itemsPerPage = 2;
+  const list = document.getElementById('sellocation-list');
+  const pagination = document.getElementById('pagination');
+  if (!list || !pagination) return;
+
+  const items = Array.from(list.querySelectorAll('.col-md-6'));
+  const total = items.length;
+  const pageCount = Math.ceil(total / itemsPerPage);
+
+  // Giữ trang hiện tại nếu có
+  let current = 1;
+  if (opts.keepPage && (opts.currentPage || list.dataset.currentPage)) {
+      current = Math.max(1, Math.min(parseInt(opts.currentPage || list.dataset.currentPage, 10), Math.max(1, pageCount)));
+  }
+
+  function renderPagination(active) {
+    pagination.innerHTML = '';
+    if (pageCount <= 1) return;
+    for (let i = 1; i <= pageCount; i++) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#';
+        a.textContent = i;
+        if (i === active) a.classList.add('active');
+        a.addEventListener('click', (e) => { e.preventDefault(); renderPage(i); });
+        li.appendChild(a);
+        pagination.appendChild(li);
+    }
+  }
+
+  function renderPage(page) {
+    const start = (page - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    items.forEach((el, i) => {
+        // Sử dụng class 'd-none' của Bootstrap để ẩn/hiện
+        if (i >= start && i < end) {
+            el.classList.remove('d-none');
+        } else {
+            el.classList.add('d-none');
+        }
+    });
+    list.dataset.currentPage = String(page);
+    renderPagination(page);
+  }
+
+  if (total === 0) {
+      pagination.innerHTML = '';
+      return;
+  }
+  renderPage(current);
+}
+
+// Gọi hàm này khi trang tải lần đầu
+$(document).ready(function() {
+    setupLocationPagination();
+});
 
 
             setTimeout(function () {

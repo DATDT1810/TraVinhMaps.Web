@@ -63,19 +63,20 @@
                                 var ts = DateTime.UtcNow - dateTime;
 
                                 if (ts.TotalSeconds < 60)
-                                    return $"{ts.Seconds} giây trước";
+                                    return $"{ts.Seconds} seconds ago";
                                 if (ts.TotalMinutes < 60)
-                                    return $"{ts.Minutes} phút trước";
+                                    return $"{ts.Minutes} minutes ago";
                                 if (ts.TotalHours < 24)
-                                    return $"{ts.Hours} giờ trước";
+                                    return $"{ts.Hours} hours ago";
                                 if (ts.TotalDays < 7)
-                                    return $"{ts.Days} ngày trước";
+                                    return $"{ts.Days} days ago";
                                 if (ts.TotalDays < 30)
-                                    return $"{(int)(ts.TotalDays / 7)} tuần trước";
+                                    return $"{(int)(ts.TotalDays / 7)} weeks ago";
                                 if (ts.TotalDays < 365)
-                                    return $"{(int)(ts.TotalDays / 30)} tháng trước";
-                                
-                                return $"{(int)(ts.TotalDays / 365)} năm trước";
+                                    return $"{(int)(ts.TotalDays / 30)} months ago";
+
+                                return $"{(int)(ts.TotalDays / 365)} years ago";
+
                             }
                         }
 

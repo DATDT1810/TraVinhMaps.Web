@@ -147,7 +147,7 @@ $(function () {
   // Upload ảnh
   $("#imageInput").on("change", function () {
     var files = this.files;
-    var maxImages = 5;
+    var maxImages = 8;
     var maxFileSize = 5 * 1024 * 1024; // 5 MB
     var allowedExtensions = ["jpg", "jpeg", "png"];
 

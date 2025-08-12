@@ -42,7 +42,7 @@ const sessionId = "@sessionId";
 $("#exportCompanyBtn").on("click", () => {
   showInfoAlert(
     "Exporting Companies",
-    "Retrieving company data for export...",
+    "Retrieving all company data for export...",
     "OK",
     exportCompaniesToExcel
   );

@@ -144,19 +144,21 @@
                                     </a>
                                 </div>
                             </div>
-                            @* <div>
-                                @if (Model.Locations == null || !Model.Locations.Any())
-                                {
-                                    <div class="d-flex justify-content-between align-items-center ps-3">
-                                        <div>
-                                            <strong>No Location Name.</strong><br />
-                                            <span>No Location Address.</span>
+                            <div>
+                                <div id="locationList" class="row">
+                                    @if (Model.Locations == null || !Model.Locations.Any())
+                                    {
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-between align-items-center ps-3">
+                                                <div>
+                                                    <strong>No Location Name.</strong><br />
+                                                    <span>No Location Address.</span>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div id="locationList" class="row">
+                                    }
+                                    else
+                                    {
                                         @for (int i = 0; i < Model.Locations.Count; i++)
                                         {
                                             var item = Model.Locations[i];
@@ -186,119 +188,40 @@
                                                             </button>
                                                             <button type="button" class="delete-sell-location btn btn-danger btn-sm px-2 py-1"
                                                                     title="Delete" style="font-size: 14px; line-height: 1;"
-                                                                    data-product-id="@Model.Id" data-location-id="@item.LocationId" data-location-name="@item.Name">
+                                                                    data-product-id="@Model.Id"
+                                                                    data-location-id="@item.LocationId"
+                                                                    data-location-name="@item.Name">
                                                                 <i class="fa fa-trash" aria-hidden="true"></i>
                                                             </button>
                                                         </div>
                                                     </div>
                                                     <div class="map-wrapper">
                                                         <div class="here-map-container"
-                                                             style="height: 100%; width: 100%;"
-                                                             data-latitude="@(item.Location?.Coordinates?.Skip(1).FirstOrDefault().ToString(CultureInfo.InvariantCulture) ?? "0")"
-                                                             data-longitude="@(item.Location?.Coordinates?.FirstOrDefault().ToString(CultureInfo.InvariantCulture) ?? "0")">
+                                                            style="height: 100%; width: 100%;"
+                                                            data-latitude="@(item.Location?.Coordinates?.Skip(1).FirstOrDefault().ToString(CultureInfo.InvariantCulture) ?? "0")"
+                                                            data-longitude="@(item.Location?.Coordinates?.FirstOrDefault().ToString(CultureInfo.InvariantCulture) ?? "0")">
                                                         </div>
                                                         <div class="map-overlay edit-location-btn" title="Edit"
-                                                             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; cursor: pointer;"
-                                                             data-bs-toggle="modal" data-bs-target="#editLocationModal"
-                                                             data-id="@Model.Id"
-                                                             data-location-id="@item.LocationId"
-                                                             data-name="@item.Name"
-                                                             data-address="@item.Address"
-                                                             data-type="@(item.Location?.Type ?? "Point")"
-                                                             data-longitude="@(item.Location?.Coordinates?.FirstOrDefault() ?? 0)"
-                                                             data-latitude="@(item.Location?.Coordinates?.Skip(1).FirstOrDefault() ?? 0)">
+                                                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; cursor: pointer;"
+                                                            data-bs-toggle="modal" data-bs-target="#editLocationModal"
+                                                            data-id="@Model.Id"
+                                                            data-location-id="@item.LocationId"
+                                                            data-name="@item.Name"
+                                                            data-address="@item.Address"
+                                                            data-type="@(item.Location?.Type ?? "Point")"
+                                                            data-longitude="@(item.Location?.Coordinates?.FirstOrDefault() ?? 0)"
+                                                            data-latitude="@(item.Location?.Coordinates?.Skip(1).FirstOrDefault() ?? 0)">
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         }
-                                    </div>
-                                    <div class="pagination-container">
-                                        <ul class="pagination" id="pagination">
-                                        </ul>
-                                    </div>
-                                }
-                            </div> *@
-                            <div>
-    <div id="locationList" class="row">
-        @if (Model.Locations == null || !Model.Locations.Any())
-        {
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center ps-3">
-                    <div>
-                        <strong>No Location Name.</strong><br />
-                        <span>No Location Address.</span>
-                    </div>
-                </div>
-            </div>
-        }
-        else
-        {
-            @for (int i = 0; i < Model.Locations.Count; i++)
-            {
-                var item = Model.Locations[i];
-                <div class="col-md-6 mb-4 d-flex" data-location-id="@item.LocationId">
-                    <div class="location-card">
-                        <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
-                            <div>
-                                <h5 style="margin: 0; font-weight: 600; max-width: 430px; min-height: 60px">
-                                    @(item.Name ?? "No Location Name.")
-                                </h5>
-                                <div class="fs-6 pt-1" style="max-width: 430px; min-height: 42px;">
-                                    @(item.Address ?? "No Location Address.")
+                                    }
+                                </div>
+                                <div class="pagination-container">
+                                    <ul class="pagination" id="pagination"></ul>
                                 </div>
                             </div>
-                            <div class="d-flex gap-2 pb-5">
-                                <button type="button" class="btn btn-success btn-sm px-2 py-1 edit-location-btn"
-                                        title="Edit" style="font-size: 14px; line-height: 1;"
-                                        data-bs-toggle="modal" data-bs-target="#editLocationModal"
-                                        data-id="@Model.Id"
-                                        data-location-id="@item.LocationId"
-                                        data-name="@item.Name"
-                                        data-address="@item.Address"
-                                        data-type="@(item.Location?.Type ?? "Point")"
-                                        data-longitude="@(item.Location?.Coordinates?.FirstOrDefault() ?? 0)"
-                                        data-latitude="@(item.Location?.Coordinates?.Skip(1).FirstOrDefault() ?? 0)">
-                                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                                </button>
-                                <button type="button" class="delete-sell-location btn btn-danger btn-sm px-2 py-1"
-                                        title="Delete" style="font-size: 14px; line-height: 1;"
-                                        data-product-id="@Model.Id"
-                                        data-location-id="@item.LocationId"
-                                        data-location-name="@item.Name">
-                                    <i class="fa fa-trash" aria-hidden="true"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="map-wrapper">
-                            <div class="here-map-container"
-                                 style="height: 100%; width: 100%;"
-                                 data-latitude="@(item.Location?.Coordinates?.Skip(1).FirstOrDefault().ToString(CultureInfo.InvariantCulture) ?? "0")"
-                                 data-longitude="@(item.Location?.Coordinates?.FirstOrDefault().ToString(CultureInfo.InvariantCulture) ?? "0")">
-                            </div>
-                            <div class="map-overlay edit-location-btn" title="Edit"
-                                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; cursor: pointer;"
-                                 data-bs-toggle="modal" data-bs-target="#editLocationModal"
-                                 data-id="@Model.Id"
-                                 data-location-id="@item.LocationId"
-                                 data-name="@item.Name"
-                                 data-address="@item.Address"
-                                 data-type="@(item.Location?.Type ?? "Point")"
-                                 data-longitude="@(item.Location?.Coordinates?.FirstOrDefault() ?? 0)"
-                                 data-latitude="@(item.Location?.Coordinates?.Skip(1).FirstOrDefault() ?? 0)">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-        }
-    </div>
-
-    <div class="pagination-container">
-        <ul class="pagination" id="pagination"></ul>
-    </div>
-</div>
-
                         </div>
                     </div>
                 </div>
