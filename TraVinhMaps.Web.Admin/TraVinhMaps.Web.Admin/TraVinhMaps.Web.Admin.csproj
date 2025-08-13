@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>a6a98951-a5c1-4390-9b19-5f4d78f9e8e6</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 	
 
@@ -12,6 +14,7 @@
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
 	<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.5" />
 	<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.6" />
+	<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
