@@ -133,3 +133,50 @@ function exportOcopProductsToExcel() {
   });
 }
 
+
+$(document).on('click', '.delete', function () {
+    const id = $(this).data('id');
+    const token = $('input[name="__RequestVerificationToken"]').val();
+    const row = $(this).closest('tr.user-removes');
+
+    showConfirmAlert('Are you sure?', "You won't be able to revert this!").then((result) => {
+        if (result) {
+            $.ajax({
+                url: window.apiBaseUrl + `api/OcopType/CountOcopProductsByTypeId/${id}`,
+                type: 'GET',
+                headers: {
+                    'RequestVerificationToken': token
+                },
+                success: function (response) {
+                    console.log("Dữ liệu nhận được từ server:", response);
+                    if (response && response.data > 0) {
+                      if(response.data > 0){
+                        const categoryName = row.find('td:eq(1)').text().trim();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Cannot Delete Ocop Type',
+                            html:
+                                `The Type "<b>${categoryName}</b>" cannot be deleted.` +
+                                '<div style="margin-top: 1rem; padding: 1rem; background-color: #fde8e8; border-radius: 5px; border: 1px solid #e57373;">' +
+                                `There are still <b>${response.data}</b> products in this type.<br/>` +
+                                'Please move or delete all products before deleting the type.' +
+                                '</div>',
+                            confirmButtonText: 'Got it'
+                        });
+                    }
+                  }
+                  else{
+                    showSuccessAlert('Deleted!', 'Danh mục đã được xóa thành công.').then(() => {
+                      row.fadeOut(500, function () {
+                          $('#project-status').DataTable().row(row).remove().draw();
+                      });
+                    });
+                  }
+                },
+                error: function () {
+                    showErrorAlert('Error!', 'Something went wrong. Please try again.');
+                }
+            });
+        }
+    });
+});
