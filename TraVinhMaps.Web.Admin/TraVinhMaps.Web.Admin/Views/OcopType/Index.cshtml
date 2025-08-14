@@ -1,3 +1,4 @@
+@using TraVinhMaps.Web.Admin.Models
 @using TraVinhMaps.Web.Admin.Models.OcopType;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model IEnumerable<OcopTypeResponse>;
@@ -24,16 +25,16 @@
     </div>
     @if (TempData["ErrorMessage"] != null)
     {
-        <div id="alert-message" class="alert alert-danger">
-            @TempData["ErrorMessage"]
-        </div>
+        <script>
+            showErrorAlert('Error!', TempData["ErrorMessage"].ToString());
+        </script>
     }
 
     @if (TempData["SuccessMessage"] != null)
     {
-        <div id="alert-message" class="alert alert-success">
-            @TempData["SuccessMessage"]
-        </div>
+        <script>
+            showSuccessAlert("Success!", "@TempData["SuccessMessage"]");
+        </script>
     }
     <!-- Container-fluid starts-->
     <div class="container-fluid">
@@ -76,13 +77,18 @@
                                                 @item.CreatedAt.ToLocalTime().ToString("dd/MM/yy, HH:mm")
                                             </td>
 
-                                            <td class="text-center align-middle">
-                                                <ul>
-                                                    <li>
-                                                        <a style="color: #158247 !important;" class="edit" asp-controller="OcopType" asp-action="UpdateOcopType"
-                                                            asp-route-id="@item.Id"><i class="fa fa-pencil"></i> </a>
-                                                    </li>
-                                                </ul>
+                                            <td class="text-center">
+                                                <div class="d-flex justify-content-center">
+                                                    <a style="color: #158247 !important;" class="edit me-2"
+                                                       asp-controller="OcopType" asp-action="UpdateOcopType"
+                                                       asp-route-id="@item.Id" title="Edit">
+                                                        <i class="fa fa-pencil"></i>
+                                                    </a>
+                                                    <a href="javascript:void(0);" class="delete" data-id="@item.Id"
+                                                       style="color: red !important;" title="Delete">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </div>
                                             </td>
                                         </tr>
                                         count++;
