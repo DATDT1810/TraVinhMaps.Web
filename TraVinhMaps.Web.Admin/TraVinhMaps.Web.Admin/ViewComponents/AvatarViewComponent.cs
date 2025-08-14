@@ -7,7 +7,7 @@ using TraVinhMaps.Web.Admin.Services.Users;
 
 namespace TraVinhMaps.Web.Admin.ViewComponents
 {
-    public class AvatarViewComponent : ViewComponent
+    public class AvatarViewComponent : ViewComponent  // Assuming this inheritance is already there
     {
         private readonly IUserService _userService;
 
@@ -18,13 +18,15 @@ namespace TraVinhMaps.Web.Admin.ViewComponents
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var username = UserClaimsPrincipal?.Identity?.Name;
+            // Use HttpContext.User directly (standard for ViewComponents)
+            var username = HttpContext.User?.Identity?.Name;
 
             if (string.IsNullOrEmpty(username))
             {
                 return View("Default", "/assets/images/dashboard/profile.png");
             }
 
+            // Assuming usernames are unique, consider using a GetByUsernameAsync method for efficiency instead of ListAsync + FirstOrDefault
             var user = await _userService
                 .ListAsync(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
 

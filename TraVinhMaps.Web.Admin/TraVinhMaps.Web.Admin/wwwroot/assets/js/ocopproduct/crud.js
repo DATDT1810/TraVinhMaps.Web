@@ -1,50 +1,3 @@
-// let locationIndex = 0; // Sẽ được cập nhật từ View
-// // Function để thêm địa điểm mới
-// function addLocation() {
-//     const container = document.getElementById('locations-container');
-//     if (!container) {
-//         console.error('locations-container not found');
-//         return;
-//     }
-//     const locationHtml = `
-//     <div class="location-group mb-3">
-//         <div class="row">
-//             <div class="col-sm-4">
-//                 <label>Name of Location</label>
-//                 <input type="text" name="SellLocations[${locationIndex}].LocationName" class="form-control" placeholder="Location name" required />
-//                 <span class="text-danger field-validation-valid" data-valmsg-for="SellLocations[${locationIndex}].LocationName" data-valmsg-replace="true"></span>
-//             </div>
-//             <div class="col-sm-4">
-//                 <label>Address</label>
-//                 <input type="text" name="SellLocations[${locationIndex}].LocationAddress" class="form-control" placeholder="Location name" required />
-//                 <span class="text-danger field-validation-valid" data-valmsg-for="SellLocations[${locationIndex}].LocationAddress" data-valmsg-replace="true"></span>
-//             </div>
-//             <div class="col-sm-4">
-//                 <label>Type</label>
-//                 <select name="SellLocations[${locationIndex}].Type" class="form-select" required>
-//                     <option value="point" selected>Point</option>
-//                 </select>
-//                 <span class="text-danger field-validation-valid" data-valmsg-for="SellLocations[${locationIndex}].Type" data-valmsg-replace="true"></span>
-//             </div>
-//         </div>
-//         <div class="row">
-//             <div class="col-sm-6">
-//                 <label>Longitude</label>
-//                 <input type="text" name="SellLocations[${locationIndex}].Longitude" class="form-control" placeholder="Location name" required />
-//                 <span class="text-danger field-validation-valid" data-valmsg-for="SellLocations[${locationIndex}].Longitude" data-valmsg-replace="true"></span>
-//             </div>
-//             <div class="col-sm-6">
-//                 <label>Latitude</label>
-//                 <input type="text" name="SellLocations[${locationIndex}].Latitude" class="form-control" placeholder="Location name" required />
-//                 <span class="text-danger field-validation-valid" data-valmsg-for="SellLocations[${locationIndex}].Latitude" data-valmsg-replace="true"></span>
-//             </div>
-//         </div>
-//         <button type="button" class="btn btn-danger btn-sm mt-2 remove-location">Remove</button>
-//     </div>`;
-//     container.insertAdjacentHTML('beforeend', locationHtml);
-//     locationIndex++;
-// }
-
 $(document).ready(function () {
   // Lấy token một lần để dùng chung
   const token = $('input[name="__RequestVerificationToken"]').val();
@@ -66,40 +19,56 @@ $(document).ready(function () {
       return;
     }
 
+    // Phần này vẫn ổn, nó sẽ mặc định là trang 1 nếu #sellocation-list chưa tồn tại
     const listEl = document.getElementById("sellocation-list");
-    const prevPage = listEl ? parseInt(listEl.dataset.currentPage || "1", 10) : 1;
+    const prevPage = listEl
+      ? parseInt(listEl.dataset.currentPage || "1", 10)
+      : 1;
 
     $.get(`/Admin/OcopProduct/Detail/${productId}`, function (html) {
       const $html = $(html);
 
-      // Cập nhật danh sách điểm bán (Sell Locations)
-      const newLocationList = $html.find("#sellocation-list").html();
-      if (newLocationList) {
-        $("#sellocation-list").html(newLocationList);
+      // === PHẦN SỬA LỖI CHO ĐIỂM BÁN (SELLING POINT) ===
+
+      // 1. Tìm container tĩnh #sellocation-wrapper trong HTML trả về từ server.
+      const newLocationWrapper = $html.find("#sellocation-wrapper");
+
+      // 2. Kiểm tra xem container đó có tồn tại trong kết quả trả về không.
+      if (newLocationWrapper.length > 0) {
+        // 3. Lấy nội dung HTML BÊN TRONG nó và thay thế toàn bộ nội dung của container trên trang hiện tại.
+        //    Điều này đảm bảo rằng dù ban đầu có danh sách hay chỉ có thông báo "No location",
+        $("#sellocation-wrapper").html(newLocationWrapper.html());
+
+        // 4. Cập nhật lại số lượng điểm bán sau khi đã cập nhật DOM.
+        //    Lúc này #sellocation-list đã chắc chắn tồn tại (nếu có điểm bán).
         const locationCount = $("#sellocation-list .col-md-6").length;
         $("#sellingPointsCount").text(locationCount);
+      } else {
+        // Xử lý dự phòng nếu không tìm thấy wrapper trong kết quả trả về (ít khả năng xảy ra)
+        $("#sellocation-wrapper").html(
+          '<div class="p-3 text-center">Could not load selling points.</div>'
+        );
+        $("#sellingPointsCount").text(0);
       }
 
-      // --- Cập nhật toàn bộ khu vực Selling Link ---
-
-      // 1. Cập nhật khối tóm tắt
+      // --- Cập nhật toàn bộ khu vực Selling Link --- (Giữ nguyên vì logic đã đúng)
       const newSummaryElement = $html.find("#selling-link-summary-container");
       if (newSummaryElement.length) {
-        // Thay thế toàn bộ thẻ div để xử lý cả trường hợp nó không tồn tại ban đầu
         $("#selling-link-summary-container").replaceWith(newSummaryElement);
       } else {
         $("#selling-link-summary-container").remove();
       }
 
-      // 2. Cập nhật danh sách các link
       const newSellingLinkList = $html.find("#sellinglink-list").html();
-      if (newSellingLinkList) {
+      if (newSellingLinkList != null) {
+        // Kiểm tra null để an toàn hơn
         $("#sellinglink-list").html(newSellingLinkList);
       }
 
       // Sau khi DOM được cập nhật, gọi lại các hàm khởi tạo
       requestAnimationFrame(() => {
         if (typeof setupLocationPagination === "function") {
+          // Hàm phân trang sẽ hoạt động đúng vì container đã được cập nhật
           setupLocationPagination({ keepPage: true, currentPage: prevPage });
         }
         if (typeof initializeMapObserver === "function") {
@@ -117,8 +86,14 @@ $(document).ready(function () {
   $("#addLocationForm, #editLocationForm").on("submit", function (e) {
     e.preventDefault();
     const form = $(this);
-    const url = form.attr("id") === "addLocationForm" ? "/Admin/OcopProduct/CreateSellLocation" : "/Admin/OcopProduct/UpdateSellLocationPost";
-    const modalId = form.attr("id") === "addLocationForm" ? "#addLocationModal" : "#editLocationModal";
+    const url =
+      form.attr("id") === "addLocationForm"
+        ? "/Admin/OcopProduct/CreateSellLocation"
+        : "/Admin/OcopProduct/UpdateSellLocationPost";
+    const modalId =
+      form.attr("id") === "addLocationForm"
+        ? "#addLocationModal"
+        : "#editLocationModal";
 
     $.ajax({
       url: url,
@@ -160,26 +135,36 @@ $(document).ready(function () {
     const productId = button.data("product-id");
     const locationName = button.data("location-name");
 
-    showConfirmAlert("Confirmation", `Are you sure you want to delete "${locationName}"?`, "Delete", "Cancel")
-    .then((confirmed) => {
-        if (!confirmed) return;
-        $.ajax({
-            url: `/Admin/OcopProduct/DeleteSellLocation/${productId}/${locationName}`,
-            method: "DELETE",
-            headers: { RequestVerificationToken: token },
-            success: function (response) {
-                if (!response.success) {
-                    return showTimedAlert("Error!", response.message, "error", 1000);
-                }
-                showTimedAlert("Success!", "Location deleted successfully!", "success", 1000);
-                // Gọi hàm làm mới chung để cập nhật toàn bộ giao diện
-                refreshOcopDetails(productId);
-            },
-            error: function (xhr) {
-                 const errorMessage = xhr.responseJSON?.message || "An error occurred.";
-                 showTimedAlert("Error!", errorMessage, "error", 3000);
-            }
-        });
+    showConfirmAlert(
+      "Confirmation",
+      `Are you sure you want to delete "${locationName}"?`,
+      "Delete",
+      "Cancel"
+    ).then((confirmed) => {
+      if (!confirmed) return;
+      $.ajax({
+        url: `/Admin/OcopProduct/DeleteSellLocation/${productId}/${locationName}`,
+        method: "DELETE",
+        headers: { RequestVerificationToken: token },
+        success: function (response) {
+          if (!response.success) {
+            return showTimedAlert("Error!", response.message, "error", 1000);
+          }
+          showTimedAlert(
+            "Success!",
+            "Location deleted successfully!",
+            "success",
+            1000
+          );
+          // Gọi hàm làm mới chung để cập nhật toàn bộ giao diện
+          refreshOcopDetails(productId);
+        },
+        error: function (xhr) {
+          const errorMessage =
+            xhr.responseJSON?.message || "An error occurred.";
+          showTimedAlert("Error!", errorMessage, "error", 3000);
+        },
+      });
     });
   });
 
@@ -189,8 +174,14 @@ $(document).ready(function () {
   $("#addSellingLinkForm, #editSellingLinkForm").on("submit", function (e) {
     e.preventDefault();
     const form = $(this);
-    const url = form.attr("id") === "addSellingLinkForm" ? "/Admin/OcopProduct/CreateSellingLink" : "/Admin/OcopProduct/UpdateSellingLinkPost";
-    const modalId = form.attr("id") === "addSellingLinkForm" ? "#addSellingLinkModal" : "#editSellingLinkModal";
+    const url =
+      form.attr("id") === "addSellingLinkForm"
+        ? "/Admin/OcopProduct/CreateSellingLink"
+        : "/Admin/OcopProduct/UpdateSellingLinkPost";
+    const modalId =
+      form.attr("id") === "addSellingLinkForm"
+        ? "#addSellingLinkModal"
+        : "#editSellingLinkModal";
 
     $.ajax({
       url: url,
@@ -229,26 +220,36 @@ $(document).ready(function () {
     const sellingLinkId = button.data("id");
     const productId = button.data("product-id"); // Lấy productId từ nút
 
-    showConfirmAlert("Confirmation", "Are you sure you want to delete this link?", "Delete", "Cancel")
-    .then((confirmed) => {
-        if (!confirmed) return;
-        $.ajax({
-            url: `/Admin/OcopProduct/DeleteSellingLink/${sellingLinkId}`,
-            method: "DELETE",
-            headers: { RequestVerificationToken: token },
-            success: function (response) {
-                if (!response.success) {
-                    return showTimedAlert("Error!", response.message, "error", 1000);
-                }
-                showTimedAlert("Success!", "Link deleted successfully!", "success", 1000);
-                // Gọi hàm làm mới chung để cập nhật toàn bộ giao diện
-                refreshOcopDetails(productId);
-            },
-            error: function (xhr) {
-                const errorMessage = xhr.responseJSON?.message || "An error occurred.";
-                showTimedAlert("Error!", errorMessage, "error", 3000);
-            }
-        });
+    showConfirmAlert(
+      "Confirmation",
+      "Are you sure you want to delete this link?",
+      "Delete",
+      "Cancel"
+    ).then((confirmed) => {
+      if (!confirmed) return;
+      $.ajax({
+        url: `/Admin/OcopProduct/DeleteSellingLink/${sellingLinkId}`,
+        method: "DELETE",
+        headers: { RequestVerificationToken: token },
+        success: function (response) {
+          if (!response.success) {
+            return showTimedAlert("Error!", response.message, "error", 1000);
+          }
+          showTimedAlert(
+            "Success!",
+            "Link deleted successfully!",
+            "success",
+            1000
+          );
+          // Gọi hàm làm mới chung để cập nhật toàn bộ giao diện
+          refreshOcopDetails(productId);
+        },
+        error: function (xhr) {
+          const errorMessage =
+            xhr.responseJSON?.message || "An error occurred.";
+          showTimedAlert("Error!", errorMessage, "error", 3000);
+        },
+      });
     });
   });
 });
@@ -264,7 +265,8 @@ if (toggleButton) {
         item.classList.toggle("d-none", isExpanded);
       }
     });
-    toggleButton.textContent = isExpanded ? "Xem thêm" : "Thu gọn";
+    toggleButton.textContent = isExpanded ? "More" : "Less";
     toggleButton.setAttribute("data-expanded", (!isExpanded).toString());
   });
 }
+
