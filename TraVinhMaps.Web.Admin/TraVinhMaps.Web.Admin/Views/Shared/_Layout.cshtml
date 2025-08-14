@@ -59,7 +59,19 @@
     <link rel="stylesheet" type="text/css" href="~/assets/css/responsive.css">
 </head>
 
-<body>
+@{
+    var userRole = "";
+    if (User.Identity.IsAuthenticated)
+    {
+        if (User.IsInRole("super-admin")) {
+            userRole = "super-admin";
+        } else if (User.IsInRole("admin")) {
+            userRole = "admin";
+        }
+        // Thêm các role khác nếu cần
+    }
+}
+<body data-user-role="@userRole">
     @await RenderSectionAsync("Styles", required: false)
 
     <!-- loader starts-->
